@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        BASE: apache
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: mysql://${DATABASE_USER}:${DATABASE_PASS}@mysql:3306/${DATABASE_BASE}?charset=utf8mb4&serverVersion=10.11.0-MariaDB
+      ADMINMAIL: ${ADMINMAIL}
+      ADMINPASS: ${ADMINPASS}
+      TRUSTED_PROXIES: "*"
+    volumes:
+      - kimai_data:/opt/kimai/var/data
+      - kimai_plugins:/opt/kimai/var/plugins
+    depends_on:
+      - mysql
+    ports:
+      - "8001:8001"
+
+  mysql:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASS}
+      MARIADB_DATABASE: ${DATABASE_BASE}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASS}
+    volumes:
+      - kimai_db:/var/lib/mysql
+
+volumes:
+  kimai_data:
+  kimai_plugins:
+  kimai_db:
