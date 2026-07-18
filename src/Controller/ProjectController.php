@@ -11,6 +11,7 @@ namespace App\Controller;
 
 use App\Configuration\SystemConfiguration;
 use App\Entity\Customer;
+use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\ProjectComment;
 use App\Entity\ProjectRate;
@@ -19,6 +20,7 @@ use App\Event\ProjectMetaDisplayEvent;
 use App\Export\Spreadsheet\EntityWithMetaFieldsExporter;
 use App\Export\Spreadsheet\Writer\BinaryFileResponseWriter;
 use App\Export\Spreadsheet\Writer\XlsxWriter;
+use App\Form\MilestoneEditForm;
 use App\Form\ProjectCommentForm;
 use App\Form\ProjectEditForm;
 use App\Form\ProjectRateForm;
@@ -29,6 +31,7 @@ use App\Project\ProjectDuplicationService;
 use App\Project\ProjectService;
 use App\Project\ProjectStatisticService;
 use App\Repository\ActivityRepository;
+use App\Repository\MilestoneRepository;
 use App\Repository\ProjectRateRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\Query\ActivityQuery;
@@ -243,7 +246,7 @@ final class ProjectController extends AbstractController
 
     #[Route(path: '/{id}/details', name: 'project_details', methods: ['GET', 'POST'])]
     #[IsGranted('view', 'project')]
-    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, ProjectStatisticService $statisticService, ProjectService $projectService, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher): Response
+    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, MilestoneRepository $milestoneRepository, ProjectStatisticService $statisticService, ProjectService $projectService, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher): Response
     {
         $projectService->loadMetaFields($project);
 
@@ -254,6 +257,7 @@ final class ProjectController extends AbstractController
         $comments = null;
         $teams = null;
         $rates = [];
+        $milestones = $milestoneRepository->findByProject($project);
         $now = $this->getDateTimeFactory()->createDateTime();
 
         $exportUrl = null;
@@ -307,6 +311,7 @@ final class ProjectController extends AbstractController
             'team' => $defaultTeam,
             'teams' => $teams,
             'rates' => $rates,
+            'milestones' => $milestones,
             'now' => $now,
             'boxes' => $boxes,
             'export_url' => $exportUrl,
@@ -356,6 +361,94 @@ final class ProjectController extends AbstractController
         }
 
         return $this->render('project/rates.html.twig', [
+            'page_setup' => $this->createPageSetup(),
+            'project' => $project,
+            'form' => $form->createView()
+        ]);
+    }
+
+    #[Route(path: '/{id}/milestone/{milestone}/edit', name: 'admin_milestone_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('edit', 'project')]
+    public function editMilestoneAction(Project $project, Milestone $milestone, Request $request, MilestoneRepository $repository): Response
+    {
+        if ($milestone->getProject() !== $project) {
+            throw $this->createAccessDeniedException('Trying to edit a milestone that does not belong to this project.');
+        }
+
+        return $this->milestoneFormAction($project, $milestone, $request, $repository, $this->generateUrl('admin_milestone_edit', ['id' => $project->getId(), 'milestone' => $milestone->getId()]));
+    }
+
+    #[Route(path: '/{id}/milestone', name: 'admin_milestone_add', methods: ['GET', 'POST'])]
+    #[IsGranted('edit', 'project')]
+    public function addMilestoneAction(Project $project, Request $request, MilestoneRepository $repository): Response
+    {
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+
+        return $this->milestoneFormAction($project, $milestone, $request, $repository, $this->generateUrl('admin_milestone_add', ['id' => $project->getId()]));
+    }
+
+    #[Route(path: '/{id}/milestone/{milestone}/delete', name: 'admin_milestone_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('edit', 'project')]
+    public function deleteMilestoneAction(Project $project, Milestone $milestone, Request $request, MilestoneRepository $repository): Response
+    {
+        if ($milestone->getProject() !== $project) {
+            throw $this->createAccessDeniedException('Trying to delete a milestone that does not belong to this project.');
+        }
+
+        $deleteForm = $this->createFormBuilder(null, [
+                'attr' => [
+                    'data-form-event' => 'kimai.milestoneDelete',
+                    'data-msg-success' => 'action.delete.success',
+                    'data-msg-error' => 'action.delete.error',
+                ]
+            ])
+            ->setAction($this->generateUrl('admin_milestone_delete', ['id' => $project->getId(), 'milestone' => $milestone->getId()]))
+            ->setMethod('POST')
+            ->getForm();
+
+        $deleteForm->handleRequest($request);
+
+        if ($deleteForm->isSubmitted() && $deleteForm->isValid()) {
+            try {
+                $repository->deleteMilestone($milestone);
+                $this->flashSuccess('action.delete.success');
+            } catch (\Exception $ex) {
+                $this->flashDeleteException($ex);
+            }
+
+            return $this->redirectToRoute('project_details', ['id' => $project->getId()]);
+        }
+
+        return $this->render('project/milestone_delete.html.twig', [
+            'page_setup' => $this->createPageSetup(),
+            'project' => $project,
+            'milestone' => $milestone,
+            'form' => $deleteForm->createView(),
+        ]);
+    }
+
+    private function milestoneFormAction(Project $project, Milestone $milestone, Request $request, MilestoneRepository $repository, string $formUrl): Response
+    {
+        $form = $this->createForm(MilestoneEditForm::class, $milestone, [
+            'action' => $formUrl,
+            'method' => 'POST',
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $repository->saveMilestone($milestone);
+                $this->flashSuccess('action.update.success');
+
+                return $this->redirectToRoute('project_details', ['id' => $project->getId()]);
+            } catch (\Exception $ex) {
+                $this->flashUpdateException($ex);
+            }
+        }
+
+        return $this->render('project/milestone.html.twig', [
             'page_setup' => $this->createPageSetup(),
             'project' => $project,
             'form' => $form->createView()

@@ -145,6 +145,6 @@ class ThemeEventExtensionTest extends TestCase
     public function testGetTitle(): void
     {
         $sut = $this->getSut(false);
-        self::assertEquals('Kimai', $sut->generateTitle());
+        self::assertEquals('gppro', $sut->generateTitle());
     }
 }

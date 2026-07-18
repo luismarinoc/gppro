@@ -12,6 +12,7 @@ namespace App\Repository\Query;
 use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\InvoiceTemplate;
+use App\Entity\Milestone;
 use App\Entity\Project;
 
 /**
@@ -22,6 +23,23 @@ class InvoiceQuery extends TimesheetQuery
     private ?InvoiceTemplate $template = null;
     private ?\DateTime $invoiceDate = null;
     private bool $allowTemplateOverwrite = true;
+    private ?Milestone $milestone = null;
+
+    public function getMilestone(): ?Milestone
+    {
+        return $this->milestone;
+    }
+
+    public function setMilestone(?Milestone $milestone): InvoiceQuery
+    {
+        $this->milestone = $milestone;
+
+        if ($milestone !== null && !$this->hasActivities()) {
+            $this->setActivities($milestone->getActivities()->toArray());
+        }
+
+        return $this;
+    }
 
     public function __construct()
     {

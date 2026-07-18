@@ -47,7 +47,7 @@ class KimaiMailerTest extends TestCase
 
         $mailer->send($message);
 
-        self::assertEquals([new Address('zippel@example.com', 'Kimai')], $message->getFrom());
+        self::assertEquals([new Address('zippel@example.com', 'gppro')], $message->getFrom());
     }
 
     public function testSendToUserSetsFromHeaderFromFallback(): void
@@ -63,7 +63,7 @@ class KimaiMailerTest extends TestCase
 
         $mailer->sendToUser($user, $message);
 
-        self::assertEquals([new Address('zippel@example.com', 'Kimai')], $message->getFrom());
+        self::assertEquals([new Address('zippel@example.com', 'gppro')], $message->getFrom());
     }
 
     public function testSendToUserSendsEmailWhenUserIsEnabledAndHasEmail(): void
@@ -80,7 +80,7 @@ class KimaiMailerTest extends TestCase
         $sut = $this->getSut($mailer);
 
         $sut->sendToUser($user, $email);
-        self::assertEquals([new Address('zippel@example.com', 'Kimai')], $email->getFrom());
+        self::assertEquals([new Address('zippel@example.com', 'gppro')], $email->getFrom());
         self::assertEquals([new Address('foo-bar@example.com')], $email->getTo());
     }
 

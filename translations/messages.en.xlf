@@ -110,6 +110,22 @@
         <source>rates.title</source>
         <target>Prices</target>
       </trans-unit>
+      <trans-unit id="gpMilestoneEmpty" resname="milestone.empty">
+        <source>milestone.empty</source>
+        <target>No milestones have been configured.</target>
+      </trans-unit>
+      <trans-unit id="gpMilestoneTitle" resname="milestone.title">
+        <source>milestone.title</source>
+        <target>Milestones</target>
+      </trans-unit>
+      <trans-unit id="gpDueDate" resname="due_date">
+        <source>due_date</source>
+        <target>Due date</target>
+      </trans-unit>
+      <trans-unit id="gpMilestone" resname="milestone">
+        <source>milestone</source>
+        <target>Milestone</target>
+      </trans-unit>
       <trans-unit id="zFfl7jw" resname="sum.total">
         <source>sum.total</source>
         <target>Total</target>

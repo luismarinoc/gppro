@@ -56,6 +56,9 @@ class Activity implements EntityWithMetaFields, EntityWithBudget, CreatedAt
     #[Serializer\Groups(['Expanded'])]
     #[OA\Property(ref: '#/components/schemas/ProjectExpanded')]
     private ?Project $project = null;
+    #[ORM\ManyToOne(targetEntity: Milestone::class, inversedBy: 'activities')]
+    #[ORM\JoinColumn(name: 'milestone_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Milestone $milestone = null;
     /**
      * Name of this activity
      */
@@ -150,6 +153,18 @@ class Activity implements EntityWithMetaFields, EntityWithBudget, CreatedAt
     public function setProject(?Project $project): Activity
     {
         $this->project = $project;
+
+        return $this;
+    }
+
+    public function getMilestone(): ?Milestone
+    {
+        return $this->milestone;
+    }
+
+    public function setMilestone(?Milestone $milestone): Activity
+    {
+        $this->milestone = $milestone;
 
         return $this;
     }

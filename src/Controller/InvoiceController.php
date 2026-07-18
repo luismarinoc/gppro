@@ -745,6 +745,7 @@ final class InvoiceController extends AbstractController
             'action' => $this->generateUrl('invoice', []),
             'include_user' => $this->isGranted('view_other_timesheet'),
             'timezone' => $this->getDateTimeFactory()->getTimezone()->getName(),
+            'user' => $this->getUser(),
             'attr' => [
                 'id' => 'invoice-print-form'
             ],

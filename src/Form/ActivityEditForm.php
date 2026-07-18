@@ -11,11 +11,14 @@ namespace App\Form;
 
 use App\Entity\Activity;
 use App\Entity\Customer;
+use App\Entity\Milestone;
 use App\Form\Type\InvoiceLabelType;
 use App\Form\Type\ProjectType;
 use App\Form\Type\TeamType;
+use App\Repository\MilestoneRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\Query\ProjectFormTypeQuery;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -81,6 +84,22 @@ class ActivityEditForm extends AbstractType
                         $query->setWithCustomer(true);
 
                         return $repo->getQueryBuilderForFormType($query);
+                    },
+                ]);
+        }
+
+        if (!$isGlobal && $project !== null) {
+            $builder
+                ->add('milestone', EntityType::class, [
+                    'class' => Milestone::class,
+                    'label' => 'milestone',
+                    'required' => false,
+                    'choice_label' => 'name',
+                    'query_builder' => function (MilestoneRepository $repo) use ($project) {
+                        return $repo->createQueryBuilder('m')
+                            ->andWhere('m.project = :project')
+                            ->setParameter('project', $project)
+                            ->orderBy('m.name', 'ASC');
                     },
                 ]);
         }

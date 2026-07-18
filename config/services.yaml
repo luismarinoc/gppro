@@ -153,6 +153,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\Project']
 
+    App\Repository\MilestoneRepository:
+        class: App\Repository\MilestoneRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\Milestone']
+
     App\Repository\TagRepository:
         class: App\Repository\TagRepository
         factory: ['@doctrine.orm.entity_manager', getRepository]

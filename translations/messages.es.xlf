@@ -818,6 +818,22 @@
         <source>rates.title</source>
         <target state="translated">Precios</target>
       </trans-unit>
+      <trans-unit id="gpMilestoneEmpty" resname="milestone.empty">
+        <source>milestone.empty</source>
+        <target state="translated">No hay hitos configurados.</target>
+      </trans-unit>
+      <trans-unit id="gpMilestoneTitle" resname="milestone.title">
+        <source>milestone.title</source>
+        <target state="translated">Hitos</target>
+      </trans-unit>
+      <trans-unit id="gpDueDate" resname="due_date">
+        <source>due_date</source>
+        <target state="translated">Fecha límite</target>
+      </trans-unit>
+      <trans-unit id="gpMilestone" resname="milestone">
+        <source>milestone</source>
+        <target state="translated">Hito</target>
+      </trans-unit>
       <trans-unit id="0M_Gylq" resname="rates.empty" xml:space="preserve">
         <source>rates.empty</source>
         <target state="translated">No se han configurado los precios.</target>
