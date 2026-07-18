@@ -1,0 +1,1 @@
+(self.webpackChunkgppro=self.webpackChunkgppro||[]).push([[896],{2836:function(n,p,u){u(6429)},6429:function(n,p,u){"use strict";u.r(p)}},function(n){var p;p=2836,n(n.s=p)}]);

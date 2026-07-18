@@ -1,0 +1,125 @@
+:root {
+    /* GPartner Consulting brand palette */
+    --tblr-primary: #1B3A6B;
+    --tblr-primary-rgb: 27, 58, 107;
+    --tblr-primary-text-emphasis: #0d1d36;
+    --tblr-primary-bg-subtle: #EBF0F8;
+    --tblr-primary-border-subtle: #9bb3d1;
+
+    --tblr-body-bg: #EBF0F8;
+    --tblr-body-bg-rgb: 235, 240, 248;
+    --tblr-card-border-width: 0px;
+    --tblr-card-box-shadow: 0 2px 16px rgba(27, 58, 107, 0.08);
+
+    --kimai-public-holiday: var(--tblr-lime);
+    --kimai-holiday: var(--tblr-green);
+    --kimai-sickness: var(--tblr-yellow);
+    --kimai-time-off: var(--tblr-blue);
+    --kimai-other: var(--tblr-purple);
+
+    --kimai-public-holiday-bg: var(--tblr-lime-lt);
+    --kimai-holiday-bg: var(--tblr-green-lt);
+    --kimai-sickness-bg: var(--tblr-yellow-lt);
+    --kimai-time-off-bg: var(--tblr-blue-lt);
+    --kimai-other-bg: var(--tblr-purple-lt);
+
+    --kimai-unexpected-bg: var(--tblr-pink-lt);
+    --kimai-missing-bg: var(--tblr-pink-lt);
+    --kimai-weekend-bg: var(--tblr-bg-surface-tertiary);
+}
+
+.public-holiday { color: var(--kimai-public-holiday); }
+.holiday { color: var(--kimai-holiday); }
+.sickness, .sickness-child { color: var(--kimai-sickness); }
+.time-off { color: var(--kimai-time-off); }
+.other, .parental, .unpaid-vacation { color: var(--kimai-other); }
+
+.bg-public-holiday { background-color: var(--kimai-public-holiday-bg); --tblr-table-bg: var(--kimai-public-holiday-bg); i.fas{ color: var(--kimai-public-holiday); } };
+.bg-holiday { background-color: var(--kimai-holiday-bg); --tblr-table-bg: var(--kimai-holiday-bg); i.fas{ color: var(--kimai-holiday); } };
+.bg-sickness, .bg-sickness-child { background-color: var(--kimai-sickness-bg); --tblr-table-bg: var(--kimai-sickness-bg); i.fas{ color: var(--kimai-sickness); } };
+.bg-time-off { background-color: var(--kimai-time-off-bg); --tblr-table-bg: var(--kimai-time-off-bg); i.fas{ color: var(--kimai-time-off); } };
+.bg-other, .bg-parental, .bg-unpaid-vacation { background-color: var(--kimai-other-bg); --tblr-table-bg: var(--kimai-other-bg); i.fas{ color: var(--kimai-other); } };
+
+.bg-unexpected { background-color: var(--kimai-unexpected-bg); --tblr-table-bg: var(--kimai-unexpected-bg); };
+.bg-missing { background-color: var(--kimai-missing-bg); --tblr-table-bg: var(--kimai-missing-bg); };
+.bg-weekend { background-color: var(--kimai-weekend-bg); --tblr-table-bg: var(--kimai-weekend-bg); };
+
+.navbar[data-bs-theme="dark"] {
+    --tblr-bg-surface: #1B3A6B;
+    --tblr-navbar-bg: #1B3A6B;
+}
+
+.navbar-brand-logo-plate {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+@media (min-width: 992px) {
+    .navbar-vertical {
+        top: 12px !important;
+        left: 12px !important;
+        height: calc(100vh - 24px) !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(27, 58, 107, 0.25);
+    }
+
+    .page-wrapper {
+        margin-left: calc(15rem + 12px) !important;
+        transition: margin-left 0.25s ease;
+    }
+
+    .navbar-vertical {
+        transition: transform 0.25s ease;
+    }
+
+    html.sidebar-hidden .navbar-vertical {
+        transform: translateX(calc(-100% - 24px));
+    }
+
+    html.sidebar-hidden .page-wrapper {
+        margin-left: 12px !important;
+    }
+}
+
+.sidebar-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #1B3A6B;
+    cursor: pointer;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(27, 58, 107, 0.1);
+}
+
+.sidebar-show-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 12px;
+    z-index: 1050;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+html.sidebar-hidden .sidebar-show-btn {
+    display: flex;
+}
