@@ -94,11 +94,19 @@
     background: transparent;
     border: none;
     border-radius: 8px;
-    color: #1B3A6B;
+    color: #fff;
     cursor: pointer;
 }
 
 .sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-brand-logo-plate + .sidebar-toggle-btn {
+    color: #1B3A6B;
+}
+
+.navbar-brand-logo-plate + .sidebar-toggle-btn:hover {
     background: rgba(27, 58, 107, 0.1);
 }
 
