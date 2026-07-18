@@ -81,6 +81,7 @@ final class ActivityController extends AbstractController
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
         $table->addColumn('project', ['class' => 'd-none']);
+        $table->addColumn('milestone', ['class' => 'd-none', 'orderBy' => false]);
         $table->addColumn('comment', ['class' => 'd-none', 'title' => 'description']);
         $table->addColumn('number', ['class' => 'd-none w-min', 'title' => 'activity_number']);
 

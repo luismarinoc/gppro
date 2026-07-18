@@ -62,6 +62,9 @@
             {% if form.activities is defined %}
                 {{ form_row(form.activities, {'row_attr': {'class': 'mb-3 invoice_search_form_row_activities'}}) }}
             {% endif %}
+            {% if form.milestone is defined %}
+                {{ form_row(form.milestone, {'row_attr': {'class': 'mb-3 invoice_search_form_row_milestone'}}) }}
+            {% endif %}
             {% if form.tags is defined %}
                 {{ form_row(form.tags, {'row_attr': {'class': 'mb-3 invoice_search_form_row_tags'}}) }}
             {% endif %}

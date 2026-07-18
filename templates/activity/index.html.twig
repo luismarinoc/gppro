@@ -18,6 +18,12 @@
                 </small>
             {% endif %}
         {% endif %}
+    {% elseif column == 'milestone' %}
+        {% if entry.milestone %}
+            {{ entry.milestone.name }}
+        {% else %}
+            &ndash;
+        {% endif %}
     {% elseif column == 'comment' %}
         {{ entry.comment|comment1line }}
     {% elseif column == 'number' %}

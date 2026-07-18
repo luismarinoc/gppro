@@ -78,6 +78,14 @@
                         </td>
                     </tr>
                 {% endif %}
+                {% if activity.milestone is not null %}
+                    <tr>
+                        <th>{{ 'milestone'|trans }}</th>
+                        <td colspan="3">
+                            {{ activity.milestone.name }}
+                        </td>
+                    </tr>
+                {% endif %}
                 {% for metaField in activity.visibleMetaFields|filter(field => field.defined)|sort((a, b) => a.order <=> b.order) %}
                     <tr>
                         <th>{{ metaField.label|trans }}</th>
