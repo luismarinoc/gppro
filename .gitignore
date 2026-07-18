@@ -1,5 +1,6 @@
 # some hosters require a htaccess to change the PHP version
 /public/.htaccess
+!/public/.htaccess
 /.env-*
 /.idea/
 .DS_Store
