@@ -31,6 +31,7 @@ var/templates/
 /var/log/*
 /var/sessions/*
 /var/packages/*
+!/var/packages/.gitkeep
 /var/plugins*
 /var/plugins/*/*.disabled
 
