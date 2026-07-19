@@ -56,20 +56,20 @@ export default class GpproCalendar {
     /**
      * Options is a huge JSON object.
      *
-     * @param {GpproContainer} kimai
+     * @param {GpproContainer} gppro
      * @param {HTMLElement} element
      * @param {Object} options
      */
-    constructor(kimai, element, options) {
-        this.kimai = kimai;
+    constructor(gppro, element, options) {
+        this.gppro = gppro;
         this.options = options;
 
         /** @type {GpproAPI} API */
-        const API = this.kimai.getPlugin('api');
+        const API = this.gppro.getPlugin('api');
         /** @type {GpproDateUtils} DATES */
-        const DATES = this.kimai.getPlugin('date');
+        const DATES = this.gppro.getPlugin('date');
         /** @type {GpproAjaxModalForm} MODAL */
-        const MODAL = this.kimai.getPlugin('modal');
+        const MODAL = this.gppro.getPlugin('modal');
 
         // Instead of using "buttonIcons" the theme needs to be adjusted directly
         // https://fullcalendar.io/docs/buttonIcons
@@ -113,8 +113,8 @@ export default class GpproCalendar {
                 center: 'dayGridMonth,timeGridWeek,timeGridDay',
                 end: 'today prev,next'
             },
-            direction: this.kimai.getConfiguration().get('direction'),
-            locale: this.kimai.getConfiguration().getLanguage().toLowerCase(),
+            direction: this.gppro.getConfiguration().get('direction'),
+            locale: this.gppro.getConfiguration().getLanguage().toLowerCase(),
 
             // https://fullcalendar.io/docs/height
             // auto makes the calendar too small
@@ -127,7 +127,7 @@ export default class GpproCalendar {
             weekends: this.options['showWeekends'],
             weekNumbers: this.options['showWeekNumbers'],
             weekNumberCalculation: 'ISO',
-            firstDay: this.kimai.getConfiguration().getFirstDayOfWeek(true),
+            firstDay: this.gppro.getConfiguration().getFirstDayOfWeek(true),
 
             now: this.options['now'],
             businessHours: {
@@ -165,7 +165,7 @@ export default class GpproCalendar {
 
             // the callbacks "viewDidMount" and "viewWillUnmount" are only called when switching between month and others, not between week and day
             datesSet: (dateInfo) => {
-                document.dispatchEvent(new CustomEvent('kimai.calendar.changeDate', {detail: {
+                document.dispatchEvent(new CustomEvent('gppro.calendar.changeDate', {detail: {
                     view: this.toExternalViewName(dateInfo.view.type),
                     date: dateInfo.start.toISOString().split('T')[0],
                 }}));
@@ -280,7 +280,7 @@ export default class GpproCalendar {
                 droppable: true,
                 // drop function handles external draggable events
                 drop: (dropInfo) => {
-                    document.dispatchEvent(new CustomEvent('kimai.reloadContent'));
+                    document.dispatchEvent(new CustomEvent('gppro.reloadContent'));
                     const entry = dropInfo.draggedEl;
                     const source = entry.parentElement;
                     let data = JSON.parse(entry.dataset.entry);
@@ -323,7 +323,7 @@ export default class GpproCalendar {
                             (result) => {
                                 const newItem = this.convertSourceForCalendar(result);
                                 this.getCalendar().addEvent(newItem, true);
-                                document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+                                document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
                             }
                         );
                     } else {
@@ -333,7 +333,7 @@ export default class GpproCalendar {
                             (result) => {
                                 const newItem = this.convertSourceForCalendar(result);
                                 this.getCalendar().addEvent(newItem, true);
-                                document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+                                document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
                             }
                         );
                     }
@@ -436,7 +436,7 @@ export default class GpproCalendar {
             let calendarSource = {};
             if (source.type === 'timesheet') {
                 calendarSource = {...calendarSource, ...{
-                    id: 'kimai-' + source.id,
+                    id: 'gppro-' + source.id,
                     events: (fetchInfo, successCallback, failureCallback) => {
                         const targetFrom = DATES.formatForAPI(fetchInfo.start);
                         const targetTo = DATES.formatForAPI(fetchInfo.end);
@@ -524,7 +524,7 @@ export default class GpproCalendar {
         if (event.source === null) {
             return false;
         }
-        return (event.source.id.indexOf('kimai-') === 0);
+        return (event.source.id.indexOf('gppro-') === 0);
     }
 
     /**
@@ -597,7 +597,7 @@ export default class GpproCalendar {
      * @private
      */
     convertSourceForCalendar(apiItem) {
-        const defaultColor = this.kimai.getConfiguration().get('defaultColor');
+        const defaultColor = this.gppro.getConfiguration().get('defaultColor');
         let color = apiItem.activity.color;
         if (color === null || color === defaultColor) {
             color = apiItem.project.color;
@@ -610,7 +610,7 @@ export default class GpproCalendar {
         }
 
         /** @type {GpproDateUtils} DATES */
-        const DATES = this.kimai.getPlugin('date');
+        const DATES = this.gppro.getPlugin('date');
 
         let title = this.options['patterns']['title'];
         title = title.replace('{project}', apiItem.project.name);
@@ -654,7 +654,7 @@ export default class GpproCalendar {
     renderEventPopoverContent(event) {
         const eventObj = event.extendedProps;
         /** @type {GpproEscape} escaper */
-        const escaper = this.kimai.getPlugin('escape');
+        const escaper = this.gppro.getPlugin('escape');
 
         let tags = '';
         if (eventObj.tags !== null && eventObj.tags.length > 0) {
@@ -701,9 +701,9 @@ export default class GpproCalendar {
         }
 
         /** @type {GpproAPI} API */
-        const API = this.kimai.getPlugin('api');
+        const API = this.gppro.getPlugin('api');
         /** @type {GpproDateUtils} DATE */
-        const DATES = this.kimai.getPlugin('date');
+        const DATES = this.gppro.getPlugin('date');
 
         let payload = {'begin': DATES.formatForAPI(event.start)};
 
@@ -713,14 +713,14 @@ export default class GpproCalendar {
             payload.end = null;
         }
 
-        document.dispatchEvent(new CustomEvent('kimai.reloadContent'));
+        document.dispatchEvent(new CustomEvent('gppro.reloadContent'));
 
         const updateUrl = this.options.url.update(event.id);
         API.patch(updateUrl, JSON.stringify(payload), () => {
-            document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+            document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
         }, (error) => {
             eventArg.revert();
-            document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+            document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
             API.handleError('action.update.error', error);
         });
     }
@@ -737,7 +737,7 @@ export default class GpproCalendar {
         }
 
         /** @type {GpproDateUtils} DATES */
-        const DATES = this.kimai.getPlugin('date');
+        const DATES = this.gppro.getPlugin('date');
 
         const durations = {};
 

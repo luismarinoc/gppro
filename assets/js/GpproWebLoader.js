@@ -16,16 +16,14 @@ import GpproLoader from "./GpproLoader";
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([], function () {
-            // NOTE: intentionally kept as the legacy global name "KimaiWebLoader" — it is the
-            // external ABI consumed by templates/macros/webloader.html.twig ("new KimaiWebLoader(...)"),
-            // which is explicitly out of scope for this PR (deferred to chunk 5b, window.kimai rename).
-            return (root.KimaiWebLoader = factory());
+            // Exposed as the global "GpproWebLoader", consumed by
+            // templates/macros/webloader.html.twig ("new GpproWebLoader(...)").
+            return (root.GpproWebLoader = factory());
         });
     } else if (typeof module === 'object' && module.exports) {
         module.exports = factory();
     } else {
-        // NOTE: same external-ABI exception as above.
-        root.KimaiWebLoader = factory();
+        root.GpproWebLoader = factory();
     }
 }(typeof self !== 'undefined' ? self : this, function () {
 

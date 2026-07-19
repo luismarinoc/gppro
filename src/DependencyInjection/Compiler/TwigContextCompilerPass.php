@@ -24,10 +24,10 @@ final class TwigContextCompilerPass implements CompilerPassInterface
         $twig = $container->getDefinition('twig');
 
         $theme = $container->getDefinition(Context::class);
-        $twig->addMethodCall('addGlobal', ['kimai_context', $theme]);
+        $twig->addMethodCall('addGlobal', ['gppro_context', $theme]);
 
         $config = $container->getDefinition(Configuration::class);
-        $twig->addMethodCall('addGlobal', ['kimai_config', $config]);
+        $twig->addMethodCall('addGlobal', ['gppro_config', $config]);
 
         $definition = $container->getDefinition('twig.loader.native_filesystem');
 

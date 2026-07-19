@@ -78,7 +78,7 @@ final class CustomerController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_customer_paginated');
-        $table->setReloadEvents('kimai.customerUpdate kimai.customerDelete kimai.customerTeamUpdate');
+        $table->setReloadEvents('gppro.customerUpdate gppro.customerDelete gppro.customerTeamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
         $table->addColumn('comment', ['class' => 'd-none', 'title' => 'description']);
@@ -353,7 +353,7 @@ final class CustomerController extends AbstractController
 
         $deleteForm = $this->createFormBuilder(null, [
                 'attr' => [
-                    'data-form-event' => 'kimai.customerDelete',
+                    'data-form-event' => 'gppro.customerDelete',
                     'data-msg-success' => 'action.delete.success',
                     'data-msg-error' => 'action.delete.error',
                 ]

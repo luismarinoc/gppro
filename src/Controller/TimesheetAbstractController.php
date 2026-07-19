@@ -74,7 +74,7 @@ abstract class TimesheetAbstractController extends AbstractController
         $table->setSearchForm($form);
         $table->setBatchForm($this->getMultiUpdateActionForm());
         $table->setPaginationRoute($paginationRoute);
-        $table->setReloadEvents('kimai.timesheetUpdate kimai.timesheetDelete');
+        $table->setReloadEvents('gppro.timesheetUpdate gppro.timesheetDelete');
 
         $table->addColumn('date', ['class' => 'alwaysVisible text-nowrap', 'orderBy' => 'begin']);
 

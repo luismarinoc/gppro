@@ -56,7 +56,7 @@ final class InvoiceEditForm extends AbstractType
             'data_class' => Invoice::class,
             'timezone' => date_default_timezone_get(),
             'attr' => [
-                'data-form-event' => 'kimai.invoiceUpdate'
+                'data-form-event' => 'gppro.invoiceUpdate'
             ],
         ]);
     }

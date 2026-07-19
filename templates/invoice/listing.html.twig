@@ -34,7 +34,7 @@
     {{ parent() }}
     {% if download is not null %}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', function() {
+        document.addEventListener('gppro.initialized', function() {
             location.href = '{{ path('admin_invoice_download', {'id': download.id}) }}';
         });
     </script>

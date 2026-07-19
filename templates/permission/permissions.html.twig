@@ -61,7 +61,7 @@
 
     {% set tableName = 'user_admin_permissions' %}
 
-    {{ tables.datatable_header(tableName, columns, null, {'reload': 'kimai.userRoleUpdate'}) }}
+    {{ tables.datatable_header(tableName, columns, null, {'reload': 'gppro.userRoleUpdate'}) }}
     
     {% set colspan = 1 + (roles|length) %}
 
@@ -109,8 +109,8 @@
             document.getElementById('permission-token').dataset['value'] = token;
         }
 
-        document.addEventListener('kimai.initialized', (event) => {
-            const FETCHER = event.detail.kimai.getPlugin('fetch');
+        document.addEventListener('gppro.initialized', (event) => {
+            const FETCHER = event.detail.gppro.getPlugin('fetch');
             for (const element of document.querySelectorAll('a.togglePerm')) {
                 element.addEventListener('click', (event) => {
                     event.stopPropagation();
@@ -127,7 +127,7 @@
                     const isActive = linkElement.classList.contains('permOn');
                     let url = linkElement.dataset['href'].replace(/__VALUE__/, isActive ? '0' : '1').replace(/__TOKEN__/, getPermissionToken());
 
-                    /** @type {KimaiFetch} FETCHER */
+                    /** @type {GpproFetch} FETCHER */
                     const headers = new Headers();
                     headers.append('Content-Type', 'application/json');
 
@@ -143,14 +143,14 @@
                             });
                         })
                         .catch(error => {
-                            kimai.getPlugin('alert').error('action.update.error');
+                            gppro.getPlugin('alert').error('action.update.error');
                             toggleLabel(linkElement, isActive);
                         })
                     ;
                 });
             }
 
-            KimaiReloadPageWidget.create('kimai.userRoleUpdate', true);
+            GpproReloadPageWidget.create('gppro.userRoleUpdate', true);
         });
 
         function toggleLabel(element, showTrue) {

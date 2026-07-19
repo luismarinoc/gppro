@@ -87,7 +87,7 @@ final class ProjectController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_project_paginated');
-        $table->setReloadEvents('kimai.projectUpdate kimai.projectDelete kimai.projectTeamUpdate');
+        $table->setReloadEvents('gppro.projectUpdate gppro.projectDelete gppro.projectTeamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
         $table->addColumn('customer', ['class' => 'd-none']);
@@ -398,7 +398,7 @@ final class ProjectController extends AbstractController
 
         $deleteForm = $this->createFormBuilder(null, [
                 'attr' => [
-                    'data-form-event' => 'kimai.milestoneDelete',
+                    'data-form-event' => 'gppro.milestoneDelete',
                     'data-msg-success' => 'action.delete.success',
                     'data-msg-error' => 'action.delete.error',
                 ]
@@ -519,7 +519,7 @@ final class ProjectController extends AbstractController
 
         $deleteForm = $this->createFormBuilder(null, [
                 'attr' => [
-                    'data-form-event' => 'kimai.projectDelete',
+                    'data-form-event' => 'gppro.projectDelete',
                     'data-msg-success' => 'action.delete.success',
                     'data-msg-error' => 'action.delete.error',
                 ]

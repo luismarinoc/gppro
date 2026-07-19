@@ -53,7 +53,7 @@ final class TagController extends AbstractController
         $table->setSearchForm($form);
         $table->setPagination($entries);
         $table->setPaginationRoute('tags_paginated');
-        $table->setReloadEvents('kimai.tagUpdate');
+        $table->setReloadEvents('gppro.tagUpdate');
         $table->setBatchForm($multiUpdateForm);
 
         if ($multiUpdateForm !== null) {

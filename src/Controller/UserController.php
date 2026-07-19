@@ -68,7 +68,7 @@ final class UserController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_user_paginated');
-        $table->setReloadEvents('kimai.userUpdate');
+        $table->setReloadEvents('gppro.userUpdate');
 
         $table->addColumn('avatar', ['class' => 'alwaysVisible w-avatar', 'title' => null, 'orderBy' => false]);
         //$table->addColumn('user', ['class' => 'alwaysVisible', 'orderBy' => 'user']);
@@ -144,7 +144,7 @@ final class UserController extends AbstractController
 
         $deleteForm = $this->createFormBuilder(null, [
                 'attr' => [
-                    'data-form-event' => 'kimai.userUpdate kimai.userDelete',
+                    'data-form-event' => 'gppro.userUpdate gppro.userDelete',
                     'data-msg-success' => 'action.delete.success',
                     'data-msg-error' => 'action.delete.error',
                 ]

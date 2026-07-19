@@ -24,7 +24,7 @@ class ProjectEditFormTest extends TypeTestCase
 
         $attr = $form->getFormConfig()->getOption('attr');
         self::assertArrayHasKey('data-form-event', $attr);
-        self::assertEquals('kimai.projectUpdate', $attr['data-form-event']);
+        self::assertEquals('gppro.projectUpdate', $attr['data-form-event']);
 
         self::assertTrue($form->has('name'));
         self::assertTrue($form->has('comment'));

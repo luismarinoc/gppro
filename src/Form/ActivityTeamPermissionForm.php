@@ -36,7 +36,7 @@ final class ActivityTeamPermissionForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_activity_teams_edit',
             'attr' => [
-                'data-form-event' => 'kimai.activityTeamUpdate'
+                'data-form-event' => 'gppro.activityTeamUpdate'
             ],
         ]);
     }

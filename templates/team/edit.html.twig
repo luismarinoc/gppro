@@ -1,4 +1,4 @@
-{% extends kimai_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
+{% extends gppro_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
 {% import "macros/widgets.html.twig" as widgets %}
 
 {% block main %}
@@ -39,15 +39,15 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', (event) => {
-            /** @type {KimaiAPI} API */
-            const API = event.detail.kimai.getPlugin('api');
+        document.addEventListener('gppro.initialized', (event) => {
+            /** @type {GpproAPI} API */
+            const API = event.detail.gppro.getPlugin('api');
 
             const successHandle = (json) => {
-                document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+                document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
             };
             const errorHandle = (error) => {
-                document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+                document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
                 API.handleError('action.update.error', error);
             };
 
@@ -55,7 +55,7 @@
                 document.getElementById('team_customer_form').addEventListener('change',
                     (event) => {
                         if (event.target.matches('input[type=checkbox]')) {
-                            document.dispatchEvent(new CustomEvent('kimai.reloadContent'));
+                            document.dispatchEvent(new CustomEvent('gppro.reloadContent'));
                             const checkbox = event.target;
                             const customerId = checkbox.value;
                             if (checkbox.checked) {
@@ -81,7 +81,7 @@
                 document.getElementById('team_project_form').addEventListener('change',
                     (event) => {
                         if (event.target.matches('input[type=checkbox]')) {
-                            document.dispatchEvent(new CustomEvent('kimai.reloadContent'));
+                            document.dispatchEvent(new CustomEvent('gppro.reloadContent'));
                             const checkbox = event.target;
                             const projectId = checkbox.value;
                             if (checkbox.checked) {

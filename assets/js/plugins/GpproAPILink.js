@@ -73,14 +73,14 @@ export default class GpproAPILink extends GpproPlugin {
         const ALERT = this.getContainer().getPlugin('alert');
         const successHandle = () => {
             EVENTS.trigger(eventName);
-            document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+            document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
         };
         const errorHandle = (error) => {
             let message = 'action.update.error';
             if (attributes['msgError'] !== undefined) {
                 message = attributes['msgError'];
             }
-            document.dispatchEvent(new CustomEvent('kimai.reloadedContent'));
+            document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));
             API.handleError(message, error);
         };
 
@@ -89,7 +89,7 @@ export default class GpproAPILink extends GpproPlugin {
             data = attributes['payload'];
         }
 
-        document.dispatchEvent(new CustomEvent('kimai.reloadContent'));
+        document.dispatchEvent(new CustomEvent('gppro.reloadContent'));
 
         if (method === 'PATCH') {
             API.patch(url, data, successHandle, errorHandle);

@@ -424,8 +424,8 @@
     {{ _self.callout('info', 'error.no_entries_found', null, 'info', false) }}
     {% if events is not empty %}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', function() {
-            KimaiReloadPageWidget.create('{{ events }}');
+        document.addEventListener('gppro.initialized', function() {
+            GpproReloadPageWidget.create('{{ events }}');
         });
     </script>
     {% endif %}
@@ -544,8 +544,8 @@
 
 {% macro page_reloader(events, full_reload) %}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', function() {
-            KimaiReloadPageWidget.create('{{ events }}', {% if full_reload is same as true %}true{% else %}false{% endif %});
+        document.addEventListener('gppro.initialized', function() {
+            GpproReloadPageWidget.create('{{ events }}', {% if full_reload is same as true %}true{% else %}false{% endif %});
         });
     </script>
 {% endmacro %}

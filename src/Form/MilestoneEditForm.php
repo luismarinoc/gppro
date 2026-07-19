@@ -44,7 +44,7 @@ class MilestoneEditForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_milestone_edit',
             'attr' => [
-                'data-form-event' => 'kimai.milestoneUpdate'
+                'data-form-event' => 'gppro.milestoneUpdate'
             ],
         ]);
     }

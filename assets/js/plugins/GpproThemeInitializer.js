@@ -35,7 +35,7 @@ export default class GpproThemeInitializer extends GpproPlugin {
         this.overlay = null;
 
         // register a global event listener, which displays an overlays upon notification
-        document.addEventListener('kimai.reloadContent', (event) => {
+        document.addEventListener('gppro.reloadContent', (event) => {
             // do not allow more than one loading screen at a time
             if (this.overlay !== null) {
                 return;
@@ -54,7 +54,7 @@ export default class GpproThemeInitializer extends GpproPlugin {
         });
 
         // register a global event listener, which hides an overlay upon notification
-        document.addEventListener('kimai.reloadedContent', () => {
+        document.addEventListener('gppro.reloadedContent', () => {
             if (this.overlay !== null) {
                 this.overlay.remove();
                 this.overlay = null;

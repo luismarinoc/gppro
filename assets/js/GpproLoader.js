@@ -51,61 +51,61 @@ export default class GpproLoader {
         Settings.defaultLocale = configurations['locale'].replace('_', '-').toLowerCase();
         Settings.defaultZone = configurations['timezone'];
 
-        const kimai = new GpproContainer(
+        const gppro = new GpproContainer(
             new GpproConfiguration(configurations),
             new GpproTranslation(translations)
         );
 
         // GLOBAL HELPER PLUGINS
-        kimai.registerPlugin(new GpproUser());
-        kimai.registerPlugin(new GpproEscape());
-        kimai.registerPlugin(new GpproEvent());
-        kimai.registerPlugin(new GpproAPI());
-        kimai.registerPlugin(new GpproAlert());
-        kimai.registerPlugin(new GpproFetch());
-        kimai.registerPlugin(new GpproDateUtils());
-        kimai.registerPlugin(new GpproNotification());
+        gppro.registerPlugin(new GpproUser());
+        gppro.registerPlugin(new GpproEscape());
+        gppro.registerPlugin(new GpproEvent());
+        gppro.registerPlugin(new GpproAPI());
+        gppro.registerPlugin(new GpproAlert());
+        gppro.registerPlugin(new GpproFetch());
+        gppro.registerPlugin(new GpproDateUtils());
+        gppro.registerPlugin(new GpproNotification());
 
         // FORM PLUGINS
-        kimai.registerPlugin(new GpproFormSelect('.selectpicker', 'select[data-related-select]'));
-        kimai.registerPlugin(new GpproDateRangePicker('input[data-daterangepicker="on"]'));
-        kimai.registerPlugin(new GpproDatePicker('input[data-datepicker="on"]'));
-        kimai.registerPlugin(new GpproAutocomplete());
-        kimai.registerPlugin(new GpproAutocompleteTags());
-        kimai.registerPlugin(new GpproTimesheetForm());
-        kimai.registerPlugin(new GpproTeamForm());
-        kimai.registerPlugin(new GpproCopyDataForm());
-        kimai.registerPlugin(new GpproDateNowForm());
-        kimai.registerPlugin(new GpproForm());
-        kimai.registerPlugin(new GpproHotkeys());
+        gppro.registerPlugin(new GpproFormSelect('.selectpicker', 'select[data-related-select]'));
+        gppro.registerPlugin(new GpproDateRangePicker('input[data-daterangepicker="on"]'));
+        gppro.registerPlugin(new GpproDatePicker('input[data-datepicker="on"]'));
+        gppro.registerPlugin(new GpproAutocomplete());
+        gppro.registerPlugin(new GpproAutocompleteTags());
+        gppro.registerPlugin(new GpproTimesheetForm());
+        gppro.registerPlugin(new GpproTeamForm());
+        gppro.registerPlugin(new GpproCopyDataForm());
+        gppro.registerPlugin(new GpproDateNowForm());
+        gppro.registerPlugin(new GpproForm());
+        gppro.registerPlugin(new GpproHotkeys());
 
         // SPECIAL FEATURES
-        kimai.registerPlugin(new GpproConfirmationLink('confirmation-link'));
-        kimai.registerPlugin(new GpproDatatableColumnView('data-column-visibility'));
-        kimai.registerPlugin(new GpproDatatable('section.content', 'table.dataTable'));
-        kimai.registerPlugin(new GpproToolbar('form.searchform', 'toolbar-action'));
-        kimai.registerPlugin(new GpproAlternativeLinks('.alternative-link'));
-        kimai.registerPlugin(new GpproAjaxModalForm('.modal-ajax-form', ['td.multiCheckbox', 'td.actions']));
-        kimai.registerPlugin(new GpproRemoteModal());
-        kimai.registerPlugin(new GpproActiveRecords());
-        kimai.registerPlugin(new GpproAPILink('api-link'));
-        kimai.registerPlugin(new GpproMultiUpdateTable());
-        kimai.registerPlugin(new GpproThemeInitializer());
+        gppro.registerPlugin(new GpproConfirmationLink('confirmation-link'));
+        gppro.registerPlugin(new GpproDatatableColumnView('data-column-visibility'));
+        gppro.registerPlugin(new GpproDatatable('section.content', 'table.dataTable'));
+        gppro.registerPlugin(new GpproToolbar('form.searchform', 'toolbar-action'));
+        gppro.registerPlugin(new GpproAlternativeLinks('.alternative-link'));
+        gppro.registerPlugin(new GpproAjaxModalForm('.modal-ajax-form', ['td.multiCheckbox', 'td.actions']));
+        gppro.registerPlugin(new GpproRemoteModal());
+        gppro.registerPlugin(new GpproActiveRecords());
+        gppro.registerPlugin(new GpproAPILink('api-link'));
+        gppro.registerPlugin(new GpproMultiUpdateTable());
+        gppro.registerPlugin(new GpproThemeInitializer());
 
         // notify all listeners that Kimai plugins can now be registered
-        document.dispatchEvent(new CustomEvent('kimai.pluginRegister', {detail: {'kimai': kimai}}));
+        document.dispatchEvent(new CustomEvent('gppro.pluginRegister', {detail: {'gppro': gppro}}));
 
         // initialize all plugins
-        kimai.getPlugins().map(plugin => { plugin.init(); });
+        gppro.getPlugins().map(plugin => { plugin.init(); });
 
         // notify all listeners that Kimai is now ready to be used
-        document.dispatchEvent(new CustomEvent('kimai.initialized', {detail: {'kimai': kimai}}));
+        document.dispatchEvent(new CustomEvent('gppro.initialized', {detail: {'gppro': gppro}}));
 
-        this.kimai = kimai;
+        this.gppro = gppro;
     }
 
-    getKimai() {
-        return this.kimai;
+    getGppro() {
+        return this.gppro;
     }
 
 }

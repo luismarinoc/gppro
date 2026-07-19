@@ -45,26 +45,26 @@
     <script>
         function notificationStatus()
         {
-            const notification = window.kimai.getPlugin('notification');
+            const notification = window.gppro.getPlugin('notification');
             if (!notification.isSupported()) {
                 notification.request((result) => {
                     if (result === false) {
-                        window.kimai.getPlugin('alert').info('{{ 'notifications.denied'|trans|e('js') }}');
+                        window.gppro.getPlugin('alert').info('{{ 'notifications.denied'|trans|e('js') }}');
                     } else if (result === true) {
                         notification.notify(null, '{{ 'notifications.welcome'|trans|e('js') }}');
                     }
-                    buttonStatusCheck(window.kimai);
+                    buttonStatusCheck(window.gppro);
                 });
             } else {
                 notification.notify(null, '{{ 'notifications.welcome'|trans|e('js') }}');
             }
         }
 
-        function buttonStatusCheck(kimai)
+        function buttonStatusCheck(gppro)
         {
             const button = document.querySelector('div#profile-buttons a');
             const icon = button.querySelector('i');
-            const notification = kimai.getPlugin('notification');
+            const notification = gppro.getPlugin('notification');
 
             if (notification.isSupported()) {
                 icon.classList.remove('fa-bell-slash');
@@ -79,8 +79,8 @@
             }
         }
 
-        document.addEventListener('kimai.initialized', function(event) {
-            buttonStatusCheck(event.detail.kimai);
+        document.addEventListener('gppro.initialized', function(event) {
+            buttonStatusCheck(event.detail.gppro);
         });
     </script>
     {% endif %}

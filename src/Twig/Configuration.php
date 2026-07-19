@@ -77,7 +77,7 @@ final class Configuration extends AbstractExtension
 
     public function __call($name, $arguments)
     {
-        @trigger_error('Accessing "kimai_config" is deprecated and always return null, use config() instead', E_USER_DEPRECATED);
+        @trigger_error('Accessing "gppro_config" is deprecated and always return null, use config() instead', E_USER_DEPRECATED);
 
         return null;
     }

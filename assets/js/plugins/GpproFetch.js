@@ -26,7 +26,7 @@ export default class GpproFetch extends GpproPlugin {
         if (options.headers === undefined) {
             options.headers = new Headers();
         }
-        options.headers.append('X-Requested-With', 'Kimai');
+        options.headers.append('X-Requested-With', 'Gppro');
 
         options = {...{
             redirect: 'follow',

@@ -58,7 +58,7 @@
     id          = 'name'
     labels      = ['Foo', 'Bar']
     dataset     = [{name: '', color: '', duration: 0, rate: 0}]
-    options     = {'height: '100px', 'renderEvent': 'kimai.initialized'}
+    options     = {'height: '100px', 'renderEvent': 'gppro.initialized'}
 #}
 {% macro doughnut_chart(id, labels, dataset, options) %}
     {% set height = options.height|default(config('theme.chart.height') ~ 'px') %}
@@ -67,7 +67,7 @@
         <canvas id="{{ id }}" style="height: {{ height }}; width: 100%;"></canvas>
     </div>
     <script type="text/javascript">
-        document.addEventListener('{{ options.renderEvent|default('kimai.initialized') }}', function() {
+        document.addEventListener('{{ options.renderEvent|default('gppro.initialized') }}', function() {
             new Chart(
                 document.getElementById("{{ id }}").getContext("2d"), {
                     type: 'doughnut',
@@ -192,7 +192,7 @@
     id          = 'name'
     labels      = ['Foo', 'Bar']
     datasets    = [[{'value': 1234, 'tooltip': '1234€', 'color': ''}]]
-    options     = {'height: '100px', 'renderEvent': 'kimai.initialized'}
+    options     = {'height: '100px', 'renderEvent': 'gppro.initialized'}
 #}
 {% macro bar_chart(id, labels, datasets, options) %}
     {% set height = options.height|default(config('theme.chart.height') ~ 'px') %}
@@ -201,7 +201,7 @@
         <canvas id="{{ id }}" style="height: {{ height }}; width: 100%;"></canvas>
     </div>
     <script type="text/javascript">
-        document.addEventListener('{{ options.renderEvent|default('kimai.initialized') }}', function() {
+        document.addEventListener('{{ options.renderEvent|default('gppro.initialized') }}', function() {
             new Chart(
                 document.getElementById('{{ id }}').getContext("2d"), {
                     type: '{{ options.type|default('bar') }}',

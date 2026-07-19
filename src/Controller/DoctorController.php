@@ -358,7 +358,7 @@ final class DoctorController extends AbstractController
      */
     private function getNextUpdateVersion(): ?array
     {
-        return $this->cache->get('kimai.update_release', function (ItemInterface $item) {
+        return $this->cache->get('gppro.update_release', function (ItemInterface $item) {
             // we cache the result, no matter if the call failed: at the end, this is "just"
             // an update note but an expensive call
 

@@ -230,7 +230,7 @@
             const formName = 'customer_' + link.dataset['customer'];
             const template = document.getElementById(formName + '_template').value;
             const date = document.getElementById(formName + '_invoiceDate').value;
-            const formPlugin = kimai.getPlugin('form');
+            const formPlugin = gppro.getPlugin('form');
             const overwrites = {'customers[]': link.dataset['customer'], 'template': template, 'invoiceDate': date};
             const uri = formPlugin.convertFormDataToQueryString(document.getElementById('{{ formId }}'), overwrites);
             const invoiceUrl = link.dataset['href'] + '?' + uri;
@@ -249,8 +249,8 @@
         }
 
         /** @type CustomEvent event */
-        document.addEventListener('kimai.initialized', function(event) {
-            KimaiReloadPageWidget.create('kimai.systemConfigUpdate', true);
+        document.addEventListener('gppro.initialized', function(event) {
+            GpproReloadPageWidget.create('gppro.systemConfigUpdate', true);
 
             {% if models|length > 0 %}
             document.getElementById('{{ form.template.vars.id }}').addEventListener('change', function(event) {

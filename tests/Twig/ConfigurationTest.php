@@ -179,7 +179,7 @@ class ConfigurationTest extends TestCase
 
         $previousHandler = set_error_handler(static function (int $type, string $message): true {
             self::assertSame(E_USER_DEPRECATED, $type);
-            self::assertSame('Accessing "kimai_config" is deprecated and always return null, use config() instead', $message);
+            self::assertSame('Accessing "gppro_config" is deprecated and always return null, use config() instead', $message);
 
             return true;
         });

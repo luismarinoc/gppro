@@ -49,7 +49,7 @@ class TagEditForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'tags_edit',
             'attr' => [
-                'data-form-event' => 'kimai.tagUpdate'
+                'data-form-event' => 'gppro.tagUpdate'
             ],
         ]);
     }

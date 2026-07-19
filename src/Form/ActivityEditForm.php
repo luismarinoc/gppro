@@ -129,7 +129,7 @@ class ActivityEditForm extends AbstractType
             'include_budget' => false,
             'include_time' => false,
             'attr' => [
-                'data-form-event' => 'kimai.activityUpdate'
+                'data-form-event' => 'gppro.activityUpdate'
             ],
         ]);
     }

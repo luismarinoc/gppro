@@ -67,10 +67,10 @@
         </div>
     {% endblock %}
 {% endembed %}
-{% if not kimai_context.javascriptRequest %}
+{% if not gppro_context.javascriptRequest %}
 <script type="text/javascript">
-    document.addEventListener('kimai.initialized', function() {
-        KimaiPaginatedBoxWidget.create('#PaginatedWorkingTimeChartBox');
+    document.addEventListener('gppro.initialized', function() {
+        GpproPaginatedBoxWidget.create('#PaginatedWorkingTimeChartBox');
     });
 </script>
 {% endif %}

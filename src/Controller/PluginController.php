@@ -58,7 +58,7 @@ final class PluginController extends AbstractController
 
     private function getPluginInformation(HttpClientInterface $client, CacheInterface $cache): array
     {
-        return $cache->get('kimai.marketplace_extensions', function (ItemInterface $item) use ($client) {
+        return $cache->get('gppro.marketplace_extensions', function (ItemInterface $item) use ($client) {
             try {
                 $response = $client->request('GET', 'https://www.kimai.org/plugins.json');
 

@@ -70,10 +70,10 @@ export default class GpproDatatable extends GpproPlugin {
             const newContent = temp.querySelector(this._contentArea);
             document.querySelector(this._contentArea).replaceWith(newContent);
             this.registerContextMenu(this._selector);
-            document.dispatchEvent(new Event('kimai.reloadedContent'));
+            document.dispatchEvent(new Event('gppro.reloadedContent'));
         };
 
-        document.dispatchEvent(new CustomEvent('kimai.reloadContent', {detail: this._contentArea}));
+        document.dispatchEvent(new CustomEvent('gppro.reloadContent', {detail: this._contentArea}));
 
         if (form === null) {
             this.fetch(document.location)

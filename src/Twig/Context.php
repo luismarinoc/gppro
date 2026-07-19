@@ -33,7 +33,7 @@ final class Context
             return false;
         }
 
-        return str_contains(strtolower($request->headers->get('X-Requested-With')), 'kimai-modal');
+        return str_contains(strtolower($request->headers->get('X-Requested-With')), 'gppro-modal');
     }
 
     public function isJavascriptRequest(): bool
@@ -52,12 +52,12 @@ final class Context
             return false;
         }
 
-        return str_contains(strtolower($request->headers->get('X-Requested-With')), 'kimai');
+        return str_contains(strtolower($request->headers->get('X-Requested-With')), 'gppro');
     }
 
     public function getBranding(string $config): mixed
     {
-        @trigger_error('Use config() instead of "kimai_context" to access system configurations', E_USER_DEPRECATED);
+        @trigger_error('Use config() instead of "gppro_context" to access system configurations', E_USER_DEPRECATED);
 
         return null;
     }

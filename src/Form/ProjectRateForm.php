@@ -39,7 +39,7 @@ class ProjectRateForm extends AbstractRateForm
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_project_rate_edit',
             'attr' => [
-                'data-form-event' => 'kimai.projectUpdate'
+                'data-form-event' => 'gppro.projectUpdate'
             ],
         ]);
     }

@@ -45,7 +45,7 @@ final class AccessTokenForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'access_token_form',
             'attr' => [
-                'data-form-event' => 'kimai.accessToken'
+                'data-form-event' => 'gppro.accessToken'
             ],
             'min_date' => new \DateTimeImmutable('today 00:00:00'),
         ]);

@@ -57,7 +57,7 @@ final class TeamController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_team_paginated');
-        $table->setReloadEvents('kimai.teamUpdate');
+        $table->setReloadEvents('gppro.teamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
         $table->addColumn('avatar', ['title' => 'team.member', 'translation_domain' => 'teams', 'class' => 'd-none d-sm-table-cell avatars avatar-list avatar-list-stacked', 'orderBy' => false]);

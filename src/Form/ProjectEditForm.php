@@ -134,7 +134,7 @@ class ProjectEditForm extends AbstractType
             'include_time' => false,
             'timezone' => date_default_timezone_get(),
             'attr' => [
-                'data-form-event' => 'kimai.projectUpdate'
+                'data-form-event' => 'gppro.projectUpdate'
             ],
         ]);
     }

@@ -337,7 +337,7 @@ final class InvoiceController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_invoice_list');
-        $table->setReloadEvents('kimai.invoiceUpdate');
+        $table->setReloadEvents('gppro.invoiceUpdate');
 
         $table->addColumn('avatar', ['class' => 'text-nowrap w-avatar d-none d-md-table-cell', 'title' => false, 'orderBy' => false]);
         $table->addColumn('date', ['class' => 'd-none d-sm-table-cell text-nowrap w-min']);
@@ -405,7 +405,7 @@ final class InvoiceController extends AbstractController
         $table = new DataTable('invoice_template', $query);
         $table->setPagination($entries);
         $table->setPaginationRoute('admin_invoice_template');
-        $table->setReloadEvents('kimai.invoiceTemplateUpdate');
+        $table->setReloadEvents('gppro.invoiceTemplateUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible', 'orderBy' => false]);
         $table->addColumn('title', ['class' => 'd-none text-nowrap', 'orderBy' => false]);
