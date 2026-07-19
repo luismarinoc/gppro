@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * A voter to check the free-configurable permission from "kimai.permissions".
+ * A voter to check the free-configurable permission from "gppro.permissions".
  *
  * @extends Voter<string, null>
  */

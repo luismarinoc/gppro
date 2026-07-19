@@ -24,8 +24,8 @@ class TwigContextCompilerPassTest extends TestCase
     private function getContainer(): ContainerBuilder
     {
         $container = new ContainerBuilder();
-        $container->setParameter('kimai.invoice.documents', []); // TODO we could test that as well
-        $container->setParameter('kimai.export.documents', []); // TODO we could test that as well
+        $container->setParameter('gppro.invoice.documents', []); // TODO we could test that as well
+        $container->setParameter('gppro.export.documents', []); // TODO we could test that as well
 
         $definition = new Definition('twig');
         $container->setDefinition('twig', $definition);

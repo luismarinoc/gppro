@@ -5,7 +5,7 @@
 # Be aware that this file is YAML format and the indentation is important.
 # Each config level needs to be indented with 4 additional spaces.
 # ---------------------------------------------------------------------------------------------
-kimai:
+gppro:
 
 # --------------------------------------------------------------------------------
 # AUTHENTICATION
@@ -163,7 +163,7 @@ kimai:
 
 
 when@test:
-    kimai:
+    gppro:
         data_dir: '%kernel.project_dir%/tests/_data'
         permissions:
             roles:

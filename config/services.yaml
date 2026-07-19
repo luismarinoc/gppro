@@ -52,11 +52,11 @@ services:
         arguments: ['%env(MAILER_FROM)%']
 
     App\Configuration\LocaleService:
-        arguments: ['%kimai.languages%']
+        arguments: ['%gppro.languages%']
 
     App\Configuration\SystemConfiguration:
         arguments:
-            $settings: '%kimai.config%'
+            $settings: '%gppro.config%'
 
     # HTTP client used by mPDF to fetch remote resources (e.g. logos referenced
     # from custom Twig invoice templates). Decorated with NoPrivateNetworkHttpClient
@@ -78,7 +78,7 @@ services:
 
     App\Utils\FileHelper:
         arguments:
-            $dataDir: '%kimai.data_dir%'
+            $dataDir: '%gppro.data_dir%'
 
     App\API\Serializer\ValidationFailedExceptionErrorHandler:
         arguments: ['@translator.default', '@fos_rest.serializer.flatten_exception_handler']
@@ -95,10 +95,10 @@ services:
         arguments:
             # this is currently required, as local.yaml allows to configure several rules,
             # while the database system only allows one rounding rule
-            $rules: '%kimai.timesheet.rounding%'
+            $rules: '%gppro.timesheet.rounding%'
 
     App\Timesheet\RateService:
-        arguments: ['%kimai.timesheet.rates%']
+        arguments: ['%gppro.timesheet.rates%']
 
     App\Timesheet\RateCalculator\RateCalculatorMode:
         factory: ['@App\Timesheet\RateCalculator\RateCalculatorFactory', getRateCalculatorMode]
@@ -109,12 +109,12 @@ services:
 
     App\Security\RoleService:
         arguments:
-            $roles: '%kimai.permission_roles%'
+            $roles: '%gppro.permission_roles%'
 
     App\Security\RolePermissionManager:
         arguments:
-            $permissions: '%kimai.permissions%'
-            $permissionNames: '%kimai.permission_names%'
+            $permissions: '%gppro.permissions%'
+            $permissionNames: '%gppro.permission_names%'
 
     # ================================================================================
     # SAML Services
@@ -190,7 +190,7 @@ services:
 
     App\Repository\InvoiceDocumentRepository:
         class: App\Repository\InvoiceDocumentRepository
-        arguments: ['%kimai.invoice.documents%']
+        arguments: ['%gppro.invoice.documents%']
 
     App\Repository\CustomerRateRepository:
         class: App\Repository\CustomerRateRepository

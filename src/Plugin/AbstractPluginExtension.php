@@ -18,14 +18,14 @@ abstract class AbstractPluginExtension extends Extension
     {
         $bundleConfig = [$this->getAlias() => $configs];
 
-        if ($container->hasParameter('kimai.bundles.config')) {
-            $config = $container->getParameter('kimai.bundles.config');
+        if ($container->hasParameter('gppro.bundles.config')) {
+            $config = $container->getParameter('gppro.bundles.config');
             if (!\is_array($config)) {
                 throw new \Exception('Invalid bundle configuration registered for ' . $this->getAlias());
             }
             $bundleConfig = array_merge($config, $bundleConfig);
         }
 
-        $container->setParameter('kimai.bundles.config', $bundleConfig);
+        $container->setParameter('gppro.bundles.config', $bundleConfig);
     }
 }

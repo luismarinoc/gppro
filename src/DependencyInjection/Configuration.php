@@ -24,7 +24,7 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('kimai');
+        $treeBuilder = new TreeBuilder('gppro');
         /** @var ArrayNodeDefinition $node */
         $node = $treeBuilder->getRootNode();
 

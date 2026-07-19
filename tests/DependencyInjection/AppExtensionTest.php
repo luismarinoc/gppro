@@ -46,7 +46,7 @@ class AppExtensionTest extends TestCase
     protected function getMinConfig(): array
     {
         return [
-            'kimai' => [
+            'gppro' => [
                 'data_dir' => '/tmp/',
                 'timesheet' => [],
                 'saml' => [
@@ -62,10 +62,10 @@ class AppExtensionTest extends TestCase
 
         $this->extension->load($minConfig, $container = $this->getContainer());
 
-        // these value list represents the default values with unmerged kimai.yaml
+        // these value list represents the default values with unmerged gppro.yaml
         $expected = [
-            'kimai.data_dir' => '/tmp/',
-            'kimai.languages' => [
+            'gppro.data_dir' => '/tmp/',
+            'gppro.languages' => [
                 'en' => [
                     'date' => 'M/d/y',
                     'time' => 'h:mm a',
@@ -97,12 +97,12 @@ class AppExtensionTest extends TestCase
                     'translation' => true,
                 ],
             ],
-            'kimai.invoice.documents' => [
+            'gppro.invoice.documents' => [
                 'var/invoices/',
                 'templates/invoice/renderer/',
             ],
-            'kimai.timesheet.rates' => [],
-            'kimai.timesheet.rounding' => [
+            'gppro.timesheet.rates' => [],
+            'gppro.timesheet.rounding' => [
                 'default' => [
                     'begin' => 1,
                     'end' => 1,
@@ -111,7 +111,7 @@ class AppExtensionTest extends TestCase
                     'days' => 'monday,tuesday,wednesday,thursday,friday,saturday,sunday'
                 ]
             ],
-            'kimai.permissions' => [
+            'gppro.permissions' => [
                 'ROLE_USER' => [],
                 'ROLE_TEAMLEAD' => [],
                 'ROLE_ADMIN' => [],
@@ -148,10 +148,10 @@ class AppExtensionTest extends TestCase
             ],
         ];
 
-        self::assertTrue($container->hasParameter('kimai.config'));
+        self::assertTrue($container->hasParameter('gppro.config'));
 
         /** @var array<string, mixed> $config */
-        $config = $container->getParameter('kimai.config');
+        $config = $container->getParameter('gppro.config');
 
         foreach (SystemConfigurationFactory::flatten($kimaiLdap) as $key => $value) {
             self::assertArrayHasKey($key, $config);
@@ -167,7 +167,7 @@ class AppExtensionTest extends TestCase
     public function testLdapDefaultValues(): void
     {
         $minConfig = $this->getMinConfig();
-        $minConfig['kimai']['ldap'] = [
+        $minConfig['gppro']['ldap'] = [
             'connection' => [
                 'host' => '9.9.9.9',
                 'baseDn' => 'lkhiuzhkj',
@@ -182,7 +182,7 @@ class AppExtensionTest extends TestCase
 
         $this->extension->load($minConfig, $container = $this->getContainer());
 
-        $config = $container->getParameter('kimai.config');
+        $config = $container->getParameter('gppro.config');
 
         self::assertIsArray($config);
         self::assertArrayHasKey('ldap.user.baseDn', $config);
@@ -200,7 +200,7 @@ class AppExtensionTest extends TestCase
     public function testLdapFallbackValue(): void
     {
         $minConfig = $this->getMinConfig();
-        $minConfig['kimai']['ldap'] = [
+        $minConfig['gppro']['ldap'] = [
             'connection' => [
                 'host' => '9.9.9.9',
             ],
@@ -212,7 +212,7 @@ class AppExtensionTest extends TestCase
 
         $this->extension->load($minConfig, $container = $this->getContainer());
 
-        $config = $container->getParameter('kimai.config');
+        $config = $container->getParameter('gppro.config');
 
         self::assertIsArray($config);
         self::assertEquals('123123123', $config['ldap.user.baseDn']);
@@ -225,7 +225,7 @@ class AppExtensionTest extends TestCase
     public function testLdapMoreFallbackValue(): void
     {
         $minConfig = $this->getMinConfig();
-        $minConfig['kimai']['ldap'] = [
+        $minConfig['gppro']['ldap'] = [
             'connection' => [
                 'host' => '9.9.9.9',
                 'baseDn' => '7658765',
@@ -239,7 +239,7 @@ class AppExtensionTest extends TestCase
 
         $this->extension->load($minConfig, $container = $this->getContainer());
 
-        $config = $container->getParameter('kimai.config');
+        $config = $container->getParameter('gppro.config');
         self::assertIsArray($config);
 
         self::assertEquals('123123123', $config['ldap.user.baseDn']);
@@ -257,10 +257,10 @@ class AppExtensionTest extends TestCase
             ],
         ];
         $container = $this->getContainer();
-        $container->setParameter('kimai.bundles.config', $bundleConfig);
+        $container->setParameter('gppro.bundles.config', $bundleConfig);
 
         $this->extension->load($this->getMinConfig(), $container);
-        $config = $container->getParameter('kimai.config');
+        $config = $container->getParameter('gppro.config');
         self::assertEquals('test', $config['foo-bundle.bar']);
     }
 
@@ -273,7 +273,7 @@ class AppExtensionTest extends TestCase
             'timesheet' => ['test'],
         ];
         $container = $this->getContainer();
-        $container->setParameter('kimai.bundles.config', $bundleConfig);
+        $container->setParameter('gppro.bundles.config', $bundleConfig);
 
         $this->extension->load($this->getMinConfig(), $container);
     }
@@ -284,7 +284,7 @@ class AppExtensionTest extends TestCase
         $this->expectExceptionMessage('Invalid bundle configuration found, skipping all bundle configuration');
 
         $container = $this->getContainer();
-        $container->setParameter('kimai.bundles.config', 'asdasd');
+        $container->setParameter('gppro.bundles.config', 'asdasd');
 
         $this->extension->load($this->getMinConfig(), $container);
     }

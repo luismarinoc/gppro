@@ -30,7 +30,7 @@ class ExportServiceCompilerPassTest extends TestCase
     private function getContainer(): ContainerBuilder
     {
         $container = new ContainerBuilder();
-        $container->setParameter('kimai.export.documents', [
+        $container->setParameter('gppro.export.documents', [
             'templates/export/renderer/',
         ]);
 

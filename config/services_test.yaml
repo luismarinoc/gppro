@@ -7,7 +7,7 @@ services:
         public: true
 
     App\Configuration\SystemConfiguration:
-        arguments: ['@App\Configuration\ConfigurationService', "%kimai.config%"]
+        arguments: ['@App\Configuration\ConfigurationService', "%gppro.config%"]
 
     # required for the importer command test
     App\Repository\UserRepository:
