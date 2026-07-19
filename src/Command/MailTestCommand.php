@@ -19,7 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Mime\Email;
 
-#[AsCommand(name: 'kimai:mail:test', description: 'Send a test email using MAILER_URL and MAILER_FROM')]
+#[AsCommand(name: 'gppro:mail:test', description: 'Send a test email using MAILER_URL and MAILER_FROM')]
 final class MailTestCommand extends Command
 {
     public function __construct(private readonly EventDispatcherInterface $dispatcher)

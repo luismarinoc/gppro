@@ -38,7 +38,7 @@ class ListUserCommandTest extends KernelTestCase
         $application = new Application($kernel);
         $application->add(new ListUserCommand($repository));
 
-        $command = $application->find('kimai:user:list');
+        $command = $application->find('gppro:user:list');
         $commandTester = new CommandTester($command);
         $inputs = array_merge(['command' => $command->getName()], []);
         $commandTester->execute($inputs);

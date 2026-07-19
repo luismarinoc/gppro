@@ -34,7 +34,7 @@ class MailTestCommandTest extends KernelTestCase
 
     public function testCommandName(): void
     {
-        $command = $this->application->find('kimai:mail:test');
+        $command = $this->application->find('gppro:mail:test');
         self::assertInstanceOf(MailTestCommand::class, $command);
     }
 }

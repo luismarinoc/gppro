@@ -34,7 +34,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-#[AsCommand(name: 'kimai:invoice:create', description: 'Create invoices')]
+#[AsCommand(name: 'gppro:invoice:create', description: 'Create invoices')]
 final class InvoiceCreateCommand extends Command
 {
     private ?string $previewDirectory = null;
@@ -193,7 +193,7 @@ final class InvoiceCreateCommand extends Command
                 return Command::FAILURE;
             }
         } elseif ($input->getOption('set-exported')) {
-            @trigger_error('The "set-exported" option of kimai:invoice:create command has no meaning anymore, it will be removed soon', E_USER_DEPRECATED);
+            @trigger_error('The "set-exported" option of gppro:invoice:create command has no meaning anymore, it will be removed soon', E_USER_DEPRECATED);
         }
 
         // =============== VALIDATION END ===============

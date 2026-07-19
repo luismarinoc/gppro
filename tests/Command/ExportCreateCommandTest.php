@@ -108,7 +108,7 @@ class ExportCreateCommandTest extends KernelTestCase
      */
     protected function createExport(array $options = []): CommandTester
     {
-        $command = $this->application->find('kimai:export:create');
+        $command = $this->application->find('gppro:export:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array_merge($options, [
             'command' => $command->getName(),
@@ -245,7 +245,7 @@ class ExportCreateCommandTest extends KernelTestCase
         $mailer->expects($this->exactly(2))->method('send');
 
         $application = $this->createApplication($mailer);
-        $command = $application->find('kimai:export:create');
+        $command = $application->find('gppro:export:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array_merge($options, [
             'command' => $command->getName(),

@@ -94,7 +94,7 @@ class InvoiceCreateCommandTest extends KernelTestCase
      */
     protected function createInvoice(array $options = []): CommandTester
     {
-        $command = $this->application->find('kimai:invoice:create');
+        $command = $this->application->find('gppro:invoice:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array_merge($options, [
             'command' => $command->getName(),

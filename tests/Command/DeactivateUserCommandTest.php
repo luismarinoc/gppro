@@ -43,13 +43,13 @@ class DeactivateUserCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:deactivate');
+        $command = $application->find('gppro:user:deactivate');
         self::assertInstanceOf(DeactivateUserCommand::class, $command);
     }
 
     protected function callCommand(?string $username): CommandTester
     {
-        $command = $this->application->find('kimai:user:deactivate');
+        $command = $this->application->find('gppro:user:deactivate');
         $input = [
             'command' => $command->getName(),
         ];

@@ -45,7 +45,7 @@ class PluginCommandTest extends KernelTestCase
         $this->application = new Application($kernel);
         $this->application->add(new PluginCommand(new PluginManager($plugins), new PackageManager($projectDirectory), $projectDirectory));
 
-        $command = $this->application->find('kimai:plugins');
+        $command = $this->application->find('gppro:plugins');
         $commandTester = new CommandTester($command);
         $inputs = array_merge(['command' => $command->getName()], $options);
         $commandTester->execute($inputs);

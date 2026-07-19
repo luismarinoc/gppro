@@ -37,7 +37,7 @@ class BundleInstallerCommandTest extends KernelTestCase
         self::assertInstanceOf(AbstractBundleInstallerCommand::class, $command);
         $this->application->add($command);
 
-        return $this->application->find('kimai:bundle:test:install');
+        return $this->application->find('gppro:bundle:test:install');
     }
 
     public function testFullRun(): void

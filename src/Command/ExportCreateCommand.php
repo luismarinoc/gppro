@@ -31,7 +31,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[AsCommand(name: 'kimai:export:create', description: 'Create exports')]
+#[AsCommand(name: 'gppro:export:create', description: 'Create exports')]
 final class ExportCreateCommand extends Command
 {
     public function __construct(

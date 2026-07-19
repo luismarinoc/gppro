@@ -25,7 +25,7 @@ use Symfony\Component\HttpClient\HttpClient;
  *
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'kimai:translations', description: 'Automated translation adjustments')]
+#[AsCommand(name: 'gppro:translations', description: 'Automated translation adjustments')]
 final class TranslationCommand extends Command
 {
     public function __construct(

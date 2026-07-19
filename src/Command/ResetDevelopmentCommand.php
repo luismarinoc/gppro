@@ -22,7 +22,7 @@ use Symfony\Component\Process\PhpSubprocess;
  * This is one of the cases where I don't feel like it is necessary to add tests, so lets "cheat" with:
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'kimai:reset:dev', description: 'Resets the "development" environment')]
+#[AsCommand(name: 'gppro:reset:dev', description: 'Resets the "development" environment')]
 final class ResetDevelopmentCommand extends AbstractResetCommand
 {
     public function __construct(string $kernelEnvironment, private readonly string $projectDirectory)

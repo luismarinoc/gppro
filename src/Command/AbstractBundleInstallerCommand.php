@@ -75,7 +75,7 @@ abstract class AbstractBundleInstallerCommand extends Command
      */
     protected function getInstallerCommandName(): string
     {
-        return \sprintf('kimai:bundle:%s:install', $this->getBundleCommandNamePart());
+        return \sprintf('gppro:bundle:%s:install', $this->getBundleCommandNamePart());
     }
 
     /**
