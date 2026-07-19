@@ -95,10 +95,10 @@ class ExtensionsTest extends TestCase
     public function testDocuLink(): void
     {
         $data = [
-            'timesheet.html' => 'https://www.kimai.org/documentation/timesheet.html',
-            'timesheet.html#duration-format' => 'https://www.kimai.org/documentation/timesheet.html#duration-format',
-            'invoice.html' => 'https://www.kimai.org/documentation/invoice.html',
-            '' => 'https://www.kimai.org/documentation/',
+            'timesheet.html' => 'https://github.com/tbema/gppro/documentation/timesheet.html',
+            'timesheet.html#duration-format' => 'https://github.com/tbema/gppro/documentation/timesheet.html#duration-format',
+            'invoice.html' => 'https://github.com/tbema/gppro/documentation/invoice.html',
+            '' => 'https://github.com/tbema/gppro/documentation/',
         ];
 
         $sut = $this->getSut();
