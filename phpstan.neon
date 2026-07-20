@@ -2668,9 +2668,9 @@ parameters:
             path: src/Saml/Security/SamlAuthenticationSuccessHandler.php
 
         -
-            message: "#^Method App\\\\Security\\\\KimaiUserProvider\\:\\:getProviders\\(\\) return type has no value type specified in iterable type array\\.$#"
+            message: "#^Method App\\\\Security\\\\GpproUserProvider\\:\\:getProviders\\(\\) return type has no value type specified in iterable type array\\.$#"
             count: 1
-            path: src/Security/KimaiUserProvider.php
+            path: src/Security/GpproUserProvider.php
 
         -
             message: "#^Method App\\\\Security\\\\RoleService\\:\\:getSystemRoles\\(\\) return type has no value type specified in iterable type array\\.$#"
