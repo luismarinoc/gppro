@@ -11,7 +11,7 @@ namespace App\EventSubscriber;
 
 use App\Event\EmailEvent;
 use App\Event\UserEmailEvent;
-use App\Mail\KimaiMailer;
+use App\Mail\GpproMailer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class EmailSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly KimaiMailer $mailer)
+    public function __construct(private readonly GpproMailer $mailer)
     {
     }
 

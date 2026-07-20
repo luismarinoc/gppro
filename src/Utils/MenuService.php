@@ -22,7 +22,7 @@ final class MenuService
     {
     }
 
-    public function getKimaiMenu(): ConfigureMainMenuEvent
+    public function getGpproMenu(): ConfigureMainMenuEvent
     {
         if (null === $this->menuEvent) {
             $this->menuEvent = new ConfigureMainMenuEvent();

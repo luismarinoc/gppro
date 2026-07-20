@@ -11,17 +11,17 @@ namespace App\Tests\Mail;
 
 use App\Configuration\MailConfiguration;
 use App\Entity\User;
-use App\Mail\KimaiMailer;
+use App\Mail\GpproMailer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
-#[CoversClass(KimaiMailer::class)]
-class KimaiMailerTest extends TestCase
+#[CoversClass(GpproMailer::class)]
+class GpproMailerTest extends TestCase
 {
-    public function getSut(?MailerInterface $mailer = null): KimaiMailer
+    public function getSut(?MailerInterface $mailer = null): GpproMailer
     {
         $config = new MailConfiguration('zippel@example.com');
 
@@ -30,7 +30,7 @@ class KimaiMailerTest extends TestCase
             $mailer->expects(self::once())->method('send');
         }
 
-        return new KimaiMailer($config, $mailer);
+        return new GpproMailer($config, $mailer);
     }
 
     public function testSendSetsFromHeaderFromFallback(): void
@@ -124,7 +124,7 @@ class KimaiMailerTest extends TestCase
         $email = new Email();
         $config = new MailConfiguration('');
         $mailer = $this->createMock(MailerInterface::class);
-        $sut = new KimaiMailer($config, $mailer);
+        $sut = new GpproMailer($config, $mailer);
 
         $sut->sendToUser($user, $email);
     }
