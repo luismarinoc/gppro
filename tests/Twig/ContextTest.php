@@ -48,7 +48,7 @@ class ContextTest extends TestCase
             'branding' => [
                 'logo' => 'Logooooo',
                 'mini' => 'Mini2',
-                'company' => 'Super Kimai',
+                'company' => 'Super Gppro',
                 'title' => null,
             ],
         ];

@@ -119,7 +119,7 @@ class AppExtensionTest extends TestCase
             ],
         ];
 
-        $kimaiLdap = [
+        $gpproLdap = [
             'ldap' => [
                 'activate' => false,
                 'user' => [
@@ -153,7 +153,7 @@ class AppExtensionTest extends TestCase
         /** @var array<string, mixed> $config */
         $config = $container->getParameter('gppro.config');
 
-        foreach (SystemConfigurationFactory::flatten($kimaiLdap) as $key => $value) {
+        foreach (SystemConfigurationFactory::flatten($gpproLdap) as $key => $value) {
             self::assertArrayHasKey($key, $config);
             self::assertEquals($value, $config[$key]);
         }

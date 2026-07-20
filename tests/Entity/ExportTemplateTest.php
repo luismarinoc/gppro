@@ -74,8 +74,8 @@ class ExportTemplateTest extends AbstractEntityTestCase
         $sut->setOption('foo', 4711);
         $sut->setOption('empty', null);
         $sut->setOption('bar', false);
-        $sut->setOption('hello', 'kimai');
-        self::assertEquals(['foo' => 4711, 'bar' => false, 'WORLD' => 'HELLO', 'hello' => 'kimai'], $sut->getOptions());
+        $sut->setOption('hello', 'gppro');
+        self::assertEquals(['foo' => 4711, 'bar' => false, 'WORLD' => 'HELLO', 'hello' => 'gppro'], $sut->getOptions());
         $sut->setOptions(null);
         self::assertEquals([], $sut->getOptions());
     }

@@ -82,17 +82,17 @@ class SamlControllerTest extends TestCase
                         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://127.0.0.1:8010/auth/saml/acs" index="1" />
                     </md:SPSSODescriptor>
                     <md:Organization>
-                       <md:OrganizationName xml:lang="en">Kimai</md:OrganizationName>
-                       <md:OrganizationDisplayName xml:lang="en">Kimai</md:OrganizationDisplayName>
-                       <md:OrganizationURL xml:lang="en">https://www.kimai.org</md:OrganizationURL>
+                       <md:OrganizationName xml:lang="en">Gppro</md:OrganizationName>
+                       <md:OrganizationDisplayName xml:lang="en">Gppro</md:OrganizationDisplayName>
+                       <md:OrganizationURL xml:lang="en">https://www.gppro.org</md:OrganizationURL>
                     </md:Organization>
                     <md:ContactPerson contactType="technical">
-                        <md:GivenName>Kimai Admin</md:GivenName>
-                        <md:EmailAddress>kimai-tech@example.com</md:EmailAddress>
+                        <md:GivenName>Gppro Admin</md:GivenName>
+                        <md:EmailAddress>gppro-tech@example.com</md:EmailAddress>
                     </md:ContactPerson>
                     <md:ContactPerson contactType="support">
-                        <md:GivenName>Kimai Support</md:GivenName>
-                        <md:EmailAddress>kimai-support@example.com</md:EmailAddress>
+                        <md:GivenName>Gppro Support</md:GivenName>
+                        <md:EmailAddress>gppro-support@example.com</md:EmailAddress>
                     </md:ContactPerson>
                 </md:EntityDescriptor>
             EOD;

@@ -62,19 +62,19 @@ class SamlAuthFactoryFactory extends AbstractMockFactory
                 ],
                 'contactPerson' => [
                     'technical' => [
-                        'givenName' => 'Kimai Admin',
-                        'emailAddress' => 'kimai-tech@example.com',
+                        'givenName' => 'Gppro Admin',
+                        'emailAddress' => 'gppro-tech@example.com',
                     ],
                     'support' => [
-                        'givenName' => 'Kimai Support',
-                        'emailAddress' => 'kimai-support@example.com',
+                        'givenName' => 'Gppro Support',
+                        'emailAddress' => 'gppro-support@example.com',
                     ]
                 ],
                 'organization' => [
                     'en' => [
-                        'name' => 'Kimai',
-                        'displayname' => 'Kimai',
-                        'url' => 'https://www.kimai.org',
+                        'name' => 'Gppro',
+                        'displayname' => 'Gppro',
+                        'url' => 'https://www.gppro.org',
                     ]
                 ]
             ];

@@ -43,7 +43,7 @@ class SamlConfigurationTest extends TestCase
                 'attribute' => 'Roles',
                 'resetOnLogin' => true,
                 'mapping' => [
-                    ['saml' => 'Kimai - Admin', 'kimai' => 'ROLE_SUPER_ADMIN'],
+                    ['saml' => 'Gppro - Admin', 'kimai' => 'ROLE_SUPER_ADMIN'],
                     ['saml' => 'Management', 'kimai' => 'ROLE_TEAMLEAD'],
                 ]
             ],
@@ -73,7 +73,7 @@ class SamlConfigurationTest extends TestCase
             'host' => '1.2.3.4',
         ], $sut->getConnection());
         self::assertEquals([
-            ['saml' => 'Kimai - Admin', 'kimai' => 'ROLE_SUPER_ADMIN'],
+            ['saml' => 'Gppro - Admin', 'kimai' => 'ROLE_SUPER_ADMIN'],
             ['saml' => 'Management', 'kimai' => 'ROLE_TEAMLEAD'],
         ], $sut->getRolesMapping());
         self::assertEquals('Roles', $sut->getRolesAttribute());

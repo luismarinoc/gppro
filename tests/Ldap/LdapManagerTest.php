@@ -29,7 +29,7 @@ class LdapManagerTest extends TestCase
     {
         if (null === $roleConfig) {
             $roleConfig = [
-                'baseDn' => 'ou=groups, dc=kimai, dc=org',
+                'baseDn' => 'ou=groups, dc=gppro, dc=org',
                 'nameAttribute' => 'cn',
                 'userDnAttribute' => 'member',
                 'groups' => [
@@ -47,7 +47,7 @@ class LdapManagerTest extends TestCase
                 'filter' => '(&(objectClass=inetOrgPerson))',
                 'usernameAttribute' => 'uid',
                 'attributesFilter' => '(objectClass=*)',
-                'baseDn' => 'ou=users, dc=kimai, dc=org',
+                'baseDn' => 'ou=users, dc=gppro, dc=org',
             ],
             'role' => $roleConfig,
         ];
@@ -72,7 +72,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foo))', $filter);
 
             return $expected;
@@ -94,7 +94,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foo))', $filter);
 
             return $expected;
@@ -113,7 +113,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foo))', $filter);
 
             return $expected;
@@ -132,7 +132,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foo))', $filter);
 
             return $expected;
@@ -154,7 +154,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foo))', $filter);
 
             return $expected;
@@ -173,7 +173,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->once())->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            self::assertEquals('ou=users, dc=kimai, dc=org', $baseDn);
+            self::assertEquals('ou=users, dc=gppro, dc=org', $baseDn);
             self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=trä\5cl=alß#aa=XY\5cZ0))', $filter);
 
             return $expected;
@@ -220,7 +220,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->exactly(2))->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            if ($baseDn === 'ou=users, dc=kimai, dc=org') {
+            if ($baseDn === 'ou=users, dc=gppro, dc=org') {
                 self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foobar))', $filter);
 
                 return $expected[0];
@@ -260,7 +260,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->exactly(2))->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            if ($baseDn === 'ou=users, dc=kimai, dc=org') {
+            if ($baseDn === 'ou=users, dc=gppro, dc=org') {
                 self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foobar))', $filter);
 
                 return $expected[0];
@@ -296,7 +296,7 @@ class LdapManagerTest extends TestCase
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->exactly(2))->method('search')->willReturnCallback(function ($baseDn, $filter) use ($expected) {
-            if ($baseDn === 'ou=users, dc=kimai, dc=org') {
+            if ($baseDn === 'ou=users, dc=gppro, dc=org') {
                 self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=foobar))', $filter);
 
                 return $expected[0];
@@ -345,7 +345,7 @@ class LdapManagerTest extends TestCase
                     'count' => 1,
                 ],
                 [
-                    'baseDn' => 'ou=groups, dc=kimai, dc=org',
+                    'baseDn' => 'ou=groups, dc=gppro, dc=org',
                     'nameAttribute' => 'cn',
                     'usernameAttribute' => 'cn', // test that "cn" is not set and fallback to "dn" happens
                     'userDnAttribute' => 'member',
@@ -373,7 +373,7 @@ class LdapManagerTest extends TestCase
                     'count' => 1,
                 ],
                 [
-                    'baseDn' => 'ou=groups, dc=kimai, dc=org',
+                    'baseDn' => 'ou=groups, dc=gppro, dc=org',
                     'nameAttribute' => 'cn',
                     'usernameAttribute' => 'blub1',
                     'userDnAttribute' => 'memberuid',
@@ -401,34 +401,34 @@ class LdapManagerTest extends TestCase
             // ROLE_TEAMLEAD
             0 => [
                 'cn' => [0 => 'group1'],
-                'member' => [0 => 'uid=user1,ou=users,dc=kimai,dc=org', 1 => 'uid=user2,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user1,ou=users,dc=gppro,dc=org', 1 => 'uid=user2,ou=users,dc=gppro,dc=org'],
             ],
             // ROLE_ADMIN
             1 => [
                 'cn' => [0 => 'admin'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: unknown group
             2 => [
-                'cn' => [0 => 'kimai_admin'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'cn' => [0 => 'gppro_admin'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: unknown group
             3 => [
                 'cn' => [0 => 'group3'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: the counter below does not announce this group!
             4 => [
                 'cn' => [0 => 'group4'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             'count' => 4
         ];
 
         $driver = $this->getMockBuilder(LdapDriver::class)->disableOriginalConstructor()->onlyMethods(['search'])->getMock();
         $driver->expects($this->exactly(3))->method('search')->willReturnCallback(function ($baseDn, $filter, $attributes) use ($expectedUsers, $expectedGroups, $expectedGroupQuery, $expected) {
-            if ($baseDn === 'ou=users, dc=kimai, dc=org') {
+            if ($baseDn === 'ou=users, dc=gppro, dc=org') {
                 self::assertEquals('(&(&(objectClass=inetOrgPerson))(uid=Karl-Heinz))', $filter);
 
                 return $expected;
@@ -437,7 +437,7 @@ class LdapManagerTest extends TestCase
                 self::assertEquals('(objectClass=*)', $filter);
 
                 return $expectedUsers;
-            } elseif ($baseDn === 'ou=groups, dc=kimai, dc=org') {
+            } elseif ($baseDn === 'ou=groups, dc=gppro, dc=org') {
                 // roles search
                 self::assertEquals($expectedGroupQuery, $filter);
                 self::assertEquals([0 => 'cn'], $attributes);
@@ -701,27 +701,27 @@ class LdapManagerTest extends TestCase
             // ROLE_TEAMLEAD
             0 => [
                 'cn' => [0 => 'group1'],
-                'member' => [0 => 'uid=user1,ou=users,dc=kimai,dc=org', 1 => 'uid=user2,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user1,ou=users,dc=gppro,dc=org', 1 => 'uid=user2,ou=users,dc=gppro,dc=org'],
             ],
             // ROLE_ADMIN
             1 => [
                 'cn' => [0 => 'admin'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: unknown group
             2 => [
-                'cn' => [0 => 'kimai_admin'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'cn' => [0 => 'gppro_admin'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: unknown group
             3 => [
                 'cn' => [0 => 'group3'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             // will be ignored: the counter below does not announce this group!
             4 => [
                 'cn' => [0 => 'group4'],
-                'member' => [0 => 'uid=user2,ou=users,dc=kimai,dc=org', 1 => 'uid=user3,ou=users,dc=kimai,dc=org'],
+                'member' => [0 => 'uid=user2,ou=users,dc=gppro,dc=org', 1 => 'uid=user3,ou=users,dc=gppro,dc=org'],
             ],
             'count' => 4
         ];

@@ -56,7 +56,7 @@ class RedirectToLocaleSubscriberTest extends TestCase
         $urlGenerator->expects($this->never())->method('generate');
 
         $sut = new RedirectToLocaleSubscriber($urlGenerator, $this->createLocaleService(), $storage);
-        $event = $this->createRequestEvent('/', ['referer' => 'https://www.kimai.test/de/dashboard']);
+        $event = $this->createRequestEvent('/', ['referer' => 'https://www.gppro.test/de/dashboard']);
 
         $sut->onKernelRequest($event);
 
@@ -150,7 +150,7 @@ class RedirectToLocaleSubscriberTest extends TestCase
     private function createRequestEvent(string $uri, array $headers = []): RequestEvent
     {
         $kernel = $this->createMock(HttpKernelInterface::class);
-        $request = Request::create($uri, 'GET', [], [], [], ['HTTP_HOST' => 'www.kimai.test', 'HTTPS' => 'on']);
+        $request = Request::create($uri, 'GET', [], [], [], ['HTTP_HOST' => 'www.gppro.test', 'HTTPS' => 'on']);
 
         foreach ($headers as $name => $value) {
             $request->headers->set($name, $value);
