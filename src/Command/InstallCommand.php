@@ -25,7 +25,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'gppro:install', description: 'Install and update Kimai', aliases: ['gppro:update'])]
+#[AsCommand(name: 'gppro:install', description: 'Install and update gppro', aliases: ['gppro:update'])]
 final class InstallCommand extends Command
 {
     public function __construct(private readonly Connection $connection)

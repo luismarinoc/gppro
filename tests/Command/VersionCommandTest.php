@@ -44,7 +44,7 @@ class VersionCommandTest extends KernelTestCase
     public static function getTestData(): array // @phpstan-ignore missingType.iterableValue
     {
         return [
-            [[], 'gppro ' . Constants::VERSION . ' by Kevin Papst.'],
+            [[], 'gppro ' . Constants::VERSION . ' by tbema.'],
             [['--short' => true], Constants::VERSION],
             [['--number' => true], Constants::VERSION_ID],
         ];

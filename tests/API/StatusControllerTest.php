@@ -56,7 +56,7 @@ class StatusControllerTest extends APIControllerBaseTestCase
         self::assertSame(Constants::VERSION, $result['version']);
         self::assertSame(Constants::VERSION_ID, $result['versionId']);
         self::assertEquals(
-            'gppro ' . Constants::VERSION . ' by Kevin Papst.',
+            'gppro ' . Constants::VERSION . ' by tbema.',
             $result['copyright']
         );
     }
