@@ -29,15 +29,15 @@ final class Constants
     /**
      * Used in multiple views
      */
-    public const GITHUB = 'https://github.com/kimai/kimai/';
+    public const GITHUB = 'https://github.com/tbema/gppro/';
     /**
      * The GitHub repository name
      */
-    public const GITHUB_REPO = 'kimai/kimai';
+    public const GITHUB_REPO = 'tbema/gppro';
     /**
      * Homepage, used in multiple views
      */
-    public const HOMEPAGE = 'https://www.kimai.org';
+    public const HOMEPAGE = 'https://github.com/tbema/gppro';
     /**
      * Default color for Customer, Project and Activity entities
      */
