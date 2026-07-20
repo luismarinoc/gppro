@@ -60,9 +60,15 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     public const DEFAULT_LANGUAGE = 'en';
     public const DEFAULT_FIRST_WEEKDAY = 'monday';
 
-    public const AUTH_INTERNAL = 'kimai';
+    public const AUTH_INTERNAL = 'internal';
     public const AUTH_LDAP = 'ldap';
     public const AUTH_SAML = 'saml';
+
+    /**
+     * Legacy value of AUTH_INTERNAL, kept for backwards compatibility with
+     * rows that have not been migrated by Version20260720214501 yet.
+     */
+    private const AUTH_INTERNAL_LEGACY = 'kimai';
 
     public const WIZARDS = ['intro', 'profile'];
 
@@ -150,7 +156,7 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     #[OA\Property(type: 'array', items: new OA\Items(ref: '#/components/schemas/TeamMembership'))]
     private Collection $memberships;
     /**
-     * The type of authentication used by the user (e.g. "kimai", "ldap", "saml")
+     * The type of authentication used by the user (e.g. "internal", "ldap", "saml")
      *
      * @internal for internal usage only
      */
@@ -865,7 +871,7 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
 
     public function isInternalUser(): bool
     {
-        return $this->auth === null || $this->auth === self::AUTH_INTERNAL;
+        return $this->auth === null || $this->auth === self::AUTH_INTERNAL || $this->auth === self::AUTH_INTERNAL_LEGACY;
     }
 
     public function addRole(string $role): void
