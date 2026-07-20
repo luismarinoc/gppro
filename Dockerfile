@@ -4,17 +4,17 @@
 # | . \| | | | | | | (_| | |
 # |_|\_\_|_| |_| |_|\__,_|_|
 #
-# Kimai images for:
-# - plain PHP FPM   (kimai/kimai2:fpm)
-# - Apache with PHP (kimai/kimai2:apache)
-# - Development     (kimai/kimai2:dev)
+# gppro images for:
+# - plain PHP FPM   (gppro/gppro:fpm)
+# - Apache with PHP (gppro/gppro:apache)
+# - Development     (gppro/gppro:dev)
 # ---------------------------------------------------------------------
 # For local testing by maintainer:
 #
-# docker build --no-cache -t kimai-fpm --build-arg BASE=fpm .
-# docker build --no-cache -t kimai-apache --build-arg BASE=apache .
-# docker run -d --name kimai-apache-app kimai-apache
-# docker exec -ti kimai-apache-app /bin/bash
+# docker build --no-cache -t gppro-fpm --build-arg BASE=fpm .
+# docker build --no-cache -t gppro-apache --build-arg BASE=apache .
+# docker run -d --name gppro-apache-app gppro-apache
+# docker exec -ti gppro-apache-app /bin/bash
 # ---------------------------------------------------------------------
 # Official PHP images: https://hub.docker.com/_/php/
 # https://github.com/docker-library/docs/blob/master/php/README.md#supported-tags-and-respective-dockerfile-links
@@ -24,9 +24,9 @@
 
 # Source base, one of: fpm, apache
 ARG BASE="fpm"
-# Kimai version label (used for OCI labels and the KIMAI env var inside the image).
+# gppro version label (used for OCI labels and the GPPRO env var inside the image).
 # The actual source is read from the local build context, not fetched by version.
-ARG KIMAI="dev"
+ARG GPPRO="dev"
 # Timezone for images
 ARG TIMEZONE="Europe/Berlin"
 
@@ -223,20 +223,20 @@ COPY --from=php-ext-opcache /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 ###########################
 
 FROM php-base AS base
-ARG KIMAI
+ARG GPPRO
 ARG TIMEZONE
 
-LABEL org.opencontainers.image.title="Kimai" \
-      org.opencontainers.image.description="Kimai is a time-tracking application." \
-      org.opencontainers.image.authors="Kimai Community" \
-      org.opencontainers.image.url="https://www.kimai.org/" \
-      org.opencontainers.image.documentation="https://www.kimai.org/documentation/" \
-      org.opencontainers.image.source="https://github.com/kimai/kimai" \
-      org.opencontainers.image.version="${KIMAI}" \
+LABEL org.opencontainers.image.title="gppro" \
+      org.opencontainers.image.description="gppro is a time-tracking application." \
+      org.opencontainers.image.authors="gppro Community" \
+      org.opencontainers.image.url="https://github.com/tbema/gppro" \
+      org.opencontainers.image.documentation="https://github.com/tbema/gppro" \
+      org.opencontainers.image.source="https://github.com/tbema/gppro" \
+      org.opencontainers.image.version="${GPPRO}" \
       org.opencontainers.image.vendor="Kevin Papst" \
       org.opencontainers.image.licenses="AGPL-3.0"
 
-ENV KIMAI=${KIMAI}
+ENV GPPRO=${GPPRO}
 ENV TIMEZONE=${TIMEZONE}
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone && \
     mkdir -p /composer  && \
@@ -246,7 +246,7 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 COPY .docker/dbtest.php /dbtest.php
 COPY .docker/entrypoint.sh /entrypoint.sh
 
-ENV DATABASE_URL="mysql://kimai:kimai@127.0.0.1:3306/kimai?charset=utf8mb4&serverVersion=8.3"
+ENV DATABASE_URL="mysql://gppro:gppro@127.0.0.1:3306/gppro?charset=utf8mb4&serverVersion=8.3"
 # APP_SECRET is intentionally not set here. The entrypoint resolves it (user-provided
 # via -e APP_SECRET=... wins; otherwise a unique value is generated and persisted to
 # the var/data volume and mirrored into .env.local). Setting it as a Dockerfile ENV
@@ -254,7 +254,7 @@ ENV DATABASE_URL="mysql://kimai:kimai@127.0.0.1:3306/kimai?charset=utf8mb4&serve
 # console invocations.
 # The default container name for nginx is nginx
 ENV TRUSTED_PROXIES=nginx,localhost,127.0.0.1
-ENV MAILER_FROM=kimai@example.com
+ENV MAILER_FROM=gppro@example.com
 ENV MAILER_URL=null://localhost
 ENV ADMINPASS=
 ENV ADMINMAIL=
@@ -264,7 +264,7 @@ ENV GROUP_ID=
 ENV COMPOSER_MEMORY_LIMIT=-1
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-VOLUME [ "/opt/kimai/var" ]
+VOLUME [ "/opt/gppro/var" ]
 
 CMD [ "/entrypoint.sh" ]
 
@@ -274,35 +274,35 @@ CMD [ "/entrypoint.sh" ]
 
 # development build
 FROM base AS dev
-# copy kimai source from local build context (see .dockerignore for what is excluded)
-COPY --chown=www-data:www-data . /opt/kimai
+# copy gppro source from local build context (see .dockerignore for what is excluded)
+COPY --chown=www-data:www-data . /opt/gppro
 COPY .docker /assets
 # do the composer deps installation
 RUN \
     export COMPOSER_HOME=/composer && \
-    composer --no-ansi install --working-dir=/opt/kimai --optimize-autoloader && \
-    composer --no-ansi require --working-dir=/opt/kimai laminas/laminas-ldap && \
+    composer --no-ansi install --working-dir=/opt/gppro --optimize-autoloader && \
+    composer --no-ansi require --working-dir=/opt/gppro laminas/laminas-ldap && \
     composer --no-ansi clearcache && \
     cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini && \
-    chown -R www-data:www-data /opt/kimai /usr/local/etc/php/php.ini && \
-    mkdir -p /opt/kimai/var/logs && chmod 777 /opt/kimai/var/logs && \
-    sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/kimai/php-cli.ini && \
-    sed -i "s/env php/env -S php -c \/opt\/kimai\/php-cli.ini/g" /opt/kimai/bin/console && \
-    /opt/kimai/bin/console kimai:version | awk '{print $2}' > /opt/kimai/version.txt
+    chown -R www-data:www-data /opt/gppro /usr/local/etc/php/php.ini && \
+    mkdir -p /opt/gppro/var/logs && chmod 777 /opt/gppro/var/logs && \
+    sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/gppro/php-cli.ini && \
+    sed -i "s/env php/env -S php -c \/opt\/gppro\/php-cli.ini/g" /opt/gppro/bin/console && \
+    /opt/gppro/bin/console gppro:version | awk '{print $2}' > /opt/gppro/version.txt
 ENV APP_ENV=dev
 ENV DATABASE_URL=
 ENV memory_limit=512M
 
 # the "prod" stage (production build) is configured as last stage in the file, as this is the default target in BuildKit
 FROM base AS prod
-# copy kimai source from local build context (see .dockerignore for what is excluded)
-COPY --chown=www-data:www-data . /opt/kimai
+# copy gppro source from local build context (see .dockerignore for what is excluded)
+COPY --chown=www-data:www-data . /opt/gppro
 COPY .docker /assets
 # do the composer deps installation
 RUN \
     export COMPOSER_HOME=/composer && \
-    composer --no-ansi install --working-dir=/opt/kimai --no-dev --optimize-autoloader && \
-    composer --no-ansi require --update-no-dev --working-dir=/opt/kimai laminas/laminas-ldap && \
+    composer --no-ansi install --working-dir=/opt/gppro --no-dev --optimize-autoloader && \
+    composer --no-ansi require --update-no-dev --working-dir=/opt/gppro laminas/laminas-ldap && \
     composer --no-ansi clearcache && \
     cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
     sed -i "s/expose_php = On/expose_php = Off/g" /usr/local/etc/php/php.ini && \
@@ -312,10 +312,10 @@ RUN \
     sed -i "s/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files=100000/g" /usr/local/etc/php/php.ini && \
     sed -i "s/opcache.validate_timestamps=1/opcache.validate_timestamps=0/g" /usr/local/etc/php/php.ini && \
     sed -i "s/session.gc_maxlifetime = 1440/session.gc_maxlifetime = 604800/g" /usr/local/etc/php/php.ini && \
-    mkdir -p /opt/kimai/var/logs && chmod 777 /opt/kimai/var/logs && \
-    sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/kimai/php-cli.ini && \
-    chown -R www-data:www-data /opt/kimai /usr/local/etc/php/php.ini && \
-    /opt/kimai/bin/console kimai:version | awk '{print $2}' > /opt/kimai/version.txt
+    mkdir -p /opt/gppro/var/logs && chmod 777 /opt/gppro/var/logs && \
+    sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/gppro/php-cli.ini && \
+    chown -R www-data:www-data /opt/gppro /usr/local/etc/php/php.ini && \
+    /opt/gppro/bin/console gppro:version | awk '{print $2}' > /opt/gppro/version.txt
 ENV APP_ENV=prod
 ENV DATABASE_URL=
 ENV memory_limit=512M

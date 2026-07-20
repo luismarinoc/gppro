@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
-KIMAI=$(cat /opt/kimai/version.txt)
-echo $KIMAI
+GPPRO=$(cat /opt/gppro/version.txt)
+echo $GPPRO
 
 function waitForDB() {
   # Parse sql connection data
@@ -30,7 +30,7 @@ function handleStartup() {
     memory_limit=512M
   fi
   sed -i "s/memory_limit.*/memory_limit=$memory_limit/g" /usr/local/etc/php/php.ini
-  cp /assets/monolog.yaml /opt/kimai/config/packages/monolog.yaml
+  cp /assets/monolog.yaml /opt/gppro/config/packages/monolog.yaml
 
   if [ -z "$USER_ID" ]; then
     USER_ID=$(id -u www-data)
@@ -43,7 +43,7 @@ function handleStartup() {
   if grep -w "$GROUP_ID" /etc/group &>/dev/null; then
     echo Group already exists
   else
-    echo www-kimai:x:"$GROUP_ID": >> /etc/group
+    echo www-gppro:x:"$GROUP_ID": >> /etc/group
     grpconv
   fi
 
@@ -51,7 +51,7 @@ function handleStartup() {
   if id "$USER_ID" &>/dev/null; then
     echo User already exists
   else
-    echo www-kimai:x:"$USER_ID":"$GROUP_ID":www-kimai:/var/www:/usr/sbin/nologin >> /etc/passwd
+    echo www-gppro:x:"$USER_ID":"$GROUP_ID":www-gppro:/var/www:/usr/sbin/nologin >> /etc/passwd
     pwconv
   fi
 
@@ -73,14 +73,14 @@ function handleStartup() {
   fi
 }
 
-function prepareKimai() {
+function prepareGppro() {
   # These are idempotent, so we can run them on every start-up
-  /opt/kimai/bin/console -n kimai:install
+  /opt/gppro/bin/console -n gppro:install
   if [ ! -z "$ADMINPASS" ] && [ ! -a "$ADMINMAIL" ]; then
-    /opt/kimai/bin/console kimai:user:create admin "$ADMINMAIL" ROLE_SUPER_ADMIN "$ADMINPASS"
+    /opt/gppro/bin/console gppro:user:create admin "$ADMINMAIL" ROLE_SUPER_ADMIN "$ADMINPASS"
   fi
-  echo "$KIMAI" > /opt/kimai/var/installed
-  echo "Kimai is ready"
+  echo "$GPPRO" > /opt/gppro/var/installed
+  echo "gppro is ready"
 }
 
 function ensureAppSecret() {
@@ -96,8 +96,8 @@ function ensureAppSecret() {
   # from being traced.
   { set +x; } 2>/dev/null
 
-  local SECRET_FILE=/opt/kimai/var/data/.appsecret
-  local ENV_LOCAL=/opt/kimai/.env.local
+  local SECRET_FILE=/opt/gppro/var/data/.appsecret
+  local ENV_LOCAL=/opt/gppro/.env.local
 
   # Always remove any prior .env.local before deciding which secret applies.
   # This prevents a stale auto-generated value from lingering after a user
@@ -140,8 +140,8 @@ function ensureAppSecret() {
 
 function runServer() {
   # Just while I'm fixing things
-  /opt/kimai/bin/console kimai:reload --env="$APP_ENV"
-  chown -R $USER_ID:$GROUP_ID /opt/kimai/var
+  /opt/gppro/bin/console gppro:reload --env="$APP_ENV"
+  chown -R $USER_ID:$GROUP_ID /opt/gppro/var
   if [ -e /use_apache ]; then
     exec /usr/sbin/apache2 -D FOREGROUND
   elif [ -e /use_fpm ]; then
@@ -154,5 +154,5 @@ function runServer() {
 waitForDB
 handleStartup
 ensureAppSecret
-prepareKimai
+prepareGppro
 runServer

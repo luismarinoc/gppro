@@ -18,13 +18,13 @@ try {
             echo 'Access denied (1045)';
             die(1);
         case 1049:
-            // error "Unknown database (1049)" can be ignored, the database will be created by Kimai
+            // error "Unknown database (1049)" can be ignored, the database will be created by gppro
             return;
         // a lot of errors share the same meaningless error code zero
         case 0:
             // this error includes the database name, so we can only search for the static part of the error message
             if (stripos($ex->getMessage(), 'SQLSTATE[HY000] [1049] Unknown database') !== false) {
-                // error "Unknown database (1049)" can be ignored, the database will be created by Kimai
+                // error "Unknown database (1049)" can be ignored, the database will be created by gppro
                 return;
             }
             switch ($ex->getMessage()) {
