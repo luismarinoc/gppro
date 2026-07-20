@@ -804,7 +804,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>נוצר ב־%date% עם %kimai%</target>
+        <target>נוצר ב־%date% עם %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">על Kimai</target>
+        <target state="translated">על gppro</target>
       </trans-unit>
       <trans-unit id="aOJITgv" resname="help.invoiceText">
         <source>help.invoiceText</source>
@@ -1284,7 +1284,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">כאן אפשר לנהל את אסימוני ה־API שלך, שמשמשים לאימות היישום שלך מול Kimai.</target>
+        <target state="translated">כאן אפשר לנהל את אסימוני ה־API שלך, שמשמשים לאימות היישום שלך מול gppro.</target>
       </trans-unit>
       <trans-unit id="wwrREDg" resname="pagination">
         <source>pagination</source>

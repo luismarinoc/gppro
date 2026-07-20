@@ -808,7 +808,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Frammleitt tann %date% við %kimai%</target>
+        <target>Frammleitt tann %date% við %gppro%</target>
       </trans-unit>
       <trans-unit id="ElDyzrx" resname="export.page_of">
         <source>export.page_of</source>

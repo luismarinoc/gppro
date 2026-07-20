@@ -1244,7 +1244,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve">
         <source>export.date_copyright</source>
-        <target state="translated">Dibentuk %date% dengan %kimai%</target>
+        <target state="translated">Dibentuk %date% dengan %gppro%</target>
       </trans-unit>
       <trans-unit id="ulr3reE" resname="stats.amountMonth" xml:space="preserve">
         <source>stats.amountMonth</source>
@@ -1688,7 +1688,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Disini anda dapat mengelola API token anda, yang digunakan untuk mengautentikasi aplikasi anda ke Kimai.</target>
+        <target state="translated">Disini anda dapat mengelola API token anda, yang digunakan untuk mengautentikasi aplikasi anda ke gppro.</target>
       </trans-unit>
       <trans-unit id="WwesQPU" resname="deactivate" xml:space="preserve">
         <source>Deactivate</source>
@@ -1700,7 +1700,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title" xml:space="preserve">
         <source>about.title</source>
-        <target state="translated">Tentang Kimai</target>
+        <target state="translated">Tentang gppro</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales" xml:space="preserve">
         <source>help_locales</source>

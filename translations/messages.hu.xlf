@@ -644,7 +644,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Készült: %date% A %kimai% segítségével</target>
+        <target>Készült: %date% A %gppro% segítségével</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1088,7 +1088,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>A Kimai névjegye</target>
+        <target>A gppro névjegye</target>
       </trans-unit>
       <trans-unit id="aOJITgv" resname="help.invoiceText" xml:space="preserve">
         <source>help.invoiceText</source>
@@ -1852,7 +1852,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Itt kezelheted az API tokenjeidet, amelyeket az alkalmazásod hitelesítésére használhatsz a Kimaiban.</target>
+        <target state="translated">Itt kezelheted az API tokenjeidet, amelyeket az alkalmazásod hitelesítésére használhatsz a gpproban.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title" xml:space="preserve">
         <source>api_password.missing_title</source>

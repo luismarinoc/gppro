@@ -636,7 +636,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">Створено %date% з %kimai%</target>
+        <target state="translated">Створено %date% з %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount">
         <source>export.warn_result_amount</source>
@@ -1140,7 +1140,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Тут ви можете керувати токенами API, які використовуються для автентифікації вашого додатку в Kimai.</target>
+        <target state="translated">Тут ви можете керувати токенами API, які використовуються для автентифікації вашого додатку в gppro.</target>
       </trans-unit>
       <trans-unit id="Eq2E_Rd" resname="menu.apps" xml:space="preserve">
         <source>Apps</source>
@@ -1360,7 +1360,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">Про Kimai</target>
+        <target state="translated">Про gppro</target>
       </trans-unit>
       <trans-unit id="FxwWVFI" resname="help.globalActivity">
         <source>help.globalActivity</source>

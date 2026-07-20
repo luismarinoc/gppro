@@ -47,7 +47,7 @@ final class UserYearController extends AbstractUserReportController
         $reader = new Html();
         $spreadsheet = $reader->loadFromString($content);
 
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-export-user-yearly');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-export-user-yearly');
 
         return $writer->getFileResponse($spreadsheet);
     }

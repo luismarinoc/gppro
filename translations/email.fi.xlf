@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target state="translated">Olet rekisteröitynyt Kimai työajan-seurantaan sähköpostiosoitteella %email%. Nyt sinun tulee aktivoida tunnuksesi seuraavien tuntien aikana, ennen kuin linkki vanhenee.</target>
+        <target state="translated">Olet rekisteröitynyt gppro työajan-seurantaan sähköpostiosoitteella %email%. Nyt sinun tulee aktivoida tunnuksesi seuraavien tuntien aikana, ennen kuin linkki vanhenee.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,7 +35,7 @@
         <target state="needs-translation">Resetoi salasanasi</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Tämä linkki on voimassa ainoastaan seuraavat 15 minuuttia.</target>
       </trans-unit>
     </body>

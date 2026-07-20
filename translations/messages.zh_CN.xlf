@@ -732,7 +732,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>创建了 %date% 与 %kimai%</target>
+        <target>创建了 %date% 与 %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">关于 Kimai</target>
+        <target state="translated">关于 gppro</target>
       </trans-unit>
       <trans-unit id="1MfS6X5" resname="remove_filter">
         <source>remove_filter</source>
@@ -1336,7 +1336,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">您可以在这里管理用于向 Kimai 验证应用程序的 API Token。</target>
+        <target state="translated">您可以在这里管理用于向 gppro 验证应用程序的 API Token。</target>
       </trans-unit>
       <trans-unit id="wYcx0So" resname="search.no_results">
         <source>search.no_results</source>

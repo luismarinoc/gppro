@@ -332,7 +332,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title" xml:space="preserve" approved="yes">
         <source>about.title</source>
-        <target state="final">關於 Kimai</target>
+        <target state="final">關於 gppro</target>
       </trans-unit>
       <trans-unit id="tsRYY4d" resname="customer" xml:space="preserve" approved="yes">
         <source>customer</source>
@@ -1040,7 +1040,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve" approved="yes">
         <source>api_password.intro</source>
-        <target state="final">您可以在此管理所有的 API token，這些 token 會用於向 Kimai 驗證您的應用程式。</target>
+        <target state="final">您可以在此管理所有的 API token，這些 token 會用於向 gppro 驗證您的應用程式。</target>
       </trans-unit>
       <trans-unit id="1GruCMx" resname="export" xml:space="preserve" approved="yes">
         <source>export</source>
@@ -1356,7 +1356,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve" approved="yes">
         <source>export.date_copyright</source>
-        <target state="final">使用 %kimai% 於 %date% 建立</target>
+        <target state="final">使用 %gppro% 於 %date% 建立</target>
       </trans-unit>
       <trans-unit id="yNWIi5U" resname="default_value_new" xml:space="preserve" approved="yes">
         <source>default_value_new</source>

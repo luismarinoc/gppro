@@ -88,7 +88,7 @@ final class InvoiceDocumentUploadForm extends AbstractType
 
             $context->buildViolation('This invoice document cannot be used, please rename the file and upload it again.')
                 ->setTranslationDomain('validators')
-                ->setCode('kimai-invoice-document-upload-01')
+                ->setCode('gppro-invoice-document-upload-01')
                 ->addViolation();
 
             return;
@@ -110,7 +110,7 @@ final class InvoiceDocumentUploadForm extends AbstractType
             $context->buildViolation('This invoice document cannot be used, allowed file extensions are: %extensions%')
                 ->setParameters(['%extensions%' => implode(', ', $this->extensions)])
                 ->setTranslationDomain('validators')
-                ->setCode('kimai-invoice-document-upload-02')
+                ->setCode('gppro-invoice-document-upload-02')
                 ->addViolation();
 
             return;
@@ -122,7 +122,7 @@ final class InvoiceDocumentUploadForm extends AbstractType
             $context->buildViolation('This invoice document cannot be used, filename may only contain the following ascii character: %character%')
                 ->setParameters(['%character%' => 'A-Z a-z 0-9 _ -'])
                 ->setTranslationDomain('validators')
-                ->setCode('kimai-invoice-document-upload-03')
+                ->setCode('gppro-invoice-document-upload-03')
                 ->addViolation();
         }
 
@@ -130,7 +130,7 @@ final class InvoiceDocumentUploadForm extends AbstractType
             $context->buildViolation('This invoice document cannot be used, allowed filename length without extension is %character% character.')
                 ->setParameters(['%character%' => 20])
                 ->setTranslationDomain('validators')
-                ->setCode('kimai-invoice-document-upload-04')
+                ->setCode('gppro-invoice-document-upload-04')
                 ->addViolation();
         }
     }

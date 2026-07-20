@@ -1312,7 +1312,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve">
         <source>export.date_copyright</source>
-        <target state="translated">Создадено на %date% со %kimai%</target>
+        <target state="translated">Создадено на %date% со %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount" xml:space="preserve">
         <source>export.warn_result_amount</source>
@@ -1512,7 +1512,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Тука можете да управувате со вашите API токени, кои се користат за автентикација на вашата апликација на Kimai.</target>
+        <target state="translated">Тука можете да управувате со вашите API токени, кои се користат за автентикација на вашата апликација на gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title" xml:space="preserve">
         <source>api_password.missing_title</source>

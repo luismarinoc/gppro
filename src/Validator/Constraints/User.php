@@ -14,10 +14,10 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class User extends Constraint
 {
-    public const USER_EXISTING_EMAIL = 'kimai-user-00';
-    public const USER_EXISTING_NAME = 'kimai-user-01';
-    public const USER_EXISTING_EMAIL_AS_NAME = 'kimai-user-02';
-    public const USER_EXISTING_NAME_AS_EMAIL = 'kimai-user-03';
+    public const USER_EXISTING_EMAIL = 'gppro-user-00';
+    public const USER_EXISTING_NAME = 'gppro-user-01';
+    public const USER_EXISTING_EMAIL_AS_NAME = 'gppro-user-02';
+    public const USER_EXISTING_NAME_AS_EMAIL = 'gppro-user-03';
 
     protected const ERROR_NAMES = [
         self::USER_EXISTING_EMAIL => 'The email is already used.',

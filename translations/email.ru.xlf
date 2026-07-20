@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Вы зарегистрировались в Kimai time-tracker с электронным адресом %email%. Пожалуйста, активируйте свою учетную запись в течение нескольких часов, пока ссылка не истекла.</target>
+        <target>Вы зарегистрировались в gppro time-tracker с электронным адресом %email%. Пожалуйста, активируйте свою учетную запись в течение нескольких часов, пока ссылка не истекла.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Зайти через Kimai</target>
+        <target state="translated">Зайти через gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Войти</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Данная ссылка будет активна только в течении 15 минут.</target>
       </trans-unit>
       <trans-unit id="1q.VHdU" resname="approval_requested_subject" xml:space="preserve">

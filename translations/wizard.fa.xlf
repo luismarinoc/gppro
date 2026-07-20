@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">به Kimai خوش آمدید</target>
+        <target state="translated">به gppro خوش آمدید</target>
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">این نابغه به شما کمک می کند Kimai را مطابق با نیازهای خود سفارشی کنید.</target>
+        <target state="translated">این نابغه به شما کمک می کند gppro را مطابق با نیازهای خود سفارشی کنید.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator">
         <source>wizard.separator</source>
@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">برخی از تنظیمات اولیه برای آسان کردن کار شما با Kimai.</target>
+        <target state="translated">برخی از تنظیمات اولیه برای آسان کردن کار شما با gppro.</target>
       </trans-unit>
       <trans-unit id="8p.2pXa" resname="wizard.done.title">
         <source>wizard.done.title</source>

@@ -644,7 +644,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Généré le %date% avec %kimai%</target>
+        <target>Généré le %date% avec %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1144,7 +1144,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>À propos de Kimai</target>
+        <target>À propos de gppro</target>
       </trans-unit>
       <trans-unit id="Fkrev.q" resname="help.globalActivities">
         <source>help.globalActivities</source>
@@ -1300,7 +1300,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Ici, vous pouvez gérer vos jetons d'API, utilisés pour authentifier votre application auprès de Kimai.</target>
+        <target state="translated">Ici, vous pouvez gérer vos jetons d'API, utilisés pour authentifier votre application auprès de gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>

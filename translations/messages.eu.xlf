@@ -748,7 +748,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>%date%-n sortua %kimai%-ren bitartez</target>
+        <target>%date%-n sortua %gppro%-ren bitartez</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -948,7 +948,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Kimairi buruz</target>
+        <target>gpprori buruz</target>
       </trans-unit>
       <trans-unit id="EGpYQvx" resname="help">
         <source>help</source>

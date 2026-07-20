@@ -744,7 +744,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Vytvorené %date% - %kimai%</target>
+        <target>Vytvorené %date% - %gppro%</target>
       </trans-unit>
       <trans-unit id="dTHY7Mw" resname="timesheet.start">
         <source>timesheet.start</source>
@@ -1028,7 +1028,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>O Kimai</target>
+        <target>O gppro</target>
       </trans-unit>
       <trans-unit id="5NugIxO" resname="includeWithBudget">
         <source>includeWithBudget</source>
@@ -1188,7 +1188,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="needs-translation">API heslo sa používa pre komunikáciu medzi Kimai a vašimi aplikáciami</target>
+        <target state="needs-translation">API heslo sa používa pre komunikáciu medzi gppro a vašimi aplikáciami</target>
       </trans-unit>
       <trans-unit id="JmkKf48" resname="user.language.help">
         <source>user.language.help</source>

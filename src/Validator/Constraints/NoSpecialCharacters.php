@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class NoSpecialCharacters extends Constraint
 {
-    public const SPECIAL_CHARACTERS_FOUND = 'kimai-html-character-001';
+    public const SPECIAL_CHARACTERS_FOUND = 'gppro-html-character-001';
 
     protected const ERROR_NAMES = [
         self::SPECIAL_CHARACTERS_FOUND => 'These characters are not allowed: {{ chars }}',

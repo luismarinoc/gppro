@@ -11,7 +11,7 @@ namespace App\Validator\Constraints;
 
 final class TimesheetNegativeDuration extends TimesheetConstraint
 {
-    public const NEGATIVE_DURATION_ERROR = 'kimai-timesheet-negative-duration-01';
+    public const NEGATIVE_DURATION_ERROR = 'gppro-timesheet-negative-duration-01';
 
     protected const ERROR_NAMES = [
         self::NEGATIVE_DURATION_ERROR => 'Duration cannot be negative.',

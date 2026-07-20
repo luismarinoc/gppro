@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Te-ai înscris la Kimai time-tracker cu adresa de e-mail %email%. Vă rugăm să vă activați contul în următoarele câteva ore, înainte ca link-ul să expire.</target>
+        <target>Te-ai înscris la gppro time-tracker cu adresa de e-mail %email%. Vă rugăm să vă activați contul în următoarele câteva ore, înainte ca link-ul să expire.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">Resetează-ți parola</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">… ți-ai uitat parola? Nu te îngrijora. Kimai te va ajuta să îți creezi o parolă nouă:</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">… ți-ai uitat parola? Nu te îngrijora. gppro te va ajuta să îți creezi o parolă nouă:</target>
       </trans-unit>
       <trans-unit id="dvPkiia" resname="approval_rejected_subject" xml:space="preserve">
         <source>approval_rejected_subject</source>

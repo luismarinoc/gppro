@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">Vítejte v Kimai</target>
+        <target state="translated">Vítejte v gppro</target>
       </trans-unit>
       <trans-unit id="8p.2pXa" resname="wizard.done.title">
         <source>wizard.done.title</source>
@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">Tento průvodce vám pomůže přizpůsobit Kimai vašim potřebám.</target>
+        <target state="translated">Tento průvodce vám pomůže přizpůsobit gppro vašim potřebám.</target>
       </trans-unit>
       <trans-unit id="8_e6ApF" resname="wizard.profile.title">
         <source>wizard.profile.title</source>
@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">Některá základní nastavení, která vám usnadní práci s Kimai.</target>
+        <target state="translated">Některá základní nastavení, která vám usnadní práci s gppro.</target>
       </trans-unit>
       <trans-unit id="k1SzMuI" resname="wizard.done.description">
         <source>wizard.done.description</source>

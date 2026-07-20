@@ -27,7 +27,7 @@ class FileHelperTest extends TestCase
             ['kkakkaekkyakkyaekkeokke_kkyeokkyekkokkwasssss', '까깨꺄꺠꺼께_껴꼐꼬꽈sssss'],
             ['ss_n_-', '\"#+ß.!$%&/()=?\\n=/*-+´_<>@' . "\n"],
             ['Demo_ProjecT1', 'Demo ProjecT1'],
-            ['kimai-export', 'kimai-export'],
+            ['gppro-export', 'gppro-export'],
             ['D_e_m_o_Pr_oj_e_c_T1', 'D"e&m%o# Pr\'oj\\e/c?T1'],
         ];
     }

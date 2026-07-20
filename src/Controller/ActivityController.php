@@ -406,7 +406,7 @@ final class ActivityController extends AbstractController
             $entries,
             new ActivityMetaDisplayEvent($query, ActivityMetaDisplayEvent::EXPORT)
         );
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-activities');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-activities');
 
         return $writer->getFileResponse($spreadsheet);
     }

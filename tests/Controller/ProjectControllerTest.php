@@ -131,7 +131,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
         $this->assertAccessIsGranted($client, '/admin/project/export');
-        $this->assertExcelExportResponse($client, 'kimai-projects_');
+        $this->assertExcelExportResponse($client, 'gppro-projects_');
     }
 
     public function testExportActionWithSearchTermQuery(): void
@@ -160,7 +160,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
             'page' => 1,
         ]);
 
-        $this->assertExcelExportResponse($client, 'kimai-projects_');
+        $this->assertExcelExportResponse($client, 'gppro-projects_');
     }
 
     public function testDetailsAction(): void

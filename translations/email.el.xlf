@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Εγγραφήκατε στο λογισμικό παρακολούθησης χρόνου Kimai με το e-mail %email%. Παρακαλούμε ενεργοποιήσετε τον λογαριασμό σας εντός μερικών ωρών, προτού λήξει ο σύνδεσμος.</target>
+        <target>Εγγραφήκατε στο λογισμικό παρακολούθησης χρόνου gppro με το e-mail %email%. Παρακαλούμε ενεργοποιήσετε τον λογαριασμό σας εντός μερικών ωρών, προτού λήξει ο σύνδεσμος.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">Επαναφορά κωδικού πρόσβασης</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">… επομένως ξεχάσατε τον κωδικό σας; Μην ανησυχείτε: Το Kimai θα σας βοηθήσει να δημιουργήσετε ένα νέο:</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">… επομένως ξεχάσατε τον κωδικό σας; Μην ανησυχείτε: Το gppro θα σας βοηθήσει να δημιουργήσετε ένα νέο:</target>
       </trans-unit>
       <trans-unit id="U.JjI9R" resname="approval_rejected_message" xml:space="preserve">
         <source>approval_rejected_message</source>

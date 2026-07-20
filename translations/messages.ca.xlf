@@ -1320,7 +1320,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve">
         <source>export.date_copyright</source>
-        <target state="translated">Creat a %date% amb %kimai%</target>
+        <target state="translated">Creat a %date% amb %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount" xml:space="preserve" approved="yes">
         <source>export.warn_result_amount</source>
@@ -1520,7 +1520,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Aquí podeu gestionar els vostres tokens API, que s'utilitzen per autenticar la vostra aplicació a Kimai.</target>
+        <target state="translated">Aquí podeu gestionar els vostres tokens API, que s'utilitzen per autenticar la vostra aplicació a gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title" xml:space="preserve">
         <source>api_password.missing_title</source>
@@ -1564,7 +1564,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title" xml:space="preserve">
         <source>about.title</source>
-        <target state="translated">Sobre Kimai</target>
+        <target state="translated">Sobre gppro</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales" xml:space="preserve">
         <source>help_locales</source>

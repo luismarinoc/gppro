@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Você se inscreveu no rastreador de tempo Kimai com o e-mail %email%. ative a sua conta nas próximas horas, antes que o link expire.</target>
+        <target>Você se inscreveu no rastreador de tempo gppro com o e-mail %email%. ative a sua conta nas próximas horas, antes que o link expire.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Faça login no Kimai</target>
+        <target state="translated">Faça login no gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Entrar</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Esse link tem validade para os próximos 15 minutos.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject">

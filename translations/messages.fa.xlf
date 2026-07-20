@@ -968,7 +968,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">%date% با %kimai% ایجاد شد</target>
+        <target state="translated">%date% با %gppro% ایجاد شد</target>
       </trans-unit>
       <trans-unit id="Qn2ouiL" resname="exported">
         <source>exported</source>
@@ -1332,7 +1332,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">در اینجا می توانید توکن های API خود را که برای احراز هویت برنامه شما در Kimai استفاده می شود، مدیریت کنید.</target>
+        <target state="translated">در اینجا می توانید توکن های API خود را که برای احراز هویت برنامه شما در gppro استفاده می شود، مدیریت کنید.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>

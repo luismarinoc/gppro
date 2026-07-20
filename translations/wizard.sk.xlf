@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">Vitajte v Kimai</target>
+        <target state="translated">Vitajte v gppro</target>
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">Tento sprievodca vám pomôže prispôsobiť Kimai vašim potrebám.</target>
+        <target state="translated">Tento sprievodca vám pomôže prispôsobiť gppro vašim potrebám.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator">
         <source>wizard.separator</source>
@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">Niektoré základné nastavenia ktoré vám pomôžu uľahčiť prácu s Kimai.</target>
+        <target state="translated">Niektoré základné nastavenia ktoré vám pomôžu uľahčiť prácu s gppro.</target>
       </trans-unit>
       <trans-unit id="8p.2pXa" resname="wizard.done.title">
         <source>wizard.done.title</source>

@@ -12,8 +12,8 @@ namespace App\Validator\Constraints;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class TimesheetFutureTimes extends TimesheetConstraint
 {
-    public const BEGIN_IN_FUTURE_ERROR = 'kimai-timesheet-future-times-01';
-    public const END_IN_FUTURE_ERROR = 'kimai-timesheet-future-times-02';
+    public const BEGIN_IN_FUTURE_ERROR = 'gppro-timesheet-future-times-01';
+    public const END_IN_FUTURE_ERROR = 'gppro-timesheet-future-times-02';
 
     protected const ERROR_NAMES = [
         self::BEGIN_IN_FUTURE_ERROR => 'The begin date cannot be in the future.',

@@ -11,7 +11,7 @@ namespace App\Validator\Constraints;
 
 final class TimesheetZeroDuration extends TimesheetConstraint
 {
-    public const ZERO_DURATION_ERROR = 'kimai-timesheet-zero-duration-01';
+    public const ZERO_DURATION_ERROR = 'gppro-timesheet-zero-duration-01';
 
     protected const ERROR_NAMES = [
         self::ZERO_DURATION_ERROR => 'Duration cannot be zero.',

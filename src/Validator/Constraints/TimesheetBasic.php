@@ -11,14 +11,14 @@ namespace App\Validator\Constraints;
 
 final class TimesheetBasic extends TimesheetConstraint
 {
-    public const MISSING_BEGIN_ERROR = 'kimai-timesheet-81';
-    public const END_BEFORE_BEGIN_ERROR = 'kimai-timesheet-82';
-    public const MISSING_ACTIVITY_ERROR = 'kimai-timesheet-84';
-    public const MISSING_PROJECT_ERROR = 'kimai-timesheet-85';
-    public const ACTIVITY_PROJECT_MISMATCH_ERROR = 'kimai-timesheet-86';
-    public const PROJECT_NOT_STARTED = 'kimai-timesheet-91';
-    public const PROJECT_ALREADY_ENDED = 'kimai-timesheet-92';
-    public const PROJECT_DISALLOWS_GLOBAL_ACTIVITY = 'kimai-timesheet-93';
+    public const MISSING_BEGIN_ERROR = 'gppro-timesheet-81';
+    public const END_BEFORE_BEGIN_ERROR = 'gppro-timesheet-82';
+    public const MISSING_ACTIVITY_ERROR = 'gppro-timesheet-84';
+    public const MISSING_PROJECT_ERROR = 'gppro-timesheet-85';
+    public const ACTIVITY_PROJECT_MISMATCH_ERROR = 'gppro-timesheet-86';
+    public const PROJECT_NOT_STARTED = 'gppro-timesheet-91';
+    public const PROJECT_ALREADY_ENDED = 'gppro-timesheet-92';
+    public const PROJECT_DISALLOWS_GLOBAL_ACTIVITY = 'gppro-timesheet-93';
 
     protected const ERROR_NAMES = [
         self::MISSING_BEGIN_ERROR => 'You must submit a begin date.',

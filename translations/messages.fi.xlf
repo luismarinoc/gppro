@@ -860,7 +860,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">Luotu %date% sovelluksella %kimai%</target>
+        <target state="translated">Luotu %date% sovelluksella %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1144,7 +1144,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">Tietoa Kimaista</target>
+        <target state="translated">Tietoa gpprosta</target>
       </trans-unit>
       <trans-unit id="1MfS6X5" resname="remove_filter">
         <source>remove_filter</source>
@@ -1268,7 +1268,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Täällä voit hallita API-tunnuksiasi, joita käytetään sovelluksesi todentamiseen Kimaille.</target>
+        <target state="translated">Täällä voit hallita API-tunnuksiasi, joita käytetään sovelluksesi todentamiseen gpprolle.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>

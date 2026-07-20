@@ -39,7 +39,7 @@ final class XlsxWriter implements WriterInterface
     {
         $options = array_merge(['autofilter' => true, 'freeze' => null], $options);
 
-        $filename = @tempnam(sys_get_temp_dir(), 'kimai-export-xlsx');
+        $filename = @tempnam(sys_get_temp_dir(), 'gppro-export-xlsx');
         if (false === $filename) {
             throw new \Exception('Could not open temporary file');
         }

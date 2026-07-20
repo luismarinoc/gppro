@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Du har registrert deg på Kimai-tidssporer med e-posten %email%. Aktiver kontoen din i løpet av de neste timene før lenken utløper.</target>
+        <target>Du har registrert deg på gppro-tidssporer med e-posten %email%. Aktiver kontoen din i løpet av de neste timene før lenken utløper.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">Tilbakestill passordet</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">… glemt passordet? Kimai hjelper deg å lage et nytt:</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">… glemt passordet? gppro hjelper deg å lage et nytt:</target>
       </trans-unit>
     </body>
   </file>

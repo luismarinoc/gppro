@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title" xml:space="preserve">
         <source>wizard.intro.title</source>
-        <target state="translated">Tere tulemast Kimaisse</target>
+        <target state="translated">Tere tulemast gpprosse</target>
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description" xml:space="preserve">
         <source>wizard.intro.description</source>
-        <target state="translated">See juhis aitab sul muuta Kimaid vastavalt oma vajadustele.</target>
+        <target state="translated">See juhis aitab sul muuta gpprod vastavalt oma vajadustele.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator" xml:space="preserve">
         <source>wizard.separator</source>
@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description" xml:space="preserve">
         <source>wizard.profile.description</source>
-        <target state="translated">Mõned põhiseaded, mis muudavad Kimai'ga töötamise lihtsamaks.</target>
+        <target state="translated">Mõned põhiseaded, mis muudavad gppro'ga töötamise lihtsamaks.</target>
       </trans-unit>
       <trans-unit id="7Vipfs7" resname="wizard.password.title" xml:space="preserve">
         <source>wizard.password.title</source>

@@ -97,6 +97,6 @@ class CustomerMonthlyProjectsControllerTest extends AbstractControllerBaseTestCa
         self::assertFileDoesNotExist($response->getFile());
 
         self::assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->headers->get('Content-Type'));
-        self::assertStringContainsString('attachment; filename=kimai-export-users-', $response->headers->get('Content-Disposition'));
+        self::assertStringContainsString('attachment; filename=gppro-export-users-', $response->headers->get('Content-Disposition'));
     }
 }

@@ -1088,7 +1088,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">تم توليده يوم %date% بفضل %kimai%</target>
+        <target state="translated">تم توليده يوم %date% بفضل %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount">
         <source>export.warn_result_amount</source>
@@ -1120,7 +1120,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>حول Kimai</target>
+        <target>حول gppro</target>
       </trans-unit>
       <trans-unit id="HNFpvnH" resname="globalActivities">
         <source>globalActivities</source>
@@ -1248,7 +1248,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">يتم استخدام كلمة مرور واجهة برمجة التطبيقات للاتصال بين Kimai وتطبيقاتك.</target>
+        <target state="translated">يتم استخدام كلمة مرور واجهة برمجة التطبيقات للاتصال بين gppro وتطبيقاتك.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>

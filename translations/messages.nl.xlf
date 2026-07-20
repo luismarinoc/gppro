@@ -712,7 +712,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Gemaakt op %date% met %kimai%</target>
+        <target>Gemaakt op %date% met %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1076,7 +1076,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Over Kimai</target>
+        <target>Over gppro</target>
       </trans-unit>
       <trans-unit id="3rJ5QDP" resname="help.teams">
         <source>help.teams</source>
@@ -1348,7 +1348,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Hier kan je de API tokens beheren, die gebruikt worden om toepassing een geauthenticeerde toegang te verlenen tot Kimai.</target>
+        <target state="translated">Hier kan je de API tokens beheren, die gebruikt worden om toepassing een geauthenticeerde toegang te verlenen tot gppro.</target>
       </trans-unit>
       <trans-unit id="wYcx0So" resname="search.no_results">
         <source>search.no_results</source>

@@ -12,8 +12,8 @@ namespace App\Validator\Constraints;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class TimesheetTeamAccess extends TimesheetConstraint
 {
-    public const PROJECT_ACCESS_ERROR = 'kimai-timesheet-team-project';
-    public const ACTIVITY_ACCESS_ERROR = 'kimai-timesheet-team-activity';
+    public const PROJECT_ACCESS_ERROR = 'gppro-timesheet-team-project';
+    public const ACTIVITY_ACCESS_ERROR = 'gppro-timesheet-team-activity';
 
     protected const ERROR_NAMES = [
         self::PROJECT_ACCESS_ERROR => 'You are not allowed to use this project.',

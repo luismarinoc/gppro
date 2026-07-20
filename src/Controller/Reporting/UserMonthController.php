@@ -48,7 +48,7 @@ final class UserMonthController extends AbstractUserReportController
         $reader = new Html();
         $spreadsheet = $reader->loadFromString($content);
 
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-export-user-monthly');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-export-user-monthly');
 
         return $writer->getFileResponse($spreadsheet);
     }

@@ -656,7 +656,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">생성 %date% 의 %kimai%</target>
+        <target state="translated">생성 %date% 의 %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1120,7 +1120,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">Kimai 정보</target>
+        <target state="translated">gppro 정보</target>
       </trans-unit>
       <trans-unit id="HNFpvnH" resname="globalActivities">
         <source>globalActivities</source>
@@ -1156,7 +1156,7 @@
       </trans-unit>
       <trans-unit id="mz4ieCN" resname="donate">
         <source>donate</source>
-        <target state="translated">Kimai의 미래를 위해 기부하기</target>
+        <target state="translated">gppro의 미래를 위해 기부하기</target>
       </trans-unit>
       <trans-unit id="cR5DD88" resname="invoice_number_generator.date">
         <source>invoice_number_generator.date</source>

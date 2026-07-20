@@ -64,7 +64,7 @@ final class XlsxRenderer extends AbstractSpreadsheetRenderer implements ExportRe
      */
     private function renderFile(array $exportItems, TimesheetQuery $query): \SplFileInfo
     {
-        $filename = @tempnam(sys_get_temp_dir(), 'kimai-export-xlsx');
+        $filename = @tempnam(sys_get_temp_dir(), 'gppro-export-xlsx');
         if (false === $filename) {
             throw new \Exception('Could not open temporary file');
         }

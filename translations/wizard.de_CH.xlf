@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">Willkommen bei Kimai</target>
+        <target state="translated">Willkommen bei gppro</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator">
         <source>wizard.separator</source>
@@ -24,11 +24,11 @@
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">Dieser Assistent hilft Ihnen, Kimai an Ihre Bedürfnisse anzupassen.</target>
+        <target state="translated">Dieser Assistent hilft Ihnen, gppro an Ihre Bedürfnisse anzupassen.</target>
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">Einige grundlegende Einstellungen, um Ihnen die Arbeit mit Kimai zu erleichtern.</target>
+        <target state="translated">Einige grundlegende Einstellungen, um Ihnen die Arbeit mit gppro zu erleichtern.</target>
       </trans-unit>
       <trans-unit id="7Vipfs7" resname="wizard.password.title" xml:space="preserve">
         <source>wizard.password.title</source>
