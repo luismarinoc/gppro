@@ -24,4 +24,4 @@ jobs:
               with:
                   githubToken: ${{ secrets.GITHUB_TOKEN }}
                   pattern: .*\.lock$|^\.github\/.*$
-                  trustedAuthors: kevinpapst
+                  trustedAuthors: luismarinoc
