@@ -20,7 +20,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kimai:user:create', description: 'Create a new user')]
+#[AsCommand(name: 'gppro:user:create', description: 'Create a new user')]
 final class CreateUserCommand extends AbstractUserCommand
 {
     public function __construct(private UserService $userService)

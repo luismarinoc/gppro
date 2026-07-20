@@ -24,7 +24,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 /**
  * @CloudRequired
  */
-#[AsCommand(name: 'kimai:user:login-link', description: 'Create a URL that can be used to login as that user', hidden: true)]
+#[AsCommand(name: 'gppro:user:login-link', description: 'Create a URL that can be used to login as that user', hidden: true)]
 final class UserLoginLinkCommand extends Command
 {
     public function __construct(

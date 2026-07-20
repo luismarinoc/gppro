@@ -46,13 +46,13 @@ class PromoteUserCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:promote');
+        $command = $application->find('gppro:user:promote');
         self::assertInstanceOf(PromoteUserCommand::class, $command);
     }
 
     protected function callCommand(?string $username, ?string $role, bool $super = false): CommandTester
     {
-        $command = $this->application->find('kimai:user:promote');
+        $command = $this->application->find('gppro:user:promote');
         $input = [
             'command' => $command->getName(),
         ];

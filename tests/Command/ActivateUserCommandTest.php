@@ -44,13 +44,13 @@ class ActivateUserCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:activate');
+        $command = $application->find('gppro:user:activate');
         self::assertInstanceOf(ActivateUserCommand::class, $command);
     }
 
     private function callCommand(?string $username): CommandTester
     {
-        $command = $this->application->find('kimai:user:activate');
+        $command = $this->application->find('gppro:user:activate');
         $input = [
             'command' => $command->getName(),
         ];

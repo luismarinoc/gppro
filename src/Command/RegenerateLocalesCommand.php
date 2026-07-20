@@ -27,7 +27,7 @@ use Symfony\Component\Intl\Locales;
  *
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'kimai:reset:locales', description: 'Regenerate the locale definition file')]
+#[AsCommand(name: 'gppro:reset:locales', description: 'Regenerate the locale definition file')]
 final class RegenerateLocalesCommand extends Command
 {
     /**

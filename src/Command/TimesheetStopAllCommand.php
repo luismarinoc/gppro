@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'kimai:timesheet:stop-all', description: 'Stop all running timesheets immediately')]
+#[AsCommand(name: 'gppro:timesheet:stop-all', description: 'Stop all running timesheets immediately')]
 final class TimesheetStopAllCommand extends Command
 {
     public function __construct(private readonly TimesheetService $timesheetService)

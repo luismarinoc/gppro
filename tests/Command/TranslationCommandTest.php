@@ -9,30 +9,39 @@
 
 namespace App\Tests\Command;
 
-use App\Command\ResetDevelopmentCommand;
+use App\Command\TranslationCommand;
+use App\Configuration\LocaleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-#[CoversClass(ResetDevelopmentCommand::class)]
+#[CoversClass(TranslationCommand::class)]
 #[Group('integration')]
-class ResetDevelopmentCommandTest extends KernelTestCase
+class TranslationCommandTest extends KernelTestCase
 {
     public function testCommandName(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
-        $application->add(new ResetDevelopmentCommand('dev', __DIR__ . '/../../'));
+        $application->add(new TranslationCommand(
+            __DIR__ . '/../../',
+            'test',
+            new LocaleService([])
+        ));
 
-        self::assertTrue($application->has('gppro:reset:dev'));
-        $command = $application->find('gppro:reset:dev');
-        self::assertInstanceOf(ResetDevelopmentCommand::class, $command);
+        self::assertTrue($application->has('gppro:translations'));
+        $command = $application->find('gppro:translations');
+        self::assertInstanceOf(TranslationCommand::class, $command);
     }
 
     public function testCommandNameIsNotEnabledInProd(): void
     {
-        $sut = new ResetDevelopmentCommand('prod', __DIR__ . '/../../');
+        $sut = new TranslationCommand(
+            __DIR__ . '/../../',
+            'prod',
+            new LocaleService([])
+        );
         self::assertFalse($sut->isEnabled());
     }
 }

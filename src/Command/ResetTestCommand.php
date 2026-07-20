@@ -31,7 +31,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * This is one of the cases where it is necessary to add tests:
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'kimai:reset:test', description: 'Resets the "test" environment')]
+#[AsCommand(name: 'gppro:reset:test', description: 'Resets the "test" environment')]
 final class ResetTestCommand extends AbstractResetCommand
 {
     public function __construct(

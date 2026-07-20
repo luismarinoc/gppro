@@ -14,7 +14,7 @@ use App\User\UserService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kimai:user:promote', description: 'Promotes a user by adding a role')]
+#[AsCommand(name: 'gppro:user:promote', description: 'Promotes a user by adding a role')]
 final class PromoteUserCommand extends AbstractRoleCommand
 {
     protected function configure(): void
@@ -24,7 +24,7 @@ final class PromoteUserCommand extends AbstractRoleCommand
         $this
             ->setHelp(
                 <<<'EOT'
-                    The <info>kimai:user:promote</info> command promotes a user by adding a role
+                    The <info>gppro:user:promote</info> command promotes a user by adding a role
 
                       <info>php %command.full_name% susan_super ROLE_TEAMLEAD</info>
                       <info>php %command.full_name% --super susan_super</info>

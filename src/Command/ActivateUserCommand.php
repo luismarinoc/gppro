@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kimai:user:activate', description: 'Activate a user')]
+#[AsCommand(name: 'gppro:user:activate', description: 'Activate a user')]
 final class ActivateUserCommand extends Command
 {
     public function __construct(private UserService $userService)
@@ -31,7 +31,7 @@ final class ActivateUserCommand extends Command
             ->addArgument('username', InputArgument::REQUIRED, 'The username')
             ->setHelp(
                 <<<'EOT'
-                    The <info>kimai:user:activate</info> command activates a user (so they will be able to log in):
+                    The <info>gppro:user:activate</info> command activates a user (so they will be able to log in):
 
                       <info>php %command.full_name% susan_super</info>
                     EOT

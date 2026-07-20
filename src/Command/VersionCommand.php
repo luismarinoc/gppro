@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kimai:version', description: 'Show version information')]
+#[AsCommand(name: 'gppro:version', description: 'Show version information')]
 final class VersionCommand extends Command
 {
     protected function configure(): void

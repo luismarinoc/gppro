@@ -63,7 +63,7 @@ class CreateUserCommandTest extends KernelTestCase
 
     protected function createUser($username, $email, $role, $password): CommandTester
     {
-        $command = $this->application->find('kimai:user:create');
+        $command = $this->application->find('gppro:user:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),

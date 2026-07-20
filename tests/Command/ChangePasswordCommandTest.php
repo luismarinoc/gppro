@@ -47,13 +47,13 @@ class ChangePasswordCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:password');
+        $command = $application->find('gppro:user:password');
         self::assertInstanceOf(ChangePasswordCommand::class, $command);
     }
 
     private function callCommand(?string $username, ?string $password): CommandTester
     {
-        $command = $this->application->find('kimai:user:password');
+        $command = $this->application->find('gppro:user:password');
         $input = [
             'command' => $command->getName(),
         ];

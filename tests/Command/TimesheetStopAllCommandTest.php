@@ -36,13 +36,13 @@ class TimesheetStopAllCommandTest extends KernelTestCase
 
     public function testCommandName(): void
     {
-        $command = $this->application->find('kimai:timesheet:stop-all');
+        $command = $this->application->find('gppro:timesheet:stop-all');
         self::assertInstanceOf(TimesheetStopAllCommand::class, $command);
     }
 
     public function testRun(): void
     {
-        $command = $this->application->find('kimai:timesheet:stop-all');
+        $command = $this->application->find('gppro:timesheet:stop-all');
         $commandTester = new CommandTester($command);
         $commandTester->execute(['command' => $command->getName()]);
 

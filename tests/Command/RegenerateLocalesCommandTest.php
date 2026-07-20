@@ -9,30 +9,30 @@
 
 namespace App\Tests\Command;
 
-use App\Command\ResetDevelopmentCommand;
+use App\Command\RegenerateLocalesCommand;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-#[CoversClass(ResetDevelopmentCommand::class)]
+#[CoversClass(RegenerateLocalesCommand::class)]
 #[Group('integration')]
-class ResetDevelopmentCommandTest extends KernelTestCase
+class RegenerateLocalesCommandTest extends KernelTestCase
 {
     public function testCommandName(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
-        $application->add(new ResetDevelopmentCommand('dev', __DIR__ . '/../../'));
+        $application->add(new RegenerateLocalesCommand(__DIR__ . '/../../', 'test'));
 
-        self::assertTrue($application->has('gppro:reset:dev'));
-        $command = $application->find('gppro:reset:dev');
-        self::assertInstanceOf(ResetDevelopmentCommand::class, $command);
+        self::assertTrue($application->has('gppro:reset:locales'));
+        $command = $application->find('gppro:reset:locales');
+        self::assertInstanceOf(RegenerateLocalesCommand::class, $command);
     }
 
     public function testCommandNameIsNotEnabledInProd(): void
     {
-        $sut = new ResetDevelopmentCommand('prod', __DIR__ . '/../../');
+        $sut = new RegenerateLocalesCommand(__DIR__ . '/../../', 'prod');
         self::assertFalse($sut->isEnabled());
     }
 }

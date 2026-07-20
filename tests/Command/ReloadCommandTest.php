@@ -34,7 +34,7 @@ class ReloadCommandTest extends KernelTestCase
 
     public function testCommandName(): void
     {
-        $command = $this->application->find('kimai:reload');
+        $command = $this->application->find('gppro:reload');
         self::assertInstanceOf(ReloadCommand::class, $command);
     }
 }

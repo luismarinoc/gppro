@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kimai:user:list', description: 'List all users')]
+#[AsCommand(name: 'gppro:user:list', description: 'List all users')]
 final class ListUserCommand extends Command
 {
     public function __construct(private readonly UserRepository $repository)

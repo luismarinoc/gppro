@@ -31,8 +31,8 @@ class ResetTestCommandTest extends KernelTestCase
             'test'
         ));
 
-        self::assertTrue($application->has('kimai:reset:test'));
-        $command = $application->find('kimai:reset:test');
+        self::assertTrue($application->has('gppro:reset:test'));
+        $command = $application->find('gppro:reset:test');
         self::assertInstanceOf(ResetTestCommand::class, $command);
     }
 

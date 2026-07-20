@@ -52,7 +52,7 @@ class VersionCommandTest extends KernelTestCase
 
     protected function getCommandTester(array $options = []): CommandTester
     {
-        $command = $this->application->find('kimai:version');
+        $command = $this->application->find('gppro:version');
         $commandTester = new CommandTester($command);
         $inputs = array_merge(['command' => $command->getName()], $options);
         $commandTester->execute($inputs);

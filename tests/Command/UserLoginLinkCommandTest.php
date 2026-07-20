@@ -41,7 +41,7 @@ class UserLoginLinkCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:login-link');
+        $command = $application->find('gppro:user:login-link');
         self::assertInstanceOf(UserLoginLinkCommand::class, $command);
     }
 }

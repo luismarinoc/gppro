@@ -46,13 +46,13 @@ class DemoteUserCommandTest extends KernelTestCase
     {
         $application = $this->application;
 
-        $command = $application->find('kimai:user:demote');
+        $command = $application->find('gppro:user:demote');
         self::assertInstanceOf(DemoteUserCommand::class, $command);
     }
 
     private function callCommand(?string $username, ?string $role, bool $super = false): CommandTester
     {
-        $command = $this->application->find('kimai:user:demote');
+        $command = $this->application->find('gppro:user:demote');
         $input = [
             'command' => $command->getName(),
         ];

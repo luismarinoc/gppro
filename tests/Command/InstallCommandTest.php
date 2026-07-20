@@ -38,7 +38,13 @@ class InstallCommandTest extends KernelTestCase
 
     public function testCommandName(): void
     {
-        $command = $this->application->find('kimai:install');
+        $command = $this->application->find('gppro:install');
+        self::assertInstanceOf(InstallCommand::class, $command);
+    }
+
+    public function testUpdateAliasResolvesToSameCommand(): void
+    {
+        $command = $this->application->find('gppro:update');
         self::assertInstanceOf(InstallCommand::class, $command);
     }
 }
