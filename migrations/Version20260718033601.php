@@ -50,10 +50,7 @@ final class Version20260718033601 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE kimai2_activities DROP FOREIGN KEY FK_8811FE1C4B3E2EDA');
-        $this->addSql('DROP INDEX IDX_8811FE1C4B3E2EDA ON kimai2_activities');
-        $this->addSql('ALTER TABLE kimai2_activities DROP milestone_id');
-        $this->addSql('ALTER TABLE kimai2_milestones DROP FOREIGN KEY FK_2517D07D166D1F9C');
+        $schema->getTable('kimai2_activities')->dropColumn('milestone_id');
         $schema->dropTable('kimai2_milestones');
     }
 
