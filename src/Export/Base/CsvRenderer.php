@@ -67,7 +67,7 @@ final class CsvRenderer extends AbstractSpreadsheetRenderer implements ExportRen
      */
     private function renderFile(array $exportItems, TimesheetQuery $query): \SplFileInfo
     {
-        $filename = @tempnam(sys_get_temp_dir(), 'kimai-export-csv');
+        $filename = @tempnam(sys_get_temp_dir(), 'gppro-export-csv');
         if (false === $filename) {
             throw new \Exception('Could not open temporary file');
         }

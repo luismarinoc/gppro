@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title" xml:space="preserve">
         <source>wizard.intro.title</source>
-        <target state="translated">Chào mừng đến Kimai</target>
+        <target state="translated">Chào mừng đến gppro</target>
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description" xml:space="preserve">
         <source>wizard.intro.description</source>
-        <target state="translated">Bảng cài đặt này sẽ giúp bạn tùy chỉnh Kimai theo nhu cầu.</target>
+        <target state="translated">Bảng cài đặt này sẽ giúp bạn tùy chỉnh gppro theo nhu cầu.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator" xml:space="preserve">
         <source>wizard.separator</source>
@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description" xml:space="preserve">
         <source>wizard.profile.description</source>
-        <target state="translated">Một vài cài đặt cơ bản giúp bạn sử dụng Kimai dễ dàng hơn.</target>
+        <target state="translated">Một vài cài đặt cơ bản giúp bạn sử dụng gppro dễ dàng hơn.</target>
       </trans-unit>
       <trans-unit id="8p.2pXa" resname="wizard.done.title" xml:space="preserve">
         <source>wizard.done.title</source>

@@ -19,12 +19,12 @@
         <target>Hesabınızı etkinleştirin</target>
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
-        <source>You signed up at the Kimai time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
-        <target state="translated">Kimai zaman izleyicisine %email% e-posta adresiyle kaydoldunuz. Lütfen bağlantının süresi dolmadan birkaç saat içinde hesabınızı etkinleştirin.</target>
+        <source>You signed up at the gppro time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
+        <target state="translated">gppro zaman izleyicisine %email% e-posta adresiyle kaydoldunuz. Lütfen bağlantının süresi dolmadan birkaç saat içinde hesabınızı etkinleştirin.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Kimai'de oturum açın</target>
+        <target state="translated">gppro'de oturum açın</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Oturum aç</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Bu bağlantı yalnızca önümüzdeki 15 dakika boyunca geçerli olacaktır.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject">

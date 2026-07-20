@@ -804,7 +804,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Tạo %date% với %kimai%</target>
+        <target>Tạo %date% với %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Thông tin về Kimai</target>
+        <target>Thông tin về gppro</target>
       </trans-unit>
       <trans-unit id="EGpYQvx" resname="help">
         <source>help</source>
@@ -1620,7 +1620,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="needs-translation">Tại đây bạn có thể quản lý mã API, mã được dùng để xác minh ứng dụng của bạn khi kết nối đến Kimai.</target>
+        <target state="needs-translation">Tại đây bạn có thể quản lý mã API, mã được dùng để xác minh ứng dụng của bạn khi kết nối đến gppro.</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales" xml:space="preserve">
         <source>help_locales</source>

@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">Kimai'ye hoş geldiniz</target>
+        <target state="translated">gppro'ye hoş geldiniz</target>
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">Bu sihirbaz, Kimai'yi ihtiyaçlarınıza göre özelleştirmenize yardımcı olacak.</target>
+        <target state="translated">Bu sihirbaz, gppro'yi ihtiyaçlarınıza göre özelleştirmenize yardımcı olacak.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator">
         <source>wizard.separator</source>
@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">Kimai ile çalışmanızı kolaylaştıracak bazı temel ayarlar.</target>
+        <target state="translated">gppro ile çalışmanızı kolaylaştıracak bazı temel ayarlar.</target>
       </trans-unit>
       <trans-unit id="8p.2pXa" resname="wizard.done.title">
         <source>wizard.done.title</source>

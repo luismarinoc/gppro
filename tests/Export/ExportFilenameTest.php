@@ -28,8 +28,8 @@ class ExportFilenameTest extends TestCase
 
         $sut = new ExportFilename($query);
 
-        self::assertEquals($datePrefix . '-kimai-export', $sut->getFilename());
-        self::assertEquals($datePrefix . '-kimai-export', (string) $sut);
+        self::assertEquals($datePrefix . '-gppro-export', $sut->getFilename());
+        self::assertEquals($datePrefix . '-gppro-export', (string) $sut);
 
         $customer = new Customer('foo');
         $query = new TimesheetQuery();
@@ -88,6 +88,6 @@ class ExportFilenameTest extends TestCase
         $query->addCustomer($customer);
 
         $sut = new ExportFilename($query);
-        self::assertEquals($datePrefix . '-kimai-export', $sut->getFilename());
+        self::assertEquals($datePrefix . '-gppro-export', $sut->getFilename());
     }
 }

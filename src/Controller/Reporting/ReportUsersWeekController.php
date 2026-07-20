@@ -49,7 +49,7 @@ final class ReportUsersWeekController extends AbstractController
         $reader = new Html();
         $spreadsheet = $reader->loadFromString($content);
 
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-export-users-weekly');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-export-users-weekly');
 
         return $writer->getFileResponse($spreadsheet);
     }

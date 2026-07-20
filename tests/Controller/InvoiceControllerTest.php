@@ -465,6 +465,6 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
         $this->assertAccessIsGranted($client, '/invoice/export');
-        $this->assertExcelExportResponse($client, 'kimai-invoices_');
+        $this->assertExcelExportResponse($client, 'gppro-invoices_');
     }
 }

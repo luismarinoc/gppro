@@ -579,7 +579,7 @@ final class ProjectController extends AbstractController
             $entries,
             new ProjectMetaDisplayEvent($query, ProjectMetaDisplayEvent::EXPORT)
         );
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-projects');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-projects');
 
         return $writer->getFileResponse($spreadsheet);
     }

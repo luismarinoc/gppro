@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description" xml:space="preserve">
         <source>wizard.intro.description</source>
-        <target state="translated">Ez a varázsló segít testre szabni a Kimai-t az igényeidnek megfelelően.</target>
+        <target state="translated">Ez a varázsló segít testre szabni a gppro-t az igényeidnek megfelelően.</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator" xml:space="preserve">
         <source>wizard.separator</source>
@@ -16,11 +16,11 @@
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description" xml:space="preserve">
         <source>wizard.profile.description</source>
-        <target state="translated">Néhány alapbeállítás, amely megkönnyíti a Kimai-val végzett munkát.</target>
+        <target state="translated">Néhány alapbeállítás, amely megkönnyíti a gppro-val végzett munkát.</target>
       </trans-unit>
       <trans-unit id="9XidDHG" resname="wizard.intro.title" xml:space="preserve">
         <source>wizard.intro.title</source>
-        <target state="translated">Üdvözöllek a Kimai-ban</target>
+        <target state="translated">Üdvözöllek a gppro-ban</target>
       </trans-unit>
       <trans-unit id="7Vipfs7" resname="wizard.password.title" xml:space="preserve">
         <source>wizard.password.title</source>

@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Создано %date% с %kimai%</target>
+        <target>Создано %date% с %gppro%</target>
       </trans-unit>
       <trans-unit id="ElDyzrx" resname="export.page_of">
         <source>export.page_of</source>
@@ -1128,7 +1128,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>О Kimai</target>
+        <target>О gppro</target>
       </trans-unit>
       <trans-unit id="HNFpvnH" resname="globalActivities">
         <source>globalActivities</source>
@@ -1600,7 +1600,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Здесь вы можете распоряжаться вашими API токенами, которые используются для подтвержденния подлинности вашей заявки для Kimai.</target>
+        <target state="translated">Здесь вы можете распоряжаться вашими API токенами, которые используются для подтвержденния подлинности вашей заявки для gppro.</target>
       </trans-unit>
       <trans-unit id="d9m85KE" resname="locale" xml:space="preserve" approved="no">
         <source>Time, date and currency format</source>

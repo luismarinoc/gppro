@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Prihlásili ste sa do Kimai sledovanie času s emailom %email%. Teraz si musíte Váš účet aktivovať v priebeh niekoľkých hodín predtým než vyprší platnosť linku.</target>
+        <target>Prihlásili ste sa do gppro sledovanie času s emailom %email%. Teraz si musíte Váš účet aktivovať v priebeh niekoľkých hodín predtým než vyprší platnosť linku.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">Resetovať heslo</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">…zabudli ste Vaše heslo? Bez obáv: Kimai Vám pomôže vytvoriť nové:</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">…zabudli ste Vaše heslo? Bez obáv: gppro Vám pomôže vytvoriť nové:</target>
       </trans-unit>
     </body>
   </file>

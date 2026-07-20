@@ -1404,7 +1404,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve" approved="no">
         <source>export.date_copyright</source>
-        <target state="translated">%kimai% உடன் %date% உருவாக்கப்பட்டது</target>
+        <target state="translated">%gppro% உடன் %date% உருவாக்கப்பட்டது</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount" xml:space="preserve" approved="no">
         <source>export.warn_result_amount</source>

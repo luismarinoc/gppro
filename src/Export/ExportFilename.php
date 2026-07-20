@@ -80,7 +80,7 @@ final class ExportFilename
             }
 
             if (!$hasName) {
-                $filename .= '-kimai-export';
+                $filename .= '-gppro-export';
             }
 
             $filename = str_replace(['/', '\\'], '-', $filename);

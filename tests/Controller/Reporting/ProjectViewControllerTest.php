@@ -91,7 +91,7 @@ class ProjectViewControllerTest extends AbstractControllerBaseTestCase
         self::assertNotNull($response->headers->get('Content-Type'));
         self::assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->headers->get('Content-Type'));
         self::assertNotNull($response->headers->get('Content-Disposition'));
-        self::assertStringContainsString('attachment; filename=kimai-export-project-overview_', $response->headers->get('Content-Disposition'));
+        self::assertStringContainsString('attachment; filename=gppro-export-project-overview_', $response->headers->get('Content-Disposition'));
         self::assertStringContainsString('.xlsx', $response->headers->get('Content-Disposition'));
     }
 }

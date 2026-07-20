@@ -1332,7 +1332,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Created %date% with %kimai%</target>
+        <target>Created %date% with %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount">
         <source>export.warn_result_amount</source>
@@ -1576,7 +1576,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>About Kimai</target>
+        <target>About gppro</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales">
         <source>help_locales</source>

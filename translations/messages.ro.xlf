@@ -764,7 +764,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Creat în %date% cu %kimai%</target>
+        <target>Creat în %date% cu %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1120,7 +1120,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Despre Kimai</target>
+        <target>Despre gppro</target>
       </trans-unit>
       <trans-unit id="1MfS6X5" resname="remove_filter">
         <source>remove_filter</source>
@@ -1500,7 +1500,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Aici vă puteți gestiona jetoanele API, care sunt folosite pentru a vă autentifica aplicația la Kimai.</target>
+        <target state="translated">Aici vă puteți gestiona jetoanele API, care sunt folosite pentru a vă autentifica aplicația la gppro.</target>
       </trans-unit>
       <trans-unit id="u4lbYD5" resname="public_holiday.group" xml:space="preserve">
         <source>public_holiday.group</source>

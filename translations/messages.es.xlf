@@ -712,7 +712,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Creado el %date% con %kimai%</target>
+        <target>Creado el %date% con %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1144,7 +1144,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">Acerca de Kimai</target>
+        <target state="translated">Acerca de gppro</target>
       </trans-unit>
       <trans-unit id="HNFpvnH" resname="globalActivities">
         <source>globalActivities</source>

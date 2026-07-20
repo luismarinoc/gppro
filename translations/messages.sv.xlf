@@ -636,7 +636,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">Skapad %date% med %kimai%</target>
+        <target state="translated">Skapad %date% med %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1132,7 +1132,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Om Kimai</target>
+        <target>Om gppro</target>
       </trans-unit>
       <trans-unit id="1MfS6X5" resname="remove_filter">
         <source>remove_filter</source>
@@ -1184,7 +1184,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">API-lösenordet används för integrationer med Kimai.</target>
+        <target state="translated">API-lösenordet används för integrationer med gppro.</target>
       </trans-unit>
       <trans-unit id="FxwWVFI" resname="help.globalActivity">
         <source>help.globalActivity</source>

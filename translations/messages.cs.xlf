@@ -660,7 +660,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Vytvořeno %date% s %kimai%</target>
+        <target>Vytvořeno %date% s %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1128,7 +1128,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>O Kimai</target>
+        <target>O gppro</target>
       </trans-unit>
       <trans-unit id="HNFpvnH" resname="globalActivities">
         <source>globalActivities</source>
@@ -1380,7 +1380,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Zde můžete spravovat své API tokeny, které se používají k autentizaci vaší aplikace pro Kimai.</target>
+        <target state="translated">Zde můžete spravovat své API tokeny, které se používají k autentizaci vaší aplikace pro gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>

@@ -848,7 +848,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" approved="yes">
         <source>export.date_copyright</source>
-        <target state="final">Creato il %date% con %kimai%</target>
+        <target state="final">Creato il %date% con %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries" approved="yes">
         <source>active.entries</source>
@@ -1132,7 +1132,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title" approved="yes">
         <source>about.title</source>
-        <target state="final">Informazioni su Kimai</target>
+        <target state="final">Informazioni su gppro</target>
       </trans-unit>
       <trans-unit id="nqEYrfk" resname="security.unlock.intro" approved="yes">
         <source>security.unlock.intro</source>
@@ -1372,7 +1372,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" approved="yes" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="final">Qui puoi gestire i tuoi token API, che vengono usati per autenticare la tua applicazione su Kimai.</target>
+        <target state="final">Qui puoi gestire i tuoi token API, che vengono usati per autenticare la tua applicazione su gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title" approved="yes">
         <source>api_password.missing_title</source>

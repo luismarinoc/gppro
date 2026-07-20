@@ -11,8 +11,8 @@ namespace App\Validator\Constraints;
 
 final class TimesheetLongRunning extends TimesheetConstraint
 {
-    public const LONG_RUNNING = 'kimai-timesheet-long-running-01';
-    public const MAXIMUM = 'kimai-timesheet-long-running-02';
+    public const LONG_RUNNING = 'gppro-timesheet-long-running-01';
+    public const MAXIMUM = 'gppro-timesheet-long-running-02';
 
     protected const ERROR_NAMES = [
         self::LONG_RUNNING => 'TIMESHEET_LONG_RUNNING',

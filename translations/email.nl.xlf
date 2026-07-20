@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>U hebt zich aangemeld bij de Kimai tijdregistratie met de e-mail %email%. Activeer uw account alstublieft in de komende uren, voordat de link afloopt.</target>
+        <target>U hebt zich aangemeld bij de gppro tijdregistratie met de e-mail %email%. Activeer uw account alstublieft in de komende uren, voordat de link afloopt.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">Reset uw wachtwoord</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">Maakt u zich geen zorgen, Kimai zal u helpen om er een nieuw te maken!</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">Maakt u zich geen zorgen, gppro zal u helpen om er een nieuw te maken!</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" xml:space="preserve">
         <source>absence_created_supervisor_subject</source>

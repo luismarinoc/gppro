@@ -708,7 +708,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target state="translated">%date% tarihinde %kimai% ile oluşturuldu</target>
+        <target state="translated">%date% tarihinde %gppro% ile oluşturuldu</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target state="translated">Kimai Hakkında</target>
+        <target state="translated">gppro Hakkında</target>
       </trans-unit>
       <trans-unit id="853W5Iu" resname="security.unlock.button">
         <source>security.unlock.button</source>
@@ -1336,7 +1336,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Burada, uygulamanız ile Kimai arasında kimlik doğrulaması yapmak için kullanılan API belirteçlerinizi yönetebilirsiniz.</target>
+        <target state="translated">Burada, uygulamanız ile gppro arasında kimlik doğrulaması yapmak için kullanılan API belirteçlerinizi yönetebilirsiniz.</target>
       </trans-unit>
       <trans-unit id="ZZaqTEr" resname="no_activity">
         <source>no_activity</source>

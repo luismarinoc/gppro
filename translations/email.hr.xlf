@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target state="translated">Prijavio/prijavila si se na Kimaijevo evidentiranje vremena s e-mail adresom %email%. Aktiviraj svoj račun u idućih par sati prije nego što poveznica istekne.</target>
+        <target state="translated">Prijavio/prijavila si se na gpprojevo evidentiranje vremena s e-mail adresom %email%. Aktiviraj svoj račun u idućih par sati prije nego što poveznica istekne.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Prijavi se na Kimai</target>
+        <target state="translated">Prijavi se na gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Prijavi se</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Ova će poveznica vrijediti samo sljedećih 15 minuta.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject">

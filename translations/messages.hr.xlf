@@ -944,7 +944,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Stvoreno %date% s %kimai%</target>
+        <target>Stvoreno %date% s %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount">
         <source>export.warn_result_amount</source>
@@ -1132,7 +1132,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Kimai informacije</target>
+        <target>gppro informacije</target>
       </trans-unit>
       <trans-unit id="BrOQ92O" resname="notifications.denied">
         <source>You have rejected notifications. Please refer to your web-browser documentation to find out how to turn them on.</source>
@@ -1272,7 +1272,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Ovdje možeš upravljati svojim API tokenima koji se koriste za autentifikaciju tvoje aplikacije u Kimaiju.</target>
+        <target state="translated">Ovdje možeš upravljati svojim API tokenima koji se koriste za autentifikaciju tvoje aplikacije u gpproju.</target>
       </trans-unit>
       <trans-unit id="WOFPb2i" resname="skin.dark" xml:space="preserve">
         <source>skin.dark</source>

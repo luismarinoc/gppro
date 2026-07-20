@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>이메일 %email%로 Kimai 시간 트래커에 등록했습니다. 이제 링크가 만료되기 전에 사용자 계정을 활성화해야합니다.</target>
+        <target>이메일 %email%로 gppro 시간 트래커에 등록했습니다. 이제 링크가 만료되기 전에 사용자 계정을 활성화해야합니다.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,8 +35,8 @@
         <target state="needs-translation">사용자 비밀번호 재설정</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
-        <target state="needs-translation">… 비밀번호를 잊어버렸나요? 걱정하지 마세요: Kimai가 새 계정을 만드는 데 도움을 줄 것입니다:</target>
+        <source>Don't worry, gppro will help you create a new one!</source>
+        <target state="needs-translation">… 비밀번호를 잊어버렸나요? 걱정하지 마세요: gppro가 새 계정을 만드는 데 도움을 줄 것입니다:</target>
       </trans-unit>
     </body>
   </file>

@@ -1424,7 +1424,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Тук можете да управлявате вашите API жетони, които се използват за удостоверяване на вашето приложение към Kimai.</target>
+        <target state="translated">Тук можете да управлявате вашите API жетони, които се използват за удостоверяване на вашето приложение към gppro.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title" xml:space="preserve">
         <source>api_password.missing_title</source>
@@ -1460,7 +1460,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title" xml:space="preserve">
         <source>about.title</source>
-        <target state="translated">За Kimai</target>
+        <target state="translated">За gppro</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales" xml:space="preserve">
         <source>help_locales</source>
@@ -1924,7 +1924,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve">
         <source>export.date_copyright</source>
-        <target state="translated">Създадено %date% с %kimai%</target>
+        <target state="translated">Създадено %date% с %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount" xml:space="preserve">
         <source>export.warn_result_amount</source>

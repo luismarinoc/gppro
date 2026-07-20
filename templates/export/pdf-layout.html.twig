@@ -61,7 +61,7 @@
     {% if company is not empty %}
         {{ company }} &ndash; {{ now|date_time }}
     {% else %}
-        {{ 'export.date_copyright'|trans({'%date%': now|date_time, '%kimai%': '<a href="' ~ constant('App\\Constants::HOMEPAGE') ~ '">' ~ constant('App\\Constants::SOFTWARE') ~ '</a>'})|raw }}
+        {{ 'export.date_copyright'|trans({'%date%': now|date_time, '%gppro%': '<a href="' ~ constant('App\\Constants::HOMEPAGE') ~ '">' ~ constant('App\\Constants::SOFTWARE') ~ '</a>'})|raw }}
     {% endif %}
     </td>
 </tr>

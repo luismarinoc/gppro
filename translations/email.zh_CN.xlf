@@ -12,10 +12,10 @@
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">登录 Kimai</target>
+        <target state="translated">登录 gppro</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">此链接仅在接下来的15分钟内有效。</target>
       </trans-unit>
       <trans-unit id="8jDJmrK" resname="automated_email_dont_answer">
@@ -36,7 +36,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target state="translated">您在 Kimai 时间跟踪器上注册了电子邮件 %email%。请在接下来的几个小时内激活您的账户，直到链接过期。</target>
+        <target state="translated">您在 gppro 时间跟踪器上注册了电子邮件 %email%。请在接下来的几个小时内激活您的账户，直到链接过期。</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" xml:space="preserve">
         <source>absence_created_supervisor_subject</source>

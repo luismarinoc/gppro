@@ -83,7 +83,7 @@ final class ProjectViewController extends AbstractController
         $reader = new Html();
         $spreadsheet = $reader->loadFromString($content);
 
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-export-project-overview');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-export-project-overview');
 
         return $writer->getFileResponse($spreadsheet);
     }

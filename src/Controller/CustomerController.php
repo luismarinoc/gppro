@@ -412,7 +412,7 @@ final class CustomerController extends AbstractController
             $entries,
             new CustomerMetaDisplayEvent($query, CustomerMetaDisplayEvent::EXPORT)
         );
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-customers');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-customers');
 
         return $writer->getFileResponse($spreadsheet);
     }

@@ -19,12 +19,12 @@
         <target state="final">Attiva il tuo account</target>
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro" approved="yes">
-        <source>You signed up at the Kimai time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
-        <target state="final">Ti sei registrato al time-tracker Kimai con l'indirizzo e-mail %email%. Attiva il tuo account nelle prossime ore, prima che il collegamento scada.</target>
+        <source>You signed up at the gppro time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
+        <target state="final">Ti sei registrato al time-tracker gppro con l'indirizzo e-mail %email%. Attiva il tuo account nelle prossime ore, prima che il collegamento scada.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" approved="yes" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="final">Accedi a Kimai</target>
+        <target state="final">Accedi a gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" approved="yes" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="final">Registrazione</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" approved="yes" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="final">Questo link sarà valido solo per i prossimi 15 minuti.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" approved="yes">

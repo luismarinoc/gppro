@@ -202,7 +202,7 @@ final class UserController extends AbstractController
             $entries,
             new UserPreferenceDisplayEvent(UserPreferenceDisplayEvent::EXPORT)
         );
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-users');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-users');
 
         return $writer->getFileResponse($spreadsheet);
     }

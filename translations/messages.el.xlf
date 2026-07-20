@@ -900,7 +900,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Δημιουργήθηκε την %date% με το %kimai%</target>
+        <target>Δημιουργήθηκε την %date% με το %gppro%</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Σχετικά με το Kimai</target>
+        <target>Σχετικά με το gppro</target>
       </trans-unit>
       <trans-unit id="OJ.wI1U" resname="invoiceText">
         <source>invoiceText</source>
@@ -1380,7 +1380,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Εδώ μπορείτε να διαχειριστείτε τα διακριτικά API, τα οποία χρησιμοποιούνται για τον έλεγχο ταυτότητας της εφαρμογής σας στο Kimai.</target>
+        <target state="translated">Εδώ μπορείτε να διαχειριστείτε τα διακριτικά API, τα οποία χρησιμοποιούνται για τον έλεγχο ταυτότητας της εφαρμογής σας στο gppro.</target>
       </trans-unit>
       <trans-unit id="wYcx0So" resname="search.no_results" xml:space="preserve">
         <source>search.no_results</source>

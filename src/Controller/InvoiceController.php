@@ -388,7 +388,7 @@ final class InvoiceController extends AbstractController
             $entries,
             new InvoiceMetaDisplayEvent($query, InvoiceMetaDisplayEvent::INVOICE)
         );
-        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'kimai-invoices');
+        $writer = new BinaryFileResponseWriter(new XlsxWriter(), 'gppro-invoices');
 
         return $writer->getFileResponse($spreadsheet);
     }

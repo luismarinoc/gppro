@@ -1108,7 +1108,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright" xml:space="preserve">
         <source>export.date_copyright</source>
-        <target state="translated">Loodud %date% rakendusega %kimai%</target>
+        <target state="translated">Loodud %date% rakendusega %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount" xml:space="preserve">
         <source>export.warn_result_amount</source>

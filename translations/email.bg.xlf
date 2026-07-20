@@ -19,12 +19,12 @@
         <target state="translated">Активирайте акаунта си</target>
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro" xml:space="preserve">
-        <source>You signed up at the Kimai time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
-        <target state="translated">Регистрирахте се във времето за проследяване на Kimai с имейл адрес %email%. Моля, активирайте акаунта си през следващите няколко часа, преди линкът да изтече.</target>
+        <source>You signed up at the gppro time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
+        <target state="translated">Регистрирахте се във времето за проследяване на gppro с имейл адрес %email%. Моля, активирайте акаунта си през следващите няколко часа, преди линкът да изтече.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Влезте в Kimai</target>
+        <target state="translated">Влезте в gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve" approved="no">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Вход</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve" approved="no">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Този линк ще бъде валиден само през следващите 15 минути.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" xml:space="preserve">

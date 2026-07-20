@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="9XidDHG" resname="wizard.intro.title">
         <source>wizard.intro.title</source>
-        <target state="translated">ようこそ、Kimai へ</target>
+        <target state="translated">ようこそ、gppro へ</target>
       </trans-unit>
       <trans-unit id="FCMK0ph" resname="wizard.separator">
         <source>wizard.separator</source>
@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="X0ws5mu" resname="wizard.intro.description">
         <source>wizard.intro.description</source>
-        <target state="translated">このウィザードは、Kimai をあなたのニーズに合わせてカスタマイズするのに便利です。</target>
+        <target state="translated">このウィザードは、gppro をあなたのニーズに合わせてカスタマイズするのに便利です。</target>
       </trans-unit>
       <trans-unit id="Mo1506M" resname="wizard.profile.description">
         <source>wizard.profile.description</source>
-        <target state="translated">Kimai での作業をより快適にするための基本的な設定をいくつかご紹介します。</target>
+        <target state="translated">gppro での作業をより快適にするための基本的な設定をいくつかご紹介します。</target>
       </trans-unit>
       <trans-unit id="k1SzMuI" resname="wizard.done.description">
         <source>wizard.done.description</source>

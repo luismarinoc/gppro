@@ -1312,7 +1312,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Erstellt %date% mit %kimai%</target>
+        <target>Erstellt %date% mit %gppro%</target>
       </trans-unit>
       <trans-unit id="W92QGbY" resname="export.warn_result_amount">
         <source>export.warn_result_amount</source>
@@ -1512,7 +1512,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro">
         <source>api_password.intro</source>
-        <target state="translated">Hier verwalten Sie Ihre API-Tokens, welche zur Authentifizierung Ihrer Anwendung gegenüber Kimai dienen.</target>
+        <target state="translated">Hier verwalten Sie Ihre API-Tokens, welche zur Authentifizierung Ihrer Anwendung gegenüber gppro dienen.</target>
       </trans-unit>
       <trans-unit id="QT8.BCN" resname="api_password.missing_title">
         <source>api_password.missing_title</source>
@@ -1556,7 +1556,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Über Kimai</target>
+        <target>Über gppro</target>
       </trans-unit>
       <trans-unit id="i_XOmN4" resname="help_locales">
         <source>help_locales</source>

@@ -73,7 +73,7 @@ class UserControllerTest extends AbstractControllerBaseTestCase
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
         $this->assertAccessIsGranted($client, '/admin/user/export');
-        $this->assertExcelExportResponse($client, 'kimai-users_');
+        $this->assertExcelExportResponse($client, 'gppro-users_');
     }
 
     public function testExportActionWithSearchTermQuery(): void
@@ -93,7 +93,7 @@ class UserControllerTest extends AbstractControllerBaseTestCase
             'page' => 1,
         ]);
 
-        $this->assertExcelExportResponse($client, 'kimai-users_');
+        $this->assertExcelExportResponse($client, 'gppro-users_');
     }
 
     public function testCreateAction(): void

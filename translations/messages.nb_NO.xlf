@@ -880,7 +880,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>Laget %date% med %kimai%</target>
+        <target>Laget %date% med %gppro%</target>
       </trans-unit>
       <trans-unit id="WVU_S.A" resname="recent.activities">
         <source>recent.activities</source>
@@ -1116,7 +1116,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Om Kimai</target>
+        <target>Om gppro</target>
       </trans-unit>
       <trans-unit id="OJ.wI1U" resname="invoiceText">
         <source>invoiceText</source>
@@ -1332,7 +1332,7 @@
       </trans-unit>
       <trans-unit id="JSBReoa" resname="api_password.intro" xml:space="preserve">
         <source>api_password.intro</source>
-        <target state="translated">Her kan du administrere dine API-nøkler, som brukes til å autentisere applikasjonen din med Kimai.</target>
+        <target state="translated">Her kan du administrere dine API-nøkler, som brukes til å autentisere applikasjonen din med gppro.</target>
       </trans-unit>
       <trans-unit id="5NugIxO" resname="includeWithBudget">
         <source>includeWithBudget</source>

@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target>Bạn đã đăng ký theo dõi thời gian Kimai với email %email%. Bây giờ bạn phải kích hoạt tài khoản của mình trong vài giờ tới, trước khi liên kết hết hạn.</target>
+        <target>Bạn đã đăng ký theo dõi thời gian gppro với email %email%. Bây giờ bạn phải kích hoạt tài khoản của mình trong vài giờ tới, trước khi liên kết hết hạn.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
-        <target state="translated">Đăng nhập vào Kimai</target>
+        <target state="translated">Đăng nhập vào gppro</target>
       </trans-unit>
       <trans-unit id="G2mhn_2" resname="reset.title" xml:space="preserve">
         <source>Forgot your password?</source>
@@ -35,7 +35,7 @@
         <target state="translated">Đăng nhập</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">Liên kết sẽ hết hạn sau 15 phút nữa.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" xml:space="preserve">

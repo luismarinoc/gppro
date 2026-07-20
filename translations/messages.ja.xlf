@@ -636,7 +636,7 @@
       </trans-unit>
       <trans-unit id="vKY0tof" resname="export.date_copyright">
         <source>export.date_copyright</source>
-        <target>%kimai% で %date% に作成されました</target>
+        <target>%gppro% で %date% に作成されました</target>
       </trans-unit>
       <trans-unit id="OxdYMR3" resname="active.entries">
         <source>active.entries</source>
@@ -760,7 +760,7 @@
       </trans-unit>
       <trans-unit id="3Clo55j" resname="about.title">
         <source>about.title</source>
-        <target>Kimai について</target>
+        <target>gppro について</target>
       </trans-unit>
       <trans-unit id="853W5Iu" resname="security.unlock.button">
         <source>security.unlock.button</source>
@@ -840,7 +840,7 @@
       </trans-unit>
       <trans-unit id="mz4ieCN" resname="donate">
         <source>donate</source>
-        <target>Kimai の発展のために寄付を行う</target>
+        <target>gppro の発展のために寄付を行う</target>
       </trans-unit>
       <trans-unit id="cR5DD88" resname="invoice_number_generator.date">
         <source>invoice_number_generator.date</source>

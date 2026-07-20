@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="IkjnHoP" resname="registration.intro">
         <source>registration.intro</source>
-        <target state="translated">شما در رهگیر زمان Kimai با ایمیل %email% ثبت نام کرده اید. اکنون باید ایمیل خود را در همین زمان، قبل از باطل شدن لینک فعال کنید.</target>
+        <target state="translated">شما در رهگیر زمان gppro با ایمیل %email% ثبت نام کرده اید. اکنون باید ایمیل خود را در همین زمان، قبل از باطل شدن لینک فعال کنید.</target>
       </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
@@ -35,7 +35,7 @@
         <target state="translated">وارد شوید</target>
       </trans-unit>
       <trans-unit id="rhkMAep" resname="reset.intro" xml:space="preserve">
-        <source>Don't worry, Kimai will help you create a new one!</source>
+        <source>Don't worry, gppro will help you create a new one!</source>
         <target state="translated">این لینک فقط تا ۱۵ دقیقه آینده معتبر خواهد بود.</target>
       </trans-unit>
       <trans-unit id="yohIAA_" resname="absence_created_supervisor_subject" xml:space="preserve">
