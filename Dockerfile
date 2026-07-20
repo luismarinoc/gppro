@@ -233,7 +233,7 @@ LABEL org.opencontainers.image.title="gppro" \
       org.opencontainers.image.documentation="https://github.com/tbema/gppro" \
       org.opencontainers.image.source="https://github.com/tbema/gppro" \
       org.opencontainers.image.version="${GPPRO}" \
-      org.opencontainers.image.vendor="Kevin Papst" \
+      org.opencontainers.image.vendor="tbema" \
       org.opencontainers.image.licenses="AGPL-3.0"
 
 ENV GPPRO=${GPPRO}
