@@ -11,38 +11,38 @@
     --tblr-card-border-width: 0px;
     --tblr-card-box-shadow: 0 2px 16px rgba(27, 58, 107, 0.08);
 
-    --kimai-public-holiday: var(--tblr-lime);
-    --kimai-holiday: var(--tblr-green);
-    --kimai-sickness: var(--tblr-yellow);
-    --kimai-time-off: var(--tblr-blue);
-    --kimai-other: var(--tblr-purple);
+    --gppro-public-holiday: var(--tblr-lime);
+    --gppro-holiday: var(--tblr-green);
+    --gppro-sickness: var(--tblr-yellow);
+    --gppro-time-off: var(--tblr-blue);
+    --gppro-other: var(--tblr-purple);
 
-    --kimai-public-holiday-bg: var(--tblr-lime-lt);
-    --kimai-holiday-bg: var(--tblr-green-lt);
-    --kimai-sickness-bg: var(--tblr-yellow-lt);
-    --kimai-time-off-bg: var(--tblr-blue-lt);
-    --kimai-other-bg: var(--tblr-purple-lt);
+    --gppro-public-holiday-bg: var(--tblr-lime-lt);
+    --gppro-holiday-bg: var(--tblr-green-lt);
+    --gppro-sickness-bg: var(--tblr-yellow-lt);
+    --gppro-time-off-bg: var(--tblr-blue-lt);
+    --gppro-other-bg: var(--tblr-purple-lt);
 
-    --kimai-unexpected-bg: var(--tblr-pink-lt);
-    --kimai-missing-bg: var(--tblr-pink-lt);
-    --kimai-weekend-bg: var(--tblr-bg-surface-tertiary);
+    --gppro-unexpected-bg: var(--tblr-pink-lt);
+    --gppro-missing-bg: var(--tblr-pink-lt);
+    --gppro-weekend-bg: var(--tblr-bg-surface-tertiary);
 }
 
-.public-holiday { color: var(--kimai-public-holiday); }
-.holiday { color: var(--kimai-holiday); }
-.sickness, .sickness-child { color: var(--kimai-sickness); }
-.time-off { color: var(--kimai-time-off); }
-.other, .parental, .unpaid-vacation { color: var(--kimai-other); }
+.public-holiday { color: var(--gppro-public-holiday); }
+.holiday { color: var(--gppro-holiday); }
+.sickness, .sickness-child { color: var(--gppro-sickness); }
+.time-off { color: var(--gppro-time-off); }
+.other, .parental, .unpaid-vacation { color: var(--gppro-other); }
 
-.bg-public-holiday { background-color: var(--kimai-public-holiday-bg); --tblr-table-bg: var(--kimai-public-holiday-bg); i.fas{ color: var(--kimai-public-holiday); } };
-.bg-holiday { background-color: var(--kimai-holiday-bg); --tblr-table-bg: var(--kimai-holiday-bg); i.fas{ color: var(--kimai-holiday); } };
-.bg-sickness, .bg-sickness-child { background-color: var(--kimai-sickness-bg); --tblr-table-bg: var(--kimai-sickness-bg); i.fas{ color: var(--kimai-sickness); } };
-.bg-time-off { background-color: var(--kimai-time-off-bg); --tblr-table-bg: var(--kimai-time-off-bg); i.fas{ color: var(--kimai-time-off); } };
-.bg-other, .bg-parental, .bg-unpaid-vacation { background-color: var(--kimai-other-bg); --tblr-table-bg: var(--kimai-other-bg); i.fas{ color: var(--kimai-other); } };
+.bg-public-holiday { background-color: var(--gppro-public-holiday-bg); --tblr-table-bg: var(--gppro-public-holiday-bg); i.fas{ color: var(--gppro-public-holiday); } };
+.bg-holiday { background-color: var(--gppro-holiday-bg); --tblr-table-bg: var(--gppro-holiday-bg); i.fas{ color: var(--gppro-holiday); } };
+.bg-sickness, .bg-sickness-child { background-color: var(--gppro-sickness-bg); --tblr-table-bg: var(--gppro-sickness-bg); i.fas{ color: var(--gppro-sickness); } };
+.bg-time-off { background-color: var(--gppro-time-off-bg); --tblr-table-bg: var(--gppro-time-off-bg); i.fas{ color: var(--gppro-time-off); } };
+.bg-other, .bg-parental, .bg-unpaid-vacation { background-color: var(--gppro-other-bg); --tblr-table-bg: var(--gppro-other-bg); i.fas{ color: var(--gppro-other); } };
 
-.bg-unexpected { background-color: var(--kimai-unexpected-bg); --tblr-table-bg: var(--kimai-unexpected-bg); };
-.bg-missing { background-color: var(--kimai-missing-bg); --tblr-table-bg: var(--kimai-missing-bg); };
-.bg-weekend { background-color: var(--kimai-weekend-bg); --tblr-table-bg: var(--kimai-weekend-bg); };
+.bg-unexpected { background-color: var(--gppro-unexpected-bg); --tblr-table-bg: var(--gppro-unexpected-bg); };
+.bg-missing { background-color: var(--gppro-missing-bg); --tblr-table-bg: var(--gppro-missing-bg); };
+.bg-weekend { background-color: var(--gppro-weekend-bg); --tblr-table-bg: var(--gppro-weekend-bg); };
 
 .navbar[data-bs-theme="dark"] {
     --tblr-bg-surface: #1B3A6B;
