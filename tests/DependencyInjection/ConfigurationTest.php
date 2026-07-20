@@ -46,7 +46,7 @@ class ConfigurationTest extends TestCase
     public function testValidateDataDir(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.data_dir": Data directory does not exist');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.data_dir": Data directory does not exist');
 
         $this->assertConfig($this->getMinConfig('sdfsdfsdfds'), []);
     }
@@ -54,7 +54,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapConfigUserBaseDn(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap": The "ldap.user.baseDn" config must be set if LDAP is activated.');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap": The "ldap.user.baseDn" config must be set if LDAP is activated.');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -70,7 +70,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapConfig(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.connection": The ldap.connection.useSsl and ldap.connection.useStartTls options are mutually exclusive.');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.connection": The ldap.connection.useSsl and ldap.connection.useStartTls options are mutually exclusive.');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -86,7 +86,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapFilterIncludingReplacer(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -101,7 +101,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapFilterMissingStartingParenthesis(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -116,7 +116,7 @@ class ConfigurationTest extends TestCase
     public function testValidateCalendarDragDropMaxEntries(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.calendar.dragdrop_amount": The dragdrop_amount must be between 0 and 20');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.calendar.dragdrop_amount": The dragdrop_amount must be between 0 and 20');
 
         $config = $this->getMinConfig();
         $config['calendar'] = [
@@ -214,7 +214,7 @@ class ConfigurationTest extends TestCase
                     'theme' => 'blue',
                 ],
             ],
-            'kimai.user.theme',
+            'gppro.user.theme',
         ];
 
         yield 'user default invalid theme' => [
@@ -225,7 +225,7 @@ class ConfigurationTest extends TestCase
                     ],
                 ],
             ],
-            'kimai.defaults.user.theme',
+            'gppro.defaults.user.theme',
         ];
     }
 
@@ -243,7 +243,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapFilterInvalidParenthesisCounter(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.user.filter": The ldap.user.filter must be enclosed by a matching number of parentheses "()" and must NOT contain a "%s" replacer');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -258,7 +258,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapAccountFilterFormatMissingUserAttributeReplacer(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -273,7 +273,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapAccountFilterFormatMissingStartingParenthesis(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -288,7 +288,7 @@ class ConfigurationTest extends TestCase
     public function testValidateLdapAccountFilterFormatInvalidParenthesisCounter(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.ldap.connection.accountFilterFormat": The accountFilterFormat must be enclosed by a matching number of parentheses "()" and contain one "%s" replacer for the username');
 
         $config = $this->getMinConfig();
         $config['ldap'] = [
@@ -303,7 +303,7 @@ class ConfigurationTest extends TestCase
     public function testValidateSamlIsMissingMappingForEmail(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.saml": You need to configure a SAML mapping for the email attribute.');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.saml": You need to configure a SAML mapping for the email attribute.');
 
         $config = $this->getMinConfig();
         $config['saml'] = [
@@ -327,7 +327,7 @@ class ConfigurationTest extends TestCase
     public function testValidateSamlFailsIfUsernameIsUsed(string $field): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "kimai.saml.mapping.1.kimai": You cannot configure "username" and "userIdentifier" for SAML attribute mapping');
+        $this->expectExceptionMessage('Invalid configuration for path "gppro.saml.mapping.1.kimai": You cannot configure "username" and "userIdentifier" for SAML attribute mapping');
 
         $config = $this->getMinConfig();
         $config['saml'] = [

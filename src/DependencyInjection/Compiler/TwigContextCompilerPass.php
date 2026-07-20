@@ -32,14 +32,14 @@ final class TwigContextCompilerPass implements CompilerPassInterface
         $definition = $container->getDefinition('twig.loader.native_filesystem');
 
         $path = \dirname(\dirname(\dirname(__DIR__))) . DIRECTORY_SEPARATOR;
-        foreach ($container->getParameter('kimai.invoice.documents') as $invoicePath) {
+        foreach ($container->getParameter('gppro.invoice.documents') as $invoicePath) {
             if (!is_dir($path . $invoicePath)) {
                 continue;
             }
             $definition->addMethodCall('addPath', [$path . $invoicePath, 'invoice']);
         }
 
-        foreach ($container->getParameter('kimai.export.documents') as $exportPath) {
+        foreach ($container->getParameter('gppro.export.documents') as $exportPath) {
             if (!is_dir($path . $exportPath)) {
                 continue;
             }

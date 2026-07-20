@@ -35,8 +35,8 @@ final class RolePermissionManager
     private bool $isInitialized = false;
 
     /**
-     * @param array<string, array<string, bool>> $permissions as defined in kimai.yaml
-     * @param array<string, bool> $permissionNames as defined in kimai.yaml
+     * @param array<string, array<string, bool>> $permissions as defined in gppro.yaml
+     * @param array<string, bool> $permissionNames as defined in gppro.yaml
      */
     public function __construct(
         private readonly PermissionService $service,

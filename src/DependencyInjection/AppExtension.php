@@ -27,7 +27,7 @@ final class AppExtension extends Extension
         try {
             $config = $this->processConfiguration($configuration, $configs);
         } catch (InvalidConfigurationException $e) {
-            trigger_error('Found invalid "kimai" configuration: ' . $e->getMessage());
+            trigger_error('Found invalid "gppro" configuration: ' . $e->getMessage());
             throw $e;
         }
 
@@ -45,17 +45,17 @@ final class AppExtension extends Extension
         if (empty($config['data_dir'])) {
             $config['data_dir'] = $container->getParameter('kernel.project_dir') . '/var/data';
         }
-        $container->setParameter('kimai.data_dir', $config['data_dir']);
-        $container->setParameter('kimai.plugin_dir', $container->getParameter('kernel.project_dir') . Kernel::PLUGIN_DIRECTORY);
+        $container->setParameter('gppro.data_dir', $config['data_dir']);
+        $container->setParameter('gppro.plugin_dir', $container->getParameter('kernel.project_dir') . Kernel::PLUGIN_DIRECTORY);
 
         $this->setLanguageFormats($container);
 
-        $container->setParameter('kimai.invoice.documents', $config['invoice']['documents']);
-        $container->setParameter('kimai.export.documents', $config['export']['documents']);
+        $container->setParameter('gppro.invoice.documents', $config['invoice']['documents']);
+        $container->setParameter('gppro.export.documents', $config['export']['documents']);
 
         $this->createPermissionParameter($config['permissions'], $container);
-        $container->setParameter('kimai.timesheet.rates', $config['timesheet']['rates']);
-        $container->setParameter('kimai.timesheet.rounding', $config['timesheet']['rounding']);
+        $container->setParameter('gppro.timesheet.rates', $config['timesheet']['rates']);
+        $container->setParameter('gppro.timesheet.rounding', $config['timesheet']['rounding']);
 
         if (!isset($config['ldap']['connection']['baseDn'])) {
             $config['ldap']['connection']['baseDn'] = $config['ldap']['user']['baseDn'];
@@ -70,8 +70,8 @@ final class AppExtension extends Extension
         }
 
         // this should happen always at the end, so bundles do not mess with the base configuration
-        if ($container->hasParameter('kimai.bundles.config')) {
-            $bundleConfig = $container->getParameter('kimai.bundles.config');
+        if ($container->hasParameter('gppro.bundles.config')) {
+            $bundleConfig = $container->getParameter('gppro.bundles.config');
             if (!\is_array($bundleConfig)) {
                 throw new \Exception('Invalid bundle configuration found, skipping all bundle configuration');
             }
@@ -102,7 +102,7 @@ final class AppExtension extends Extension
             $newConfig[implode('.', $keys)] = $value; // @phpstan-ignore argument.type
         }
 
-        $container->setParameter('kimai.config', $newConfig);
+        $container->setParameter('gppro.config', $newConfig);
     }
 
     private function setLanguageFormats(ContainerBuilder $container): void
@@ -131,11 +131,11 @@ final class AppExtension extends Extension
 
         ksort($appLocales);
 
-        $container->setParameter('kimai.languages', $appLocales);
+        $container->setParameter('gppro.languages', $appLocales);
     }
 
     /**
-     * Performs some pre-compilation on the configured permissions from kimai.yaml
+     * Performs some pre-compilation on the configured permissions from gppro.yaml
      * to save us from constant array lookups from during runtime.
      *
      * @param array $config
@@ -159,7 +159,7 @@ final class AppExtension extends Extension
                     $exception = new InvalidConfigurationException(
                         'Configured permission set "' . $set . '" for role "' . $role . '" is unknown'
                     );
-                    $exception->setPath('kimai.permissions.maps.' . $role);
+                    $exception->setPath('gppro.permissions.maps.' . $role);
                     throw $exception;
                 }
                 $roles[$role] = array_merge($roles[$role] ?? [], $this->extractSinglePermissionsFromSet($config, $set));
@@ -191,9 +191,9 @@ final class AppExtension extends Extension
             }
         }
 
-        $container->setParameter('kimai.permissions', $config['roles']);
-        $container->setParameter('kimai.permission_names', $names);
-        $container->setParameter('kimai.permission_roles', array_map('strtoupper', array_values(array_unique($roles))));
+        $container->setParameter('gppro.permissions', $config['roles']);
+        $container->setParameter('gppro.permission_names', $names);
+        $container->setParameter('gppro.permission_roles', array_map('strtoupper', array_values(array_unique($roles))));
     }
 
     private function extractSinglePermissionsFromSet(array $permissions, string $name): array
@@ -213,6 +213,6 @@ final class AppExtension extends Extension
 
     public function getAlias(): string
     {
-        return 'kimai';
+        return 'gppro';
     }
 }
