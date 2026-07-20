@@ -53,13 +53,13 @@ nelmio_api_doc:
                 bearer:
                     type: 'http'
                     description: 'API Token'
-                    bearerFormat: 'KIMAI'
+                    bearerFormat: 'GPPRO'
                     scheme: 'bearer'
     documentation:
         info:
-            title: Kimai - API
+            title: gppro - API
             description: |
-                JSON API for the Kimai time-tracking software. Find more infos in our [API documentation](https://www.kimai.org/documentation/rest-api.html).
+                JSON API for the gppro time-tracking software. Find more infos in our [API documentation](https://github.com/tbema/gppro).
             version: '1.1'
         security:
             - bearer: []
