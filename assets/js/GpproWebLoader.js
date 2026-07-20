@@ -1,5 +1,5 @@
 /*
- * This file is part of the Kimai time-tracking app.
+ * This file is part of the gppro time-tracking app.
  *
  * Main JS application file for Kimai 2. This file should be included in all pages.
  *
