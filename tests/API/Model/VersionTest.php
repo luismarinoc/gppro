@@ -23,6 +23,6 @@ class VersionTest extends TestCase
 
         self::assertEquals(Constants::VERSION, $sut->version);
         self::assertEquals(Constants::VERSION_ID, $sut->versionId);
-        self::assertEquals(Constants::SOFTWARE . ' ' . Constants::VERSION . ' by Kevin Papst.', $sut->copyright);
+        self::assertEquals(Constants::SOFTWARE . ' ' . Constants::VERSION . ' by tbema.', $sut->copyright);
     }
 }

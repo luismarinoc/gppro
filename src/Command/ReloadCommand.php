@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @codeCoverageIgnore
  */
-#[AsCommand(name: 'gppro:reload', description: 'Reload Kimai caches')]
+#[AsCommand(name: 'gppro:reload', description: 'Reload gppro caches')]
 final class ReloadCommand extends Command
 {
     public function __construct(

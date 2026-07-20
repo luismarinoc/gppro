@@ -43,6 +43,6 @@ final class Version
     {
         $this->version = Constants::VERSION;
         $this->versionId = Constants::VERSION_ID;
-        $this->copyright = Constants::SOFTWARE . ' ' . Constants::VERSION . ' by Kevin Papst.';
+        $this->copyright = Constants::SOFTWARE . ' ' . Constants::VERSION . ' by tbema.';
     }
 }
