@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproDatePicker: single date selects (currently unused)
+ * [GPPRO] GpproDatePicker: single date selects (currently unused)
  */
 
 import { Litepicker } from 'litepicker';

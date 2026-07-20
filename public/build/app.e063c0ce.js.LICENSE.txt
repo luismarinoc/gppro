@@ -1,0 +1,179 @@
+/*!
+  * Bootstrap v5.3.8 (https://getbootstrap.com/)
+  * Copyright 2011-2025 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+  */
+
+/*!
+ * 
+ * litepicker.umd.js
+ * Litepicker v2.0.12 (https://github.com/wakirin/Litepicker)
+ * Package: litepicker (https://www.npmjs.com/package/litepicker)
+ * License: MIT (https://github.com/wakirin/Litepicker/blob/master/LICENCE.md)
+ * Copyright 2019-2021 Rinat G.
+ *     
+ * Hash: 504eef9c08cb42543660
+ * 
+ */
+
+/*!
+ * 
+ * plugins/mobilefriendly.js
+ * Litepicker v2.0.12 (https://github.com/wakirin/Litepicker)
+ * Package: litepicker (https://www.npmjs.com/package/litepicker)
+ * License: MIT (https://github.com/wakirin/Litepicker/blob/master/LICENCE.md)
+ * Copyright 2019-2021 Rinat G.
+ *     
+ * Hash: b9a648207aabe31b2912
+ * 
+ */
+
+/*!
+ * [GPPRO] GpproAPI: easy access to API methods
+ */
+
+/*!
+ * [GPPRO] GpproActiveRecords: responsible to display the users active records
+ */
+
+/*!
+ * [GPPRO] GpproAjaxModalForm
+ *
+ * allows to assign the given selector to any element, which then is used as click-handler:
+ * opening a modal with the content from the URL given in the elements 'data-href' or 'href' attribute
+ */
+
+/*!
+ * [GPPRO] GpproAlert: notifications for gppro
+ */
+
+/*!
+ * [GPPRO] GpproAlternativeLinks
+ *
+ * allows to assign the given selector to any element, which then is used as click-handler
+ * redirecting to the URL given in the elements 'data-href' or 'href' attribute
+ */
+
+/*!
+ * [GPPRO] GpproColor: handle colors
+ */
+
+/*!
+ * [GPPRO] GpproConfiguration: handling all configuration and runtime settings
+ */
+
+/*!
+ * [GPPRO] GpproContainer
+ *
+ * ServiceContainer for gppro
+ */
+
+/*!
+ * [GPPRO] GpproContextMenu: help to create, position and display context menus
+ */
+
+/*!
+ * [GPPRO] GpproDatatable: handles functionality for the datatable
+ */
+
+/*!
+ * [GPPRO] GpproDatatableColumnView: manages the visibility of data-table columns in cookies
+ */
+
+/*!
+ * [GPPRO] GpproDatePicker: single date selects (currently unused)
+ */
+
+/*!
+ * [GPPRO] GpproDateRangePicker: activate the (daterange picker) compound field in toolbar
+ */
+
+/*!
+ * [GPPRO] GpproDateUtils: responsible for handling date specific tasks
+ */
+
+/*!
+ * [GPPRO] GpproEditTimesheetForm: responsible for the most important form in the application
+ */
+
+/*!
+ * [GPPRO] GpproEscape: sanitize strings
+ */
+
+/*!
+ * [GPPRO] GpproEvent: helper to trigger events
+ */
+
+/*!
+ * [GPPRO] GpproForm: basic functions for all forms
+ */
+
+/*!
+ * [GPPRO] GpproFormPlugin: base class for all none ID plugin that handle forms
+ */
+
+/*!
+ * [GPPRO] GpproFormSelect: enhanced functionality for HTMLSelectElement
+ */
+
+/*!
+ * [GPPRO] GpproFormTomselectPlugin: base form plugin for everyone using tomselect
+ */
+
+/*!
+ * [GPPRO] GpproLoader: bootstrap the application and all plugins
+ */
+
+/*!
+ * [GPPRO] GpproMultiUpdateForm: handle the multi update checkbox list and form
+ */
+
+/*!
+ * [GPPRO] GpproPaginatedBoxWidget: handles box widgets that have a pagination
+ */
+
+/*!
+ * [GPPRO] GpproPlugin: base class for all plugins
+ */
+
+/*!
+ * [GPPRO] GpproReducedClickHandler: abstract class
+ */
+
+/*!
+ * [GPPRO] GpproReloadPageWidget: a simple helper to reload the page on events
+ */
+
+/*!
+ * [GPPRO] GpproRemoteModal: load remote content (without forms) into a modal
+ */
+
+/*!
+ * [GPPRO] GpproStorage: simple wrapper to handle localStorage access
+ */
+
+/*!
+ * [GPPRO] GpproThemeInitializer: initialize theme functionality
+ */
+
+/*!
+ * [GPPRO] GpproToolbar: some event listener to handle the toolbar/data-table filter, toolbar and navigation
+ */
+
+/*!
+ * [GPPRO] GpproTranslation: handling translation strings
+ */
+
+/*!
+ * [GPPRO] GpproUser: information about the current user
+ */
+
+/*!
+ * [GPPRO] Notification: notifications for gppro
+ */
+
+/*!
+ * [GPPRO] Wrapper class for loading gppro app in browser script scope
+ */
+
+/*! @license DOMPurify 3.4.11 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.11/LICENSE */

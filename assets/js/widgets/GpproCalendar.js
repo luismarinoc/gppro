@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproCalendar: wrapping Fullcalendar.io
+ * [GPPRO] GpproCalendar: wrapping Fullcalendar.io
  */
 import { Popover } from 'bootstrap';
 import { Calendar } from '@fullcalendar/core';
@@ -206,7 +206,7 @@ export default class GpproCalendar {
                 const event = mouseEnterInfo.event;
 
                 if (!this.isGpproSource(event)) {
-                    // TODO allow to copy into kimai
+                    // TODO allow to copy into gppro
                     return;
                 }
 

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproTranslation: handling translation strings
+ * [GPPRO] GpproTranslation: handling translation strings
  */
 
 export default class GpproTranslation {

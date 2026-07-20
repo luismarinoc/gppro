@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproActiveRecords: responsible to display the users active records
+ * [GPPRO] GpproActiveRecords: responsible to display the users active records
  */
 
 import GpproPlugin from '../GpproPlugin';

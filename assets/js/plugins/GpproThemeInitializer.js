@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproThemeInitializer: initialize theme functionality
+ * [GPPRO] GpproThemeInitializer: initialize theme functionality
  */
 
 import { Tooltip, Offcanvas } from 'bootstrap';

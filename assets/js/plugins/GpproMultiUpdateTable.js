@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproMultiUpdateForm: handle the multi update checkbox list and form
+ * [GPPRO] GpproMultiUpdateForm: handle the multi update checkbox list and form
  */
 
 import GpproPlugin from '../GpproPlugin';

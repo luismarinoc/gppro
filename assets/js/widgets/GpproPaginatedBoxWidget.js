@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproPaginatedBoxWidget: handles box widgets that have a pagination
+ * [GPPRO] GpproPaginatedBoxWidget: handles box widgets that have a pagination
  */
 
 import GpproContextMenu from "./GpproContextMenu";

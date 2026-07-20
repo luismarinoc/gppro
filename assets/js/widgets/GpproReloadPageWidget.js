@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproReloadPageWidget: a simple helper to reload the page on events
+ * [GPPRO] GpproReloadPageWidget: a simple helper to reload the page on events
  */
 
 import { Tooltip } from 'bootstrap';

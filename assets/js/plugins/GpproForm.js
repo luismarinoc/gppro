@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproForm: basic functions for all forms
+ * [GPPRO] GpproForm: basic functions for all forms
  */
 
 import GpproPlugin from "../GpproPlugin";

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproColor: handle colors
+ * [GPPRO] GpproColor: handle colors
  */
 
 export default class GpproColor {

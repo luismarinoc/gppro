@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproLoader: bootstrap the application and all plugins
+ * [GPPRO] GpproLoader: bootstrap the application and all plugins
  */
 
 import { Settings } from 'luxon';
@@ -92,13 +92,13 @@ export default class GpproLoader {
         gppro.registerPlugin(new GpproMultiUpdateTable());
         gppro.registerPlugin(new GpproThemeInitializer());
 
-        // notify all listeners that Kimai plugins can now be registered
+        // notify all listeners that gppro plugins can now be registered
         document.dispatchEvent(new CustomEvent('gppro.pluginRegister', {detail: {'gppro': gppro}}));
 
         // initialize all plugins
         gppro.getPlugins().map(plugin => { plugin.init(); });
 
-        // notify all listeners that Kimai is now ready to be used
+        // notify all listeners that gppro is now ready to be used
         document.dispatchEvent(new CustomEvent('gppro.initialized', {detail: {'gppro': gppro}}));
 
         this.gppro = gppro;

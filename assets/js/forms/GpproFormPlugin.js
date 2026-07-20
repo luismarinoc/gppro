@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproFormPlugin: base class for all none ID plugin that handle forms
+ * [GPPRO] GpproFormPlugin: base class for all none ID plugin that handle forms
  */
 
 import GpproPlugin from '../GpproPlugin';

@@ -6,9 +6,9 @@
  */
 
 /*!
- * [KIMAI] GpproContainer
+ * [GPPRO] GpproContainer
  *
- * ServiceContainer for Kimai
+ * ServiceContainer for gppro
  */
 
 import GpproConfiguration from './GpproConfiguration';

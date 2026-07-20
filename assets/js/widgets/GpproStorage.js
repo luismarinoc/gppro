@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproStorage: simple wrapper to handle localStorage access
+ * [GPPRO] GpproStorage: simple wrapper to handle localStorage access
  */
 
 export default class GpproStorage {

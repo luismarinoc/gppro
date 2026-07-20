@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproReducedClickHandler: abstract class
+ * [GPPRO] GpproReducedClickHandler: abstract class
  */
 
 import GpproPlugin from "../GpproPlugin";

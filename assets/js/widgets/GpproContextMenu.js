@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproContextMenu: help to create, position and display context menus
+ * [GPPRO] GpproContextMenu: help to create, position and display context menus
  */
 
 export default class GpproContextMenu {

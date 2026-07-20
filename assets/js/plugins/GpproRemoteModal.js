@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproRemoteModal: load remote content (without forms) into a modal
+ * [GPPRO] GpproRemoteModal: load remote content (without forms) into a modal
  */
 
 import GpproPlugin from '../GpproPlugin';

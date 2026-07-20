@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproEvent: helper to trigger events
+ * [GPPRO] GpproEvent: helper to trigger events
  */
 
 import GpproPlugin from "../GpproPlugin";

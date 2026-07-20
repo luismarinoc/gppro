@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproEscape: sanitize strings
+ * [GPPRO] GpproEscape: sanitize strings
  */
 
 import GpproPlugin from "../GpproPlugin";
@@ -72,7 +72,7 @@ export default class GpproFetch extends GpproPlugin {
                 }
             })
             .catch(error => {
-                console.log('Error occurred while talking to Kimai backend', error);
+                console.log('Error occurred while talking to gppro backend', error);
                 reject(error);
             });
         });

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproDateUtils: responsible for handling date specific tasks
+ * [GPPRO] GpproDateUtils: responsible for handling date specific tasks
  */
 
 import GpproPlugin from '../GpproPlugin';

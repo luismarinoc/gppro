@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproAlternativeLinks
+ * [GPPRO] GpproAlternativeLinks
  *
  * allows to assign the given selector to any element, which then is used as click-handler
  * redirecting to the URL given in the elements 'data-href' or 'href' attribute

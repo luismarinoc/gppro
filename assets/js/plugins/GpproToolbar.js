@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproToolbar: some event listener to handle the toolbar/data-table filter, toolbar and navigation
+ * [GPPRO] GpproToolbar: some event listener to handle the toolbar/data-table filter, toolbar and navigation
  */
 
 import GpproPlugin from "../GpproPlugin";

@@ -5,15 +5,15 @@
   */
 
 /*!
- * [KIMAI] GpproCalendar: wrapping Fullcalendar.io
+ * [GPPRO] GpproCalendar: wrapping Fullcalendar.io
  */
 
 /*!
- * [KIMAI] GpproColor: handle colors
+ * [GPPRO] GpproColor: handle colors
  */
 
 /*!
- * [KIMAI] GpproContextMenu: help to create, position and display context menus
+ * [GPPRO] GpproContextMenu: help to create, position and display context menus
  */
 
 /*!

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproUser: information about the current user
+ * [GPPRO] GpproUser: information about the current user
  */
 
 import GpproPlugin from "../GpproPlugin";
