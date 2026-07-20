@@ -18,7 +18,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\RawMessage;
 
-final class KimaiMailer implements MailerInterface
+final class GpproMailer implements MailerInterface
 {
     public function __construct(private readonly MailConfiguration $configuration, private readonly MailerInterface $mailer)
     {

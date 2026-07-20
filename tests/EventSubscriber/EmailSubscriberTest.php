@@ -12,7 +12,7 @@ namespace App\Tests\EventSubscriber;
 use App\Configuration\MailConfiguration;
 use App\Event\EmailEvent;
 use App\EventSubscriber\EmailSubscriber;
-use App\Mail\KimaiMailer;
+use App\Mail\GpproMailer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
@@ -35,7 +35,7 @@ class EmailSubscriberTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects($this->once())->method('send');
 
-        $mailer = new KimaiMailer(
+        $mailer = new GpproMailer(
             new MailConfiguration('test@example.com'),
             $mailer
         );

@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 final class TagsType extends AbstractType
 {
     /**
-     * See KimaiFormSelect.js (maxOptions) as well.
+     * See GpproFormSelect.js (maxOptions) as well.
      */
     public const MAX_AMOUNT_SELECT = 500;
 

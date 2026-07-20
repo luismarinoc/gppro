@@ -132,7 +132,7 @@ final class PluginCommand extends Command
             $rows[] = [
                 $metadata->getName(),
                 $metadata->getVersion(),
-                $metadata->getKimaiVersion(),
+                $metadata->getGpproVersion(),
                 $metadata->getPackage(),
                 $package->getPackageFile()->getPathname(),
             ];
@@ -160,7 +160,7 @@ final class PluginCommand extends Command
                 $plugin->getId(),
                 $plugin->getName(),
                 $meta->getVersion(),
-                $meta->getKimaiVersion(),
+                $meta->getGpproVersion(),
                 $plugin->getPath(),
             ];
         }

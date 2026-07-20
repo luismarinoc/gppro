@@ -14,7 +14,7 @@ use App\DataFixtures\UserFixtures;
 use App\Entity\Customer;
 use App\Entity\Project;
 use App\Export\ServiceExport;
-use App\Mail\KimaiMailer;
+use App\Mail\GpproMailer;
 use App\Repository\CustomerRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\TeamRepository;
@@ -80,7 +80,7 @@ class ExportCreateCommandTest extends KernelTestCase
             $container->get(TeamRepository::class), // @phpstan-ignore argument.type
             $container->get(UserRepository::class), // @phpstan-ignore argument.type
             $container->get(TranslatorInterface::class), // @phpstan-ignore argument.type
-            $mailer ?? $container->get(KimaiMailer::class),
+            $mailer ?? $container->get(GpproMailer::class),
         ));
 
         return $application;

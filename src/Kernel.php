@@ -119,8 +119,8 @@ class Kernel extends BaseKernel
 
             $meta = PluginMetadata::createFromPath($fullPath);
 
-            if ($meta->getKimaiVersion() > Constants::VERSION_ID) {
-                throw new \Exception(\sprintf('Bundle "%s" requires minimum Kimai version %s, but yours is lower: %s (%s). Please update Kimai or use a lower Plugin version.', $bundleName, $meta->getKimaiVersion(), Constants::VERSION, Constants::VERSION_ID));
+            if ($meta->getGpproVersion() > Constants::VERSION_ID) {
+                throw new \Exception(\sprintf('Bundle "%s" requires minimum Kimai version %s, but yours is lower: %s (%s). Please update Kimai or use a lower Plugin version.', $bundleName, $meta->getGpproVersion(), Constants::VERSION, Constants::VERSION_ID));
             }
 
             $plugins[] = $plugin;

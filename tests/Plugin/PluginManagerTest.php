@@ -62,7 +62,7 @@ class PluginManagerTest extends TestCase
         self::assertEquals('TestPlugin from composer.json', $test->getName());
 
         $meta = $test->getMetadata();
-        self::assertEquals(10000, $meta->getKimaiVersion());
+        self::assertEquals(10000, $meta->getGpproVersion());
         self::assertEquals('1.0', $meta->getVersion());
         self::assertEquals('TestPlugin', $test->getId());
         self::assertEquals('TestPlugin from composer.json', $meta->getName());

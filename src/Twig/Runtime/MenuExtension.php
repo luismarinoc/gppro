@@ -33,7 +33,7 @@ final class MenuExtension implements RuntimeExtensionInterface
         $favMenu = [];
 
         $shortcuts = explode(',', $shortcuts);
-        $menu = $this->menuService->getKimaiMenu();
+        $menu = $this->menuService->getGpproMenu();
         foreach ($shortcuts as $fav) {
             $tmp = $menu->findById($fav);
             if ($tmp !== null && !$tmp->hasChildren()) {

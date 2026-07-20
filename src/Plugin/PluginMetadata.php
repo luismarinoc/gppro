@@ -15,7 +15,7 @@ class PluginMetadata
 {
     private string $package;
     private string $version;
-    private int $kimaiVersion;
+    private int $gpproVersion;
     private string $homepage;
     private string $description;
     private string $name;
@@ -73,7 +73,7 @@ class PluginMetadata
         $meta->description = $json['description'] ?? '';
         $meta->homepage = $json['homepage'] ?? Constants::HOMEPAGE . '/store/';
         $meta->name = $json['extra']['kimai']['name'];
-        $meta->kimaiVersion = $json['extra']['kimai']['require'];
+        $meta->gpproVersion = $json['extra']['kimai']['require'];
 
         // the version field is required if we use composer to install a plugin via var/packages/
         $meta->version = $json['extra']['kimai']['version'] ?? ($json['version'] ?? 'unknown');
@@ -98,9 +98,9 @@ class PluginMetadata
         return $this->version;
     }
 
-    public function getKimaiVersion(): int
+    public function getGpproVersion(): int
     {
-        return $this->kimaiVersion;
+        return $this->gpproVersion;
     }
 
     public function getHomepage(): string

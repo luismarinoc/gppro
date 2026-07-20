@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 /**
  * @template-implements UserProviderInterface<User>
  */
-final class KimaiUserProvider implements UserProviderInterface, PasswordUpgraderInterface
+final class GpproUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     private ?ChainUserProvider $provider = null;
 

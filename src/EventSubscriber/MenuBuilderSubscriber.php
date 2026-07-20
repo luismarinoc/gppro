@@ -34,7 +34,7 @@ final class MenuBuilderSubscriber implements EventSubscriberInterface
 
     public function onSetupNavbar(MenuEvent $event): void
     {
-        $menuEvent = $this->menuService->getKimaiMenu();
+        $menuEvent = $this->menuService->getGpproMenu();
 
         foreach ($menuEvent->getMenu()->getChildren() as $child) {
             if ($child->getRoute() === null && !$child->hasChildren()) {
