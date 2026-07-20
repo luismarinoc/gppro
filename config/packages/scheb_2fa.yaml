@@ -9,7 +9,7 @@ scheb_two_factor:
         enabled: true
         template: security/2fa.html.twig    # Overwritten template
         leeway: 29                          # How many seconds the code is valid
-        issuer: Kimai                       # Issuer name used in QR code
+        issuer: gppro                       # Issuer name used in QR code
 
     two_factor_condition: App\Security\TwoFactorCondition
 

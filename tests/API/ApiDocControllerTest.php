@@ -27,7 +27,7 @@ class ApiDocControllerTest extends AbstractControllerBaseTestCase
         $this->assertAccessIsGranted($client, '/api/doc');
         $content = $client->getResponse()->getContent();
         self::assertIsString($content);
-        self::assertStringContainsString('<title>Kimai', $content);
+        self::assertStringContainsString('<title>gppro', $content);
         self::assertStringContainsString('docs.apiDescriptionDocument', $content);
         self::assertStringContainsString('const config = {"basePath":"/api/doc","router":"memory","logo":"/touch-icon-192x192.png","hideInternal":true};', $content);
         $results = preg_match('/docs\.apiDescriptionDocument\ \=\ (.*)\.spec;/', $content, $matches);
@@ -123,7 +123,7 @@ class ApiDocControllerTest extends AbstractControllerBaseTestCase
         self::assertArrayHasKey('openapi', $json);
         self::assertEquals('3.0.0', $json['openapi']);
         self::assertArrayHasKey('info', $json);
-        self::assertStringStartsWith('Kimai', $json['info']['title']);
+        self::assertStringStartsWith('gppro', $json['info']['title']);
         self::assertEquals('1.1', $json['info']['version']);
 
         self::assertArrayHasKey('paths', $json);
