@@ -240,6 +240,17 @@ class UserTest extends TestCase
         self::assertTrue($user->isInternalUser());
     }
 
+    public function testIsInternalUserAcceptsLegacyKimaiAuthValue(): void
+    {
+        // Safety net for rows not yet migrated from the legacy 'kimai' auth
+        // value to 'internal' (see Version20260720214501).
+        $user = new User();
+        $user->setAuth('kimai');
+
+        self::assertNotEquals(User::AUTH_INTERNAL, $user->getAuth());
+        self::assertTrue($user->isInternalUser());
+    }
+
     public function testDatetime(): void
     {
         $date = new \DateTime('+1 day');
