@@ -1,0 +1,179 @@
+/*!
+  * Bootstrap v5.3.8 (https://getbootstrap.com/)
+  * Copyright 2011-2025 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+  */
+
+/*!
+ * 
+ * litepicker.umd.js
+ * Litepicker v2.0.12 (https://github.com/wakirin/Litepicker)
+ * Package: litepicker (https://www.npmjs.com/package/litepicker)
+ * License: MIT (https://github.com/wakirin/Litepicker/blob/master/LICENCE.md)
+ * Copyright 2019-2021 Rinat G.
+ *     
+ * Hash: 504eef9c08cb42543660
+ * 
+ */
+
+/*!
+ * 
+ * plugins/mobilefriendly.js
+ * Litepicker v2.0.12 (https://github.com/wakirin/Litepicker)
+ * Package: litepicker (https://www.npmjs.com/package/litepicker)
+ * License: MIT (https://github.com/wakirin/Litepicker/blob/master/LICENCE.md)
+ * Copyright 2019-2021 Rinat G.
+ *     
+ * Hash: b9a648207aabe31b2912
+ * 
+ */
+
+/*!
+ * [KIMAI] GpproAPI: easy access to API methods
+ */
+
+/*!
+ * [KIMAI] GpproActiveRecords: responsible to display the users active records
+ */
+
+/*!
+ * [KIMAI] GpproAjaxModalForm
+ *
+ * allows to assign the given selector to any element, which then is used as click-handler:
+ * opening a modal with the content from the URL given in the elements 'data-href' or 'href' attribute
+ */
+
+/*!
+ * [KIMAI] GpproAlert: notifications for Kimai
+ */
+
+/*!
+ * [KIMAI] GpproAlternativeLinks
+ *
+ * allows to assign the given selector to any element, which then is used as click-handler
+ * redirecting to the URL given in the elements 'data-href' or 'href' attribute
+ */
+
+/*!
+ * [KIMAI] GpproColor: handle colors
+ */
+
+/*!
+ * [KIMAI] GpproConfiguration: handling all configuration and runtime settings
+ */
+
+/*!
+ * [KIMAI] GpproContainer
+ *
+ * ServiceContainer for Kimai
+ */
+
+/*!
+ * [KIMAI] GpproContextMenu: help to create, position and display context menus
+ */
+
+/*!
+ * [KIMAI] GpproDatatable: handles functionality for the datatable
+ */
+
+/*!
+ * [KIMAI] GpproDatatableColumnView: manages the visibility of data-table columns in cookies
+ */
+
+/*!
+ * [KIMAI] GpproDatePicker: single date selects (currently unused)
+ */
+
+/*!
+ * [KIMAI] GpproDateRangePicker: activate the (daterange picker) compound field in toolbar
+ */
+
+/*!
+ * [KIMAI] GpproDateUtils: responsible for handling date specific tasks
+ */
+
+/*!
+ * [KIMAI] GpproEditTimesheetForm: responsible for the most important form in the application
+ */
+
+/*!
+ * [KIMAI] GpproEscape: sanitize strings
+ */
+
+/*!
+ * [KIMAI] GpproEvent: helper to trigger events
+ */
+
+/*!
+ * [KIMAI] GpproForm: basic functions for all forms
+ */
+
+/*!
+ * [KIMAI] GpproFormPlugin: base class for all none ID plugin that handle forms
+ */
+
+/*!
+ * [KIMAI] GpproFormSelect: enhanced functionality for HTMLSelectElement
+ */
+
+/*!
+ * [KIMAI] GpproFormTomselectPlugin: base form plugin for everyone using tomselect
+ */
+
+/*!
+ * [KIMAI] GpproLoader: bootstrap the application and all plugins
+ */
+
+/*!
+ * [KIMAI] GpproMultiUpdateForm: handle the multi update checkbox list and form
+ */
+
+/*!
+ * [KIMAI] GpproPaginatedBoxWidget: handles box widgets that have a pagination
+ */
+
+/*!
+ * [KIMAI] GpproPlugin: base class for all plugins
+ */
+
+/*!
+ * [KIMAI] GpproReducedClickHandler: abstract class
+ */
+
+/*!
+ * [KIMAI] GpproReloadPageWidget: a simple helper to reload the page on events
+ */
+
+/*!
+ * [KIMAI] GpproRemoteModal: load remote content (without forms) into a modal
+ */
+
+/*!
+ * [KIMAI] GpproStorage: simple wrapper to handle localStorage access
+ */
+
+/*!
+ * [KIMAI] GpproThemeInitializer: initialize theme functionality
+ */
+
+/*!
+ * [KIMAI] GpproToolbar: some event listener to handle the toolbar/data-table filter, toolbar and navigation
+ */
+
+/*!
+ * [KIMAI] GpproTranslation: handling translation strings
+ */
+
+/*!
+ * [KIMAI] GpproUser: information about the current user
+ */
+
+/*!
+ * [KIMAI] Notification: notifications for Kimai
+ */
+
+/*!
+ * [KIMAI] Wrapper class for loading Kimai app in browser script scope
+ */
+
+/*! @license DOMPurify 3.4.11 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.11/LICENSE */
