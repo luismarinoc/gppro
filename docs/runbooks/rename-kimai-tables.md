@@ -285,10 +285,12 @@ Fill in before each real execution (staging or production):
 
 | Field | Value |
 |-------|-------|
-| Executed by | _(fill in)_ |
-| Date/time | _(fill in)_ |
-| Environment (staging / production) | _(fill in)_ |
-| Backup file path + checksum | _(fill in)_ |
-| Approved by | _(fill in)_ |
-| Maintenance window (if production) | _(fill in)_ |
-| Outcome (success / rolled back) | _(fill in)_ |
+| Executed by | luismarinoc |
+| Date/time | 2026-07-20 ~22:40 UTC |
+| Environment (staging / production) | production (VPS, container `gpartnerc-gppro-14lb5g-app-1`) |
+| Backup file path + checksum | `gppro_post_rename_20260720224739.sql` (taken post-hoc, see note below) |
+| Approved by | luismarinoc |
+| Maintenance window (if production) | none — ran via Dokploy auto-deploy on push to `main`, no pre-deploy maintenance window was scheduled |
+| Outcome (success / rolled back) | success — verified post-deploy: 35/0 `gppro_%`/`kimai2_%` tables, 0 rows with `auth='kimai'`, `gppro:user:list` shows no leak |
+
+**Note on this execution**: Dokploy's auto-deploy triggered on the PR merges to `main` before the pre-migration backup (Section 2/3) was taken — the pre-existing backup/restore-verification step in this runbook was written assuming a manual/controlled deploy trigger, which did not hold here. The backup above was taken immediately after detecting the deploy had already applied both migrations, as a safety net going forward, not as the pre-migration snapshot the runbook originally intended. All post-deploy verification queries (Section 6) passed. If Dokploy auto-deploy remains enabled for this repo, a future runbook revision should account for it (e.g. a pre-merge backup step, or disabling auto-deploy for migration-bearing PRs).
