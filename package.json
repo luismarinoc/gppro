@@ -1,16 +1,16 @@
 {
   "name": "gppro",
-  "homepage": "https://github.com/kimai/kimai",
-  "license": "AGPL",
+  "homepage": "https://github.com/tbema/gppro",
+  "license": "AGPL-3.0-or-later",
   "maintainers": [
     {
-      "name": "Kevin Papst",
-      "url": "https://www.kevinpapst.de"
+      "name": "tbema",
+      "url": "https://github.com/tbema/gppro"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kimai/kimai.git"
+    "url": "git+https://github.com/tbema/gppro.git"
   },
   "scripts": {
     "dev-server": "encore dev-server",

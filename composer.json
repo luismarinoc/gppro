@@ -2,15 +2,11 @@
     "name": "tbema/gppro",
     "license": "AGPL-3.0-or-later",
     "type": "project",
-    "description": "Kimai - Time Tracking",
+    "description": "gppro - Time Tracking",
     "authors": [
         {
-            "name": "Kevin Papst",
-            "homepage": "https://www.kevinpapst.de"
-        },
-        {
-            "name": "All contributors",
-            "homepage": "https://github.com/kimai/kimai/contributors"
+            "name": "tbema",
+            "homepage": "https://github.com/tbema/gppro"
         }
     ],
     "require": {
