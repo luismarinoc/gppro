@@ -47,12 +47,12 @@ class MPdfConverterTest extends KernelTestCase
         // mPDF's `SetAssociatedFiles`. The legitimate ZUGFeRD path uses
         // `content` (pre-read bytes); we additionally pass `path` to confirm
         // it is stripped before reaching mPDF.
-        $sentinelPath = tempnam(sys_get_temp_dir(), 'kimai-pdf-leak-');
+        $sentinelPath = tempnam(sys_get_temp_dir(), 'gppro-pdf-leak-');
         self::assertNotFalse($sentinelPath);
-        $sentinelBytes = 'KIMAI_LEAK_SENTINEL_' . bin2hex(random_bytes(8));
+        $sentinelBytes = 'GPPRO_LEAK_SENTINEL_' . bin2hex(random_bytes(8));
         file_put_contents($sentinelPath, $sentinelBytes);
 
-        $legitimateContent = 'KIMAI_LEGITIMATE_CONTENT_' . bin2hex(random_bytes(8));
+        $legitimateContent = 'GPPRO_LEGITIMATE_CONTENT_' . bin2hex(random_bytes(8));
 
         try {
             $sut = new MPdfConverter((new FileHelperFactory($this))->create(), $cacheDir);

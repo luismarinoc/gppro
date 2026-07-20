@@ -53,7 +53,7 @@ class ThemeOptionsSubscriberTest extends TestCase
         self::assertFalse($helper->isNavbarOverlapping());
     }
 
-    public function testUsesAuthenticationThemeForNonKimaiUserToken(): void
+    public function testUsesAuthenticationThemeForNonGpproUserToken(): void
     {
         $securityUser = $this->createMock(UserInterface::class);
 

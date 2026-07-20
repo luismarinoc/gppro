@@ -96,13 +96,13 @@ class SamlAuthFactoryTest extends TestCase
                 'x509cert' => 'asdf',
             ],
             'sp' => [
-                'entityId' => 'https://kimai.example.com/auth/saml/metadata',
+                'entityId' => 'https://gppro.example.com/auth/saml/metadata',
                 'assertionConsumerService' => [
-                    'url' => 'https://kimai.example.com/auth/saml/acs',
+                    'url' => 'https://gppro.example.com/auth/saml/acs',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
                 ],
                 'singleLogoutService' => [
-                    'url' => 'https://kimai.example.com/auth/saml/logout',
+                    'url' => 'https://gppro.example.com/auth/saml/logout',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
                 ],
                 'privateKey' => '',

@@ -173,7 +173,7 @@ class ConfigurationTest extends TestCase
         self::assertNull($sut->get($environment, 'does.not.exist'));
     }
 
-    public function testDeprecatedKimaiConfigAccessAlwaysReturnsNull(): void
+    public function testDeprecatedGpproConfigAccessAlwaysReturnsNull(): void
     {
         $sut = $this->createExtension($this->getDefaultSettings());
 
