@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_users')]
+#[ORM\Table(name: 'gppro_users')]
 #[ORM\UniqueConstraint(columns: ['username'])]
 #[ORM\UniqueConstraint(columns: ['email'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]

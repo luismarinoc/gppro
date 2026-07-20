@@ -18,7 +18,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_milestones')]
+#[ORM\Table(name: 'gppro_milestones')]
 #[ORM\Index(columns: ['project_id'])]
 #[ORM\Entity(repositoryClass: MilestoneRepository::class)]
 class Milestone implements CreatedAt

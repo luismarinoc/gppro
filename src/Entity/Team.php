@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_teams')]
+#[ORM\Table(name: 'gppro_teams')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

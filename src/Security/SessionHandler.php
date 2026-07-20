@@ -24,7 +24,7 @@ final class SessionHandler extends PdoSessionHandler
     )
     {
         parent::__construct($connection->getNativeConnection(), [
-            'db_table' => 'kimai2_sessions',
+            'db_table' => 'gppro_sessions',
             'db_id_col' => 'id',
             'db_data_col' => 'data',
             'db_lifetime_col' => 'lifetime',
@@ -36,7 +36,7 @@ final class SessionHandler extends PdoSessionHandler
     public function garbageCollection(): void
     {
         $connection = $this->getConnection();
-        $sql = 'DELETE FROM kimai2_sessions WHERE lifetime < :time';
+        $sql = 'DELETE FROM gppro_sessions WHERE lifetime < :time';
         $stmt = $connection->prepare($sql);
         $stmt->bindValue(':time', time(), \PDO::PARAM_INT);
         $stmt->execute();

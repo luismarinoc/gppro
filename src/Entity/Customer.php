@@ -22,7 +22,7 @@ use JMS\Serializer\Annotation as Serializer;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_customers')]
+#[ORM\Table(name: 'gppro_customers')]
 #[ORM\Index(columns: ['visible'])]
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
@@ -185,7 +185,7 @@ class Customer implements EntityWithMetaFields, EntityWithBudget, CreatedAt
      *
      * @var Collection<Team>
      */
-    #[ORM\JoinTable(name: 'kimai2_customers_teams')]
+    #[ORM\JoinTable(name: 'gppro_customers_teams')]
     #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'team_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'customers', cascade: ['persist'])]

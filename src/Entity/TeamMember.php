@@ -15,7 +15,7 @@ use JMS\Serializer\Annotation as Serializer;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_users_teams')]
+#[ORM\Table(name: 'gppro_users_teams')]
 #[ORM\UniqueConstraint(columns: ['user_id', 'team_id'])]
 #[ORM\Entity]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

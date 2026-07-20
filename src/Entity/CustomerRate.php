@@ -15,7 +15,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_customers_rates')]
+#[ORM\Table(name: 'gppro_customers_rates')]
 #[ORM\UniqueConstraint(columns: ['user_id', 'customer_id'])]
 #[ORM\Entity(repositoryClass: CustomerRateRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

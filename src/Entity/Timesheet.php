@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Internal docs:
  * - IDX_4F60C6B1415614018D93D649 (for ticktac in v1)
  */
-#[ORM\Table(name: 'kimai2_timesheet')]
+#[ORM\Table(name: 'gppro_timesheet')]
 #[ORM\Index(columns: ['user'], name: 'IDX_4F60C6B18D93D649')]
 #[ORM\Index(columns: ['activity_id'], name: 'IDX_4F60C6B181C06096')]
 #[ORM\Index(columns: ['user', 'start_time'], name: 'IDX_4F60C6B18D93D649502DF587')]
@@ -207,7 +207,7 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
      *
      * @var Collection<Tag>
      */
-    #[ORM\JoinTable(name: 'kimai2_timesheet_tags')]
+    #[ORM\JoinTable(name: 'gppro_timesheet_tags')]
     #[ORM\JoinColumn(name: 'timesheet_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'])]

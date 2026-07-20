@@ -17,7 +17,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_tags')]
+#[ORM\Table(name: 'gppro_tags')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

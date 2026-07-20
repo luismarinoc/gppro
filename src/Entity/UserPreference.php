@@ -21,7 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_user_preferences')]
+#[ORM\Table(name: 'gppro_user_preferences')]
 #[ORM\UniqueConstraint(columns: ['user_id', 'name'])]
 #[ORM\Entity]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

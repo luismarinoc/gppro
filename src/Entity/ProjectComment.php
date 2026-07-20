@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_projects_comments')]
+#[ORM\Table(name: 'gppro_projects_comments')]
 #[ORM\Index(columns: ['project_id'])]
 #[ORM\Entity]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

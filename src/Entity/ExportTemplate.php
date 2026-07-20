@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_export_templates')]
+#[ORM\Table(name: 'gppro_export_templates')]
 #[ORM\UniqueConstraint(columns: ['title'])]
 #[ORM\Entity(repositoryClass: ExportTemplateRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

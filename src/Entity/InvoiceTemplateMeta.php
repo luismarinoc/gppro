@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_invoice_templates_meta')]
+#[ORM\Table(name: 'gppro_invoice_templates_meta')]
 #[ORM\UniqueConstraint(columns: ['template_id', 'name'])]
 #[ORM\Entity]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
