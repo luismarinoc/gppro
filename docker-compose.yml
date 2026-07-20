@@ -13,8 +13,8 @@ services:
       ADMINPASS: ${ADMINPASS}
       TRUSTED_PROXIES: "*"
     volumes:
-      - kimai_data:/opt/kimai/var/data
-      - kimai_plugins:/opt/kimai/var/plugins
+      - gppro_data:/opt/gppro/var/data
+      - gppro_plugins:/opt/gppro/var/plugins
     depends_on:
       - mysql
     ports:
@@ -29,9 +29,9 @@ services:
       MARIADB_USER: ${DATABASE_USER}
       MARIADB_PASSWORD: ${DATABASE_PASS}
     volumes:
-      - kimai_db:/var/lib/mysql
+      - gppro_db:/var/lib/mysql
 
 volumes:
-  kimai_data:
-  kimai_plugins:
-  kimai_db:
+  gppro_data:
+  gppro_plugins:
+  gppro_db:
