@@ -38,7 +38,7 @@ final class FormLoginLdapFactory extends AbstractFactory implements Authenticato
 
     public function getKey(): string
     {
-        return 'kimai_ldap';
+        return 'gppro_ldap';
     }
 
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string

@@ -121,7 +121,7 @@ services:
     # ================================================================================
     App\Saml\SamlProvider:
         arguments:
-            $userProvider: '@security.user.provider.concrete.kimai_internal'
+            $userProvider: '@security.user.provider.concrete.gppro_internal'
             $configuration: '@App\Configuration\SamlConfigurationInterface'
 
     # ================================================================================

@@ -20,7 +20,7 @@ class FormLoginLdapFactoryTest extends TestCase
     {
         $sut = new FormLoginLdapFactory();
 
-        self::assertEquals('kimai_ldap', $sut->getKey());
+        self::assertEquals('gppro_ldap', $sut->getKey());
         self::assertEquals(-20, $sut->getPriority());
     }
 }

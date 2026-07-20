@@ -5,11 +5,11 @@ security:
     providers:
         chain_provider:
             chain:
-                providers: [kimai_internal,kimai_ldap]
-        kimai_internal:
+                providers: [gppro_internal,gppro_ldap]
+        gppro_internal:
             entity:
                 class: App\Entity\User
-        kimai_ldap:
+        gppro_ldap:
             id: App\Ldap\LdapUserProvider
 
     firewalls:
@@ -31,7 +31,7 @@ security:
                 - App\API\Authentication\TokenAuthenticator
 
         secured_area:
-            kimai_ldap: ~
+            gppro_ldap: ~
             pattern: ^/
             user_checker: App\Security\UserChecker
             stateless: false
