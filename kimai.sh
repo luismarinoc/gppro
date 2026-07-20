@@ -69,7 +69,7 @@ function confirm_update() {
     local version="$1"
     local answer
 
-    echo "About to update Kimai to version ${version}."
+    echo "About to update gppro to version ${version}."
     read -r -p "Continue? [y/N] " answer
     if [[ ! "${answer}" =~ ^[Yy]([Ee][Ss])?$ ]]; then
         echo "Update cancelled."
@@ -77,30 +77,30 @@ function confirm_update() {
     fi
 }
 
-function update_kimai() {
+function update_gppro() {
     if [[ "$1" == "latest" ]]; then
         if ! command -v sort >/dev/null 2>&1 || ! command -v tail >/dev/null 2>&1; then
-            echo "we could not detect the latest kimai version due to missing commands: sort, tail"
+            echo "we could not detect the latest gppro version due to missing commands: sort, tail"
             exit 1
         fi
 
         git fetch --tags
         export VERSION="$(git tag --list | sort -V | tail -n 1)"
         if [ -z "$VERSION" ]; then
-            echo "Failed loading Kimai version"
+            echo "Failed loading gppro version"
             exit 1
         fi
     elif [[ "$1" =~ ^([0-9]+\.){2,3}[0-9]+$ ]]; then
         export VERSION=$1
     else
-        echo "You need to supply a full Kimai version like: \"2.24.0\""
+        echo "You need to supply a full gppro version like: \"2.24.0\""
         exit 1
     fi
 
     git fetch --tags
 
     if ! git rev-parse --verify --quiet "refs/tags/$VERSION" >/dev/null; then
-        echo "Requested Kimai version does not exist: $VERSION"
+        echo "Requested gppro version does not exist: $VERSION"
         exit 1
     fi
 
@@ -121,7 +121,7 @@ function update_kimai() {
     git checkout "$VERSION"
     run_composer install --no-dev --optimize-autoloader || exit 1
 
-    $KIMAI_PHP bin/console kimai:install
+    $KIMAI_PHP bin/console gppro:install
 
     install_plugins
 
@@ -135,8 +135,8 @@ function install_plugins() {
     local packages_output
     local -a packages
 
-    if ! packages_output="$($KIMAI_PHP bin/console kimai:plugin --composer)"; then
-        echo "Failed loading plugin list from kimai:plugin --composer"
+    if ! packages_output="$($KIMAI_PHP bin/console gppro:plugins --composer)"; then
+        echo "Failed loading plugin list from gppro:plugins --composer"
         exit 1
     fi
 
@@ -148,7 +148,7 @@ function install_plugins() {
     fi
 
     verbose "Installing plugins"
-    $KIMAI_PHP bin/console kimai:plugins --install || exit 1
+    $KIMAI_PHP bin/console gppro:plugins --install || exit 1
 }
 
 function set_permission() {
@@ -205,16 +205,16 @@ fi
 cd "$(dirname "$0")" || { echo "Cannot change working directory."; exit 1; }
 
 # we need a few commands installed in order for this script to complete
-composer_exists || { echo >&2 "Kimai requires 'composer' but it's not installed or not executable."; exit 1; }
-command -v git >/dev/null 2>&1 || { echo >&2 "Kimai requires 'git' but it's not installed."; exit 1; }
-command -v "$KIMAI_PHP" >/dev/null 2>&1 || { echo >&2 "Kimai requires 'php' but it's not installed."; exit 1; }
+composer_exists || { echo >&2 "gppro requires 'composer' but it's not installed or not executable."; exit 1; }
+command -v git >/dev/null 2>&1 || { echo >&2 "gppro requires 'git' but it's not installed."; exit 1; }
+command -v "$KIMAI_PHP" >/dev/null 2>&1 || { echo >&2 "gppro requires 'php' but it's not installed."; exit 1; }
 
 verbose "Using PHP: $KIMAI_PHP"
 verbose "Using Composer: $KIMAI_COMPOSER"
 
 if [[ -n $1 ]]; then
     if [ "$1" == 'update' ]; then
-        update_kimai "$2"
+        update_gppro "$2"
         exit
     elif [ "$1" == 'permission' ]; then
         set_permission
@@ -234,8 +234,8 @@ fi
 echo ""
 echo "This script has the following sub-commands:"
 echo ""
-echo "$0 update            - Update Kimai to the latest version"
-echo "$0 update <version>  - Update Kimai to the given version <version>"
+echo "$0 update            - Update gppro to the latest version"
+echo "$0 update <version>  - Update gppro to the given version <version>"
 echo "$0 permission        - Fix file permissions"
 echo "$0 plugin[s]         - Install available plugins from var/packages/*.zip"
 echo "$0 cache             - Clear application cache"
