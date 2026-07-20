@@ -19,7 +19,7 @@ when@prod:
                 type: stream
                 level: info
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
-                formatter: monolog.formatter.kimai
+                formatter: monolog.formatter.gppro
             console:
                 type: console
                 process_psr_3_messages: false
@@ -43,7 +43,7 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                formatter: monolog.formatter.kimai
+                formatter: monolog.formatter.gppro
             console:
                 type: console
                 process_psr_3_messages: false
@@ -62,4 +62,4 @@ when@test:
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: info
                 channels: ["!event"]
-                formatter: monolog.formatter.kimai
+                formatter: monolog.formatter.gppro
