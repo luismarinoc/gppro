@@ -232,7 +232,7 @@ final class RegenerateLocalesCommand extends Command
             $io->error('Failed reading configuration file at ' . $filename);
         } else {
             $content = preg_replace(
-                '/^(\s*kimai_locales:\s*\[).*?(\])$/m',
+                '/^(\s*gppro_locales:\s*\[).*?(\])$/m',
                 '${1}' . implode(', ', $listOfLocales) . '${2}',
                 $content
             );
