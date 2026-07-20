@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_invoices')]
+#[ORM\Table(name: 'gppro_invoices')]
 #[ORM\UniqueConstraint(columns: ['invoice_number'])]
 #[ORM\UniqueConstraint(columns: ['invoice_filename'])]
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]

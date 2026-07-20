@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_roles')]
+#[ORM\Table(name: 'gppro_roles')]
 #[ORM\UniqueConstraint(name: 'roles_name', columns: ['name'])]
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

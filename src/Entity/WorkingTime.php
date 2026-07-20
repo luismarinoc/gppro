@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Table(name: 'kimai2_working_times')]
+#[ORM\Table(name: 'gppro_working_times')]
 #[ORM\UniqueConstraint(columns: ['user_id', 'date'])]
 #[ORM\Entity(repositoryClass: WorkingTimeRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

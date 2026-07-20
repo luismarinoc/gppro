@@ -126,9 +126,9 @@ abstract class AbstractResetCommand extends Command
 
         try {
             $command = $this->getApplication()->find('dbal:run-sql');
-            $command->run(new ArrayInput(['sql' => 'DROP TABLE IF EXISTS kimai2_sessions']), $output);
+            $command->run(new ArrayInput(['sql' => 'DROP TABLE IF EXISTS gppro_sessions']), $output);
         } catch (Exception $ex) {
-            $io->error('Failed to drop kimai2_sessions table: ' . $ex->getMessage());
+            $io->error('Failed to drop gppro_sessions table: ' . $ex->getMessage());
 
             return Command::FAILURE;
         }

@@ -11,7 +11,7 @@ doctrine:
         connections:
             default:
                 # existing migrations will fail if the schema filter is activated
-                #schema_filter: ~^(?!(bundle_migration_|kimai2_sessions))~
+                #schema_filter: ~^(?!(bundle_migration_|gppro_sessions))~
                 url: '%env(DATABASE_URL)%'
                 driver: 'pdo_mysql'
                 charset: utf8mb4
