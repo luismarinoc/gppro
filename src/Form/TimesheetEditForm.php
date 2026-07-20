@@ -472,7 +472,7 @@ class TimesheetEditForm extends AbstractType
             'duration_minutes' => null,
             'duration_hours' => $maxHours,
             'attr' => [
-                'data-form-event' => 'kimai.timesheetUpdate',
+                'data-form-event' => 'gppro.timesheetUpdate',
                 'data-msg-success' => 'action.update.success',
                 'data-msg-error' => 'action.update.error',
             ],

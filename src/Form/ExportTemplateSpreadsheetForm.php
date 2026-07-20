@@ -96,7 +96,7 @@ class ExportTemplateSpreadsheetForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'export_template_create',
             'attr' => [
-                'data-form-event' => 'kimai.exportTemplate'
+                'data-form-event' => 'gppro.exportTemplate'
             ],
         ]);
     }

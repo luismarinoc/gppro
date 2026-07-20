@@ -24,7 +24,7 @@ class CustomerEditFormTest extends TypeTestCase
 
         $attr = $form->getFormConfig()->getOption('attr');
         self::assertArrayHasKey('data-form-event', $attr);
-        self::assertEquals('kimai.customerUpdate', $attr['data-form-event']);
+        self::assertEquals('gppro.customerUpdate', $attr['data-form-event']);
 
         self::assertTrue($form->has('name'));
         self::assertTrue($form->has('comment'));

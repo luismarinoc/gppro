@@ -1,8 +1,8 @@
-{% extends kimai_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
+{% extends gppro_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
 {% import "macros/widgets.html.twig" as widgets %}
 
 {% block main %}
-    {% set formEditTemplate = kimai_context.modalRequest ? 'default/_form_modal.html.twig' : 'default/_form.html.twig' %}
+    {% set formEditTemplate = gppro_context.modalRequest ? 'default/_form_modal.html.twig' : 'default/_form.html.twig' %}
     {% set formOptions = {
         'title': (access_token.id is null ? 'create'|trans : 'edit'|trans),
         'form': form,

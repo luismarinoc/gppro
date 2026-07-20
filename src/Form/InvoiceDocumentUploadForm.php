@@ -142,7 +142,7 @@ final class InvoiceDocumentUploadForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_invoice_document_upload',
             'attr' => [
-                'data-form-event' => 'kimai.invoiceTemplateUpdate',
+                'data-form-event' => 'gppro.invoiceTemplateUpdate',
                 'data-msg-success' => 'action.update.success',
                 'data-msg-error' => 'action.update.error',
             ],

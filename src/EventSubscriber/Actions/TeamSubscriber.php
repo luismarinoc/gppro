@@ -45,7 +45,7 @@ final class TeamSubscriber extends AbstractActionsSubscriber
                 'url' => $this->path('delete_team', ['id' => $team->getId()]),
                 'class' => 'api-link text-red',
                 'attr' => [
-                    'data-event' => 'kimai.teamDelete kimai.teamUpdate',
+                    'data-event' => 'gppro.teamDelete gppro.teamUpdate',
                     'data-method' => 'DELETE',
                     'data-question' => 'confirm.delete',
                     'data-msg-error' => 'action.delete.error',

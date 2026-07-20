@@ -79,7 +79,7 @@ export default class GpproAjaxModalForm extends GpproReducedClickHandler {
     openUrlInModal(url, error)
     {
         const headers = new Headers();
-        headers.append('X-Requested-With', 'Kimai-Modal');
+        headers.append('X-Requested-With', 'Gppro-Modal');
 
         this.fetch(url, {
             method: 'GET',
@@ -222,7 +222,7 @@ export default class GpproAjaxModalForm extends GpproReducedClickHandler {
                 event.stopPropagation();
 
                 const headers = new Headers();
-                headers.append('X-Requested-With', 'Kimai-Modal');
+                headers.append('X-Requested-With', 'Gppro-Modal');
                 const options = {headers: headers};
 
                 this.fetchForm(form, options)

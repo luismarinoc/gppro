@@ -55,14 +55,14 @@ export default class GpproPaginatedBoxWidget {
         const selector = this.selector;
 
         // this event will render a spinning loader
-        document.dispatchEvent(new CustomEvent('kimai.reloadContent', {detail: this.selector}));
+        document.dispatchEvent(new CustomEvent('gppro.reloadContent', {detail: this.selector}));
 
         // and this event will hide it afterwards
         const hideOverlay = () => {
-            document.dispatchEvent(new Event('kimai.reloadedContent'));
+            document.dispatchEvent(new Event('gppro.reloadedContent'));
         };
 
-        window.kimai.getPlugin('fetch').fetch(url)
+        window.gppro.getPlugin('fetch').fetch(url)
             .then(response => {
                 response.text().then((text) => {
                     const temp = document.createElement('div');
@@ -78,7 +78,7 @@ export default class GpproPaginatedBoxWidget {
             })
             .catch(() => {
                 // this is not yet a plugin, so the alert is not available here
-                window.kimai.getPlugin('alert').error('Failed loading selected page');
+                window.gppro.getPlugin('alert').error('Failed loading selected page');
                 hideOverlay();
             });
     }

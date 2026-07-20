@@ -69,11 +69,11 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        document.addEventListener('kimai.initialized', function(event) {
-            const kimai = event.detail.kimai;
-            const DATES = kimai.getPlugin('date');
-            /** @type {KimaiFormSelect} FORM_SELECT */
-            const FORM_SELECT = kimai.getPlugin('form-select');
+        document.addEventListener('gppro.initialized', function(event) {
+            const gppro = event.detail.gppro;
+            const DATES = gppro.getPlugin('date');
+            /** @type {GpproFormSelect} FORM_SELECT */
+            const FORM_SELECT = gppro.getPlugin('form-select');
 
 
             if (window.matchMedia("(max-width: 1360px)").matches) {

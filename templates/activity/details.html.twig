@@ -128,8 +128,8 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', function() {
-            KimaiReloadPageWidget.create('kimai.activityUpdate kimai.teamUpdate kimai.activityTeamUpdate kimai.projectTeamUpdate kimai.customerTeamUpdate kimai.customerUpdate kimai.projectUpdate kimai.rateUpdate');
+        document.addEventListener('gppro.initialized', function() {
+            GpproReloadPageWidget.create('gppro.activityUpdate gppro.teamUpdate gppro.activityTeamUpdate gppro.projectTeamUpdate gppro.customerTeamUpdate gppro.customerUpdate gppro.projectUpdate gppro.rateUpdate');
         });
     </script>
 {% endblock %}

@@ -39,7 +39,7 @@ class ActivityRateForm extends AbstractRateForm
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_customer_rate_edit',
             'attr' => [
-                'data-form-event' => 'kimai.activityUpdate'
+                'data-form-event' => 'gppro.activityUpdate'
             ],
         ]);
     }

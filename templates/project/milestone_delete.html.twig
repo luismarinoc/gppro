@@ -1,7 +1,7 @@
-{% extends kimai_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
+{% extends gppro_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
 
 {% block main %}
-    {{ include(kimai_context.modalRequest ? 'default/_form_delete_modal.html.twig' : 'default/_form_delete.html.twig', {
+    {{ include(gppro_context.modalRequest ? 'default/_form_delete_modal.html.twig' : 'default/_form_delete.html.twig', {
         'message': 'admin_entity.delete_confirm'|trans,
         'form': form,
         'delete_item_name': milestone.name,

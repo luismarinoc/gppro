@@ -28,6 +28,6 @@ class WidgetControllerTest extends AbstractControllerBaseTestCase
         $content = $client->getResponse()->getContent();
         self::assertStringContainsString('id="PaginatedWorkingTimeChartBox"', $content);
         self::assertStringContainsString('myChart = new Chart', $content);
-        self::assertStringContainsString("KimaiPaginatedBoxWidget.create('#PaginatedWorkingTimeChartBox');", $content);
+        self::assertStringContainsString("GpproPaginatedBoxWidget.create('#PaginatedWorkingTimeChartBox');", $content);
     }
 }

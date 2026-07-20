@@ -42,7 +42,7 @@ class AjaxAuthenticationSubscriberTest extends TestCase
     {
         return [
             ['XMLHttpRequest'],
-            ['Kimai']
+            ['Gppro']
         ];
     }
 

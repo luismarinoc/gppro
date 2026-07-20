@@ -177,8 +177,8 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        document.addEventListener('kimai.initialized', function() {
-            KimaiReloadPageWidget.create('kimai.commentUpdate kimai.customerTeamUpdate kimai.customerUpdate kimai.teamUpdate kimai.projectTeamUpdate kimai.rateUpdate');
+        document.addEventListener('gppro.initialized', function() {
+            GpproReloadPageWidget.create('gppro.commentUpdate gppro.customerTeamUpdate gppro.customerUpdate gppro.teamUpdate gppro.projectTeamUpdate gppro.rateUpdate');
         });
     </script>
 {% endblock %}

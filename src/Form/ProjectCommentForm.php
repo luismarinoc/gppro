@@ -34,7 +34,7 @@ final class ProjectCommentForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_project_comment',
             'attr' => [
-                'data-form-event' => 'kimai.projectComment'
+                'data-form-event' => 'gppro.projectComment'
             ],
         ]);
     }

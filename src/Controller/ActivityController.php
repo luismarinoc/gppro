@@ -77,7 +77,7 @@ final class ActivityController extends AbstractController
         $table->setPagination($entries);
         $table->setSearchForm($form);
         $table->setPaginationRoute('admin_activity_paginated');
-        $table->setReloadEvents('kimai.activityUpdate kimai.activityDelete kimai.activityTeamUpdate');
+        $table->setReloadEvents('gppro.activityUpdate gppro.activityDelete gppro.activityTeamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
         $table->addColumn('project', ['class' => 'd-none']);
@@ -351,7 +351,7 @@ final class ActivityController extends AbstractController
 
         $deleteForm = $this->createFormBuilder(null, [
                 'attr' => [
-                    'data-form-event' => 'kimai.activityDelete',
+                    'data-form-event' => 'gppro.activityDelete',
                     'data-msg-success' => 'action.delete.success',
                     'data-msg-error' => 'action.delete.error',
                 ]

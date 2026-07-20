@@ -57,8 +57,8 @@ class TwigContextCompilerPassTest extends TestCase
         self::assertCount(2, $methods);
         self::assertTrue($definition->hasMethodCall('addGlobal'));
         self::assertEquals('addGlobal', $methods[0][0]);
-        self::assertEquals('kimai_context', $methods[0][1][0]);
+        self::assertEquals('gppro_context', $methods[0][1][0]);
         self::assertEquals('addGlobal', $methods[1][0]);
-        self::assertEquals('kimai_config', $methods[1][1][0]);
+        self::assertEquals('gppro_config', $methods[1][1][0]);
     }
 }

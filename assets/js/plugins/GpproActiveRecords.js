@@ -40,14 +40,14 @@ export default class GpproActiveRecords extends GpproPlugin {
             this.reloadActiveRecords();
         };
 
-        document.addEventListener('kimai.timesheetUpdate', handleUpdate);
-        document.addEventListener('kimai.timesheetDelete', handleUpdate);
-        document.addEventListener('kimai.activityUpdate', handleUpdate);
-        document.addEventListener('kimai.activityDelete', handleUpdate);
-        document.addEventListener('kimai.projectUpdate', handleUpdate);
-        document.addEventListener('kimai.projectDelete', handleUpdate);
-        document.addEventListener('kimai.customerUpdate', handleUpdate);
-        document.addEventListener('kimai.customerDelete', handleUpdate);
+        document.addEventListener('gppro.timesheetUpdate', handleUpdate);
+        document.addEventListener('gppro.timesheetDelete', handleUpdate);
+        document.addEventListener('gppro.activityUpdate', handleUpdate);
+        document.addEventListener('gppro.activityDelete', handleUpdate);
+        document.addEventListener('gppro.projectUpdate', handleUpdate);
+        document.addEventListener('gppro.projectDelete', handleUpdate);
+        document.addEventListener('gppro.customerUpdate', handleUpdate);
+        document.addEventListener('gppro.customerDelete', handleUpdate);
 
         // -----------------------------------------------------------------------
         // handle duration in the visible UI
@@ -57,8 +57,8 @@ export default class GpproActiveRecords extends GpproPlugin {
             this._updateDuration();
         };
         this._updatesHandler = setInterval(handle, 10000);
-        document.addEventListener('kimai.timesheetUpdate', handle);
-        document.addEventListener('kimai.reloadedContent', handle);
+        document.addEventListener('gppro.timesheetUpdate', handle);
+        document.addEventListener('gppro.reloadedContent', handle);
     }
 
     // TODO we could unregister all handler and listener

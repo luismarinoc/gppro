@@ -98,10 +98,10 @@
         var calendar = null;
 
         const reloader = function() { calendar.reloadEvents(); };
-        document.addEventListener('kimai.timesheetUpdate', reloader);
-        document.addEventListener('kimai.timesheetDelete', reloader);
+        document.addEventListener('gppro.timesheetUpdate', reloader);
+        document.addEventListener('gppro.timesheetDelete', reloader);
 
-        document.addEventListener('kimai.calendar.changeDate', function(event) {
+        document.addEventListener('gppro.calendar.changeDate', function(event) {
             var queryParams = new URLSearchParams(window.location.search);
 
             const dateSelect = document.getElementById('date');
@@ -118,8 +118,8 @@
             history.replaceState(null, null, "?" + queryParams.toString());
         });
 
-        document.addEventListener('kimai.initialized', function(event) {
-            const kimai = event.detail.kimai;
+        document.addEventListener('gppro.initialized', function(event) {
+            const gppro = event.detail.gppro;
 
             let calendarOptions = {
                 initialDate: '{{ initial_date|report_date }}',
@@ -224,8 +224,8 @@
                 },
             };
 
-            calendar = new KimaiCalendar(
-                kimai,
+            calendar = new GpproCalendar(
+                gppro,
                 document.getElementById('{{ calendarSelector }}'),
                 Object.assign({}, calendarOptions, {{ config|json_encode|raw }})
             );
@@ -240,7 +240,7 @@
             toolbar[1].classList.add('col-md-4', 'col-12', 'mb-1', 'text-center', 'order-3');
             toolbar[2].classList.add('col-md-4', 'col-6', 'mb-1', 'text-end', 'order-md-4', 'order-xs-2');
 
-            KimaiReloadPageWidget.create('kimai.systemConfigUpdate', true);
+            GpproReloadPageWidget.create('gppro.systemConfigUpdate', true);
         });
     </script>
 {% endblock %}

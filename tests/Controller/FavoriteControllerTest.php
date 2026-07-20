@@ -42,7 +42,7 @@ class FavoriteControllerTest extends AbstractControllerBaseTestCase
         self::assertNotFalse($content);
         self::assertStringContainsString('<a class="api-link text-decoration-none text-body d-block" href="#', $content);
         self::assertStringContainsString('data-href="/api/timesheets/', $content);
-        self::assertStringContainsString('data-event="kimai.timesheetStart kimai.timesheetUpdate" data-method="PATCH" data-msg-error="timesheet', $content);
+        self::assertStringContainsString('data-event="gppro.timesheetStart gppro.timesheetUpdate" data-method="PATCH" data-msg-error="timesheet', $content);
     }
 
     /**

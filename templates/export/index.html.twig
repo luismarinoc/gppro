@@ -149,7 +149,7 @@
                                                     {{ btnTitle }}
                                                     {% if allowCreate and cfg.internal %}
                                                         <span class="dropdown-action modal-ajax-form open-edit ps-2 ms-auto" data-href="{{ path('export_template_edit', {exportTemplate: id}) }}">{{ icon('edit') }}</span>
-                                                        <span class="dropdown-action api-link text-red dd-ts-trash text-danger ms-2" href="{{ path('delete_export_template', {id: id}) }}" data-event="kimai.exportTemplate" data-method="DELETE" data-question="confirm.delete" data-msg-error="action.delete.error">{{ icon('delete') }}</span>
+                                                        <span class="dropdown-action api-link text-red dd-ts-trash text-danger ms-2" href="{{ path('delete_export_template', {id: id}) }}" data-event="gppro.exportTemplate" data-method="DELETE" data-question="confirm.delete" data-msg-error="action.delete.error">{{ icon('delete') }}</span>
                                                     {% endif %}
                                                 </a>
                                             {% endfor %}
@@ -315,14 +315,14 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        KimaiReloadPageWidget.create('kimai.exportTemplate', true);
+        GpproReloadPageWidget.create('gppro.exportTemplate', true);
 
         function updateTimesheetExportState(node, id)
         {
-            /** @type {KimaiAlert} */
-            const ALERT = kimai.getPlugin('alert');
-            /** @type {KimaiAPI} */
-            const API = kimai.getPlugin('api');
+            /** @type {GpproAlert} */
+            const ALERT = gppro.getPlugin('alert');
+            /** @type {GpproAPI} */
+            const API = gppro.getPlugin('api');
 
             API.patch(
                 '{{ path('export_timesheet', {id: 1}) }}'.replace('1', id),
@@ -339,7 +339,7 @@
             );
         }
 
-        document.addEventListener('kimai.initialized', function() {
+        document.addEventListener('gppro.initialized', function() {
             document.addEventListener('click', function (event) {
                 const node = event.target;
                 if (node.matches('.exportBtn')) {
@@ -380,7 +380,7 @@
         {% if showToggleButton %}
             function confirmToggleState(doExport)
             {
-                let ALERT = kimai.getPlugin('alert');
+                let ALERT = gppro.getPlugin('alert');
                 let message = '{{ 'export.clear_all'|trans }}';
 
                 if (doExport) {

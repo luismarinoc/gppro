@@ -47,7 +47,7 @@ class ExportTemplateSpreadsheetFormTest extends TypeTestCase
         $attr = $form->getFormConfig()->getOption('attr');
         self::assertIsArray($attr);
         self::assertArrayHasKey('data-form-event', $attr);
-        self::assertEquals('kimai.exportTemplate', $attr['data-form-event']);
+        self::assertEquals('gppro.exportTemplate', $attr['data-form-event']);
 
         self::assertTrue($form->has('title'));
         self::assertTrue($form->has('renderer'));

@@ -3,7 +3,7 @@
         {% import "macros/widgets.html.twig" as widgets %}
         {% block box_title %}{{ 'projects'|trans }}{% endblock %}
         {% block box_attributes %}
-            id="project_list_box" data-reload="kimai.projectUpdate kimai.projectDelete"
+            id="project_list_box" data-reload="gppro.projectUpdate gppro.projectDelete"
         {% endblock %}
         {% block box_tools %}
             {%- if is_granted('report:project') and is_granted('budget_any', 'project') -%}
@@ -59,8 +59,8 @@
         {% endblock %}
     {% endembed %}
     <script type="text/javascript">
-        {% set eventName = kimai_context.javascriptRequest ? 'kimai.reloadPage' : 'kimai.initialized' %}
+        {% set eventName = gppro_context.javascriptRequest ? 'gppro.reloadPage' : 'gppro.initialized' %}
         document.addEventListener('{{ eventName }}', function() {
-            KimaiPaginatedBoxWidget.create('#project_list_box');
+            GpproPaginatedBoxWidget.create('#project_list_box');
         });
     </script>

@@ -137,13 +137,13 @@
         myChart.destroy();
     };
 
-    {% if kimai_context.javascriptRequest %}
+    {% if gppro_context.javascriptRequest %}
         paintChart();
     {% else %}
         if (document.getElementById('dashboard-grid-container') !== null) {
             document.addEventListener('dashboard.initialized', paintChart);
         } else {
-            document.addEventListener('kimai.initialized', paintChart);
+            document.addEventListener('gppro.initialized', paintChart);
         }
     {% endif %}
 </script>

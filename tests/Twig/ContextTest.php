@@ -62,7 +62,7 @@ class ContextTest extends TestCase
         $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'XMLHttpRequest']);
         self::assertTrue($sut->isModalRequest());
 
-        $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'Kimai-Modal']);
+        $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'Gppro-Modal']);
         self::assertTrue($sut->isModalRequest());
     }
 
@@ -74,7 +74,7 @@ class ContextTest extends TestCase
         $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'XMLHttpRequest']);
         self::assertTrue($sut->isJavascriptRequest());
 
-        $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'Kimai']);
+        $sut = $this->getSut($this->getDefaultSettings(), ['X-Requested-With' => 'Gppro']);
         self::assertTrue($sut->isJavascriptRequest());
     }
 
@@ -84,7 +84,7 @@ class ContextTest extends TestCase
 
         $previousHandler = set_error_handler(static function (int $type, string $message): true {
             self::assertSame(E_USER_DEPRECATED, $type);
-            self::assertSame('Use config() instead of "kimai_context" to access system configurations', $message);
+            self::assertSame('Use config() instead of "gppro_context" to access system configurations', $message);
 
             return true;
         });

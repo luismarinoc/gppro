@@ -181,7 +181,7 @@ class CustomerEditForm extends AbstractType
             'include_budget' => false,
             'include_time' => false,
             'attr' => [
-                'data-form-event' => 'kimai.customerUpdate'
+                'data-form-event' => 'gppro.customerUpdate'
             ],
         ]);
     }

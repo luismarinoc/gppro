@@ -36,7 +36,7 @@ final class ProjectTeamPermissionForm extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'admin_project_teams_edit',
             'attr' => [
-                'data-form-event' => 'kimai.projectTeamUpdate'
+                'data-form-event' => 'gppro.projectTeamUpdate'
             ],
         ]);
     }

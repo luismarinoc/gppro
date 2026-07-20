@@ -35,17 +35,17 @@ export default class GpproReloadPageWidget {
     }
     
     _showOverlay() {
-        document.dispatchEvent(new CustomEvent('kimai.reloadContent', {detail: 'div.page-wrapper'}));
+        document.dispatchEvent(new CustomEvent('gppro.reloadContent', {detail: 'div.page-wrapper'}));
     }
 
     _hideOverlay() {
-        document.dispatchEvent(new Event('kimai.reloadedContent'));
+        document.dispatchEvent(new Event('gppro.reloadedContent'));
     }
 
     _loadPage(url) {
         this._showOverlay();
 
-        window.kimai.getPlugin('fetch').fetch(url)
+        window.gppro.getPlugin('fetch').fetch(url)
             .then(response => {
                 response.text().then((text) => {
                     const temp = document.createElement('div');
@@ -58,7 +58,7 @@ export default class GpproReloadPageWidget {
                     });
                     const newContent = temp.querySelector('section.content');
                     oldContent.replaceWith(newContent);
-                    document.dispatchEvent(new Event('kimai.reloadPage'));
+                    document.dispatchEvent(new Event('gppro.reloadPage'));
                     this._hideOverlay();
                 });
             })

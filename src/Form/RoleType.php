@@ -81,7 +81,7 @@ final class RoleType extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'edit_role',
             'attr' => [
-                'data-form-event' => 'kimai.userRoleUpdate',
+                'data-form-event' => 'gppro.userRoleUpdate',
                 'data-msg-success' => 'action.update.success',
                 'data-msg-error' => 'action.update.error',
             ],

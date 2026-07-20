@@ -54,7 +54,7 @@ final class TagSubscriber extends AbstractActionsSubscriber
                 'url' => $this->path('delete_tag', ['id' => $id]),
                 'class' => 'api-link text-red',
                 'attr' => [
-                    'data-event' => 'kimai.tagDelete kimai.tagUpdate',
+                    'data-event' => 'gppro.tagDelete gppro.tagUpdate',
                     'data-method' => 'DELETE',
                     'data-question' => 'confirm.delete',
                     'data-msg-error' => 'action.delete.error',
