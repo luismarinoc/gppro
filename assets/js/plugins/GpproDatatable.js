@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproDatatable: handles functionality for the datatable
+ * [GPPRO] GpproDatatable: handles functionality for the datatable
  */
 
 import GpproPlugin from "../GpproPlugin";

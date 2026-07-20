@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproAlert: notifications for Kimai
+ * [GPPRO] GpproAlert: notifications for gppro
  */
 
 import GpproPlugin from "../GpproPlugin";

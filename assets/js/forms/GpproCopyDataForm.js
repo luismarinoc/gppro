@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproEditTimesheetForm: responsible for the most important form in the application
+ * [GPPRO] GpproEditTimesheetForm: responsible for the most important form in the application
  */
 
 import GpproFormPlugin from "./GpproFormPlugin";

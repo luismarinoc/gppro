@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproFormTomselectPlugin: base form plugin for everyone using tomselect
+ * [GPPRO] GpproFormTomselectPlugin: base form plugin for everyone using tomselect
  */
 
 import GpproFormPlugin from './GpproFormPlugin';

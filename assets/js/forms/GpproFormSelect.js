@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproFormSelect: enhanced functionality for HTMLSelectElement
+ * [GPPRO] GpproFormSelect: enhanced functionality for HTMLSelectElement
  */
 
 import TomSelect from 'tom-select';

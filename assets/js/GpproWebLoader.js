@@ -1,14 +1,14 @@
 /*
  * This file is part of the gppro time-tracking app.
  *
- * Main JS application file for Kimai 2. This file should be included in all pages.
+ * Main JS application file for gppro. This file should be included in all pages.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 /*!
- * [KIMAI] Wrapper class for loading Kimai app in browser script scope
+ * [GPPRO] Wrapper class for loading gppro app in browser script scope
  */
 
 import GpproLoader from "./GpproLoader";

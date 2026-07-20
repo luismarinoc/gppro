@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproAjaxModalForm
+ * [GPPRO] GpproAjaxModalForm
  *
  * allows to assign the given selector to any element, which then is used as click-handler:
  * opening a modal with the content from the URL given in the elements 'data-href' or 'href' attribute

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproDateRangePicker: activate the (daterange picker) compound field in toolbar
+ * [GPPRO] GpproDateRangePicker: activate the (daterange picker) compound field in toolbar
  */
 
 import GpproDatePicker from "./GpproDatePicker";

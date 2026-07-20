@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproEditTimesheetForm: responsible for the most important form in the application
+ * [GPPRO] GpproEditTimesheetForm: responsible for the most important form in the application
  */
 
 import { DateTime } from 'luxon';
@@ -549,7 +549,7 @@ export default class GpproTimesheetForm extends GpproFormPlugin {
     _addSecondsToEndDate(dateTime, seconds)
     {
         // if the duration is longer than one day, the end field should be empty
-        // so kimai can calculate it after submitting the data from start + duration
+        // so gppro can calculate it after submitting the data from start + duration
         if (seconds < 86400) {
             this._applyDateToField(dateTime.plus({seconds: seconds}), null, this._endTime);
         } else {

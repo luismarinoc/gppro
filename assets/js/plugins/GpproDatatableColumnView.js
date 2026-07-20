@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproDatatableColumnView: manages the visibility of data-table columns in cookies
+ * [GPPRO] GpproDatatableColumnView: manages the visibility of data-table columns in cookies
  */
 
 import GpproPlugin from "../GpproPlugin";
@@ -45,7 +45,7 @@ export default class GpproDatatableColumnView extends GpproPlugin {
                 .then(() => {
                     // the local storage is read in the login screen to set a cookie,
                     // which triggers the session switch in ProfileSubscriber
-                    localStorage.setItem('kimai_profile', element.getAttribute('value'));
+                    localStorage.setItem('gppro_profile', element.getAttribute('value'));
                     document.location.reload();
                 })
                 .catch(() => {

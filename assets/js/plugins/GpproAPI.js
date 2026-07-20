@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproAPI: easy access to API methods
+ * [GPPRO] GpproAPI: easy access to API methods
  */
 
 import GpproPlugin from "../GpproPlugin";

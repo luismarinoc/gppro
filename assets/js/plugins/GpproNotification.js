@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] Notification: notifications for Kimai
+ * [GPPRO] Notification: notifications for gppro
  */
 
 import GpproPlugin from '../GpproPlugin';
@@ -74,14 +74,14 @@ export default class GpproNotification extends GpproPlugin {
             //opts.renotify = true;
             /*
             if (options.tag === undefined) {
-                opts.tag = 'kimai';
+                opts.tag = 'gppro';
             }
             */
             if (icon !== undefined && icon !== null) {
                 opts.icon = icon;
             }
 
-            let nTitle = 'Kimai';
+            let nTitle = 'gppro';
             if (title !== null) {
                 nTitle = nTitle + ': ' + title;
             }

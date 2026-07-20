@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproPlugin: base class for all plugins
+ * [GPPRO] GpproPlugin: base class for all plugins
  */
 
 import GpproContainer from "./GpproContainer";

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproEscape: sanitize strings
+ * [GPPRO] GpproEscape: sanitize strings
  */
 
 import GpproPlugin from "../GpproPlugin";

@@ -6,7 +6,7 @@
  */
 
 /*!
- * [KIMAI] GpproConfiguration: handling all configuration and runtime settings
+ * [GPPRO] GpproConfiguration: handling all configuration and runtime settings
  */
 
 export default class GpproConfiguration {
