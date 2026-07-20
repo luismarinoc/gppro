@@ -26,6 +26,7 @@ var/templates/
 /config/bundles-local.php
 /var/dev/*
 /var/data/*
+!/var/data/.gitkeep
 /var/cache/*
 /var/invoices*
 /var/export*

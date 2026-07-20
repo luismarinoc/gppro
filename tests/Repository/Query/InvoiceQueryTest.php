@@ -60,6 +60,7 @@ class InvoiceQueryTest extends TimesheetQueryTest
 
         self::assertSame([$selected], $sut->getActivities());
     }
+
     public function testQuery(): void
     {
         $sut = new InvoiceQuery();

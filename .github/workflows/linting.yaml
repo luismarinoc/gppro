@@ -16,6 +16,8 @@ jobs:
     integration:
         name: Linting (${{ matrix.php }})
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
 
         strategy:
             matrix:
