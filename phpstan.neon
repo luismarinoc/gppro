@@ -2508,6 +2508,16 @@ parameters:
             path: src/Repository/Query/TimesheetQuery.php
 
         -
+            message: "#^Cannot call method setBegin\\(\\) on App\\\\Form\\\\Model\\\\DateRange\\|null\\.$#"
+            count: 1
+            path: src/Repository/Query/FxRateQuery.php
+
+        -
+            message: "#^Cannot call method setEnd\\(\\) on App\\\\Form\\\\Model\\\\DateRange\\|null\\.$#"
+            count: 1
+            path: src/Repository/Query/FxRateQuery.php
+
+        -
             message: "#^Method App\\\\Repository\\\\RoleRepository\\:\\:deleteRole\\(\\) has no return type specified\\.$#"
             count: 1
             path: src/Repository/RoleRepository.php
