@@ -3133,6 +3133,11 @@ parameters:
             path: src/Validator/Constraints/Duration.php
 
         -
+            message: "#^Parameter \\#1 \\$value \\(App\\\\Entity\\\\Milestone\\) of method App\\\\Validator\\\\Constraints\\\\MilestoneValidator\\:\\:validate\\(\\) should be contravariant with parameter \\$value \\(mixed\\) of method Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\:\\:validate\\(\\)$#"
+            count: 2
+            path: src/Validator/Constraints/MilestoneValidator.php
+
+        -
             message: "#^Parameter \\#1 \\$value \\(App\\\\Entity\\\\Team\\) of method App\\\\Validator\\\\Constraints\\\\TeamValidator\\:\\:validate\\(\\) should be contravariant with parameter \\$value \\(mixed\\) of method Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\:\\:validate\\(\\)$#"
             count: 2
             path: src/Validator/Constraints/TeamValidator.php

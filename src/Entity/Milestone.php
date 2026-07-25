@@ -12,6 +12,7 @@ namespace App\Entity;
 use App\Doctrine\Behavior\CreatedAt;
 use App\Doctrine\Behavior\CreatedTrait;
 use App\Repository\MilestoneRepository;
+use App\Validator\Constraints as Constraints;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -21,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'gppro_milestones')]
 #[ORM\Index(columns: ['project_id'])]
 #[ORM\Entity(repositoryClass: MilestoneRepository::class)]
+#[Constraints\Milestone]
 class Milestone implements CreatedAt
 {
     use CreatedTrait;
@@ -45,6 +47,14 @@ class Milestone implements CreatedAt
 
     #[ORM\Column(name: 'due_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dueDate = null;
+
+    #[ORM\Column(name: 'value', type: Types::DECIMAL, precision: 18, scale: 4, nullable: true)]
+    #[Assert\Range(min: 0.01, max: 900000000000)]
+    private ?string $value = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    #[Assert\Currency]
+    private ?string $currency = null;
 
     /**
      * @var Collection<int, Activity>
@@ -107,6 +117,30 @@ class Milestone implements CreatedAt
     public function setDueDate(?\DateTime $dueDate): Milestone
     {
         $this->dueDate = $dueDate;
+
+        return $this;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(?string $value): Milestone
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?string $currency): Milestone
+    {
+        $this->currency = $currency;
 
         return $this;
     }
