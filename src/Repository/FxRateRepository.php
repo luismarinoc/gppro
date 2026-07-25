@@ -14,6 +14,7 @@ use App\Repository\Paginator\PaginatorInterface;
 use App\Repository\Paginator\QueryPaginator;
 use App\Repository\Query\FxRateQuery;
 use App\Utils\Pagination;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -26,6 +27,38 @@ class FxRateRepository extends EntityRepository
     public function findOneByDateAndIndicator(\DateTimeImmutable $date, string $indicator): ?FxRate
     {
         return $this->findOneBy(['date' => $date, 'indicator' => $indicator]);
+    }
+
+    /**
+     * The most recent rate for $indicator with a date on or before $date.
+     *
+     * Relies on the `UNIQ_GPPRO_FX_RATES_DATE_INDICATOR (date, indicator)` index: MySQL
+     * walks it backwards from $date and stops at the first row matching $indicator.
+     */
+    public function findLatestOnOrBefore(string $indicator, \DateTimeImmutable $date): ?FxRate
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.indicator = :indicator')->setParameter('indicator', $indicator)
+            ->andWhere('f.date <= :date')->setParameter('date', $date, Types::DATE_IMMUTABLE)
+            ->orderBy('f.date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * The most recent rate for $indicator, regardless of date.
+     */
+    public function findLatest(string $indicator): ?FxRate
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.indicator = :indicator')->setParameter('indicator', $indicator)
+            ->orderBy('f.date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     public function saveFxRate(FxRate $fxRate): void
