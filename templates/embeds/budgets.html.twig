@@ -87,6 +87,21 @@
                             <td>{{ 'costs'|trans }}</td>
                             <td class="text-nowrap text-end">{{ stats.internalRate|money(currency) }}</td>
                         </tr>
+                        {% if milestone_total|default(null) is not null and (milestone_total.hasTotal() or milestone_total.isPartial()) %}
+                            <tr class="milestone_total_row">
+                                <td>{{ 'milestone.total_clp'|trans }}</td>
+                                <td class="text-nowrap text-end">
+                                    {% if milestone_total.hasTotal() %}
+                                        {{ milestone_total.total|money('CLP') }}
+                                    {% else %}
+                                        &ndash;
+                                    {% endif %}
+                                    {% if milestone_total.isPartial() %}
+                                        <span class="badge bg-warning text-warning-fg milestone_total_partial" data-toggle="tooltip" data-placement="top" title="{{ 'milestone.total_partial'|trans({'%count%': milestone_total.excludedCount}) }}">!</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
                         {% if not entity.isMonthlyBudget() and timeBudgetVisible and stats.duration > 0 and stats.duration|chart_duration > 0.00 %}
                             {% set revenueTotal = stats.rateBillable - stats.internalRate %}
                             {% if stats.internalRate > 0 %}

@@ -27,6 +27,7 @@ use App\Form\ProjectRateForm;
 use App\Form\ProjectTeamPermissionForm;
 use App\Form\Toolbar\ProjectToolbarForm;
 use App\Form\Type\ProjectType;
+use App\Milestone\MilestoneTotalCalculator;
 use App\Project\ProjectDuplicationService;
 use App\Project\ProjectService;
 use App\Project\ProjectStatisticService;
@@ -246,11 +247,12 @@ final class ProjectController extends AbstractController
 
     #[Route(path: '/{id}/details', name: 'project_details', methods: ['GET', 'POST'])]
     #[IsGranted('view', 'project')]
-    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, MilestoneRepository $milestoneRepository, ProjectStatisticService $statisticService, ProjectService $projectService, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher): Response
+    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, MilestoneRepository $milestoneRepository, ProjectStatisticService $statisticService, ProjectService $projectService, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher, MilestoneTotalCalculator $milestoneTotalCalculator): Response
     {
         $projectService->loadMetaFields($project);
 
         $stats = null;
+        $milestoneTotal = null;
         $defaultTeam = null;
         $commentForm = null;
         $attachments = [];
@@ -278,6 +280,10 @@ final class ProjectController extends AbstractController
 
         if ($this->isGranted('budget', $project) || $this->isGranted('time', $project)) {
             $stats = $statisticService->getBudgetStatisticModel($project, $now);
+        }
+
+        if ($this->isGranted('budget', $project)) {
+            $milestoneTotal = $milestoneTotalCalculator->calculate($milestones);
         }
 
         if ($this->isGranted('comments', $project)) {
@@ -308,6 +314,7 @@ final class ProjectController extends AbstractController
             'commentForm' => $commentForm,
             'attachments' => $attachments,
             'stats' => $stats,
+            'milestone_total' => $milestoneTotal,
             'team' => $defaultTeam,
             'teams' => $teams,
             'rates' => $rates,

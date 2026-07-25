@@ -17,6 +17,7 @@
                 <tr>
                     <th>{{ 'name'|trans }}</th>
                     <th class="d-none d-sm-table-cell">{{ 'due_date'|trans }}</th>
+                    <th class="d-none d-sm-table-cell text-end">{{ 'value'|trans }}</th>
                     <th class="actions"></th>
                 </tr>
                 </thead>
@@ -27,6 +28,13 @@
                         <td class="d-none d-sm-table-cell">
                             {% if milestone.dueDate is not null %}
                                 {{ milestone.dueDate|date_short }}
+                            {% else %}
+                                &ndash;
+                            {% endif %}
+                        </td>
+                        <td class="d-none d-sm-table-cell text-end">
+                            {% if milestone.value is not null %}
+                                {{ milestone.value|money(milestone.currency) }}
                             {% else %}
                                 &ndash;
                             {% endif %}

@@ -122,6 +122,14 @@
         <source>due_date</source>
         <target>Due date</target>
       </trans-unit>
+      <trans-unit id="gpMilestoneTotalClp" resname="milestone.total_clp">
+        <source>milestone.total_clp</source>
+        <target>Milestone total (CLP)</target>
+      </trans-unit>
+      <trans-unit id="gpMilestoneTotalPartial" resname="milestone.total_partial">
+        <source>milestone.total_partial</source>
+        <target>%count% milestone(s) with no exchange rate available</target>
+      </trans-unit>
       <trans-unit id="gpMilestone" resname="milestone">
         <source>milestone</source>
         <target>Milestone</target>
