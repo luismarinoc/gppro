@@ -9,6 +9,8 @@
 
 namespace App\Repository\Query;
 
+use App\Form\Model\DateRange;
+
 class FxRateQuery extends BaseQuery implements DateRangeInterface
 {
     use DateRangeTrait;
@@ -20,6 +22,7 @@ class FxRateQuery extends BaseQuery implements DateRangeInterface
         $this->setDefaults([
             'orderBy' => 'date',
             'order' => self::ORDER_DESC,
+            'dateRange' => new DateRange(),
         ]);
     }
 
