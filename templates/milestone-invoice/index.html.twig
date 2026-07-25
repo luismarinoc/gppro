@@ -1,0 +1,30 @@
+{% extends 'datatable.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+{% import "macros/datatables.html.twig" as tables %}
+
+{% block main_before %}
+    {{ tables.configuration(dataTable) }}
+    <p class="text-body-secondary">{{ customer.name }}</p>
+{% endblock %}
+
+{% block datatable_column_value %}
+    {% if column == 'name' %}
+        {{ entry.name }}
+    {% elseif column == 'project' %}
+        {{ entry.project.name }}
+    {% elseif column == 'due_date' %}
+        {% if entry.dueDate is not null %}
+            {{ entry.dueDate|date_short }}
+        {% endif %}
+    {% elseif column == 'value' %}
+        {% if entry.value is not null %}
+            {{ entry.value|money(entry.currency) }}
+        {% endif %}
+    {% elseif column == 'currency' %}
+        {{ entry.currency }}
+    {% elseif column == 'id' %}
+        {% if dataTable.hasBatchForm() %}
+            {{ tables.datatable_multiupdate_row(entry.id) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
