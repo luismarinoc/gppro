@@ -1072,6 +1072,21 @@ parameters:
             path: Entity/TimesheetTest.php
 
         -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\MilestoneValidationTest\\:\\:assertHasNoViolations\\(\\) has parameter \\$entity with no type specified\\.$#"
+            count: 1
+            path: Entity/MilestoneValidationTest.php
+
+        -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\MilestoneValidationTest\\:\\:assertHasNoViolations\\(\\) has parameter \\$groups with no type specified\\.$#"
+            count: 1
+            path: Entity/MilestoneValidationTest.php
+
+        -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\MilestoneValidationTest\\:\\:assertHasViolationForField\\(\\) has parameter \\$groups with no type specified\\.$#"
+            count: 1
+            path: Entity/MilestoneValidationTest.php
+
+        -
             message: "#^Method App\\\\Tests\\\\Entity\\\\TimesheetValidationTest\\:\\:assertHasNoViolations\\(\\) has parameter \\$entity with no type specified\\.$#"
             count: 1
             path: Entity/TimesheetValidationTest.php
@@ -2225,6 +2240,11 @@ parameters:
             message: "#^Parameter \\#1 \\$string of function strtoupper expects string, int\\|string given\\.$#"
             count: 1
             path: Validator/Constraints/DurationValidatorTest.php
+
+        -
+            message: "#^Parameter \\#1 \\$value of method App\\\\Validator\\\\Constraints\\\\MilestoneValidator\\:\\:validate\\(\\) expects App\\\\Entity\\\\Milestone, stdClass given\\.$#"
+            count: 1
+            path: Validator/Constraints/MilestoneValidatorTest.php
 
         -
             message: "#^Cannot cast mixed to string\\.$#"
