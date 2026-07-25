@@ -151,6 +151,22 @@ final class MilestoneInvoiceController extends AbstractController
             return $this->redirectToRoute('milestone_invoice_index', ['id' => $customer->getId()]);
         }
 
+        // IDOR defense-in-depth (same class of check as the mixed-customer
+        // validation above, but catching a DIFFERENT gap): the mixed-customer
+        // check only rejects a selection spanning MULTIPLE customers among
+        // themselves. It does NOT catch a single, internally-consistent
+        // selection that belongs entirely to a customer other than the one
+        // already access-checked by the route's #[IsGranted('access',
+        // 'customer')] above. Never trust that the resolved customer matches
+        // the route customer just because `access` passed for the route —
+        // `access` was only ever evaluated against $customer, never against
+        // $resolvedCustomer.
+        if ($resolvedCustomer->getId() !== $customer->getId()) {
+            $this->flashError('milestone_invoice.error.unauthorized_customer');
+
+            return $this->redirectToRoute('milestone_invoice_index', ['id' => $customer->getId()]);
+        }
+
         try {
             $invoiceService->createInvoice(
                 $milestoneInvoiceService->createModel(

@@ -2162,6 +2162,10 @@
         <source>milestone_invoice.error.stale_selection</source>
         <target state="translated">Uno de los hitos seleccionados ya fue facturado o ya no se puede convertir. Recarga la lista e intenta nuevamente.</target>
       </trans-unit>
+      <trans-unit id="gpMsInvE4" resname="milestone_invoice.error.unauthorized_customer" xml:space="preserve">
+        <source>milestone_invoice.error.unauthorized_customer</source>
+        <target state="translated">Los hitos seleccionados no pertenecen a un cliente para el cual tienes autorización de facturación.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
