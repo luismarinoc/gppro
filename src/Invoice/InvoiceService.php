@@ -392,7 +392,7 @@ class InvoiceService
         return $model;
     }
 
-    private function createModelWithoutEntries(InvoiceQuery $query): InvoiceModel
+    public function createModelWithoutEntries(InvoiceQuery $query): InvoiceModel
     {
         $customer = $query->getCustomer();
         if ($customer === null) {
