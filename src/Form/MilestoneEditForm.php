@@ -12,6 +12,8 @@ namespace App\Form;
 use App\Entity\Milestone;
 use App\Form\Type\DatePickerType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +34,23 @@ class MilestoneEditForm extends AbstractType
             ->add('comment', TextareaType::class, [
                 'label' => 'comment',
                 'required' => false,
+            ])
+            ->add('value', NumberType::class, [
+                'label' => 'value',
+                'input' => 'string',
+                'scale' => 4,
+                'required' => false,
+            ])
+            ->add('currency', CurrencyType::class, [
+                'label' => 'currency',
+                'required' => false,
+                // Restrict to the ISO codes ClpConverter can actually resolve
+                // (Milestone::SUPPORTED_CURRENCIES) instead of the full ICU currency
+                // list. Passing 'choice_loader' => null overrides CurrencyType's
+                // default Intl-backed loader, which otherwise takes priority over
+                // the 'choices' option (see Symfony\...\ChoiceType::createChoiceList).
+                'choice_loader' => null,
+                'choices' => array_combine(Milestone::SUPPORTED_CURRENCIES, Milestone::SUPPORTED_CURRENCIES),
             ])
         ;
     }

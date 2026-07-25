@@ -12,6 +12,8 @@ namespace App\Tests\Controller;
 use App\Entity\Activity;
 use App\Entity\ActivityMeta;
 use App\Entity\ActivityRate;
+use App\Entity\FxRate;
+use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\ProjectMeta;
 use App\Entity\ProjectRate;
@@ -26,6 +28,7 @@ use App\Tests\DataFixtures\ProjectFixtures;
 use App\Tests\DataFixtures\TeamFixtures;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use App\Tests\Mocks\ProjectTestMetaFieldSubscriberMock;
+use App\User\PermissionService;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -607,5 +610,229 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
                 ]
             ],
         ];
+    }
+
+    private function persistFxRate(EntityManager $em, string $indicator, string $date, string $rateValue): FxRate
+    {
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable($date));
+        $fxRate->setIndicator($indicator);
+        $fxRate->setRateValue($rateValue);
+        $em->persist($fxRate);
+
+        return $fxRate;
+    }
+
+    private function createMilestone(EntityManager $em, Project $project, string $name, ?string $value = null, ?string $currency = null, ?string $dueDate = null): Milestone
+    {
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName($name);
+
+        if ($value !== null) {
+            $milestone->setValue($value);
+        }
+
+        if ($currency !== null) {
+            $milestone->setCurrency($currency);
+        }
+
+        if ($dueDate !== null) {
+            $milestone->setDueDate(new \DateTime($dueDate));
+        }
+
+        $em->persist($milestone);
+
+        return $milestone;
+    }
+
+    public function testDetailsActionShowsMilestoneClpTotalWhenAllMilestonesConvertible(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        $this->persistFxRate($em, FxRate::INDICATOR_USD, '2026-07-20', '933.920000');
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        $this->createMilestone($em, $project, 'CLP milestone', '1000000.0000', 'CLP');
+        $this->createMilestone($em, $project, 'USD milestone', '100.0000', 'USD', '2026-07-20');
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(1, $row->count());
+        self::assertEquals(0, $row->filter('span.milestone_total_partial')->count());
+
+        // 1,000,000 CLP (passthrough) + 100 USD * 933.92 = 93,392 CLP -> 1,093,392 CLP total.
+        $digitsOnly = preg_replace('/\D/', '', $row->filter('td')->eq(1)->text());
+        self::assertSame('1093392', $digitsOnly);
+    }
+
+    public function testDetailsActionHidesMilestoneTotalWhenNoMilestoneHasValue(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        $this->createMilestone($em, $project, 'No value milestone');
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(0, $row->count());
+    }
+
+    public function testDetailsActionShowsPartialBadgeWhenSomeMilestonesAreNotConvertible(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        $this->persistFxRate($em, FxRate::INDICATOR_USD, '2026-07-20', '933.920000');
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        $this->createMilestone($em, $project, 'Convertible', '100.0000', 'USD', '2026-07-20');
+        // CLF ('uf') has no rate at all in this test's transaction -> not convertible.
+        $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'CLF', '2026-07-20');
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(1, $row->count());
+
+        $badge = $row->filter('span.milestone_total_partial');
+        self::assertEquals(1, $badge->count());
+        self::assertStringContainsString('1', (string) $badge->attr('title'));
+
+        $digitsOnly = preg_replace('/\D/', '', $row->filter('td')->eq(1)->text());
+        self::assertSame('93392', $digitsOnly);
+    }
+
+    public function testDetailsActionShowsDashWhenEveryValuedMilestoneIsNonConvertible(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        // No FxRate rows exist at all in this test's transaction -> USD is never convertible.
+        $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'USD');
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(1, $row->count());
+        self::assertStringContainsString('–', $row->filter('td')->eq(1)->text());
+        self::assertEquals(1, $row->filter('span.milestone_total_partial')->count());
+    }
+
+    public function testDetailsActionRendersWithoutErrorWhenFxRatesTableIsEmpty(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        // No FxRate fixtures imported at all - the page must not 500.
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+        self::assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function testDetailsActionHidesMilestoneTotalForUserWithoutBudgetPermission(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        $role = (new Role())->setName('TEST_VIEW_PROJECT_TIME_NO_BUDGET');
+        $em->persist($role);
+        $em->flush();
+
+        // PermissionService caches all role permissions for a day (App\User\PermissionService).
+        // Persisting RolePermission directly through the EntityManager (as the sibling
+        // testCreateWithCustomerActionDeniesUserWithoutEditCustomerPermission test does for a
+        // denial case) never invalidates that cache, so a newly *granted* permission would not
+        // be picked up. Route through PermissionService::saveRolePermission() instead - it
+        // deletes the 'permissions' cache entry after every save.
+        /** @var PermissionService $permissionService */
+        $permissionService = self::getContainer()->get(PermissionService::class);
+        $view = (new RolePermission())->setRole($role)->setPermission('view_project')->setAllowed(true);
+        $permissionService->saveRolePermission($view);
+        $details = (new RolePermission())->setRole($role)->setPermission('details_project')->setAllowed(true);
+        $permissionService->saveRolePermission($details);
+        // Grants 'time' (but not 'budget') so the shared budgets.html.twig embed
+        // still gets included (stats is not null), proving the milestone total
+        // row stays hidden through its own is_granted('budget') gate.
+        $time = (new RolePermission())->setRole($role)->setPermission('time_project')->setAllowed(true);
+        $permissionService->saveRolePermission($time);
+
+        $roleName = $role->getName();
+        self::assertNotNull($roleName);
+        $user->addRole($roleName);
+        $em->persist($user);
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        $this->createMilestone($em, $project, 'Has value', '100.0000', 'CLP');
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        self::assertEquals(0, $client->getCrawler()->filter('div.card#budget_box')->count());
+        self::assertEquals(0, $client->getCrawler()->filter('tr.milestone_total_row')->count());
+    }
+
+    public function testMilestoneAddActionPersistsValueAndCurrency(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/milestone');
+        $form = $client->getCrawler()->filter('form[name=milestone_edit_form]')->form();
+        $client->submit($form, [
+            'milestone_edit_form' => [
+                'name' => 'Delivery milestone',
+                'value' => '5000.1234',
+                'currency' => 'USD',
+            ]
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/project/1/details'));
+        $client->followRedirect();
+
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+        /** @var Milestone[] $milestones */
+        $milestones = $em->getRepository(Milestone::class)->findBy(['name' => 'Delivery milestone']);
+        self::assertCount(1, $milestones);
+        self::assertSame('5000.1234', $milestones[0]->getValue());
+        self::assertSame('USD', $milestones[0]->getCurrency());
+    }
+
+    public function testMilestoneAddActionRejectsValueWithoutCurrency(): void
+    {
+        $this->assertFormHasValidationError(
+            User::ROLE_ADMIN,
+            '/admin/project/1/milestone',
+            'form[name=milestone_edit_form]',
+            [
+                'milestone_edit_form' => [
+                    'name' => 'Partial milestone',
+                    'value' => '100',
+                    'currency' => '',
+                ]
+            ],
+            ['#milestone_edit_form_currency']
+        );
+
+        $em = $this->getEntityManager();
+        self::assertCount(0, $em->getRepository(Milestone::class)->findBy(['name' => 'Partial milestone']));
     }
 }
