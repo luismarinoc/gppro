@@ -1,0 +1,11 @@
+{% extends gppro_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
+
+{% block main %}
+    {{ include(gppro_context.modalRequest ? 'default/_form_delete_modal.html.twig' : 'default/_form_delete.html.twig', {
+        'message': 'confirm.delete'|trans,
+        'form': form,
+        'delete_item_name': ('fx_rate.indicator.' ~ fx_rate.indicator)|trans ~ ' - ' ~ fx_rate.date|date_short,
+        'used': false,
+        'back': path('fx_rates')
+    }) }}
+{% endblock %}

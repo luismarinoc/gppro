@@ -254,6 +254,30 @@
         <source>tags</source>
         <target>Tags</target>
       </trans-unit>
+      <trans-unit id="gpFxRates" resname="fx_rates">
+        <source>fx_rates</source>
+        <target>FX Rates</target>
+      </trans-unit>
+      <trans-unit id="gpFxRateIndUsd" resname="fx_rate.indicator.dolar">
+        <source>fx_rate.indicator.dolar</source>
+        <target>USD</target>
+      </trans-unit>
+      <trans-unit id="gpFxRateIndUf" resname="fx_rate.indicator.uf">
+        <source>fx_rate.indicator.uf</source>
+        <target>UF</target>
+      </trans-unit>
+      <trans-unit id="gpFxRateIndicator" resname="indicator">
+        <source>indicator</source>
+        <target>Indicator</target>
+      </trans-unit>
+      <trans-unit id="gpFxRateValue" resname="value">
+        <source>value</source>
+        <target>Value</target>
+      </trans-unit>
+      <trans-unit id="gpFxRateModifiedAt" resname="modified_at">
+        <source>modified_at</source>
+        <target>Modified at</target>
+      </trans-unit>
       <trans-unit id="JGaf9IK" resname="Doctor">
         <source>Doctor</source>
         <target>Doctor</target>
