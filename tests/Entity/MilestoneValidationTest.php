@@ -73,6 +73,26 @@ class MilestoneValidationTest extends KernelTestCase
         $this->assertHasViolationForField($entity, 'currency');
     }
 
+    public function testValidationUnsupportedCurrencyIsRejected(): void
+    {
+        $entity = $this->getEntity();
+        $entity->setValue('100.0000');
+        $entity->setCurrency('EUR');
+
+        $this->assertHasViolationForField($entity, 'currency');
+    }
+
+    public function testValidationSupportedCurrenciesAreAccepted(): void
+    {
+        foreach (Milestone::SUPPORTED_CURRENCIES as $currency) {
+            $entity = $this->getEntity();
+            $entity->setValue('100.0000');
+            $entity->setCurrency($currency);
+
+            $this->assertHasNoViolations($entity);
+        }
+    }
+
     public function testValidationMinimumPositiveValueIsAccepted(): void
     {
         $entity = $this->getEntity();

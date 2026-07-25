@@ -27,6 +27,13 @@ class Milestone implements CreatedAt
 {
     use CreatedTrait;
 
+    /**
+     * ISO-4217 codes convertible via gppro_fx_rates: CLP (base), USD, CLF (Chile's Unidad de Fomento).
+     *
+     * @var string[]
+     */
+    public const SUPPORTED_CURRENCIES = ['CLP', 'USD', 'CLF'];
+
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
@@ -53,7 +60,7 @@ class Milestone implements CreatedAt
     private ?string $value = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
-    #[Assert\Currency]
+    #[Assert\Choice(choices: self::SUPPORTED_CURRENCIES)]
     private ?string $currency = null;
 
     /**
