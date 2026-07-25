@@ -1,0 +1,20 @@
+{% extends gppro_context.modalRequest ? 'form.html.twig' : 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+
+{% block main %}
+    {% set formEditTemplate = gppro_context.modalRequest ? 'default/_form_modal.html.twig' : 'default/_form.html.twig' %}
+    {% set formOptions = {
+        'title': (fx_rate.id is null ? 'create'|trans : 'edit'|trans),
+        'form': form,
+        'back': path('fx_rates')
+    } %}
+    {% embed formEditTemplate with formOptions %}
+        {% form_theme form 'form/horizontal.html.twig' %}
+        {% block form_body %}
+            {{ form_row(form.date) }}
+            {{ form_row(form.indicator) }}
+            {{ form_row(form.rateValue) }}
+            {{ form_rest(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

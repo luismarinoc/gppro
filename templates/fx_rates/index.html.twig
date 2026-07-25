@@ -1,0 +1,22 @@
+{% extends 'datatable.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+{% import "macros/datatables.html.twig" as tables %}
+
+{% set manageAllowed = is_granted('manage_fx_rate') %}
+
+{% block datatable_row_attr %}{% if manageAllowed %} class="modal-ajax-form open-edit" data-href="{{ path('fx_rates_edit', {'id': entry.id}) }}"{% endif %}{% endblock %}
+
+{% block datatable_column_value %}
+    {% if column == 'date' %}
+        {{ entry.date|date_short }}
+    {% elseif column == 'indicator' %}
+        {{ ('fx_rate.indicator.' ~ entry.indicator)|trans }}
+    {% elseif column == 'rateValue' %}
+        {{ entry.rateValue }}
+    {% elseif column == 'modifiedAt' %}
+        {% if entry.modifiedAt is not null %}{{ entry.modifiedAt|date_time }}{% endif %}
+    {% elseif column == 'actions' %}
+        {% set event = actions(app.user, 'fx_rate', 'index', {'fx_rate': entry}) %}
+        {{ widgets.table_actions(event.actions) }}
+    {% endif %}
+{% endblock %}

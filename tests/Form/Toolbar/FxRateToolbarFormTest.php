@@ -23,6 +23,7 @@ class FxRateToolbarFormTest extends TypeTestCase
         $query = new FxRateQuery();
         $form = $this->factory->createBuilder(FxRateToolbarForm::class, $query);
 
+        self::assertTrue($form->has('searchTerm'));
         self::assertTrue($form->has('daterange'));
         self::assertTrue($form->has('indicator'));
         self::assertTrue($form->has('size'));

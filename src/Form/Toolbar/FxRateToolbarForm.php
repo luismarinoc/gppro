@@ -27,6 +27,7 @@ final class FxRateToolbarForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->addSearchTermInputField($builder);
         $this->addDateRange($builder, ['timezone' => $options['timezone']]);
         $builder->add('indicator', ChoiceType::class, [
             'label' => 'indicator',
