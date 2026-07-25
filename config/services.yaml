@@ -249,6 +249,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\ExportTemplate']
 
+    App\Repository\FxRateRepository:
+        class: App\Repository\FxRateRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\FxRate']
+
     monolog.formatter.gppro:
         class: Monolog\Formatter\LineFormatter
         arguments:
