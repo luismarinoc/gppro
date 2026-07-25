@@ -5,6 +5,9 @@
         {{ 'milestone.title'|trans }}
     {% endblock %}
     {% block box_tools %}
+        {% if entity.customer is not null and is_granted('create_invoice') and is_granted('access', entity.customer) %}
+            {{ widgets.card_tool_button('invoice', {'title': 'milestone_invoice.title'|trans, 'url': path('milestone_invoice_index', {'id': entity.customer.id})}) }}
+        {% endif %}
         {{ widgets.card_tool_button('create', {'class': 'modal-ajax-form open-edit', 'title': 'create', 'url': create_url}) }}
     {% endblock %}
     {% block box_body_class %}{% if milestones is not empty %}p-0{% endif %}{% endblock %}
