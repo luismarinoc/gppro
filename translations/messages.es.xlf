@@ -2142,6 +2142,26 @@
         <source>reopen</source>
         <target state="translated">Reabrir</target>
       </trans-unit>
+      <trans-unit id="gpMsInvT1" resname="milestone_invoice.title" xml:space="preserve">
+        <source>milestone_invoice.title</source>
+        <target state="translated">Facturación de hitos</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvA1" resname="milestone_invoice.action.generate" xml:space="preserve">
+        <source>milestone_invoice.action.generate</source>
+        <target state="translated">Generar factura</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE1" resname="milestone_invoice.error.mixed_customer" xml:space="preserve">
+        <source>milestone_invoice.error.mixed_customer</source>
+        <target state="translated">Los hitos seleccionados deben pertenecer todos al mismo cliente.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE2" resname="milestone_invoice.error.empty_selection" xml:space="preserve">
+        <source>milestone_invoice.error.empty_selection</source>
+        <target state="translated">Por favor selecciona al menos un hito para facturar.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE3" resname="milestone_invoice.error.stale_selection" xml:space="preserve">
+        <source>milestone_invoice.error.stale_selection</source>
+        <target state="translated">Uno de los hitos seleccionados ya fue facturado o ya no se puede convertir. Recarga la lista e intenta nuevamente.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
