@@ -76,6 +76,23 @@ services:
             $cacheDirectory: '%kernel.cache_dir%'
             $httpClient: '@App\Pdf\SafeRemoteContentClient'
 
+    # HTTP client used by MindicadorClient (App\FxRate) to fetch daily USD/UF
+    # rates from mindicador.cl. Decorated with RetryableHttpClient so a
+    # transient transport error or 5xx blip on the once-a-day sync job gets
+    # one automatic retry (2 attempts total, 1s initial delay, factor 2 —
+    # GenericRetryStrategy defaults). Deliberately does NOT retry 404, which
+    # is how mindicador.cl signals "no data for this date" (weekend/holiday),
+    # not an outage — retrying it would only waste time on the normal case.
+    Symfony\Component\HttpClient\RetryableHttpClient:
+        arguments:
+            - '@http_client'
+            - null
+            - 1
+
+    App\FxRate\MindicadorClient:
+        arguments:
+            $httpClient: '@Symfony\Component\HttpClient\RetryableHttpClient'
+
     App\Utils\FileHelper:
         arguments:
             $dataDir: '%gppro.data_dir%'
