@@ -160,6 +160,12 @@ final class MenuSubscriber implements EventSubscriberInterface
             );
         }
 
+        if ($auth->isGranted('view_fx_rate')) {
+            $fxRates = new MenuItemModel('fx_rates', 'fx_rates', 'fx_rates', [], 'fas fa-coins');
+            $fxRates->setChildRoutes(['fx_rates_create', 'fx_rates_edit']);
+            $menu->addChild($fxRates);
+        }
+
         $this->addDivider($menu);
 
         // ------------------- system menu -------------------

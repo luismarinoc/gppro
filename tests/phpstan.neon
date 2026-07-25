@@ -1304,6 +1304,11 @@ parameters:
         -
             message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, mixed given\\.$#"
             count: 1
+            path: Form/FxRateEditFormTest.php
+
+        -
+            message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, mixed given\\.$#"
+            count: 1
             path: Form/ProjectEditFormTest.php
 
         -

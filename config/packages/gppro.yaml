@@ -97,6 +97,7 @@ gppro:
             PROFILE: ['view_own_profile','edit_own_profile','password_own_profile','preferences_own_profile','api-token_own_profile']
             PROFILE_OTHER: ['view_other_profile','edit_other_profile','password_other_profile','roles_other_profile','preferences_other_profile','api-token_other_profile','teams_other_profile','supervisor_other_profile']
             TAGS: ['view_tag','manage_tag','create_tag','delete_tag']
+            FX_RATES: ['view_fx_rate','manage_fx_rate','create_fx_rate','delete_fx_rate']
             USER: ['view_user','create_user','delete_user','role_permissions']
             RATE: ['view_rate_own_timesheet','edit_rate_own_timesheet']
             RATE_OTHER: ['view_rate_other_timesheet','edit_rate_other_timesheet']
@@ -113,8 +114,8 @@ gppro:
         maps:
             ROLE_USER: ['TIMESHEET','PROFILE', 'EVERYONE']
             ROLE_TEAMLEAD: ['ACTIVITIES_TEAMLEAD','PROJECTS_TEAMLEAD','CUSTOMERS_TEAMLEAD','TIMESHEET_OTHER','INVOICE','TIMESHEET','PROFILE','EXPORT','BILLABLE','TAGS','REPORTING', 'EVERYONE']
-            ROLE_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','LOCKDOWN','REPORTING', 'EVERYONE']
-            ROLE_SUPER_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','PROFILE_OTHER','USER','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','LOCKDOWN','REPORTING', 'EVERYONE']
+            ROLE_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
+            ROLE_SUPER_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','PROFILE_OTHER','USER','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
         # mapping a "role name" to an array of "permission names"
         roles:
             ROLE_USER: ['view_team_member','time_team_project','create_tag','view_reporting']
