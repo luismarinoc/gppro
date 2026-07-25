@@ -2162,6 +2162,30 @@
         <source>reopen</source>
         <target>Reopen</target>
       </trans-unit>
+      <trans-unit id="gpMsInvT1" resname="milestone_invoice.title">
+        <source>milestone_invoice.title</source>
+        <target>Milestone invoicing</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvA1" resname="milestone_invoice.action.generate">
+        <source>milestone_invoice.action.generate</source>
+        <target>Generate invoice</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE1" resname="milestone_invoice.error.mixed_customer">
+        <source>milestone_invoice.error.mixed_customer</source>
+        <target>Selected milestones must all belong to the same customer.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE2" resname="milestone_invoice.error.empty_selection">
+        <source>milestone_invoice.error.empty_selection</source>
+        <target>Please select at least one milestone to invoice.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE3" resname="milestone_invoice.error.stale_selection">
+        <source>milestone_invoice.error.stale_selection</source>
+        <target>One of the selected milestones was already invoiced or can no longer be converted. Please reload the list and try again.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvE4" resname="milestone_invoice.error.unauthorized_customer">
+        <source>milestone_invoice.error.unauthorized_customer</source>
+        <target>Selected milestones do not belong to a customer you are authorized to invoice.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

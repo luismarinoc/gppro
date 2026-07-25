@@ -1567,6 +1567,16 @@ parameters:
             path: Invoice/InvoiceServiceTest.php
 
         -
+            message: "#^Parameter \\#1 \\$dataDir of class App\\\\Utils\\\\FileHelper constructor expects string, string\\|false given\\.$#"
+            count: 1
+            path: Invoice/MilestoneInvoiceServiceTest.php
+
+        -
+            message: "#^Parameter \\#1 \\$dataDir of class App\\\\Utils\\\\FileHelper constructor expects string, string\\|false given\\.$#"
+            count: 1
+            path: Invoice/Calculator/MilestoneCalculatorCompatibilityTest.php
+
+        -
             message: "#^Method App\\\\Tests\\\\Ldap\\\\LdapManagerTest\\:\\:getLdapManager\\(\\) has no return type specified\\.$#"
             count: 1
             path: Ldap/LdapManagerTest.php

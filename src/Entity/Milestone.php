@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: 'gppro_milestones')]
 #[ORM\Index(columns: ['project_id'])]
+#[ORM\Index(name: 'IDX_GPPRO_MILESTONES_INVOICE', columns: ['invoice_id'])]
 #[ORM\Entity(repositoryClass: MilestoneRepository::class)]
 #[Constraints\Milestone]
 class Milestone implements CreatedAt
@@ -62,6 +63,10 @@ class Milestone implements CreatedAt
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
     #[Assert\Choice(choices: self::SUPPORTED_CURRENCIES)]
     private ?string $currency = null;
+
+    #[ORM\ManyToOne(targetEntity: Invoice::class)]
+    #[ORM\JoinColumn(name: 'invoice_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Invoice $invoice = null;
 
     /**
      * @var Collection<int, Activity>
@@ -158,6 +163,23 @@ class Milestone implements CreatedAt
     public function getActivities(): Collection
     {
         return $this->activities;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): Milestone
+    {
+        $this->invoice = $invoice;
+
+        return $this;
+    }
+
+    public function isInvoiced(): bool
+    {
+        return null !== $this->invoice;
     }
 
     public function __toString(): string

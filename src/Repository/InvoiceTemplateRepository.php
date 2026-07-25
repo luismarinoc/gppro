@@ -10,6 +10,7 @@
 namespace App\Repository;
 
 use App\Entity\InvoiceTemplate;
+use App\Invoice\MilestoneInvoiceCalculators;
 use App\Repository\Paginator\PaginatorInterface;
 use App\Repository\Paginator\QueryPaginator;
 use App\Repository\Query\BaseQuery;
@@ -35,6 +36,21 @@ class InvoiceTemplateRepository extends EntityRepository
         $qb->select('t')
             ->from(InvoiceTemplate::class, 't')
             ->orderBy('t.name');
+
+        return $qb;
+    }
+
+    /**
+     * Same as getQueryBuilderForFormType(), but restricted to templates
+     * configured with a calculator compatible with milestone invoicing
+     * (see MilestoneInvoiceCalculators::COMPATIBLE).
+     */
+    public function getQueryBuilderForMilestoneFormType(): QueryBuilder
+    {
+        $qb = $this->getQueryBuilderForFormType();
+
+        $qb->andWhere($qb->expr()->in('t.calculator', ':calculators'))
+            ->setParameter('calculators', MilestoneInvoiceCalculators::COMPATIBLE);
 
         return $qb;
     }

@@ -10,8 +10,10 @@
 namespace App\Tests\Repository;
 
 use App\Entity\Customer;
+use App\Entity\Invoice;
 use App\Entity\Milestone;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Repository\MilestoneRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -28,23 +30,89 @@ class MilestoneRepositoryTest extends AbstractRepositoryTestCase
         return $repository;
     }
 
-    private function createProject(): Project
+    private function createProject(?Customer $customer = null): Project
     {
         $em = $this->getEntityManager();
 
-        $customer = new Customer('Milestone repository test customer');
-        $customer->setCountry('CL');
-        $customer->setTimezone('America/Santiago');
-        $em->persist($customer);
+        if (null === $customer) {
+            $customer = new Customer('Milestone repository test customer ' . uniqid());
+            $customer->setCountry('CL');
+            $customer->setTimezone('America/Santiago');
+            $em->persist($customer);
+        }
 
         $project = new Project();
-        $project->setName('Milestone repository test project');
+        $project->setName('Milestone repository test project ' . uniqid());
         $project->setCustomer($customer);
         $em->persist($project);
 
         $em->flush();
 
         return $project;
+    }
+
+    private function createCustomer(): Customer
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Milestone repository test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+        $em->flush();
+
+        return $customer;
+    }
+
+    private function createUser(): User
+    {
+        $em = $this->getEntityManager();
+
+        $suffix = uniqid();
+        $user = new User();
+        $user->setUsername('milestone-repo-test-' . $suffix);
+        $user->setEmail('milestone-repo-test-' . $suffix . '@example.com');
+        $user->setPassword('irrelevant');
+        $user->setEnabled(true);
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+    }
+
+    private function createInvoice(Customer $customer, User $user): Invoice
+    {
+        $em = $this->getEntityManager();
+
+        $suffix = uniqid();
+        $invoice = new Invoice();
+        $invoice->setCustomer($customer);
+        $invoice->setUser($user);
+        $invoice->setInvoiceNumber('INV-' . $suffix);
+        $invoice->setFilename('invoice-' . $suffix);
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setCurrency('CLP');
+        $invoice->setTotal(1000.00);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setDueDays(30);
+        $em->persist($invoice);
+        $em->flush();
+
+        return $invoice;
+    }
+
+    private function createMilestone(Project $project, string $name = 'Milestone'): Milestone
+    {
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName($name . ' ' . uniqid());
+        $milestone->setValue('1000.0000');
+        $milestone->setCurrency('USD');
+
+        $this->getRepository()->saveMilestone($milestone);
+
+        return $milestone;
     }
 
     public function testValueAndCurrencyRoundTripWithoutPrecisionLoss(): void
@@ -89,5 +157,118 @@ class MilestoneRepositoryTest extends AbstractRepositoryTestCase
         self::assertNotNull($stored);
         self::assertNull($stored->getValue());
         self::assertNull($stored->getCurrency());
+    }
+
+    public function testFindInvoiceableByCustomerExcludesInvoicedAndOtherCustomer(): void
+    {
+        $repository = $this->getRepository();
+        $customer = $this->createCustomer();
+        $otherCustomer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $otherProject = $this->createProject($otherCustomer);
+        $user = $this->createUser();
+        $invoice = $this->createInvoice($customer, $user);
+
+        $invoiceable = $this->createMilestone($project, 'Invoiceable');
+
+        $alreadyInvoiced = $this->createMilestone($project, 'Already invoiced');
+        $alreadyInvoiced->setInvoice($invoice);
+        $repository->saveMilestone($alreadyInvoiced);
+
+        $otherCustomerMilestone = $this->createMilestone($otherProject, 'Other customer');
+
+        $result = $repository->findInvoiceableByCustomer($customer);
+        $resultIds = array_map(static fn (Milestone $m): ?int => $m->getId(), $result);
+
+        self::assertContains($invoiceable->getId(), $resultIds);
+        self::assertNotContains($alreadyInvoiced->getId(), $resultIds);
+        self::assertNotContains($otherCustomerMilestone->getId(), $resultIds);
+    }
+
+    public function testFindInvoiceableByCustomerIncludesMultiProjectSameCustomer(): void
+    {
+        $repository = $this->getRepository();
+        $customer = $this->createCustomer();
+        $projectA = $this->createProject($customer);
+        $projectB = $this->createProject($customer);
+
+        $milestoneA = $this->createMilestone($projectA, 'Project A milestone');
+        $milestoneB = $this->createMilestone($projectB, 'Project B milestone');
+
+        $result = $repository->findInvoiceableByCustomer($customer);
+        $resultIds = array_map(static fn (Milestone $m): ?int => $m->getId(), $result);
+
+        self::assertContains($milestoneA->getId(), $resultIds);
+        self::assertContains($milestoneB->getId(), $resultIds);
+    }
+
+    public function testMarkAsInvoicedSkipsAlreadyLinkedRows(): void
+    {
+        $em = $this->getEntityManager();
+        $repository = $this->getRepository();
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $user = $this->createUser();
+        $firstInvoice = $this->createInvoice($customer, $user);
+        $secondInvoice = $this->createInvoice($customer, $user);
+
+        $freeMilestone = $this->createMilestone($project, 'Free');
+
+        $claimedMilestone = $this->createMilestone($project, 'Claimed');
+        $claimedMilestone->setInvoice($firstInvoice);
+        $repository->saveMilestone($claimedMilestone);
+
+        $freeId = $freeMilestone->getId();
+        $claimedId = $claimedMilestone->getId();
+        self::assertNotNull($freeId);
+        self::assertNotNull($claimedId);
+
+        $affected = $repository->markAsInvoiced($secondInvoice, [$freeId, $claimedId]);
+
+        self::assertSame(1, $affected);
+
+        $em->clear();
+
+        $reloadedFree = $repository->find($freeId);
+        $reloadedClaimed = $repository->find($claimedId);
+
+        self::assertNotNull($reloadedFree);
+        self::assertNotNull($reloadedClaimed);
+
+        $reloadedFreeInvoice = $reloadedFree->getInvoice();
+        $reloadedClaimedInvoice = $reloadedClaimed->getInvoice();
+
+        self::assertNotNull($reloadedFreeInvoice);
+        self::assertNotNull($reloadedClaimedInvoice);
+        self::assertSame($secondInvoice->getId(), $reloadedFreeInvoice->getId());
+        self::assertSame($firstInvoice->getId(), $reloadedClaimedInvoice->getId());
+    }
+
+    public function testDeletingInvoiceReleasesMilestonesViaDatabaseSetNull(): void
+    {
+        $em = $this->getEntityManager();
+        $repository = $this->getRepository();
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $user = $this->createUser();
+        $invoice = $this->createInvoice($customer, $user);
+
+        $milestone = $this->createMilestone($project, 'Linked');
+        $milestone->setInvoice($invoice);
+        $repository->saveMilestone($milestone);
+
+        $milestoneId = $milestone->getId();
+
+        $invoiceToDelete = $em->getRepository(Invoice::class)->find($invoice->getId());
+        self::assertNotNull($invoiceToDelete);
+        $em->remove($invoiceToDelete);
+        $em->flush();
+        $em->clear();
+
+        $released = $repository->find($milestoneId);
+
+        self::assertNotNull($released);
+        self::assertNull($released->getInvoice());
+        self::assertFalse($released->isInvoiced());
     }
 }
