@@ -14,6 +14,7 @@ use App\Entity\Invoice;
 use App\Entity\InvoiceTemplate;
 use App\Entity\Milestone;
 use App\Entity\Project;
+use App\Entity\Team;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -363,6 +364,94 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         /** @var Milestone $reloaded */
         $reloaded = $em->getRepository(Milestone::class)->find($milestone->getId());
         self::assertTrue($reloaded->isInvoiced());
+    }
+
+    public function testCreateActionRejectsForeignCustomerMilestoneOutsideTeamAccessIdor(): void
+    {
+        // client must be created first: booting a second kernel via the
+        // entity manager afterwards is not supported by WebTestCase (see
+        // testCreateActionRequiresCreateInvoicePermission above)
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        // attacker: team-scoped (canSeeAllData() === false for ROLE_TEAMLEAD,
+        // see config/packages/gppro.yaml) user, explicitly restricted via
+        // team membership to Customer A ONLY. This is a realistic,
+        // legitimate non-admin role in this app.
+        $attacker = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $customerA = $this->createCustomer();
+        $customerB = $this->createCustomer();
+
+        $em = $this->getEntityManager();
+
+        // Customer A: attacker IS on this team -> #[IsGranted('access', 'customer')]
+        // on the route legitimately passes for A.
+        $teamA = new Team('Team A ' . uniqid());
+        $teamA->addUser($attacker);
+        $teamA->addCustomer($customerA);
+        $em->persist($teamA);
+
+        // Customer B: has a team the attacker is NOT a member of -> access
+        // to B must be denied (checkTeamAccessCustomer fails-open only when
+        // a customer has ZERO teams; B is deliberately given one to prove
+        // this is a real, enforced restriction, not an accidental default-allow).
+        $teamB = new Team('Team B ' . uniqid());
+        $teamB->addCustomer($customerB);
+        $em->persist($teamB);
+        $em->flush();
+
+        // the attacker also has a legitimate milestone of their own on A —
+        // needed only so the listing page actually renders the
+        // multi_update_table form/CSRF token; the exploit tampers the
+        // submitted CSV to reference a foreign milestone instead
+        $projectA = $this->createProject($customerA);
+        $this->createMilestone($projectA, 'Customer A own milestone');
+
+        $projectB = $this->createProject($customerB);
+        // Milestone IDs are plain auto-increment integers, trivially
+        // enumerable — no leak of B's id is required for this exploit.
+        $foreignMilestone = $this->createMilestone($projectB, 'Customer B milestone (foreign)');
+
+        $template = $this->createCompatibleTemplate();
+
+        // Step 1: the attacker legitimately loads the listing for Customer A
+        // (their own, authorized customer) to obtain a valid CSRF token.
+        $this->request($client, '/invoice/milestones/' . $customerA->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $client->getCrawler()->filter('form[name=multi_update_table]')->form();
+        $node = $form->getFormNode();
+        $node->setAttribute('action', $this->createUrl('/invoice/milestones/' . $customerA->getId() . '/create'));
+
+        // Step 2: POST against the AUTHORIZED route (Customer A) but with a
+        // SINGLE milestone id belonging to Customer B. Not "mixed" (only one
+        // customer in the resolved selection), so the existing mixed-customer
+        // check alone does not catch it.
+        $client->submit($form, [
+            'multi_update_table' => [
+                'entities' => (string) $foreignMilestone->getId(),
+                'template' => $template->getId(),
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/milestones/' . $customerA->getId()));
+        $client->followRedirect();
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        // Must be rejected with a clear error, exactly like the existing
+        // mixed-customer / stale-selection validations in this controller —
+        // never a success flash.
+        $this->assertHasFlashError($client);
+
+        $em->clear();
+
+        // No invoice may ever be created for Customer B (or anyone) as a
+        // side effect of this request.
+        self::assertCount(0, $em->getRepository(Invoice::class)->findBy(['customer' => $customerB->getId()]));
+
+        /** @var Milestone $reloadedForeign */
+        $reloadedForeign = $em->getRepository(Milestone::class)->find($foreignMilestone->getId());
+        self::assertFalse($reloadedForeign->isInvoiced());
     }
 
     public function testCreateActionRequiresCreateInvoicePermission(): void

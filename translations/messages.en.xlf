@@ -2182,6 +2182,10 @@
         <source>milestone_invoice.error.stale_selection</source>
         <target>One of the selected milestones was already invoiced or can no longer be converted. Please reload the list and try again.</target>
       </trans-unit>
+      <trans-unit id="gpMsInvE4" resname="milestone_invoice.error.unauthorized_customer">
+        <source>milestone_invoice.error.unauthorized_customer</source>
+        <target>Selected milestones do not belong to a customer you are authorized to invoice.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
