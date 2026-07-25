@@ -33,7 +33,8 @@ class PermissionControllerTest extends AbstractControllerBaseTestCase
         $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
         $this->assertAccessIsGranted($client, '/admin/permissions');
         $this->assertHasDataTable($client);
-        $this->assertDataTableRowCount($client, 'datatable_user_admin_permissions', 136);
+        // +4 vs. the pre-fx-rates baseline: view_fx_rate, manage_fx_rate, create_fx_rate, delete_fx_rate.
+        $this->assertDataTableRowCount($client, 'datatable_user_admin_permissions', 140);
         $this->assertPageActions($client, [
             'create modal-ajax-form' => $this->createUrl('/admin/permissions/roles/create'),
         ]);
