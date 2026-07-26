@@ -17,12 +17,15 @@ use App\Form\Type\InvoiceRendererType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MetaFieldsCollectionType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 /**
  * Defines the form used to manipulate invoice templates.
@@ -66,6 +69,24 @@ final class InvoiceTemplateForm extends AbstractType
                 'label' => 'sending_company',
                 'placeholder' => '',
                 'help' => 'sending_company.help',
+            ])
+            ->add('logo', FileType::class, [
+                'label' => 'logo',
+                'mapped' => false,
+                'required' => false,
+                'help' => 'logo.help',
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => ['image/png', 'image/jpeg', 'image/svg+xml'],
+                        'mimeTypesMessage' => 'This file type is not allowed',
+                        'maxSize' => '512k',
+                    ]),
+                ],
+            ])
+            ->add('removeLogo', CheckboxType::class, [
+                'label' => 'logo.remove',
+                'mapped' => false,
+                'required' => false,
             ])
             ->add('metaFields', MetaFieldsCollectionType::class)
         ;

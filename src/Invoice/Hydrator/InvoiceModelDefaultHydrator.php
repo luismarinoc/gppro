@@ -76,6 +76,7 @@ final class InvoiceModelDefaultHydrator implements InvoiceModelHydrator
             'template.country' => null,
             'template.country_name' => null,
             'template.payment_details' => $template->getPaymentDetails() ?? '',
+            'template.logo' => $template->getLogo() ?? '',
 
             'query.begin' => '',
             'query.begin_day' => '',

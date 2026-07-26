@@ -151,6 +151,7 @@ class DebugRendererTest extends TestCase
             'template.contact',
             'template.payment_details',
             'template.country_name',
+            'template.logo',
             'query.day',
             'query.month',
             'query.month_number',

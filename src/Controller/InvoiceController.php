@@ -785,6 +785,18 @@ final class InvoiceController extends AbstractController
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             try {
+                /** @var UploadedFile|null $logoFile */
+                $logoFile = $editForm->get('logo')->getData();
+                if (null !== $logoFile) {
+                    $mimeType = $logoFile->getMimeType() ?? 'application/octet-stream';
+                    $contents = file_get_contents($logoFile->getRealPath());
+                    if (false !== $contents) {
+                        $template->setLogo(\sprintf('data:%s;base64,%s', $mimeType, base64_encode($contents)));
+                    }
+                } elseif (true === $editForm->get('removeLogo')->getData()) {
+                    $template->setLogo(null);
+                }
+
                 $templateRepository->saveTemplate($template);
                 $this->flashSuccess('action.update.success');
 

@@ -1278,6 +1278,18 @@
         <source>invoice_bank_account</source>
         <target>Bank account</target>
       </trans-unit>
+      <trans-unit id="gpInvTplLogo1" resname="logo">
+        <source>logo</source>
+        <target>Logo</target>
+      </trans-unit>
+      <trans-unit id="gpInvTplLogo2" resname="logo.help">
+        <source>logo.help</source>
+        <target>PNG, JPEG or SVG, 512 KB max. Shown in the PDF and in the invoice preview.</target>
+      </trans-unit>
+      <trans-unit id="gpInvTplLogo3" resname="logo.remove">
+        <source>logo.remove</source>
+        <target>Remove current logo</target>
+      </trans-unit>
       <trans-unit id="BzwWNMS" resname="status">
         <source>status</source>
         <target>Status</target>

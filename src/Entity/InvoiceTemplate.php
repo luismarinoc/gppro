@@ -71,6 +71,14 @@ class InvoiceTemplate implements EntityWithMetaFields
     #[ORM\Column(name: 'payment_details', type: Types::TEXT, nullable: true)]
     private ?string $paymentDetails = null;
     /**
+     * A "data:" URI (e.g. "data:image/png;base64,...") ready to be dropped
+     * directly into an <img src> - stored inline rather than as a file on
+     * disk so PDF rendering never needs filesystem access to an upload
+     * directory.
+     */
+    #[ORM\Column(name: 'logo', type: Types::TEXT, nullable: true)]
+    private ?string $logo = null;
+    /**
      * Used for translations and formatting money, numbers, dates and time.
      */
     #[ORM\Column(name: 'language', type: Types::STRING, length: 6, nullable: false)]
@@ -252,6 +260,16 @@ class InvoiceTemplate implements EntityWithMetaFields
     public function setPaymentDetails(?string $paymentDetails): void
     {
         $this->paymentDetails = $paymentDetails;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): void
+    {
+        $this->logo = $logo;
     }
 
     /**
