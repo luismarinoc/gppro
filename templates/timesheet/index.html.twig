@@ -148,6 +148,8 @@
         {{ widgets.label_boolean(entry.billable) }}
     {% elseif column == 'exported' %}
         {{ widgets.label_boolean(entry.exported) }}
+    {% elseif column == 'invoiced' %}
+        {{ widgets.label_boolean(entry.invoiced) }}
     {% elseif column == 'username' %}
         {{ widgets.label_user(entry.user) }}
     {% elseif column == 'actions' %}
