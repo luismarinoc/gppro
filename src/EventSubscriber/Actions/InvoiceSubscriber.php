@@ -38,6 +38,7 @@ final class InvoiceSubscriber extends AbstractActionsSubscriber
         }
 
         if ($allowView) {
+            $event->addAction('view', ['url' => $this->path('admin_invoice_view', ['id' => $invoice->getId()]), 'target' => '_blank']);
             $event->addAction('download', ['url' => $this->path('admin_invoice_download', ['id' => $invoice->getId()]), 'target' => '_blank']);
         }
 

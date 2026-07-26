@@ -140,6 +140,7 @@ tabler:
         upload: fas fa-upload
         user: fas fa-user
         users: fas fa-user-friends
+        view: far fa-eye
         visibility: far fa-eye
         warning: fas fa-exclamation
         weekly-times: fas fa-th

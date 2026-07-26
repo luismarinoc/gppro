@@ -1942,6 +1942,10 @@
         <source>download</source>
         <target>Download</target>
       </trans-unit>
+      <trans-unit id="gpInvoiceView" resname="view">
+        <source>view</source>
+        <target>View</target>
+      </trans-unit>
       <trans-unit id="hHIeqOW" resname="invoice.pending">
         <source>invoice.pending</source>
         <target>Waiting for payment</target>

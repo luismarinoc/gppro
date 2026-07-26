@@ -38,6 +38,7 @@ use App\Repository\MilestoneRepository;
 use App\Repository\Query\BaseQuery;
 use App\Repository\Query\InvoiceArchiveQuery;
 use App\Repository\Query\InvoiceQuery;
+use App\Repository\TimesheetRepository;
 use App\Utils\DataTable;
 use App\Utils\PageSetup;
 use Exception;
@@ -47,6 +48,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -335,9 +337,24 @@ final class InvoiceController extends AbstractController
         return $this->file($file->getRealPath(), $file->getBasename());
     }
 
+    #[Route(path: '/view/{id}', name: 'admin_invoice_view', methods: ['GET'])]
+    #[IsGranted('view_invoice', 'invoice')]
+    public function viewAction(Invoice $invoice, InvoiceService $service): Response
+    {
+        $file = $service->getInvoiceFile($invoice);
+
+        if (null === $file) {
+            throw $this->createNotFoundException(
+                \sprintf('Invoice file could not be found for invoice ID "%s"', $invoice->getId())
+            );
+        }
+
+        return $this->file($file->getRealPath(), $file->getBasename(), ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
     #[Route(path: '/show/{page}', defaults: ['page' => 1], requirements: ['page' => '[1-9]\d*'], name: 'admin_invoice_list', methods: ['GET'])]
     #[IsGranted('view_invoice')]
-    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository): Response
+    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository, TimesheetRepository $timesheetRepository): Response
     {
         $invoice = null;
 
@@ -363,7 +380,18 @@ final class InvoiceController extends AbstractController
                 $invoiceIds[] = $entry->getId();
             }
         }
-        $milestoneInvoiceIds = $milestoneRepository->findInvoiceIdsWithMilestones($invoiceIds);
+
+        $invoiceMilestones = [];
+        foreach ($milestoneRepository->findByInvoiceIds($invoiceIds) as $milestone) {
+            $milestoneInvoice = $milestone->getInvoice();
+            if (null === $milestoneInvoice || null === $milestoneInvoice->getId()) {
+                continue;
+            }
+            $invoiceMilestones[$milestoneInvoice->getId()][] = $milestone;
+        }
+        $milestoneInvoiceIds = array_keys($invoiceMilestones);
+
+        $invoiceDurations = $timesheetRepository->getDurationSumByInvoiceIds($invoiceIds);
 
         $table = new DataTable('invoices', $query);
         $table->setPagination($entries);
@@ -376,7 +404,7 @@ final class InvoiceController extends AbstractController
         $table->addColumn('user', ['class' => 'd-none text-nowrap w-min', 'orderBy' => false]);
         $table->addColumn('customer', ['class' => 'alwaysVisible text-nowrap', 'orderBy' => false]);
         $table->addColumn('type', ['class' => 'd-none d-sm-table-cell w-min', 'title' => 'invoice_type', 'orderBy' => false]);
-        $table->addColumn('comment', ['class' => 'd-none', 'title' => 'description']);
+        $table->addColumn('comment', ['class' => 'd-none d-lg-table-cell', 'title' => 'description']);
 
         foreach ($metaColumns as $metaColumn) {
             $table->addColumn('mf_' . $metaColumn->getName(), ['title' => $metaColumn->getLabel(), 'class' => 'd-none', 'orderBy' => false]);
@@ -401,6 +429,8 @@ final class InvoiceController extends AbstractController
             'download' => $invoice,
             'metaColumns' => $metaColumns,
             'milestone_invoice_ids' => $milestoneInvoiceIds,
+            'invoice_milestones' => $invoiceMilestones,
+            'invoice_durations' => $invoiceDurations,
         ]);
     }
 

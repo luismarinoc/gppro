@@ -1898,6 +1898,10 @@
         <source>download</source>
         <target state="translated">Descargar</target>
       </trans-unit>
+      <trans-unit id="gpInvoiceView" resname="view">
+        <source>view</source>
+        <target state="translated">Ver</target>
+      </trans-unit>
       <trans-unit id="Qf.Yt2r" resname="details">
         <source>details</source>
         <target>Mostrar</target>
