@@ -166,6 +166,33 @@ class BudgetStatisticModel implements BudgetStatisticModelInterface
         return $this->statisticTotal->getRateBillable();
     }
 
+    public function getRateBillableExported(): float
+    {
+        if ($this->isMonthlyBudget()) {
+            return $this->getRateBillableExportedRelative();
+        }
+
+        return $this->getRateBillableExportedTotal();
+    }
+
+    public function getRateBillableExportedRelative(): float
+    {
+        if ($this->statistic === null) {
+            return 0.00;
+        }
+
+        return $this->statistic->getRateBillableExported();
+    }
+
+    public function getRateBillableExportedTotal(): float
+    {
+        if ($this->statisticTotal === null) {
+            return 0.00;
+        }
+
+        return $this->statisticTotal->getRateBillableExported();
+    }
+
     public function getRate(): float
     {
         if ($this->isMonthlyBudget()) {
