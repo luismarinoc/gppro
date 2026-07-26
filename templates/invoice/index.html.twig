@@ -140,6 +140,9 @@
                                     {% for attrs in [{'class': 'd-inline-flex d-md-none'}, {'icon': false, 'class': 'd-none d-md-inline-flex'}] %}
                                     {{ widgets.action_button('print', {'url': '#', 'onclick': 'return singleInvoice(this, true)', 'title': 'preview'|trans, 'target': '_blank', 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_preview', {'customer': model.customer.id, 'token': csrf_token('invoice.preview')})}}|merge(attrs)) }}
                                     {{ widgets.action_button('invoice', {'url': '#', 'onclick': 'return singleInvoice(this, false)', 'title': 'action.save'|trans, 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_create', {'customer': model.customer.id, 'token': csrf_token('invoice.create')})}}|merge(attrs), 'primary') }}
+                                    {% if is_granted('access', model.customer) %}
+                                        {{ widgets.action_button('invoice', {'url': path('milestone_invoice_index', {'id': model.customer.id}), 'title': 'milestone_invoice.title'|trans}|merge(attrs)) }}
+                                    {% endif %}
                                     {% endfor %}
                                 </td>
                             </tr>
