@@ -16,10 +16,14 @@ use App\Entity\ActivityBoardState;
 use App\Entity\ActivityBoardStatus;
 use App\Entity\Customer;
 use App\Entity\Project;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Repository\ActivityBoardStateRepository;
 use App\Repository\ActivityRepository;
+use App\Repository\UserRepository;
+use App\Security\RolePermissionManager;
 use App\Tests\Repository\AbstractRepositoryTestCase;
+use App\Validator\ValidationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -35,8 +39,12 @@ class ActivityBoardServiceTest extends AbstractRepositoryTestCase
         $activityRepository = $em->getRepository(Activity::class);
         /** @var ActivityBoardStateRepository $stateRepository */
         $stateRepository = $em->getRepository(ActivityBoardState::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $em->getRepository(User::class);
+        /** @var RolePermissionManager $permissionManager */
+        $permissionManager = self::getContainer()->get(RolePermissionManager::class);
 
-        return new ActivityBoardService($activityRepository, $stateRepository);
+        return new ActivityBoardService($activityRepository, $stateRepository, $userRepository, $permissionManager);
     }
 
     private function createProject(): Project
@@ -174,5 +182,102 @@ class ActivityBoardServiceTest extends AbstractRepositoryTestCase
 
         self::assertNull($state->getPriority());
         self::assertNull($state->getDueDate());
+    }
+
+    public function testUpdateCardPersistsAssignedToWhenCandidateHasProjectTeamAccess(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card to assign');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        // candidate is a plain member (not teamlead) of a team attached
+        // directly to the project - sufficient for checkTeamAccessActivity()
+        // per RolePermissionManager::checkTeamAccess() (design's assignee
+        // restriction).
+        $em = $this->getEntityManager();
+        $team = new Team('Board service project team ' . uniqid());
+        $team->addUser($candidate);
+        $em->persist($team);
+        $project->addTeam($team);
+        $em->flush();
+
+        $sut = $this->getSut();
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => $candidate->getId()]));
+
+        $em->clear();
+
+        $reloadedActivity = $em->getRepository(Activity::class)->find($activity->getId());
+        self::assertNotNull($reloadedActivity);
+
+        /** @var ActivityBoardStateRepository $stateRepository */
+        $stateRepository = $em->getRepository(ActivityBoardState::class);
+        $state = $stateRepository->findOrCreate($reloadedActivity);
+
+        self::assertNotNull($state->getAssignedTo());
+        self::assertSame($candidate->getId(), $state->getAssignedTo()->getId());
+    }
+
+    public function testUpdateCardRejectsAssignedToWithoutProjectAccess(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card to protect');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        // the project's customer has a team the candidate is NOT part of -
+        // checkTeamAccessCustomer() fails, so checkTeamAccessProject() (and
+        // therefore checkTeamAccessActivity()) must reject the candidate.
+        $em = $this->getEntityManager();
+        $customer = $project->getCustomer();
+        self::assertNotNull($customer);
+        $team = new Team('Board service foreign team ' . uniqid());
+        $em->persist($team);
+        $customer->addTeam($team);
+        $em->flush();
+
+        $sut = $this->getSut();
+
+        $this->expectException(ValidationException::class);
+
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => $candidate->getId()]));
+    }
+
+    public function testUpdateCardRejectsUnknownAssignedToId(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card with bogus assignee');
+        $sut = $this->getSut();
+
+        $this->expectException(ValidationException::class);
+
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => 999999999]));
+    }
+
+    public function testUpdateCardExplicitNullClearsAssignedTo(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card to unassign');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $em = $this->getEntityManager();
+        $team = new Team('Board service unassign team ' . uniqid());
+        $team->addUser($candidate);
+        $em->persist($team);
+        $project->addTeam($team);
+        $em->flush();
+
+        $sut = $this->getSut();
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => $candidate->getId()]));
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => null]));
+
+        $em->clear();
+
+        $reloadedActivity = $em->getRepository(Activity::class)->find($activity->getId());
+        self::assertNotNull($reloadedActivity);
+
+        /** @var ActivityBoardStateRepository $stateRepository */
+        $stateRepository = $em->getRepository(ActivityBoardState::class);
+        $state = $stateRepository->findOrCreate($reloadedActivity);
+
+        self::assertNull($state->getAssignedTo());
     }
 }
