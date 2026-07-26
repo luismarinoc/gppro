@@ -62,6 +62,7 @@ abstract class AbstractVoterTestCase extends TestCase
             $customersTeam = ['view_teamlead_customer', 'edit_teamlead_customer', 'budget_teamlead_customer', 'time_teamlead_customer', 'comments_teamlead_customer', 'details_teamlead_customer'];
             $invoice = ['view_invoice', 'create_invoice'];
             $invoiceTemplate = ['manage_invoice_template'];
+            $invoiceAll = ['delete_invoice'];
             $timesheet = ['view_own_timesheet', 'start_own_timesheet', 'stop_own_timesheet', 'create_own_timesheet', 'edit_own_timesheet', 'export_own_timesheet', 'delete_own_timesheet'];
             $timesheetOthers = ['view_other_timesheet', 'start_other_timesheet', 'stop_other_timesheet', 'create_other_timesheet', 'edit_other_timesheet',  'export_other_timesheet', 'delete_other_timesheet'];
             $profile = ['view_own_profile', 'edit_own_profile', 'password_own_profile', 'preferences_own_profile', 'api-token_own_profile'];
@@ -80,7 +81,7 @@ abstract class AbstractVoterTestCase extends TestCase
                 'ROLE_USER' => array_merge($timesheet, $profile, $roleUser),
                 'ROLE_TEAMLEAD' => array_merge($invoice, $timesheet, $timesheetOthers, $profile, $roleTeamlead, $activitiesTeam, $projectsTeam, $customersTeam),
                 'ROLE_ADMIN' => array_merge($activities, $projects, $customers, $invoice, $invoiceTemplate, $timesheet, $timesheetOthers, $profile, $rate, $rateOther, $roleAdmin, $teams),
-                'ROLE_SUPER_ADMIN' => array_merge($activities, $projects, $customers, $invoice, $invoiceTemplate, $timesheet, $timesheetOthers, $profile, $profileOther, $user, $rate, $rateOther, $roleSuperAdmin, $teams),
+                'ROLE_SUPER_ADMIN' => array_merge($activities, $projects, $customers, $invoice, $invoiceTemplate, $invoiceAll, $timesheet, $timesheetOthers, $profile, $profileOther, $user, $rate, $rateOther, $roleSuperAdmin, $teams),
             ];
         }
 

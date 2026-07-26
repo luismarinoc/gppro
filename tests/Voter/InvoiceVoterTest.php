@@ -98,7 +98,7 @@ class InvoiceVoterTest extends AbstractVoterTestCase
         yield [self::getUser(3, User::ROLE_ADMIN), $invoice, 'delete_invoice', VoterInterface::ACCESS_DENIED];
         yield [self::getUser(4, User::ROLE_SUPER_ADMIN), $invoice, 'view_invoice', VoterInterface::ACCESS_GRANTED];
         yield [self::getUser(4, User::ROLE_SUPER_ADMIN), $invoice, 'edit_invoice', VoterInterface::ACCESS_GRANTED];
-        yield [self::getUser(4, User::ROLE_SUPER_ADMIN), $invoice, 'delete_invoice', VoterInterface::ACCESS_DENIED];
+        yield [self::getUser(4, User::ROLE_SUPER_ADMIN), $invoice, 'delete_invoice', VoterInterface::ACCESS_GRANTED];
 
         $result = VoterInterface::ACCESS_ABSTAIN;
         yield [self::getUser(2, User::ROLE_TEAMLEAD), $invoice, 'view', $result];
