@@ -19,6 +19,7 @@ use App\Repository\Query\InvoiceQuery;
 use App\Repository\Query\ProjectFormTypeQuery;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -30,12 +31,25 @@ final class InvoiceToolbarForm extends AbstractType
 {
     use ToolbarFormTrait;
 
+    public const TYPE_TIMESHEET = 'timesheet';
+    public const TYPE_MILESTONE = 'milestone';
+
     public function __construct(private readonly ProjectRepository $projectRepository)
     {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('invoiceType', ChoiceType::class, [
+            'mapped' => false,
+            'required' => true,
+            'label' => 'invoice_type',
+            'choices' => [
+                'invoice_type.timesheet' => self::TYPE_TIMESHEET,
+                'invoice_type.milestone' => self::TYPE_MILESTONE,
+            ],
+            'data' => self::TYPE_TIMESHEET,
+        ]);
         $this->addSearchTermInputField($builder);
         $this->addDateRange($builder, ['timezone' => $options['timezone']]);
         $this->addCustomerMultiChoice($builder, ['start_date_param' => null, 'end_date_param' => null, 'ignore_date' => true], true);

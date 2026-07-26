@@ -53,6 +53,7 @@
         {% block box_before %}{{ form_start(form) }}{% endblock %}
         {% block box_body %}
             {{ form_errors(form) }}
+            {{ form_row(form.invoiceType, {'row_attr': {'class': 'mb-3 invoice_search_form_row_invoiceType'}}) }}
             {% if form.searchTerm is defined %}
                 {{ form_row(form.searchTerm, {'row_attr': {'class': 'mb-3 invoice_search_form_row_searchTerm'}}) }}
             {% endif %}
@@ -88,11 +89,49 @@
         {% block box_after %}{{ form_end(form) }}{% endblock %}
     {% endembed %}
 
+    {% if is_milestone_mode %}
+        {% if milestone_customer is null %}
+            {{ widgets.nothing_found() }}
+        {% else %}
+            {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+                {% import "macros/widgets.html.twig" as widgets %}
+                {% import "macros/datatables.html.twig" as tables %}
+                {% block box_title %}{{ 'preview'|trans }}{% endblock %}
+                {% block box_body %}
+                    {% if milestones is empty %}
+                        {{ widgets.nothing_found() }}
+                    {% else %}
+                        {% set milestoneColumns = {
+                            'id': {'class': 'alwaysVisible multiCheckbox', 'orderBy': false, 'title': false, 'batchUpdate': true},
+                            'name': {'class': 'alwaysVisible'},
+                            'project': {'class': 'd-none d-sm-table-cell', 'orderBy': false},
+                            'due_date': {'class': 'd-none w-min', 'orderBy': false},
+                            'value': {'class': 'text-end w-min', 'orderBy': false},
+                            'currency': {'class': 'd-none text-end w-min', 'orderBy': false},
+                        } %}
+                        {{ tables.datatable_header('invoice_milestone', milestoneColumns, null, {'orderBy': false}) }}
+                        {% for milestone in milestones %}
+                            <tr>
+                                <td>{{ tables.datatable_multiupdate_row(milestone.id) }}</td>
+                                <td>{{ milestone.name }}</td>
+                                <td class="d-none d-sm-table-cell">{{ milestone.project.name }}</td>
+                                <td class="d-none w-min">{% if milestone.dueDate is not null %}{{ milestone.dueDate|date_short }}{% endif %}</td>
+                                <td class="text-end w-min">{% if milestone.value is not null %}{{ milestone.value|money(milestone.currency) }}{% endif %}</td>
+                                <td class="d-none text-end w-min">{{ milestone.currency }}</td>
+                            </tr>
+                        {% endfor %}
+                        {{ tables.data_table_footer(null, '', milestone_form) }}
+                    {% endif %}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+    {% endif %}
+
     {% if showEmpty %}
         {{ widgets.nothing_found() }}
     {% endif %}
 
-    {% if models|length > 0 %}
+    {% if not is_milestone_mode and models|length > 0 %}
         {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
             {% import "macros/widgets.html.twig" as widgets %}
             {% import "macros/datatables.html.twig" as tables %}
@@ -140,9 +179,6 @@
                                     {% for attrs in [{'class': 'd-inline-flex d-md-none'}, {'icon': false, 'class': 'd-none d-md-inline-flex'}] %}
                                     {{ widgets.action_button('print', {'url': '#', 'onclick': 'return singleInvoice(this, true)', 'title': 'preview'|trans, 'target': '_blank', 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_preview', {'customer': model.customer.id, 'token': csrf_token('invoice.preview')})}}|merge(attrs)) }}
                                     {{ widgets.action_button('invoice', {'url': '#', 'onclick': 'return singleInvoice(this, false)', 'title': 'action.save'|trans, 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_create', {'customer': model.customer.id, 'token': csrf_token('invoice.create')})}}|merge(attrs), 'primary') }}
-                                    {% if is_granted('access', model.customer) %}
-                                        {{ widgets.action_button('invoice', {'url': path('milestone_invoice_index', {'id': model.customer.id}), 'title': 'milestone_invoice.title'|trans}|merge(attrs)) }}
-                                    {% endif %}
                                     {% endfor %}
                                 </td>
                             </tr>

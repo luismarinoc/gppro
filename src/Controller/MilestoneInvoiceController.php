@@ -12,12 +12,11 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Entity\InvoiceTemplate;
 use App\Entity\Milestone;
-use App\Form\MultiUpdate\MultiUpdateTable;
 use App\Form\MultiUpdate\MultiUpdateTableDTO;
-use App\Form\Type\MilestoneInvoiceTemplateType;
-use App\FxRate\ClpConverter;
 use App\Invoice\InvoiceService;
 use App\Invoice\MilestoneInvoiceService;
+use App\Milestone\InvoiceableMilestoneFinder;
+use App\Milestone\MilestoneInvoiceSelectionFormFactory;
 use App\Repository\MilestoneRepository;
 use App\Repository\Query\BaseQuery;
 use App\Repository\Query\MilestoneInvoiceQuery;
@@ -78,11 +77,11 @@ final class MilestoneInvoiceController extends AbstractController
     #[Route(path: '/{id}', name: 'milestone_invoice_index', methods: ['GET'])]
     #[IsGranted('create_invoice')]
     #[IsGranted('access', 'customer')]
-    public function indexAction(Customer $customer, MilestoneRepository $milestoneRepository, ClpConverter $converter): Response
+    public function indexAction(Customer $customer, InvoiceableMilestoneFinder $finder, MilestoneInvoiceSelectionFormFactory $formFactory): Response
     {
-        $milestones = $this->getInvoiceableMilestones($customer, $milestoneRepository, $converter);
+        $milestones = $finder->findForCustomer($customer);
 
-        $form = $this->getSelectionForm($customer, $milestoneRepository);
+        $form = $formFactory->create($customer);
 
         $table = new DataTable('milestone_invoice', new BaseQuery());
         $table->setPagination(new Pagination(new ArrayAdapter($milestones)));
@@ -110,9 +109,9 @@ final class MilestoneInvoiceController extends AbstractController
     #[Route(path: '/{id}/create', name: 'milestone_invoice_create', methods: ['POST'])]
     #[IsGranted('create_invoice')]
     #[IsGranted('access', 'customer')]
-    public function createAction(Customer $customer, Request $request, MilestoneRepository $milestoneRepository, ClpConverter $converter, MilestoneInvoiceService $milestoneInvoiceService, InvoiceService $invoiceService): Response
+    public function createAction(Customer $customer, Request $request, InvoiceableMilestoneFinder $finder, MilestoneInvoiceSelectionFormFactory $formFactory, MilestoneInvoiceService $milestoneInvoiceService, InvoiceService $invoiceService): Response
     {
-        $form = $this->getSelectionForm($customer, $milestoneRepository);
+        $form = $formFactory->create($customer);
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
@@ -161,7 +160,7 @@ final class MilestoneInvoiceController extends AbstractController
         // milestones meanwhile, or its FX rate may no longer be available.
         // Fail the whole request with a flash, never a partial invoice.
         foreach ($milestones as $milestone) {
-            if ($milestone->isInvoiced() || !$this->isConvertible($milestone, $converter)) {
+            if ($milestone->isInvoiced() || !$finder->isConvertible($milestone)) {
                 $this->flashError('milestone_invoice.error.stale_selection');
 
                 return $this->redirectToRoute('milestone_invoice_index', ['id' => $customer->getId()]);
@@ -224,55 +223,6 @@ final class MilestoneInvoiceController extends AbstractController
         $query->setCurrentUser($this->getUser());
 
         return $query;
-    }
-
-    /**
-     * Milestones of the given customer that are not yet invoiced, have a
-     * value/currency, AND can actually be converted to CLP right now
-     * (design D6: re-checked at generation time too, since the selection
-     * may go stale between listing and submit).
-     *
-     * @return Milestone[]
-     */
-    private function getInvoiceableMilestones(Customer $customer, MilestoneRepository $milestoneRepository, ClpConverter $converter): array
-    {
-        $milestones = [];
-
-        foreach ($milestoneRepository->findInvoiceableByCustomer($customer) as $milestone) {
-            if ($this->isConvertible($milestone, $converter)) {
-                $milestones[] = $milestone;
-            }
-        }
-
-        return $milestones;
-    }
-
-    private function isConvertible(Milestone $milestone, ClpConverter $converter): bool
-    {
-        $value = $milestone->getValue();
-        $currency = $milestone->getCurrency();
-
-        if (null === $value || null === $currency) {
-            return false;
-        }
-
-        $date = $milestone->getDueDate() ?? $milestone->getCreatedAt();
-
-        return null !== $converter->convert($value, $currency, $date);
-    }
-
-    private function getSelectionForm(Customer $customer, MilestoneRepository $milestoneRepository): FormInterface
-    {
-        $dto = new MultiUpdateTableDTO();
-        $dto->addAction('milestone_invoice.action.generate', $this->generateUrl('milestone_invoice_create', ['id' => $customer->getId()]));
-
-        return $this->createForm(MultiUpdateTable::class, $dto, [
-            'action' => $this->generateUrl('milestone_invoice_create', ['id' => $customer->getId()]),
-            'repository' => $milestoneRepository,
-            'method' => 'POST',
-        ])->add('template', MilestoneInvoiceTemplateType::class, [
-            'mapped' => false,
-        ]);
     }
 
     private function flashFormError(FormInterface $form): void
