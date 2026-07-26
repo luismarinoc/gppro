@@ -81,6 +81,13 @@ final class MilestoneInvoiceController extends AbstractController
     {
         $milestones = $finder->findForCustomer($customer);
 
+        $milestoneIdsWithoutHours = [];
+        foreach ($milestones as $milestone) {
+            if (!$finder->hasBillableHours($milestone)) {
+                $milestoneIdsWithoutHours[] = $milestone->getId();
+            }
+        }
+
         $form = $formFactory->create($customer);
 
         $table = new DataTable('milestone_invoice', new BaseQuery());
@@ -103,6 +110,7 @@ final class MilestoneInvoiceController extends AbstractController
             'page_setup' => $page,
             'dataTable' => $table,
             'customer' => $customer,
+            'milestone_ids_without_hours' => $milestoneIdsWithoutHours,
         ]);
     }
 
@@ -162,6 +170,12 @@ final class MilestoneInvoiceController extends AbstractController
         foreach ($milestones as $milestone) {
             if ($milestone->isInvoiced() || !$finder->isConvertible($milestone)) {
                 $this->flashError('milestone_invoice.error.stale_selection');
+
+                return $this->redirectToRoute('milestone_invoice_index', ['id' => $customer->getId()]);
+            }
+
+            if (!$finder->hasBillableHours($milestone)) {
+                $this->flashError('milestone_invoice.error.no_hours_logged');
 
                 return $this->redirectToRoute('milestone_invoice_index', ['id' => $customer->getId()]);
             }

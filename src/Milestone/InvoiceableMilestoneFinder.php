@@ -45,6 +45,11 @@ final class InvoiceableMilestoneFinder
         return $milestones;
     }
 
+    public function hasBillableHours(Milestone $milestone): bool
+    {
+        return $this->repository->hasBillableHours($milestone);
+    }
+
     public function isConvertible(Milestone $milestone): bool
     {
         $value = $milestone->getValue();

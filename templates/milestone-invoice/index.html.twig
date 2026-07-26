@@ -10,6 +10,9 @@
 {% block datatable_column_value %}
     {% if column == 'name' %}
         {{ entry.name }}
+        {% if entry.id in milestone_ids_without_hours %}
+            <span class="badge bg-warning text-warning-fg milestone_no_hours_warning" data-toggle="tooltip" data-placement="top" title="{{ 'milestone_invoice.warning.no_hours_logged'|trans }}">!</span>
+        {% endif %}
     {% elseif column == 'project' %}
         {{ entry.project.name }}
     {% elseif column == 'due_date' %}
@@ -24,7 +27,11 @@
         {{ entry.currency == 'CLF' ? 'UF' : entry.currency }}
     {% elseif column == 'id' %}
         {% if dataTable.hasBatchForm() %}
-            {{ tables.datatable_multiupdate_row(entry.id) }}
+            {% if entry.id in milestone_ids_without_hours %}
+                <input type="checkbox" class="multi_update_single form-check-input m-0 align-middle" disabled title="{{ 'milestone_invoice.warning.no_hours_logged'|trans }}">
+            {% else %}
+                {{ tables.datatable_multiupdate_row(entry.id) }}
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endblock %}

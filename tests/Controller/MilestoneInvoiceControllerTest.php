@@ -9,12 +9,14 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\InvoiceTemplate;
 use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\Team;
+use App\Entity\Timesheet;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -87,6 +89,32 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         $em->flush();
 
         return $milestone;
+    }
+
+    private function addBillableHours(Milestone $milestone, User $user): void
+    {
+        $em = $this->getEntityManager();
+        $project = $milestone->getProject();
+        self::assertNotNull($project);
+
+        $activity = new Activity();
+        $activity->setName('Billable activity ' . uniqid());
+        $activity->setProject($project);
+        $activity->setMilestone($milestone);
+        $em->persist($activity);
+        $em->flush();
+
+        $timesheet = new Timesheet();
+        $timesheet->setProject($project);
+        $timesheet->setActivity($activity);
+        $timesheet->setUser($user);
+        $timesheet->setBegin(new \DateTime('-2 hour'));
+        $timesheet->setEnd(new \DateTime('-1 hour'));
+        $timesheet->setDuration(3600);
+        $timesheet->setBillable(true);
+        $em->persist($timesheet);
+
+        $em->flush();
     }
 
     private function nameOf(Milestone $milestone): string
@@ -176,6 +204,84 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString($this->nameOf($alreadyInvoiced), $html);
     }
 
+    public function testIndexActionShowsWarningAndDisablesCheckboxForMilestoneWithoutBillableHours(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+
+        $withoutHours = $this->createMilestone($project, 'No hours yet');
+        $withHours = $this->createMilestone($project, 'Has hours');
+        $this->addBillableHours($withHours, $this->getUserByRole(User::ROLE_TEAMLEAD));
+
+        $this->request($client, '/invoice/milestones/' . $customer->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        $rows = $crawler->filter('table.dataTable tbody tr');
+
+        $withoutHoursRow = null;
+        $withHoursRow = null;
+        foreach ($rows as $row) {
+            $rowCrawler = new \Symfony\Component\DomCrawler\Crawler($row);
+            $text = $rowCrawler->text();
+            if (str_contains($text, $this->nameOf($withoutHours))) {
+                $withoutHoursRow = $rowCrawler;
+            } elseif (str_contains($text, $this->nameOf($withHours))) {
+                $withHoursRow = $rowCrawler;
+            }
+        }
+
+        self::assertNotNull($withoutHoursRow, 'milestone without billable hours must still be listed');
+        self::assertNotNull($withHoursRow);
+
+        self::assertEquals(1, $withoutHoursRow->filter('.milestone_no_hours_warning')->count());
+        self::assertEquals(1, $withoutHoursRow->filter('input[type=checkbox][disabled]')->count());
+
+        self::assertEquals(0, $withHoursRow->filter('.milestone_no_hours_warning')->count());
+        self::assertEquals(0, $withHoursRow->filter('input[type=checkbox][disabled]')->count());
+    }
+
+    public function testCreateActionRejectsMilestoneWithoutBillableHours(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $milestone = $this->createMilestone($project, 'No hours logged yet');
+
+        $template = $this->createCompatibleTemplate();
+
+        $this->request($client, '/invoice/milestones/' . $customer->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $client->getCrawler()->filter('form[name=multi_update_table]')->form();
+        $node = $form->getFormNode();
+        $node->setAttribute('action', $this->createUrl('/invoice/milestones/' . $customer->getId() . '/create'));
+
+        $client->submit($form, [
+            'multi_update_table' => [
+                'entities' => (string) $milestone->getId(),
+                'template' => $template->getId(),
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/milestones/' . $customer->getId()));
+        $client->followRedirect();
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $this->assertHasFlashError($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+
+        self::assertCount(0, $em->getRepository(Invoice::class)->findBy(['customer' => $customer->getId()]));
+
+        /** @var Milestone $reloaded */
+        $reloaded = $em->getRepository(Milestone::class)->find($milestone->getId());
+        self::assertFalse($reloaded->isInvoiced());
+    }
+
     public function testPickCustomerActionIsSecure(): void
     {
         $this->assertUrlIsSecured('/invoice/milestones/');
@@ -228,6 +334,9 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
 
         $milestoneA = $this->createMilestone($projectA, 'Milestone A');
         $milestoneB = $this->createMilestone($projectB, 'Milestone B');
+        $user = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $this->addBillableHours($milestoneA, $user);
+        $this->addBillableHours($milestoneB, $user);
 
         $template = $this->createCompatibleTemplate();
 
@@ -329,6 +438,7 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         $project = $this->createProject($customer);
 
         $validMilestone = $this->createMilestone($project, 'Valid CLP milestone');
+        $this->addBillableHours($validMilestone, $this->getUserByRole(User::ROLE_TEAMLEAD));
         // never convertible: USD with no FxRate rows present in the test DB,
         // simulating an ID that went stale (or was tampered) between listing
         // and this submit
@@ -372,6 +482,7 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         $customer = $this->createCustomer();
         $project = $this->createProject($customer);
         $milestone = $this->createMilestone($project, 'Real milestone');
+        $this->addBillableHours($milestone, $this->getUserByRole(User::ROLE_TEAMLEAD));
 
         $template = $this->createCompatibleTemplate();
 
@@ -453,6 +564,7 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         // Milestone IDs are plain auto-increment integers, trivially
         // enumerable — no leak of B's id is required for this exploit.
         $foreignMilestone = $this->createMilestone($projectB, 'Customer B milestone (foreign)');
+        $this->addBillableHours($foreignMilestone, $attacker);
 
         $template = $this->createCompatibleTemplate();
 
