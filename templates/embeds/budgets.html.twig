@@ -93,7 +93,7 @@
                         </tr>
                         <tr class="timesheet_total_invoiced_row">
                             <td>{{ 'timesheet.total_invoiced'|trans }}</td>
-                            <td class="text-nowrap text-end">{{ stats.durationBillableInvoiced|duration }}</td>
+                            <td class="text-nowrap text-end">{{ stats.durationBillableInvoiced|duration }} ({{ stats.rateBillableInvoiced|money(currency) }})</td>
                         </tr>
                         {% if invoiced_milestone_total|default(null) is not null and (invoiced_milestone_total.hasTotal() or invoiced_milestone_total.isPartial()) %}
                             <tr class="milestone_total_row">
