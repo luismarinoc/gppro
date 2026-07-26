@@ -41,17 +41,6 @@
     </tr>
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    {% if download is not null %}
-    <script type="text/javascript">
-        document.addEventListener('gppro.initialized', function() {
-            location.href = '{{ path('admin_invoice_download', {'id': download.id}) }}';
-        });
-    </script>
-    {% endif %}
-{% endblock %}
-
 {% macro invoice_status(invoice) %}
     {% from "macros/widgets.html.twig" import label %}
     {% set overdue = invoice.overdue %}
