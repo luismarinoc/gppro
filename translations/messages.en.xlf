@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="gpMilestoneTotalClp" resname="milestone.total_clp">
         <source>milestone.total_clp</source>
-        <target>Milestone total (CLP)</target>
+        <target>Invoiced milestone total (CLP)</target>
       </trans-unit>
       <trans-unit id="gpTimesheetTotalInvoiced" resname="timesheet.total_invoiced">
         <source>timesheet.total_invoiced</source>

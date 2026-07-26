@@ -193,6 +193,33 @@ class BudgetStatisticModel implements BudgetStatisticModelInterface
         return $this->statisticTotal->getRateBillableInvoiced();
     }
 
+    public function getDurationBillableInvoiced(): int
+    {
+        if ($this->isMonthlyBudget()) {
+            return $this->getDurationBillableInvoicedRelative();
+        }
+
+        return $this->getDurationBillableInvoicedTotal();
+    }
+
+    public function getDurationBillableInvoicedRelative(): int
+    {
+        if ($this->statistic === null) {
+            return 0;
+        }
+
+        return $this->statistic->getDurationBillableInvoiced();
+    }
+
+    public function getDurationBillableInvoicedTotal(): int
+    {
+        if ($this->statisticTotal === null) {
+            return 0;
+        }
+
+        return $this->statisticTotal->getDurationBillableInvoiced();
+    }
+
     public function getRate(): float
     {
         if ($this->isMonthlyBudget()) {
