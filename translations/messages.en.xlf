@@ -1406,6 +1406,10 @@
         <source>exported</source>
         <target>Exported</target>
       </trans-unit>
+      <trans-unit id="gpTimesheetInvoicedColumn" resname="invoiced">
+        <source>invoiced</source>
+        <target>Invoiced</target>
+      </trans-unit>
       <trans-unit id="_DDecAV" resname="entryState.exported">
         <source>entryState.exported</source>
         <target>Cleared</target>

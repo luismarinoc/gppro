@@ -738,6 +738,10 @@
         <source>exported</source>
         <target>Exportado</target>
       </trans-unit>
+      <trans-unit id="gpTimesheetInvoicedColumn" resname="invoiced">
+        <source>invoiced</source>
+        <target>Facturado</target>
+      </trans-unit>
       <trans-unit id="_DDecAV" resname="entryState.exported" xml:space="preserve">
         <source>entryState.exported</source>
         <target state="translated">Despejado</target>
