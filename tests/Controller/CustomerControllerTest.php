@@ -9,9 +9,12 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\CustomerMeta;
 use App\Entity\CustomerRate;
+use App\Entity\Invoice;
+use App\Entity\Project;
 use App\Entity\Timesheet;
 use App\Entity\User;
 use App\Tests\DataFixtures\CustomerFixtures;
@@ -132,6 +135,84 @@ class CustomerControllerTest extends AbstractControllerBaseTestCase
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
         $this->assertAccessIsGranted($client, '/admin/customer/1/details');
         $this->assertDetailsPage($client);
+    }
+
+    public function testDetailsActionRevenueOnlyCountsInvoicedTimesheets(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        /** @var Customer $customer */
+        $customer = $em->getRepository(Customer::class)->find(1);
+        $customer->setCurrency('CLP');
+        $em->persist($customer);
+        $em->flush();
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        self::assertSame($customer->getId(), $project->getCustomer()?->getId());
+
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $activity = new Activity();
+        $activity->setName('Customer revenue test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $invoice = new Invoice();
+        $invoice->setCustomer($customer);
+        $invoice->setUser($user);
+        $invoice->setInvoiceNumber('INV-' . uniqid());
+        $invoice->setFilename('invoice-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setCurrency('CLP');
+        $invoice->setTotal(2000.0);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setDueDays(30);
+        $em->persist($invoice);
+        $em->flush();
+
+        // billable but never invoiced -> must NOT count as revenue
+        $notInvoiced = new Timesheet();
+        $notInvoiced->setProject($project);
+        $notInvoiced->setActivity($activity);
+        $notInvoiced->setUser($user);
+        $notInvoiced->setBegin(new \DateTime('2026-07-01 09:00:00'));
+        $notInvoiced->setEnd(new \DateTime('2026-07-01 10:00:00'));
+        $notInvoiced->setDuration(3600);
+        $notInvoiced->setBillable(true);
+        $notInvoiced->setFixedRate(1000.0);
+        $em->persist($notInvoiced);
+
+        // billable and actually invoiced -> must count
+        $invoiced = new Timesheet();
+        $invoiced->setProject($project);
+        $invoiced->setActivity($activity);
+        $invoiced->setUser($user);
+        $invoiced->setBegin(new \DateTime('2026-07-02 09:00:00'));
+        $invoiced->setEnd(new \DateTime('2026-07-02 10:00:00'));
+        $invoiced->setDuration(3600);
+        $invoiced->setBillable(true);
+        $invoiced->setFixedRate(2000.0);
+        $invoiced->setInvoice($invoice);
+        $em->persist($invoiced);
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/customer/' . $customer->getId() . '/details');
+
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.revenue_row');
+        self::assertEquals(1, $row->count());
+        $digitsOnly = preg_replace('/\D/', '', $row->filter('td')->eq(1)->text());
+        self::assertSame('2000', $digitsOnly);
+
+        $hoursRow = $client->getCrawler()->filter('div.card#budget_box tr.timesheet_total_invoiced_row');
+        self::assertEquals(1, $hoursRow->count());
+        $hoursRowText = $hoursRow->filter('td')->eq(1)->text();
+        self::assertStringContainsString('1:00', $hoursRowText);
+        self::assertSame('2000', preg_replace('/\D/', '', str_replace('1:00', '', $hoursRowText)));
     }
 
     private function assertDetailsPage(HttpKernelBrowser $client)
