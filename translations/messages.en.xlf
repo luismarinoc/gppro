@@ -126,6 +126,10 @@
         <source>milestone.total_clp</source>
         <target>Milestone total (CLP)</target>
       </trans-unit>
+      <trans-unit id="gpTimesheetTotalInvoiced" resname="timesheet.total_invoiced">
+        <source>timesheet.total_invoiced</source>
+        <target>Total invoiced hours</target>
+      </trans-unit>
       <trans-unit id="gpMilestoneTotalPartial" resname="milestone.total_partial">
         <source>milestone.total_partial</source>
         <target>%count% milestone(s) with no exchange rate available</target>

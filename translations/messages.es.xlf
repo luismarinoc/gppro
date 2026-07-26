@@ -838,6 +838,10 @@
         <source>milestone.total_clp</source>
         <target state="translated">Total de hitos (CLP)</target>
       </trans-unit>
+      <trans-unit id="gpTimesheetTotalInvoiced" resname="timesheet.total_invoiced">
+        <source>timesheet.total_invoiced</source>
+        <target state="translated">Total de horas facturadas</target>
+      </trans-unit>
       <trans-unit id="gpMilestoneTotalPartial" resname="milestone.total_partial" xml:space="preserve">
         <source>milestone.total_partial</source>
         <target state="translated">%count% hito(s) sin tipo de cambio disponible</target>
