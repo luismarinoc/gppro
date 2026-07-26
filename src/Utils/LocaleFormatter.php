@@ -178,7 +178,20 @@ final class LocaleFormatter
             $this->moneyFormatter = new NumberFormatter($this->locale, NumberFormatter::CURRENCY);
         }
 
-        return $this->moneyFormatter->formatCurrency($amount, $currency);
+        $formatted = $this->moneyFormatter->formatCurrency($amount, $currency);
+
+        if (false === $formatted) {
+            return (string) $amount;
+        }
+
+        // ICU has no common display symbol for CLF (Chile's "Unidad de
+        // Fomento") and falls back to the raw ISO 4217 code. Chilean users
+        // know it exclusively as "UF", never "CLF".
+        if ($currency === 'CLF') {
+            $formatted = str_replace('CLF', 'UF', $formatted);
+        }
+
+        return $formatted;
     }
 
     public function dateShort(\DateTimeInterface|string|null $date): ?string

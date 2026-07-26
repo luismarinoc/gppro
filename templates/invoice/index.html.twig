@@ -117,7 +117,7 @@
                                 <td class="d-none d-sm-table-cell">{{ milestone.project.name }}</td>
                                 <td class="d-none w-min">{% if milestone.dueDate is not null %}{{ milestone.dueDate|date_short }}{% endif %}</td>
                                 <td class="text-end w-min">{% if milestone.value is not null %}{{ milestone.value|money(milestone.currency) }}{% endif %}</td>
-                                <td class="d-none text-end w-min">{{ milestone.currency }}</td>
+                                <td class="d-none text-end w-min">{{ milestone.currency == 'CLF' ? 'UF' : milestone.currency }}</td>
                             </tr>
                         {% endfor %}
                         {{ tables.data_table_footer(null, '', milestone_form) }}

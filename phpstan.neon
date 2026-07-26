@@ -3029,7 +3029,7 @@ parameters:
 
         -
             message: "#^Method App\\\\Utils\\\\LocaleFormatter\\:\\:money\\(\\) should return string but returns string\\|false\\.$#"
-            count: 2
+            count: 1
             path: src/Utils/LocaleFormatter.php
 
         -

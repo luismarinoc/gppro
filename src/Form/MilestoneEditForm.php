@@ -49,8 +49,14 @@ class MilestoneEditForm extends AbstractType
                 // list. Passing 'choice_loader' => null overrides CurrencyType's
                 // default Intl-backed loader, which otherwise takes priority over
                 // the 'choices' option (see Symfony\...\ChoiceType::createChoiceList).
+                // CLF is displayed as "UF" (Chile's "Unidad de Fomento", its only
+                // common name) while still storing/validating the ISO code 'CLF'.
                 'choice_loader' => null,
-                'choices' => array_combine(Milestone::SUPPORTED_CURRENCIES, Milestone::SUPPORTED_CURRENCIES),
+                'choices' => [
+                    'CLP' => 'CLP',
+                    'USD' => 'USD',
+                    'UF' => 'CLF',
+                ],
             ])
         ;
     }

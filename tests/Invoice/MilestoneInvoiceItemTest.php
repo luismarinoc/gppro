@@ -9,11 +9,13 @@
 
 namespace App\Tests\Invoice;
 
+use App\Entity\Activity;
 use App\Entity\Invoice;
 use App\Entity\Milestone;
 use App\Entity\Project;
 use App\FxRate\ClpConversion;
 use App\Invoice\MilestoneInvoiceItem;
+use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +31,23 @@ class MilestoneInvoiceItemTest extends TestCase
         $milestone->setCurrency('USD');
 
         return $milestone;
+    }
+
+    // Activity::$milestone is the owning (mappedBy target) side, populated by
+    // Doctrine only on real hydration; a pure unit test has to reach into the
+    // inverse-side collection directly to simulate that.
+    private function addActivity(Milestone $milestone, string $name): void
+    {
+        $activity = new Activity();
+        $activity->setName($name);
+        $activity->setMilestone($milestone);
+
+        $reflection = new \ReflectionClass($milestone);
+        $property = $reflection->getProperty('activities');
+        $property->setAccessible(true);
+        $activities = $property->getValue($milestone);
+        self::assertInstanceOf(Collection::class, $activities);
+        $activities->add($activity);
     }
 
     public function testBeginAndEndUseDueDateNormalizedToMidnight(): void
@@ -151,6 +170,29 @@ class MilestoneInvoiceItemTest extends TestCase
         self::assertStringContainsString('CLP', $description);
         // no FX rate was looked up for a CLP->CLP passthrough
         self::assertStringNotContainsString('×', $description);
+    }
+
+    public function testDescriptionListsEachLinkedActivityNameOnItsOwnLine(): void
+    {
+        $milestone = $this->createMilestone('Design phase');
+        $this->addActivity($milestone, 'Wireframes');
+        $this->addActivity($milestone, 'Client review');
+
+        $sut = new MilestoneInvoiceItem($milestone, $this->convertedConversion());
+
+        $description = $sut->getDescription();
+        $lines = explode("\n", $description);
+
+        self::assertStringContainsString('Design phase', $lines[0]);
+        self::assertContains('Wireframes', $lines);
+        self::assertContains('Client review', $lines);
+    }
+
+    public function testDescriptionHasNoTrailingLinesWithoutLinkedActivities(): void
+    {
+        $sut = new MilestoneInvoiceItem($this->createMilestone('No activities'), $this->convertedConversion());
+
+        self::assertStringNotContainsString("\n", $sut->getDescription());
     }
 
     public function testTypeAndCategoryAreMilestone(): void
