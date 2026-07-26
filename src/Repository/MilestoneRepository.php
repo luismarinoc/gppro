@@ -13,6 +13,7 @@ use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\Milestone;
 use App\Entity\Project;
+use App\Entity\Timesheet;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -68,6 +69,28 @@ class MilestoneRepository extends EntityRepository
             ->addOrderBy('m.name', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Whether at least one billable timesheet entry has been logged against
+     * an activity linked to this milestone. A milestone with none must not
+     * be invoiceable yet - a fixed-price value alone is not proof any work
+     * has actually started.
+     */
+    public function hasBillableHours(Milestone $milestone): bool
+    {
+        $count = $this->getEntityManager()->createQueryBuilder()
+            ->select('COUNT(t.id)')
+            ->from(Timesheet::class, 't')
+            ->join('t.activity', 'a')
+            ->andWhere('a.milestone = :milestone')
+            ->andWhere('t.billable = :billable')
+            ->setParameter('milestone', $milestone)
+            ->setParameter('billable', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return ((int) $count) > 0;
     }
 
     /**

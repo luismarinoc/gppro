@@ -2190,6 +2190,14 @@
         <source>milestone_invoice.error.stale_selection</source>
         <target>One of the selected milestones was already invoiced or can no longer be converted. Please reload the list and try again.</target>
       </trans-unit>
+      <trans-unit id="gpMsInvE5" resname="milestone_invoice.error.no_hours_logged">
+        <source>milestone_invoice.error.no_hours_logged</source>
+        <target>One of the selected milestones has no billable hours logged yet and cannot be invoiced.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvW1" resname="milestone_invoice.warning.no_hours_logged">
+        <source>milestone_invoice.warning.no_hours_logged</source>
+        <target>This milestone has no billable hours logged yet and cannot be invoiced.</target>
+      </trans-unit>
       <trans-unit id="gpMsInvE4" resname="milestone_invoice.error.unauthorized_customer">
         <source>milestone_invoice.error.unauthorized_customer</source>
         <target>Selected milestones do not belong to a customer you are authorized to invoice.</target>
