@@ -21,7 +21,7 @@
             {{ entry.value|money(entry.currency) }}
         {% endif %}
     {% elseif column == 'currency' %}
-        {{ entry.currency }}
+        {{ entry.currency == 'CLF' ? 'UF' : entry.currency }}
     {% elseif column == 'id' %}
         {% if dataTable.hasBatchForm() %}
             {{ tables.datatable_multiupdate_row(entry.id) }}

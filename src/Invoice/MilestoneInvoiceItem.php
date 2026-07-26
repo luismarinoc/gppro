@@ -144,18 +144,32 @@ final class MilestoneInvoiceItem implements ExportableItem
         $name = (string) $this->milestone->getName();
 
         if (!$this->conversion->isConverted()) {
-            return \sprintf('%s — %s CLP', $name, $this->conversion->clpAmount);
+            $description = \sprintf('%s — %s CLP', $name, $this->conversion->clpAmount);
+        } else {
+            $description = \sprintf(
+                '%s — %s %s × %s (%s) = %s CLP',
+                $name,
+                $this->conversion->sourceAmount,
+                $this->conversion->sourceCurrency,
+                $this->conversion->rate,
+                $this->conversion->rateDate?->format('Y-m-d'),
+                $this->conversion->clpAmount
+            );
         }
 
-        return \sprintf(
-            '%s — %s %s × %s (%s) = %s CLP',
-            $name,
-            $this->conversion->sourceAmount,
-            $this->conversion->sourceCurrency,
-            $this->conversion->rate,
-            $this->conversion->rateDate?->format('Y-m-d'),
-            $this->conversion->clpAmount
-        );
+        $activityNames = [];
+        foreach ($this->milestone->getActivities() as $activity) {
+            $activityName = $activity->getName();
+            if (null !== $activityName && '' !== $activityName) {
+                $activityNames[] = $activityName;
+            }
+        }
+
+        if ([] !== $activityNames) {
+            $description .= "\n" . implode("\n", $activityNames);
+        }
+
+        return $description;
     }
 
     /**
