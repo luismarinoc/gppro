@@ -50,6 +50,15 @@ final class TimesheetDeactivatedValidator extends ConstraintValidator
                 ->addViolation();
         }
 
+        $milestone = $activity?->getMilestone();
+        if (null !== $milestone && $milestone->isInvoiced()) {
+            $context->buildViolation(TimesheetDeactivated::getErrorName(TimesheetDeactivated::MILESTONE_INVOICED_ERROR))
+                ->atPath('activity')
+                ->setTranslationDomain('validators')
+                ->setCode(TimesheetDeactivated::MILESTONE_INVOICED_ERROR)
+                ->addViolation();
+        }
+
         $project = $timesheet->getProject();
         if ($project === null) {
             return;
