@@ -50,6 +50,25 @@ class MilestoneRepository extends EntityRepository
     }
 
     /**
+     * All milestones across every project of the given customer, regardless
+     * of value/currency/invoiced state - used to roll up the customer-level
+     * "invoiced milestones" total, mirroring the project-level one.
+     *
+     * @return Milestone[]
+     */
+    public function findByCustomer(Customer $customer): array
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.project', 'p')
+            ->andWhere('p.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->orderBy('m.dueDate', 'ASC')
+            ->addOrderBy('m.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Milestones of the given customer that are not yet invoiced and carry a
      * value/currency (the minimum needed to attempt an FX conversion later).
      * Convertibility itself (via ClpConverter) is checked by the caller.

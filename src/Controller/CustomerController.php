@@ -14,6 +14,7 @@ use App\Customer\CustomerStatisticService;
 use App\Entity\Customer;
 use App\Entity\CustomerComment;
 use App\Entity\CustomerRate;
+use App\Entity\Milestone;
 use App\Event\CustomerDetailControllerEvent;
 use App\Event\CustomerMetaDisplayEvent;
 use App\Export\Spreadsheet\EntityWithMetaFieldsExporter;
@@ -25,8 +26,10 @@ use App\Form\CustomerRateForm;
 use App\Form\CustomerTeamPermissionForm;
 use App\Form\Toolbar\CustomerToolbarForm;
 use App\Form\Type\CustomerType;
+use App\Milestone\MilestoneTotalCalculator;
 use App\Repository\CustomerRateRepository;
 use App\Repository\CustomerRepository;
+use App\Repository\MilestoneRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\Query\CustomerQuery;
 use App\Repository\Query\ProjectQuery;
@@ -211,11 +214,12 @@ final class CustomerController extends AbstractController
 
     #[Route(path: '/{id}/details', name: 'customer_details', methods: ['GET', 'POST'])]
     #[IsGranted('view', 'customer')]
-    public function detailsAction(Customer $customer, TeamRepository $teamRepository, CustomerRateRepository $rateRepository, CustomerStatisticService $statisticService, CustomerService $customerService, EventDispatcherInterface $dispatcher): Response
+    public function detailsAction(Customer $customer, TeamRepository $teamRepository, CustomerRateRepository $rateRepository, CustomerStatisticService $statisticService, CustomerService $customerService, MilestoneRepository $milestoneRepository, MilestoneTotalCalculator $milestoneTotalCalculator, EventDispatcherInterface $dispatcher): Response
     {
         $customerService->loadMetaFields($customer);
 
         $stats = null;
+        $invoicedMilestoneTotal = null;
         $timezone = null;
         $defaultTeam = null;
         $commentForm = null;
@@ -249,6 +253,12 @@ final class CustomerController extends AbstractController
             $stats = $statisticService->getBudgetStatisticModel($customer, $now);
         }
 
+        if ($this->isGranted('budget', $customer)) {
+            $invoicedMilestoneTotal = $milestoneTotalCalculator->calculate(
+                array_filter($milestoneRepository->findByCustomer($customer), static fn (Milestone $milestone): bool => $milestone->isInvoiced())
+            );
+        }
+
         if ($this->isGranted('comments', $customer)) {
             $comments = $this->repository->getComments($customer);
             $commentForm = $this->getCommentForm(new CustomerComment($customer))->createView();
@@ -277,6 +287,7 @@ final class CustomerController extends AbstractController
             'commentForm' => $commentForm,
             'attachments' => $attachments,
             'stats' => $stats,
+            'invoiced_milestone_total' => $invoicedMilestoneTotal,
             'team' => $defaultTeam,
             'teams' => $teams,
             'customer_now' => new \DateTime('now', $timezone),

@@ -14,6 +14,7 @@ use App\Entity\Customer;
 use App\Entity\CustomerMeta;
 use App\Entity\CustomerRate;
 use App\Entity\Invoice;
+use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\Timesheet;
 use App\Entity\User;
@@ -213,6 +214,87 @@ class CustomerControllerTest extends AbstractControllerBaseTestCase
         $hoursRowText = $hoursRow->filter('td')->eq(1)->text();
         self::assertStringContainsString('1:00', $hoursRowText);
         self::assertSame('2000', preg_replace('/\D/', '', str_replace('1:00', '', $hoursRowText)));
+    }
+
+    public function testDetailsActionRevenueIncludesInvoicedMilestonesAcrossAllCustomerProjects(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        /** @var Customer $customer */
+        $customer = $em->getRepository(Customer::class)->find(1);
+        $customer->setCurrency('CLP');
+        $em->persist($customer);
+        $em->flush();
+
+        /** @var Project $projectA */
+        $projectA = $em->getRepository(Project::class)->find(1);
+        self::assertSame($customer->getId(), $projectA->getCustomer()?->getId());
+
+        $projectB = new Project();
+        $projectB->setName('Second project ' . uniqid());
+        $projectB->setCustomer($customer);
+        $em->persist($projectB);
+        $em->flush();
+
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $invoice = new Invoice();
+        $invoice->setCustomer($customer);
+        $invoice->setUser($user);
+        $invoice->setInvoiceNumber('INV-' . uniqid());
+        $invoice->setFilename('invoice-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setCurrency('CLP');
+        $invoice->setTotal(9000.0);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setDueDays(30);
+        $em->persist($invoice);
+        $em->flush();
+
+        // invoiced milestone on project A -> must count
+        $invoicedA = new Milestone();
+        $invoicedA->setProject($projectA);
+        $invoicedA->setName('Invoiced milestone A ' . uniqid());
+        $invoicedA->setValue('4000.0000');
+        $invoicedA->setCurrency('CLP');
+        $em->persist($invoicedA);
+        $em->flush();
+        $invoicedA->setInvoice($invoice);
+        $em->persist($invoicedA);
+
+        // invoiced milestone on project B -> must ALSO count (rolled up across every project of the customer)
+        $invoicedB = new Milestone();
+        $invoicedB->setProject($projectB);
+        $invoicedB->setName('Invoiced milestone B ' . uniqid());
+        $invoicedB->setValue('5000.0000');
+        $invoicedB->setCurrency('CLP');
+        $em->persist($invoicedB);
+        $em->flush();
+        $invoicedB->setInvoice($invoice);
+        $em->persist($invoicedB);
+
+        // not yet invoiced milestone on project A -> must NOT count
+        $notInvoiced = new Milestone();
+        $notInvoiced->setProject($projectA);
+        $notInvoiced->setName('Not yet invoiced milestone ' . uniqid());
+        $notInvoiced->setValue('3000.0000');
+        $notInvoiced->setCurrency('CLP');
+        $em->persist($notInvoiced);
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/customer/' . $customer->getId() . '/details');
+
+        // 4,000 (project A) + 5,000 (project B) = 9,000; the 3,000 not-yet-invoiced milestone is excluded
+        $row = $client->getCrawler()->filter('div.card#budget_box tr.revenue_row');
+        self::assertEquals(1, $row->count());
+        self::assertSame('9000', preg_replace('/\D/', '', $row->filter('td')->eq(1)->text()));
+
+        $milestoneRow = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(1, $milestoneRow->count());
+        self::assertSame('9000', preg_replace('/\D/', '', $milestoneRow->filter('td')->eq(1)->text()));
     }
 
     private function assertDetailsPage(HttpKernelBrowser $client)
