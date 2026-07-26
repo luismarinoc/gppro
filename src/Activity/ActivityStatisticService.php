@@ -146,6 +146,10 @@ class ActivityStatisticService
                         $statistic->addDurationBillableExported((int) $resultRow['duration']);
                         $statistic->addRateBillableExported((float) $resultRow['rate']);
                     }
+                    if ($resultRow['invoiced']) {
+                        $statistic->addDurationBillableInvoiced((int) $resultRow['duration']);
+                        $statistic->addRateBillableInvoiced((float) $resultRow['rate']);
+                    }
                 }
                 if ($resultRow['exported']) {
                     $statistic->addDurationExported((int) $resultRow['duration']);
@@ -173,10 +177,12 @@ class ActivityStatisticService
             ->addSelect('COUNT(t.id) as counter')
             ->addSelect('t.billable as billable')
             ->addSelect('t.exported as exported')
+            ->addSelect('CASE WHEN t.invoice IS NULL THEN 0 ELSE 1 END AS invoiced')
             ->andWhere($qb->expr()->isNotNull('t.end'))
             ->groupBy('id')
             ->addGroupBy('billable')
             ->addGroupBy('exported')
+            ->addGroupBy('invoiced')
             ->andWhere($qb->expr()->in('t.activity', ':activity'))
             ->setParameter('activity', $activities)
         ;
