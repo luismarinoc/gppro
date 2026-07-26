@@ -404,6 +404,89 @@ class CustomerControllerTest extends AbstractControllerBaseTestCase
         self::assertEquals(5, $node->count());
     }
 
+    public function testProjectsActionShowsPerProjectRevenueCostAndProfit(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        /** @var EntityManager $em */
+        $em = $this->getEntityManager();
+
+        /** @var Customer $customer */
+        $customer = $em->getRepository(Customer::class)->find(1);
+        $customer->setCurrency('CLP');
+        $em->persist($customer);
+        $em->flush();
+
+        /** @var Project $project */
+        $project = $em->getRepository(Project::class)->find(1);
+        self::assertSame($customer->getId(), $project->getCustomer()?->getId());
+
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $activity = new Activity();
+        $activity->setName('Project financials test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $invoice = new Invoice();
+        $invoice->setCustomer($customer);
+        $invoice->setUser($user);
+        $invoice->setInvoiceNumber('INV-' . uniqid());
+        $invoice->setFilename('invoice-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setCurrency('CLP');
+        $invoice->setTotal(7000.0);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setDueDays(30);
+        $em->persist($invoice);
+        $em->flush();
+
+        // billable + invoiced hours: 2,000 income. The rate calculator
+        // subscriber defaults internalRate to match the fixed rate when no
+        // project/activity-specific internal pricing is configured, so cost
+        // also comes out to 2,000 here - not an explicitly chosen value.
+        $invoiced = new Timesheet();
+        $invoiced->setProject($project);
+        $invoiced->setActivity($activity);
+        $invoiced->setUser($user);
+        $invoiced->setBegin(new \DateTime('2026-07-02 09:00:00'));
+        $invoiced->setEnd(new \DateTime('2026-07-02 10:00:00'));
+        $invoiced->setDuration(3600);
+        $invoiced->setBillable(true);
+        $invoiced->setFixedRate(2000.0);
+        $invoiced->setInvoice($invoice);
+        $em->persist($invoiced);
+
+        // invoiced milestone on the same project: 5,000 income
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName('Invoiced milestone ' . uniqid());
+        $milestone->setValue('5000.0000');
+        $milestone->setCurrency('CLP');
+        $em->persist($milestone);
+        $em->flush();
+        $milestone->setInvoice($invoice);
+        $em->persist($milestone);
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/customer/' . $customer->getId() . '/projects/1');
+
+        $row = $client->getCrawler()->filter('div.card#project_list_box .card-body table tbody tr')->first();
+
+        // income: 2,000 (invoiced hours) + 5,000 (invoiced milestone) = 7,000
+        $incomeCell = $row->filter('td')->eq(3)->text();
+        self::assertSame('7000', preg_replace('/\D/', '', $incomeCell));
+
+        // cost: 2,000 (internal rate, auto-computed to match the fixed rate)
+        $costCell = $row->filter('td')->eq(4)->text();
+        self::assertSame('2000', preg_replace('/\D/', '', $costCell));
+
+        // profit: 7,000 - 2,000 = 5,000
+        $profitCell = $row->filter('td')->eq(5)->text();
+        self::assertSame('5000', preg_replace('/\D/', '', $profitCell));
+    }
+
     public function testCreateAction(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);

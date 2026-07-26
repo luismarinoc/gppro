@@ -15,6 +15,7 @@ use App\Entity\Customer;
 use App\Entity\CustomerComment;
 use App\Entity\CustomerRate;
 use App\Entity\Milestone;
+use App\Entity\Project;
 use App\Event\CustomerDetailControllerEvent;
 use App\Event\CustomerMetaDisplayEvent;
 use App\Export\Spreadsheet\EntityWithMetaFieldsExporter;
@@ -27,6 +28,7 @@ use App\Form\CustomerTeamPermissionForm;
 use App\Form\Toolbar\CustomerToolbarForm;
 use App\Form\Type\CustomerType;
 use App\Milestone\MilestoneTotalCalculator;
+use App\Project\ProjectStatisticService;
 use App\Repository\CustomerRateRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\MilestoneRepository;
@@ -191,7 +193,7 @@ final class CustomerController extends AbstractController
 
     #[Route(path: '/{id}/projects/{page}', defaults: ['page' => 1], name: 'customer_projects', methods: ['GET', 'POST'])]
     #[IsGranted('view', 'customer')]
-    public function projectsAction(Customer $customer, int $page, ProjectRepository $projectRepository): Response
+    public function projectsAction(Customer $customer, int $page, ProjectRepository $projectRepository, ProjectStatisticService $statisticService, MilestoneRepository $milestoneRepository, MilestoneTotalCalculator $milestoneTotalCalculator): Response
     {
         $query = new ProjectQuery();
         $query->setCurrentUser($this->getUser());
@@ -204,11 +206,49 @@ final class CustomerController extends AbstractController
 
         $entries = $projectRepository->getPagerfantaForQuery($query);
 
+        $now = $this->getDateTimeFactory()->createDateTime();
+        $projectFinancials = [];
+
+        if ($this->isGranted('budget_any', 'project')) {
+            /** @var Project[] $projects */
+            $projects = iterator_to_array($entries);
+            $models = $statisticService->getBudgetStatisticModelForProjects($projects, $now);
+
+            foreach ($projects as $project) {
+                $id = $project->getId();
+                if (null === $id) {
+                    continue;
+                }
+
+                $income = $models[$id]->getRateBillableInvoiced();
+
+                if ($project->getCustomer()?->getCurrency() === 'CLP') {
+                    $invoicedMilestones = array_filter(
+                        $milestoneRepository->findByProject($project),
+                        static fn (Milestone $milestone): bool => $milestone->isInvoiced()
+                    );
+                    $milestoneTotal = $milestoneTotalCalculator->calculate($invoicedMilestones);
+                    if ($milestoneTotal->hasTotal()) {
+                        $income += (float) $milestoneTotal->total;
+                    }
+                }
+
+                $cost = $models[$id]->getInternalRate();
+
+                $projectFinancials[$id] = [
+                    'income' => $income,
+                    'cost' => $cost,
+                    'profit' => $income - $cost,
+                ];
+            }
+        }
+
         return $this->render('customer/embed_projects.html.twig', [
             'customer' => $customer,
             'projects' => $entries,
+            'project_financials' => $projectFinancials,
             'page' => $page,
-            'now' => $this->getDateTimeFactory()->createDateTime(),
+            'now' => $now,
         ]);
     }
 
