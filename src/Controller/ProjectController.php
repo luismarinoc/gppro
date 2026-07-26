@@ -253,6 +253,7 @@ final class ProjectController extends AbstractController
 
         $stats = null;
         $milestoneTotal = null;
+        $invoicedMilestoneTotal = null;
         $defaultTeam = null;
         $commentForm = null;
         $attachments = [];
@@ -284,6 +285,9 @@ final class ProjectController extends AbstractController
 
         if ($this->isGranted('budget', $project)) {
             $milestoneTotal = $milestoneTotalCalculator->calculate($milestones);
+            $invoicedMilestoneTotal = $milestoneTotalCalculator->calculate(
+                array_filter($milestones, static fn (Milestone $milestone): bool => $milestone->isInvoiced())
+            );
         }
 
         if ($this->isGranted('comments', $project)) {
@@ -315,6 +319,7 @@ final class ProjectController extends AbstractController
             'attachments' => $attachments,
             'stats' => $stats,
             'milestone_total' => $milestoneTotal,
+            'invoiced_milestone_total' => $invoicedMilestoneTotal,
             'team' => $defaultTeam,
             'teams' => $teams,
             'rates' => $rates,
