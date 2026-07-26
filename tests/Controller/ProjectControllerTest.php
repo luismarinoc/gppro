@@ -747,7 +747,11 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         // the hour and milestone components must also be visible on their own
         $hoursRow = $client->getCrawler()->filter('div.card#budget_box tr.timesheet_total_invoiced_row');
         self::assertEquals(1, $hoursRow->count());
-        self::assertSame('2000', preg_replace('/\D/', '', $hoursRow->filter('td')->eq(1)->text()));
+        $hoursRowText = $hoursRow->filter('td')->eq(1)->text();
+        [$hoursMoneyPart, $hoursDurationPart] = explode('(', $hoursRowText);
+        self::assertSame('2000', preg_replace('/\D/', '', $hoursMoneyPart));
+        // the single invoiced timesheet was exactly 1 hour (09:00-10:00)
+        self::assertStringContainsString('1:00', $hoursDurationPart);
 
         // milestone_total_row is the potential total of ALL milestones with a
         // value (invoiced or not): 5,000 invoiced + 3,000 not yet invoiced

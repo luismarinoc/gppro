@@ -11,6 +11,8 @@ namespace App\Tests\Validator\Constraints;
 
 use App\Entity\Activity;
 use App\Entity\Customer;
+use App\Entity\Invoice;
+use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\Timesheet;
 use App\Validator\Constraints\TimesheetDeactivated;
@@ -77,6 +79,97 @@ class TimesheetDeactivatedValidatorTest extends ConstraintValidatorTestCase
             ->atPath('property.path.customer')
             ->setCode(TimesheetDeactivated::DISABLED_CUSTOMER_ERROR)
             ->assertRaised();
+    }
+
+    public function testMilestoneInvoicedBlocksStartingNewTime(): void
+    {
+        $begin = new \DateTime('-10 hour');
+        $customer = new Customer('foo');
+        $project = new Project();
+        $project->setCustomer($customer);
+
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName('Invoiced milestone');
+        $milestone->setInvoice(new Invoice());
+
+        $activity = new Activity();
+        $activity->setProject($project);
+        $activity->setMilestone($milestone);
+
+        $timesheet = new Timesheet();
+        $timesheet
+            ->setBegin($begin)
+            ->setActivity($activity)
+            ->setProject($project)
+        ;
+
+        $this->validator->validate($timesheet, new TimesheetDeactivated(['message' => 'myMessage']));
+
+        $this->buildViolation(TimesheetDeactivated::getErrorName(TimesheetDeactivated::MILESTONE_INVOICED_ERROR))
+            ->atPath('property.path.activity')
+            ->setCode(TimesheetDeactivated::MILESTONE_INVOICED_ERROR)
+            ->assertRaised();
+    }
+
+    public function testMilestoneNotInvoicedDoesNotBlockStartingNewTime(): void
+    {
+        $begin = new \DateTime('-10 hour');
+        $customer = new Customer('foo');
+        $project = new Project();
+        $project->setCustomer($customer);
+
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName('Not yet invoiced milestone');
+
+        $activity = new Activity();
+        $activity->setProject($project);
+        $activity->setMilestone($milestone);
+
+        $timesheet = new Timesheet();
+        $timesheet
+            ->setBegin($begin)
+            ->setActivity($activity)
+            ->setProject($project)
+        ;
+
+        $this->validator->validate($timesheet, new TimesheetDeactivated(['message' => 'myMessage']));
+
+        $this->assertNoViolation();
+    }
+
+    public function testMilestoneInvoicedDoesNotBlockEditingAnAlreadySavedTimesheet(): void
+    {
+        $begin = new \DateTime('-10 hour');
+        $end = new \DateTime('-9 hour');
+        $customer = new Customer('foo');
+        $project = new Project();
+        $project->setCustomer($customer);
+
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName('Invoiced milestone');
+        $milestone->setInvoice(new Invoice());
+
+        $activity = new Activity();
+        $activity->setProject($project);
+        $activity->setMilestone($milestone);
+
+        $timesheet = new Timesheet();
+        $timesheet
+            ->setBegin($begin)
+            ->setEnd($end)
+            ->setActivity($activity)
+            ->setProject($project)
+        ;
+
+        $idProperty = new \ReflectionProperty(Timesheet::class, 'id');
+        $idProperty->setValue($timesheet, 1);
+
+        $this->validator->validate($timesheet, new TimesheetDeactivated(['message' => 'myMessage']));
+
+        $this->assertNoViolation();
     }
 
     public function testGetTargets(): void

@@ -15,11 +15,13 @@ final class TimesheetDeactivated extends TimesheetConstraint
     public const DISABLED_ACTIVITY_ERROR = 'gppro-timesheet-deactivated-activity';
     public const DISABLED_PROJECT_ERROR = 'gppro-timesheet-deactivated-project';
     public const DISABLED_CUSTOMER_ERROR = 'gppro-timesheet-deactivated-customer';
+    public const MILESTONE_INVOICED_ERROR = 'gppro-timesheet-milestone-invoiced';
 
     protected const ERROR_NAMES = [
         self::DISABLED_ACTIVITY_ERROR => 'Cannot start a disabled activity.',
         self::DISABLED_PROJECT_ERROR => 'Cannot start a disabled project.',
         self::DISABLED_CUSTOMER_ERROR => 'Cannot start a disabled customer.',
+        self::MILESTONE_INVOICED_ERROR => 'Cannot add time to an activity whose milestone was already invoiced.',
     ];
 
     public string $message = 'This timesheet has invalid settings.';
