@@ -24,6 +24,12 @@ class TimesheetCountedStatistic implements \JsonSerializable
     private float $recordRateBillableExported = 0.0;
     private int $recordDurationBillableExported = 0;
 
+    // Unlike *BillableExported (driven by the `exported` flag, shared with
+    // the unrelated CSV/Excel export feature), these are driven by an actual
+    // invoice link — see Timesheet::$invoice / TimesheetInvoiceLinkSubscriber.
+    private float $recordRateBillableInvoiced = 0.0;
+    private int $recordDurationBillableInvoiced = 0;
+
     private int $counterExported = 0;
     private int $recordDurationExported = 0;
     private float $recordRateExported = 0.0;
@@ -229,6 +235,36 @@ class TimesheetCountedStatistic implements \JsonSerializable
         $this->recordRateBillableExported += $recordRate;
     }
 
+    public function getRateBillableInvoiced(): float
+    {
+        return $this->recordRateBillableInvoiced;
+    }
+
+    public function setRateBillableInvoiced(float $recordRate): void
+    {
+        $this->recordRateBillableInvoiced = $recordRate;
+    }
+
+    public function addRateBillableInvoiced(float $recordRate): void
+    {
+        $this->recordRateBillableInvoiced += $recordRate;
+    }
+
+    public function getDurationBillableInvoiced(): int
+    {
+        return $this->recordDurationBillableInvoiced;
+    }
+
+    public function setDurationBillableInvoiced(int $recordDuration): void
+    {
+        $this->recordDurationBillableInvoiced = $recordDuration;
+    }
+
+    public function addDurationBillableInvoiced(int $recordDuration): void
+    {
+        $this->recordDurationBillableInvoiced += $recordDuration;
+    }
+
     public function getDurationExported(): int
     {
         return $this->recordDurationExported;
@@ -266,10 +302,12 @@ class TimesheetCountedStatistic implements \JsonSerializable
             'duration_billable' => $this->recordDurationBillable,
             'duration_exported' => $this->recordDurationExported,
             'duration_billable_exported' => $this->recordDurationBillableExported,
+            'duration_billable_invoiced' => $this->recordDurationBillableInvoiced,
             'rate' => $this->recordRate,
             'rate_billable' => $this->recordRateBillable,
             'rate_exported' => $this->recordRateExported,
             'rate_billable_exported' => $this->recordRateBillableExported,
+            'rate_billable_invoiced' => $this->recordRateBillableInvoiced,
             'rate_internal' => $this->internalRate,
             'rate_internal_exported' => $this->internalRateExported,
             'amount' => $this->counter,

@@ -41,6 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['end_time', 'user', 'start_time'], name: 'IDX_TIMESHEET_TICKTAC')]
 #[ORM\Index(columns: ['user', 'project_id', 'activity_id'], name: 'IDX_TIMESHEET_RECENT_ACTIVITIES')]
 #[ORM\Index(columns: ['user', 'id', 'duration'], name: 'IDX_TIMESHEET_RESULT_STATS')]
+#[ORM\Index(name: 'IDX_GPPRO_TIMESHEET_INVOICE', columns: ['invoice_id'])]
 #[ORM\Entity(repositoryClass: TimesheetRepository::class)]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 #[ORM\HasLifecycleCallbacks]
@@ -189,6 +190,12 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
     #[Serializer\Expose]
     #[Serializer\Groups(['Default'])]
     private bool $exported = false;
+    // `exported` is shared with the unrelated CSV/Excel export feature
+    // (ExportController) and does NOT mean "was invoiced" — use `invoice`
+    // for that. Mirrors Milestone::$invoice.
+    #[ORM\ManyToOne(targetEntity: Invoice::class)]
+    #[ORM\JoinColumn(name: 'invoice_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Invoice $invoice = null;
     #[ORM\Column(name: 'billable', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
     #[Assert\NotNull]
     #[Serializer\Expose]
@@ -468,6 +475,23 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
         $this->exported = $exported;
 
         return $this;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): Timesheet
+    {
+        $this->invoice = $invoice;
+
+        return $this;
+    }
+
+    public function isInvoiced(): bool
+    {
+        return null !== $this->invoice;
     }
 
     public function getTimezone(): ?string

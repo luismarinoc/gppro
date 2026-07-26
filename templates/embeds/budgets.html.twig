@@ -58,7 +58,7 @@
     {% endembed %}
 {% endif %}
 {% if is_granted('budget', entity) %}
-    {% set income = stats.rateBillableExported %}
+    {% set income = stats.rateBillableInvoiced %}
     {% if invoiced_milestone_total|default(null) is not null and invoiced_milestone_total.hasTotal() and currency == 'CLP' %}
         {% set income = income + invoiced_milestone_total.total %}
     {% endif %}

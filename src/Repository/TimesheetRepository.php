@@ -11,6 +11,7 @@ namespace App\Repository;
 
 use App\Entity\ActivityRate;
 use App\Entity\CustomerRate;
+use App\Entity\Invoice;
 use App\Entity\Project;
 use App\Entity\ProjectRate;
 use App\Entity\RateInterface;
@@ -781,6 +782,33 @@ class TimesheetRepository extends EntityRepository
         } catch (\Exception $ex) {
             $em->rollback();
         }
+    }
+
+    /**
+     * Writes the timesheet -> invoice FK link. Unlike setExported() (shared
+     * with the unrelated CSV/Excel export feature), this is the only signal
+     * that a timesheet was actually invoiced. Atomic DB-level guard against
+     * double-invoicing (WHERE invoice IS NULL), same pattern as
+     * MilestoneRepository::markAsInvoiced().
+     *
+     * @param int[] $timesheetIds
+     * @return int number of timesheets actually linked (may be less than count($timesheetIds))
+     */
+    public function markAsInvoiced(Invoice $invoice, array $timesheetIds): int
+    {
+        if ([] === $timesheetIds) {
+            return 0;
+        }
+
+        return (int) $this->createQueryBuilder('t')
+            ->update()
+            ->set('t.invoice', ':invoice')
+            ->andWhere('t.id IN (:ids)')
+            ->andWhere('t.invoice IS NULL')
+            ->setParameter('invoice', $invoice)
+            ->setParameter('ids', $timesheetIds)
+            ->getQuery()
+            ->execute();
     }
 
     /**

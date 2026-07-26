@@ -34,6 +34,7 @@ use App\Repository\CustomerRepository;
 use App\Repository\InvoiceDocumentRepository;
 use App\Repository\InvoiceRepository;
 use App\Repository\InvoiceTemplateRepository;
+use App\Repository\MilestoneRepository;
 use App\Repository\Query\BaseQuery;
 use App\Repository\Query\InvoiceArchiveQuery;
 use App\Repository\Query\InvoiceQuery;
@@ -336,7 +337,7 @@ final class InvoiceController extends AbstractController
 
     #[Route(path: '/show/{page}', defaults: ['page' => 1], requirements: ['page' => '[1-9]\d*'], name: 'admin_invoice_list', methods: ['GET'])]
     #[IsGranted('view_invoice')]
-    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository): Response
+    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository): Response
     {
         $invoice = null;
 
@@ -356,6 +357,14 @@ final class InvoiceController extends AbstractController
         $entries = $invoiceRepository->getPagerfantaForQuery($query);
         $metaColumns = $this->findMetaColumns($query);
 
+        $invoiceIds = [];
+        foreach ($entries as $entry) {
+            if ($entry instanceof Invoice && null !== $entry->getId()) {
+                $invoiceIds[] = $entry->getId();
+            }
+        }
+        $milestoneInvoiceIds = $milestoneRepository->findInvoiceIdsWithMilestones($invoiceIds);
+
         $table = new DataTable('invoices', $query);
         $table->setPagination($entries);
         $table->setSearchForm($form);
@@ -366,6 +375,7 @@ final class InvoiceController extends AbstractController
         $table->addColumn('date', ['class' => 'd-none d-sm-table-cell text-nowrap w-min']);
         $table->addColumn('user', ['class' => 'd-none text-nowrap w-min', 'orderBy' => false]);
         $table->addColumn('customer', ['class' => 'alwaysVisible text-nowrap', 'orderBy' => false]);
+        $table->addColumn('type', ['class' => 'd-none d-sm-table-cell w-min', 'title' => 'invoice_type', 'orderBy' => false]);
         $table->addColumn('comment', ['class' => 'd-none', 'title' => 'description']);
 
         foreach ($metaColumns as $metaColumn) {
@@ -390,6 +400,7 @@ final class InvoiceController extends AbstractController
             'dataTable' => $table,
             'download' => $invoice,
             'metaColumns' => $metaColumns,
+            'milestone_invoice_ids' => $milestoneInvoiceIds,
         ]);
     }
 
