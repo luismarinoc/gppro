@@ -145,7 +145,7 @@
     {% endif %}
 
     {% if stats is not null %}
-        {{ include('embeds/budgets.html.twig', {'entity': project, 'stats': stats, 'currency': project.customer.currency, 'milestone_total': milestone_total, 'invoiced_milestone_total': invoiced_milestone_total}) }}
+        {{ include('embeds/budgets.html.twig', {'entity': project, 'stats': stats, 'currency': project.customer.currency, 'invoiced_milestone_total': invoiced_milestone_total}) }}
     {% endif %}
 
     {% for controller in boxes %}

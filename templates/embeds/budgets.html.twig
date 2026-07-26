@@ -95,17 +95,17 @@
                             <td>{{ 'timesheet.total_invoiced'|trans }}</td>
                             <td class="text-nowrap text-end">{{ stats.durationBillableInvoiced|duration }}</td>
                         </tr>
-                        {% if milestone_total|default(null) is not null and (milestone_total.hasTotal() or milestone_total.isPartial()) %}
+                        {% if invoiced_milestone_total|default(null) is not null and (invoiced_milestone_total.hasTotal() or invoiced_milestone_total.isPartial()) %}
                             <tr class="milestone_total_row">
                                 <td>{{ 'milestone.total_clp'|trans }}</td>
                                 <td class="text-nowrap text-end">
-                                    {% if milestone_total.hasTotal() %}
-                                        {{ milestone_total.total|money('CLP') }}
+                                    {% if invoiced_milestone_total.hasTotal() %}
+                                        {{ invoiced_milestone_total.total|money('CLP') }}
                                     {% else %}
                                         &ndash;
                                     {% endif %}
-                                    {% if milestone_total.isPartial() %}
-                                        <span class="badge bg-warning text-warning-fg milestone_total_partial" data-toggle="tooltip" data-placement="top" title="{{ 'milestone.total_partial'|trans({'%count%': milestone_total.excludedCount}) }}">!</span>
+                                    {% if invoiced_milestone_total.isPartial() %}
+                                        <span class="badge bg-warning text-warning-fg milestone_total_partial" data-toggle="tooltip" data-placement="top" title="{{ 'milestone.total_partial'|trans({'%count%': invoiced_milestone_total.excludedCount}) }}">!</span>
                                     {% endif %}
                                 </td>
                             </tr>

@@ -624,6 +624,27 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         return $fxRate;
     }
 
+    private function persistInvoice(EntityManager $em, Project $project, User $user): Invoice
+    {
+        $customer = $project->getCustomer();
+        self::assertNotNull($customer);
+
+        $invoice = new Invoice();
+        $invoice->setCustomer($customer);
+        $invoice->setUser($user);
+        $invoice->setInvoiceNumber('INV-' . uniqid());
+        $invoice->setFilename('invoice-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setCurrency('CLP');
+        $invoice->setTotal(0.0);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setDueDays(30);
+        $em->persist($invoice);
+
+        return $invoice;
+    }
+
     private function createMilestone(EntityManager $em, Project $project, string $name, ?string $value = null, ?string $currency = null, ?string $dueDate = null): Milestone
     {
         $milestone = new Milestone();
@@ -751,11 +772,11 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         self::assertEquals(1, $hoursRow->count());
         self::assertSame('1:00', trim($hoursRow->filter('td')->eq(1)->text()));
 
-        // milestone_total_row is the potential total of ALL milestones with a
-        // value (invoiced or not): 5,000 invoiced + 3,000 not yet invoiced
+        // milestone_total_row only counts INVOICED milestones: 5,000 invoiced,
+        // the 3,000 not-yet-invoiced milestone must be excluded
         $milestoneRow = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
         self::assertEquals(1, $milestoneRow->count());
-        self::assertSame('8000', preg_replace('/\D/', '', $milestoneRow->filter('td')->eq(1)->text()));
+        self::assertSame('5000', preg_replace('/\D/', '', $milestoneRow->filter('td')->eq(1)->text()));
     }
 
     public function testDetailsActionShowsMilestoneClpTotalWhenAllMilestonesConvertible(): void
@@ -768,8 +789,13 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
 
         /** @var Project $project */
         $project = $em->getRepository(Project::class)->find(1);
-        $this->createMilestone($em, $project, 'CLP milestone', '1000000.0000', 'CLP');
-        $this->createMilestone($em, $project, 'USD milestone', '100.0000', 'USD', '2026-07-20');
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->persistInvoice($em, $project, $user);
+        $clpMilestone = $this->createMilestone($em, $project, 'CLP milestone', '1000000.0000', 'CLP');
+        $usdMilestone = $this->createMilestone($em, $project, 'USD milestone', '100.0000', 'USD', '2026-07-20');
+        $em->flush();
+        $clpMilestone->setInvoice($invoice);
+        $usdMilestone->setInvoice($invoice);
         $em->flush();
 
         $this->assertAccessIsGranted($client, '/admin/project/1/details');
@@ -810,9 +836,14 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
 
         /** @var Project $project */
         $project = $em->getRepository(Project::class)->find(1);
-        $this->createMilestone($em, $project, 'Convertible', '100.0000', 'USD', '2026-07-20');
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->persistInvoice($em, $project, $user);
+        $convertible = $this->createMilestone($em, $project, 'Convertible', '100.0000', 'USD', '2026-07-20');
         // CLF ('uf') has no rate at all in this test's transaction -> not convertible.
-        $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'CLF', '2026-07-20');
+        $notConvertible = $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'CLF', '2026-07-20');
+        $em->flush();
+        $convertible->setInvoice($invoice);
+        $notConvertible->setInvoice($invoice);
         $em->flush();
 
         $this->assertAccessIsGranted($client, '/admin/project/1/details');
@@ -836,8 +867,12 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
 
         /** @var Project $project */
         $project = $em->getRepository(Project::class)->find(1);
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->persistInvoice($em, $project, $user);
         // No FxRate rows exist at all in this test's transaction -> USD is never convertible.
-        $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'USD');
+        $notConvertible = $this->createMilestone($em, $project, 'Not convertible', '50.0000', 'USD');
+        $em->flush();
+        $notConvertible->setInvoice($invoice);
         $em->flush();
 
         $this->assertAccessIsGranted($client, '/admin/project/1/details');
