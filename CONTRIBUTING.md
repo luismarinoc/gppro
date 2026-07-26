@@ -1,7 +1,6 @@
 # Contributing
 
-Kimai is an open source project, contributions made by the community are welcome.
-But we can only accept contributions with a signed CLA (Contributor License Agreement) to prevent issues in the future (you will see a link when opening a PR).
+gppro is an open source project, contributions made by the community are welcome.
 
 Send your ideas, code reviews, pull requests and feature requests to help to improve this project.
 
@@ -13,4 +12,4 @@ Send your ideas, code reviews, pull requests and feature requests to help to imp
 - Verify everything still works with `composer tests` 
 - Add tests for your changes
 
-Further documentation can be found in the [developer documentation](https://www.kimai.org/documentation/developers.html).
+Further documentation can be found in the [UPGRADING guide](UPGRADING.md).
