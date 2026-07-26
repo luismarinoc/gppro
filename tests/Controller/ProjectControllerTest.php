@@ -647,7 +647,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         return $milestone;
     }
 
-    public function testDetailsActionRevenueOnlyCountsExportedTimesheetsAndInvoicedMilestones(): void
+    public function testDetailsActionRevenueOnlyCountsInvoicedTimesheetsAndInvoicedMilestonesNotJustTheExportedFlag(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
         /** @var EntityManager $em */
@@ -668,34 +668,6 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $em->persist($activity);
         $em->flush();
 
-        // billable, but not yet invoiced -> must NOT count as revenue
-        $notExported = new Timesheet();
-        $notExported->setProject($project);
-        $notExported->setActivity($activity);
-        $notExported->setUser($user);
-        $notExported->setBegin(new \DateTime('2026-07-01 09:00:00'));
-        $notExported->setEnd(new \DateTime('2026-07-01 10:00:00'));
-        $notExported->setDuration(3600);
-        $notExported->setBillable(true);
-        $notExported->setExported(false);
-        $notExported->setFixedRate(1000.0);
-        $em->persist($notExported);
-
-        // billable AND already invoiced -> must count as revenue
-        $exported = new Timesheet();
-        $exported->setProject($project);
-        $exported->setActivity($activity);
-        $exported->setUser($user);
-        $exported->setBegin(new \DateTime('2026-07-02 09:00:00'));
-        $exported->setEnd(new \DateTime('2026-07-02 10:00:00'));
-        $exported->setDuration(3600);
-        $exported->setBillable(true);
-        $exported->setExported(true);
-        $exported->setFixedRate(2000.0);
-        $em->persist($exported);
-
-        $invoicedMilestone = $this->createMilestone($em, $project, 'Invoiced milestone', '5000.0000', 'CLP');
-
         $invoice = new Invoice();
         $invoice->setCustomer($customer);
         $invoice->setUser($user);
@@ -703,11 +675,57 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $invoice->setFilename('invoice-' . uniqid());
         $invoice->setCreatedAt(new \DateTime());
         $invoice->setCurrency('CLP');
-        $invoice->setTotal(5000.0);
+        $invoice->setTotal(2000.0);
         $invoice->setVat(0.0);
         $invoice->setTax(0.0);
         $invoice->setDueDays(30);
         $em->persist($invoice);
+        $em->flush();
+
+        // billable, never touched by export or invoicing -> must NOT count
+        $untouched = new Timesheet();
+        $untouched->setProject($project);
+        $untouched->setActivity($activity);
+        $untouched->setUser($user);
+        $untouched->setBegin(new \DateTime('2026-07-01 09:00:00'));
+        $untouched->setEnd(new \DateTime('2026-07-01 10:00:00'));
+        $untouched->setDuration(3600);
+        $untouched->setBillable(true);
+        $untouched->setExported(false);
+        $untouched->setFixedRate(1000.0);
+        $em->persist($untouched);
+
+        // billable AND exported=true, but NEVER invoiced (e.g. included in a
+        // plain CSV/Excel export instead) -> must NOT count as revenue. This
+        // is exactly the bug: `exported` is shared with the unrelated export
+        // feature and is not proof of invoicing.
+        $exportedNotInvoiced = new Timesheet();
+        $exportedNotInvoiced->setProject($project);
+        $exportedNotInvoiced->setActivity($activity);
+        $exportedNotInvoiced->setUser($user);
+        $exportedNotInvoiced->setBegin(new \DateTime('2026-07-01 11:00:00'));
+        $exportedNotInvoiced->setEnd(new \DateTime('2026-07-01 12:00:00'));
+        $exportedNotInvoiced->setDuration(3600);
+        $exportedNotInvoiced->setBillable(true);
+        $exportedNotInvoiced->setExported(true);
+        $exportedNotInvoiced->setFixedRate(4000.0);
+        $em->persist($exportedNotInvoiced);
+
+        // billable AND actually linked to a real invoice -> must count
+        $invoiced = new Timesheet();
+        $invoiced->setProject($project);
+        $invoiced->setActivity($activity);
+        $invoiced->setUser($user);
+        $invoiced->setBegin(new \DateTime('2026-07-02 09:00:00'));
+        $invoiced->setEnd(new \DateTime('2026-07-02 10:00:00'));
+        $invoiced->setDuration(3600);
+        $invoiced->setBillable(true);
+        $invoiced->setExported(true);
+        $invoiced->setFixedRate(2000.0);
+        $invoiced->setInvoice($invoice);
+        $em->persist($invoiced);
+
+        $invoicedMilestone = $this->createMilestone($em, $project, 'Invoiced milestone', '5000.0000', 'CLP');
         $em->flush();
         $invoicedMilestone->setInvoice($invoice);
 
@@ -721,7 +739,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $row = $client->getCrawler()->filter('div.card#budget_box tr.revenue_row');
         self::assertEquals(1, $row->count());
 
-        // only the exported timesheet (2,000) + the invoiced milestone (5,000) = 7,000
+        // only the invoiced timesheet (2,000) + the invoiced milestone (5,000) = 7,000
         $rawText = $row->filter('td')->eq(1)->text();
         $digitsOnly = preg_replace('/\D/', '', $rawText);
         self::assertSame('7000', $digitsOnly);

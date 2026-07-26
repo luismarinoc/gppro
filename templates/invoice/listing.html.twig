@@ -9,6 +9,7 @@
         <td class="{{ tables.class(dataTable, 'date') }}">{{ entry.createdAt|date_short }}</td>
         <td class="{{ tables.class(dataTable, 'user') }}">{{ widgets.label_user(entry.user) }}</td>
         <td class="{{ tables.class(dataTable, 'customer') }}">{{ widgets.label_customer(entry.customer) }}</td>
+        <td class="{{ tables.class(dataTable, 'type') }}">{{ _self.invoice_type(entry, milestone_invoice_ids) }}</td>
         <td class="{{ tables.class(dataTable, 'comment') }}">{{ entry.comment }}</td>
         {% for field in metaColumns %}
             <td class="{{ tables.class(dataTable, 'mf_' ~ field.name) }}">
@@ -56,6 +57,15 @@
         {{ label('status.paid'|trans, 'success') }}
     {% elseif invoice.canceled %}
         {{ label('status.canceled'|trans, 'gray') }}
+    {% endif %}
+{% endmacro %}
+
+{% macro invoice_type(invoice, milestone_invoice_ids) %}
+    {% from "macros/widgets.html.twig" import label %}
+    {% if invoice.id in milestone_invoice_ids %}
+        {{ label('invoice_type.milestone'|trans, 'gray') }}
+    {% else %}
+        {{ label('invoice_type.timesheet'|trans, 'gray') }}
     {% endif %}
 {% endmacro %}
 

@@ -312,11 +312,13 @@ class ProjectStatisticService
             ->addSelect('COUNT(t.id) as counter')
             ->addSelect('t.billable as billable')
             ->addSelect('t.exported as exported')
+            ->addSelect('CASE WHEN t.invoice IS NULL THEN 0 ELSE 1 END AS invoiced')
             ->andWhere($qb->expr()->in('t.project', ':project'))
             ->andWhere($qb->expr()->isNotNull('t.end'))
             ->groupBy('id')
             ->addGroupBy('billable')
             ->addGroupBy('exported')
+            ->addGroupBy('invoiced')
             ->setParameter('project', array_keys($statistics))
         ;
 
@@ -351,6 +353,10 @@ class ProjectStatisticService
                     if ($resultRow['exported']) {
                         $statistic->setDurationBillableExported($statistic->getDurationBillableExported() + $resultRow['duration']);
                         $statistic->setRateBillableExported($statistic->getRateBillableExported() + $resultRow['rate']);
+                    }
+                    if ($resultRow['invoiced']) {
+                        $statistic->setDurationBillableInvoiced($statistic->getDurationBillableInvoiced() + $resultRow['duration']);
+                        $statistic->setRateBillableInvoiced($statistic->getRateBillableInvoiced() + $resultRow['rate']);
                     }
                 }
                 if ($resultRow['exported']) {
