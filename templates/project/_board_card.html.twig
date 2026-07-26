@@ -1,0 +1,23 @@
+{% import "macros/widgets.html.twig" as widgets %}
+<div class="activity_board_card" data-activity-id="{{ card.activity.id }}">
+    <div class="activity_board_card_name">{{ card.activity.name }}</div>
+    <div class="activity_board_card_meta d-flex align-items-center justify-content-between">
+        <span class="activity_board_card_priority">
+            {%- if card.priority is not null -%}
+                {{ widgets.badge(('activity_board.priority.' ~ card.priority.value)|trans) }}
+            {%- endif -%}
+        </span>
+        <span class="activity_board_card_due_date">
+            {%- if card.dueDate is not null -%}
+                {{ card.dueDate|date_short }}
+            {%- endif -%}
+        </span>
+    </div>
+    <div class="activity_board_card_assignee">
+        {%- if card.assignedTo is not null -%}
+            {{ widgets.user_avatar(card.assignedTo, card.assignedTo.displayName, 'avatar-sm') }} {{ card.assignedTo.displayName }}
+        {%- else -%}
+            <span class="text-muted">{{ 'activity_board.unassigned'|trans }}</span>
+        {%- endif -%}
+    </div>
+</div>
