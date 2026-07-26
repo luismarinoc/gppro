@@ -2190,9 +2190,17 @@
         <source>milestone_invoice.no_customers</source>
         <target>No customer currently has milestones pending invoicing.</target>
       </trans-unit>
-      <trans-unit id="gpMsInvC2" resname="menu.milestone_invoice">
-        <source>menu.milestone_invoice</source>
-        <target>Invoice milestones</target>
+      <trans-unit id="gpInvType1" resname="invoice_type">
+        <source>invoice_type</source>
+        <target>Invoice type</target>
+      </trans-unit>
+      <trans-unit id="gpInvType2" resname="invoice_type.timesheet">
+        <source>invoice_type.timesheet</source>
+        <target>By hour</target>
+      </trans-unit>
+      <trans-unit id="gpInvType3" resname="invoice_type.milestone">
+        <source>invoice_type.milestone</source>
+        <target>By milestone</target>
       </trans-unit>
     </body>
   </file>

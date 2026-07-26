@@ -28,6 +28,8 @@ use App\Form\Toolbar\InvoiceToolbarForm;
 use App\Form\Type\DatePickerType;
 use App\Form\Type\InvoiceTemplateType;
 use App\Invoice\InvoiceService;
+use App\Milestone\InvoiceableMilestoneFinder;
+use App\Milestone\MilestoneInvoiceSelectionFormFactory;
 use App\Repository\CustomerRepository;
 use App\Repository\InvoiceDocumentRepository;
 use App\Repository\InvoiceRepository;
@@ -65,7 +67,7 @@ final class InvoiceController extends AbstractController
 
     #[Route(path: '/', name: 'invoice', methods: ['GET', 'POST'])]
     #[IsGranted('create_invoice')]
-    public function indexAction(Request $request, InvoiceService $service, InvoiceTemplateRepository $templateRepository): Response
+    public function indexAction(Request $request, InvoiceService $service, InvoiceTemplateRepository $templateRepository, InvoiceableMilestoneFinder $milestoneFinder, MilestoneInvoiceSelectionFormFactory $milestoneFormFactory): Response
     {
         if (!$templateRepository->hasTemplate()) {
             if ($this->isGranted('manage_invoice_template')) {
@@ -84,11 +86,28 @@ final class InvoiceController extends AbstractController
         // this can be deleted in the future, but for now invalid bookmarks exists, which contain an old invoice date
         $query->setInvoiceDate($this->getDateTimeFactory()->createDateTime());
 
+        $isMilestoneMode = InvoiceToolbarForm::TYPE_MILESTONE === $form->get('invoiceType')->getData();
+
         $models = [];
         $total = 0;
         $searched = false;
+        $milestones = [];
+        $milestoneCustomer = null;
+        $milestoneForm = null;
 
-        if ($form->isValid() && $query->getTemplate() !== null) {
+        if ($isMilestoneMode) {
+            // the customer field is not choice-validated against accessible
+            // customers (it's a "fake" autocomplete field, see
+            // ToolbarFormTrait::addCustomerSelect) — never trust a submitted
+            // customer id without an explicit access check, same class of
+            // gap as the IDOR fixed in MilestoneInvoiceController.
+            $candidate = $query->getCustomer();
+            if (null !== $candidate && $this->isGranted('access', $candidate)) {
+                $milestoneCustomer = $candidate;
+                $milestones = $milestoneFinder->findForCustomer($milestoneCustomer);
+                $milestoneForm = $milestoneFormFactory->create($milestoneCustomer);
+            }
+        } elseif ($form->isValid() && $query->getTemplate() !== null) {
             try {
                 $models = $service->createModels($query);
                 $searched = true;
@@ -128,6 +147,10 @@ final class InvoiceController extends AbstractController
             'form' => $form->createView(),
             'limit_preview' => ($total > 500),
             'searched' => $searched,
+            'is_milestone_mode' => $isMilestoneMode,
+            'milestones' => $milestones,
+            'milestone_customer' => $milestoneCustomer,
+            'milestone_form' => $milestoneForm?->createView(),
         ]);
     }
 

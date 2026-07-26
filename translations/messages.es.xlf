@@ -2170,9 +2170,17 @@
         <source>milestone_invoice.no_customers</source>
         <target state="translated">Ningún cliente tiene hitos pendientes de facturar por el momento.</target>
       </trans-unit>
-      <trans-unit id="gpMsInvC2" resname="menu.milestone_invoice" xml:space="preserve">
-        <source>menu.milestone_invoice</source>
-        <target state="translated">Facturar hitos</target>
+      <trans-unit id="gpInvType1" resname="invoice_type" xml:space="preserve">
+        <source>invoice_type</source>
+        <target state="translated">Tipo de factura</target>
+      </trans-unit>
+      <trans-unit id="gpInvType2" resname="invoice_type.timesheet" xml:space="preserve">
+        <source>invoice_type.timesheet</source>
+        <target state="translated">Por hora</target>
+      </trans-unit>
+      <trans-unit id="gpInvType3" resname="invoice_type.milestone" xml:space="preserve">
+        <source>invoice_type.milestone</source>
+        <target state="translated">Por hito</target>
       </trans-unit>
     </body>
   </file>

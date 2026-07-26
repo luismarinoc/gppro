@@ -9,8 +9,12 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\InvoiceTemplate;
+use App\Entity\Milestone;
+use App\Entity\Project;
+use App\Entity\Team;
 use App\Entity\Timesheet;
 use App\Entity\User;
 use App\Tests\DataFixtures\InvoiceTemplateFixtures;
@@ -78,6 +82,118 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $this->assertHasNoEntriesWithFilter($client);
+    }
+
+    private function createCustomer(): Customer
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Invoice controller test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+        $em->flush();
+
+        return $customer;
+    }
+
+    private function createProject(Customer $customer): Project
+    {
+        $em = $this->getEntityManager();
+
+        $project = new Project();
+        $project->setName('Invoice controller test project ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+        $em->flush();
+
+        return $project;
+    }
+
+    private function createMilestone(Project $project, string $name): Milestone
+    {
+        $em = $this->getEntityManager();
+
+        $milestone = new Milestone();
+        $milestone->setProject($project);
+        $milestone->setName($name . ' ' . uniqid());
+        $milestone->setValue('1000.0000');
+        $milestone->setCurrency('CLP');
+        $em->persist($milestone);
+        $em->flush();
+
+        return $milestone;
+    }
+
+    private function nameOf(Milestone $milestone): string
+    {
+        $name = $milestone->getName();
+        self::assertNotNull($name);
+
+        return $name;
+    }
+
+    public function testIndexActionMilestoneModeListsInvoiceableMilestonesForSelectedCustomer(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $milestone = $this->createMilestone($project, 'Milestone toggle listing');
+
+        $this->request($client, '/invoice/?invoiceType=milestone&customers[]=' . $customer->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringContainsString($this->nameOf($milestone), $html);
+    }
+
+    public function testIndexActionMilestoneModeShowsNothingWithoutCustomerSelected(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/invoice/?invoiceType=milestone');
+        self::assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function testIndexActionMilestoneModeDeniesUnauthorizedCustomerIdor(): void
+    {
+        // client must be created first: booting a second kernel via the
+        // entity manager afterwards is not supported by WebTestCase
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        // attacker: team-scoped (canSeeAllData() === false for ROLE_TEAMLEAD)
+        // user, restricted via team membership to Customer A only. The
+        // "customers" toolbar field is not choice-validated (it's a "fake"
+        // autocomplete field, see ToolbarFormTrait::addCustomerSelect), so a
+        // tampered customers[]=<B> query param must still be rejected by the
+        // explicit isGranted('access', ...) check in InvoiceController.
+        $attacker = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $em = $this->getEntityManager();
+
+        $customerA = $this->createCustomer();
+        $teamA = new Team('Invoice milestone mode team A ' . uniqid());
+        $teamA->addUser($attacker);
+        $teamA->addCustomer($customerA);
+        $em->persist($teamA);
+
+        $customerB = $this->createCustomer();
+        $teamB = new Team('Invoice milestone mode team B ' . uniqid());
+        $teamB->addCustomer($customerB);
+        $em->persist($teamB);
+        $em->flush();
+
+        $projectB = $this->createProject($customerB);
+        $foreignMilestone = $this->createMilestone($projectB, 'Foreign milestone');
+
+        $this->request($client, '/invoice/?invoiceType=milestone&customers[]=' . $customerB->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringNotContainsString($this->nameOf($foreignMilestone), $html);
     }
 
     public function testListTemplateAction(): void
