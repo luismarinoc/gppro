@@ -271,4 +271,51 @@ class MilestoneRepositoryTest extends AbstractRepositoryTestCase
         self::assertNull($released->getInvoice());
         self::assertFalse($released->isInvoiced());
     }
+
+    public function testFindCustomersWithInvoiceableMilestonesExcludesInvoicedOnlyAndValuelessCustomers(): void
+    {
+        $repository = $this->getRepository();
+
+        $customerWithInvoiceable = $this->createCustomer();
+        $projectWithInvoiceable = $this->createProject($customerWithInvoiceable);
+        $this->createMilestone($projectWithInvoiceable, 'Invoiceable');
+
+        $customerFullyInvoiced = $this->createCustomer();
+        $projectFullyInvoiced = $this->createProject($customerFullyInvoiced);
+        $user = $this->createUser();
+        $invoice = $this->createInvoice($customerFullyInvoiced, $user);
+        $invoicedMilestone = $this->createMilestone($projectFullyInvoiced, 'Already invoiced');
+        $invoicedMilestone->setInvoice($invoice);
+        $repository->saveMilestone($invoicedMilestone);
+
+        $customerWithoutValue = $this->createCustomer();
+        $projectWithoutValue = $this->createProject($customerWithoutValue);
+        $milestoneWithoutValue = new Milestone();
+        $milestoneWithoutValue->setProject($projectWithoutValue);
+        $milestoneWithoutValue->setName('No value ' . uniqid());
+        $repository->saveMilestone($milestoneWithoutValue);
+
+        $result = $repository->findCustomersWithInvoiceableMilestones();
+        $resultIds = array_map(static fn (Customer $c): ?int => $c->getId(), $result);
+
+        self::assertContains($customerWithInvoiceable->getId(), $resultIds);
+        self::assertNotContains($customerFullyInvoiced->getId(), $resultIds);
+        self::assertNotContains($customerWithoutValue->getId(), $resultIds);
+    }
+
+    public function testFindCustomersWithInvoiceableMilestonesReturnsCustomerOnceForMultipleProjects(): void
+    {
+        $repository = $this->getRepository();
+        $customer = $this->createCustomer();
+        $projectA = $this->createProject($customer);
+        $projectB = $this->createProject($customer);
+        $this->createMilestone($projectA, 'Project A milestone');
+        $this->createMilestone($projectB, 'Project B milestone');
+
+        $result = $repository->findCustomersWithInvoiceableMilestones();
+        $resultIds = array_map(static fn (Customer $c): ?int => $c->getId(), $result);
+        $matches = array_filter($resultIds, static fn (?int $id): bool => $id === $customer->getId());
+
+        self::assertCount(1, $matches);
+    }
 }

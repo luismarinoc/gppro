@@ -2186,6 +2186,14 @@
         <source>milestone_invoice.error.unauthorized_customer</source>
         <target>Selected milestones do not belong to a customer you are authorized to invoice.</target>
       </trans-unit>
+      <trans-unit id="gpMsInvC1" resname="milestone_invoice.no_customers">
+        <source>milestone_invoice.no_customers</source>
+        <target>No customer currently has milestones pending invoicing.</target>
+      </trans-unit>
+      <trans-unit id="gpMsInvC2" resname="menu.milestone_invoice">
+        <source>menu.milestone_invoice</source>
+        <target>Invoice milestones</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

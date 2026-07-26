@@ -113,6 +113,10 @@ final class MenuSubscriber implements EventSubscriberInterface
 
         if ($auth->isGranted('create_invoice')) {
             $invoice->addChild(new MenuItemModel('invoice', 'invoice_form.title', 'invoice', [], 'invoice'));
+
+            $tmpMenu = new MenuItemModel('milestone_invoice', 'menu.milestone_invoice', 'milestone_invoice_customers', [], 'invoice');
+            $tmpMenu->setChildRoutes(['milestone_invoice_index', 'milestone_invoice_create']);
+            $invoice->addChild($tmpMenu);
         }
 
         if ($auth->isGranted('view_invoice')) {
