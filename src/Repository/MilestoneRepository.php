@@ -128,26 +128,26 @@ class MilestoneRepository extends EntityRepository
     }
 
     /**
-     * Invoice has no inverse `milestones` collection mapped, so "is this
-     * invoice a milestone invoice" can't be read off the entity directly —
-     * this is the cheapest way to answer it for a page of invoice rows.
+     * Invoice has no inverse `milestones` collection mapped, so "which
+     * milestones does this invoice cover" can't be read off the entity
+     * directly — this is the cheapest way to answer it for a page of
+     * invoice rows. Group the result by getInvoice()->getId() to build a
+     * per-invoice list.
      *
      * @param int[] $invoiceIds
-     * @return int[] the subset of $invoiceIds that have at least one linked milestone
+     * @return Milestone[]
      */
-    public function findInvoiceIdsWithMilestones(array $invoiceIds): array
+    public function findByInvoiceIds(array $invoiceIds): array
     {
         if ([] === $invoiceIds) {
             return [];
         }
 
-        $result = $this->createQueryBuilder('m')
-            ->select('DISTINCT IDENTITY(m.invoice) AS invoiceId')
+        return $this->createQueryBuilder('m')
             ->andWhere('m.invoice IN (:ids)')
             ->setParameter('ids', $invoiceIds)
+            ->orderBy('m.name', 'ASC')
             ->getQuery()
-            ->getScalarResult();
-
-        return array_map('intval', array_column($result, 'invoiceId'));
+            ->getResult();
     }
 }

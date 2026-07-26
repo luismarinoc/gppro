@@ -10,7 +10,17 @@
         <td class="{{ tables.class(dataTable, 'user') }}">{{ widgets.label_user(entry.user) }}</td>
         <td class="{{ tables.class(dataTable, 'customer') }}">{{ widgets.label_customer(entry.customer) }}</td>
         <td class="{{ tables.class(dataTable, 'type') }}">{{ _self.invoice_type(entry, milestone_invoice_ids) }}</td>
-        <td class="{{ tables.class(dataTable, 'comment') }}">{{ entry.comment }}</td>
+        <td class="{{ tables.class(dataTable, 'comment') }}">
+            {% if entry.comment is not empty %}
+                {{ entry.comment }}
+            {% elseif entry.id in milestone_invoice_ids %}
+                {% for milestone in invoice_milestones[entry.id]|default([]) %}
+                    {{ milestone.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            {% elseif invoice_durations[entry.id]|default(0) > 0 %}
+                {{ invoice_durations[entry.id]|duration }}
+            {% endif %}
+        </td>
         {% for field in metaColumns %}
             <td class="{{ tables.class(dataTable, 'mf_' ~ field.name) }}">
                 {{ tables.datatable_meta_column(entry, field) }}

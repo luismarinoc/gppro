@@ -9,6 +9,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\InvoiceTemplate;
@@ -131,6 +132,75 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertNotNull($name);
 
         return $name;
+    }
+
+    public function testShowInvoicesActionListsMilestoneNameForMilestoneInvoicesAndDurationForHourInvoices(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $milestoneInvoice = new Invoice();
+        $milestoneInvoice->setCustomer($customer);
+        $milestoneInvoice->setUser($user);
+        $milestoneInvoice->setInvoiceNumber('INV-' . uniqid());
+        $milestoneInvoice->setFilename('invoice-' . uniqid());
+        $milestoneInvoice->setCreatedAt(new \DateTime());
+        $milestoneInvoice->setCurrency('CLP');
+        $milestoneInvoice->setTotal(1000.0);
+        $milestoneInvoice->setVat(0.0);
+        $milestoneInvoice->setTax(0.0);
+        $milestoneInvoice->setDueDays(30);
+        $em->persist($milestoneInvoice);
+
+        $hourInvoice = new Invoice();
+        $hourInvoice->setCustomer($customer);
+        $hourInvoice->setUser($user);
+        $hourInvoice->setInvoiceNumber('INV-' . uniqid());
+        $hourInvoice->setFilename('invoice-' . uniqid());
+        $hourInvoice->setCreatedAt(new \DateTime());
+        $hourInvoice->setCurrency('CLP');
+        $hourInvoice->setTotal(2000.0);
+        $hourInvoice->setVat(0.0);
+        $hourInvoice->setTax(0.0);
+        $hourInvoice->setDueDays(30);
+        $em->persist($hourInvoice);
+        $em->flush();
+
+        $milestone = $this->createMilestone($project, 'Listing milestone detail');
+        $milestone->setInvoice($milestoneInvoice);
+
+        $activity = new Activity();
+        $activity->setName('Listing test activity');
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $timesheet = new Timesheet();
+        $timesheet->setProject($project);
+        $timesheet->setActivity($activity);
+        $timesheet->setUser($user);
+        $timesheet->setBegin(new \DateTime('2026-07-01 09:00:00'));
+        $timesheet->setEnd(new \DateTime('2026-07-01 11:00:00'));
+        $timesheet->setDuration(7200);
+        $timesheet->setBillable(true);
+        $timesheet->setInvoice($hourInvoice);
+        $em->persist($timesheet);
+        $em->flush();
+
+        $this->request($client, '/invoice/show/1');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringContainsString($this->nameOf($milestone), $html);
+        // the hour invoice's linked timesheet totals exactly 2 hours
+        self::assertStringContainsString('2:00', $html);
+        self::assertStringContainsString($this->createUrl('/invoice/view/' . $milestoneInvoice->getId()), $html);
+        self::assertStringContainsString($this->createUrl('/invoice/download/' . $milestoneInvoice->getId()), $html);
     }
 
     public function testIndexActionMilestoneModeListsInvoiceableMilestonesForSelectedCustomer(): void

@@ -812,6 +812,34 @@ class TimesheetRepository extends EntityRepository
     }
 
     /**
+     * @param int[] $invoiceIds
+     * @return array<int, int> invoice id => total duration in seconds
+     */
+    public function getDurationSumByInvoiceIds(array $invoiceIds): array
+    {
+        if ([] === $invoiceIds) {
+            return [];
+        }
+
+        /** @var list<array{invoiceId: int|string, totalDuration: int|string}> $result */
+        $result = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.invoice) AS invoiceId')
+            ->addSelect('COALESCE(SUM(t.duration), 0) AS totalDuration')
+            ->andWhere('t.invoice IN (:ids)')
+            ->groupBy('invoiceId')
+            ->setParameter('ids', $invoiceIds)
+            ->getQuery()
+            ->getScalarResult();
+
+        $map = [];
+        foreach ($result as $row) {
+            $map[(int) $row['invoiceId']] = (int) $row['totalDuration'];
+        }
+
+        return $map;
+    }
+
+    /**
      * @param Timesheet $timesheet
      * @return RateInterface[]
      */
