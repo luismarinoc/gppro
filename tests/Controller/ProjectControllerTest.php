@@ -745,9 +745,11 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         self::assertSame('7000', $digitsOnly);
 
         // the hour and milestone components must also be visible on their own
+        // this row must show the INVOICED HOURS (duration), not their money value:
+        // only the invoiced timesheet counts (1 hour), the exported-but-not-invoiced one does not
         $hoursRow = $client->getCrawler()->filter('div.card#budget_box tr.timesheet_total_invoiced_row');
         self::assertEquals(1, $hoursRow->count());
-        self::assertSame('2000', preg_replace('/\D/', '', $hoursRow->filter('td')->eq(1)->text()));
+        self::assertSame('1:00', trim($hoursRow->filter('td')->eq(1)->text()));
 
         // milestone_total_row is the potential total of ALL milestones with a
         // value (invoiced or not): 5,000 invoiced + 3,000 not yet invoiced
