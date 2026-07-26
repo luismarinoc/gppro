@@ -50,6 +50,31 @@ final class MilestoneInvoiceController extends AbstractController
     ) {
     }
 
+    /**
+     * Entry point reachable from the main navigation menu (no customer in the
+     * URL yet): lists the customers that currently have at least one
+     * invoiceable milestone, so the user can pick which one to invoice.
+     * Access-scoped per customer, same as every other listing in this
+     * controller — a teamlead only sees customers they can access.
+     */
+    #[Route(path: '/', name: 'milestone_invoice_customers', methods: ['GET'])]
+    #[IsGranted('create_invoice')]
+    public function pickCustomerAction(MilestoneRepository $milestoneRepository): Response
+    {
+        $customers = array_values(array_filter(
+            $milestoneRepository->findCustomersWithInvoiceableMilestones(),
+            fn (Customer $customer): bool => $this->isGranted('access', $customer)
+        ));
+
+        $page = new PageSetup('milestone_invoice.title');
+        $page->setActionName('milestone_invoice');
+
+        return $this->render('milestone-invoice/customers.html.twig', [
+            'page_setup' => $page,
+            'customers' => $customers,
+        ]);
+    }
+
     #[Route(path: '/{id}', name: 'milestone_invoice_index', methods: ['GET'])]
     #[IsGranted('create_invoice')]
     #[IsGranted('access', 'customer')]

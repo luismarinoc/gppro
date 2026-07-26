@@ -176,6 +176,48 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString($this->nameOf($alreadyInvoiced), $html);
     }
 
+    public function testPickCustomerActionIsSecure(): void
+    {
+        $this->assertUrlIsSecured('/invoice/milestones/');
+    }
+
+    public function testPickCustomerActionListsOnlyCustomersWithInvoiceableMilestones(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $customerWithMilestone = $this->createCustomer();
+        $projectWithMilestone = $this->createProject($customerWithMilestone);
+        $this->createMilestone($projectWithMilestone, 'Invoiceable');
+
+        $customerWithoutMilestone = $this->createCustomer();
+
+        $this->request($client, '/invoice/milestones/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        // scope the assertion to this screen's table, not the whole page:
+        // the global layout (e.g. a quick customer switcher) may legitimately
+        // list every customer's name elsewhere on the page.
+        $table = $client->getCrawler()->filter('table.dataTable')->html();
+        $nameWithMilestone = $customerWithMilestone->getName();
+        $nameWithoutMilestone = $customerWithoutMilestone->getName();
+        self::assertNotNull($nameWithMilestone);
+        self::assertNotNull($nameWithoutMilestone);
+        self::assertStringContainsString($nameWithMilestone, $table);
+        self::assertStringNotContainsString($nameWithoutMilestone, $table);
+    }
+
+    public function testPickCustomerActionShowsEmptyStateWhenNoCustomerHasInvoiceableMilestones(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/invoice/milestones/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringContainsString('No customer currently has milestones pending invoicing.', $html);
+    }
+
     public function testCreateActionHappyPathGeneratesInvoiceAndMarksMilestonesInvoiced(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

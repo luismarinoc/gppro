@@ -71,6 +71,37 @@ class MilestoneRepository extends EntityRepository
     }
 
     /**
+     * Distinct customers that have at least one not-yet-invoiced milestone
+     * with a value/currency (the minimum needed to attempt an FX conversion
+     * later; actual convertibility is checked per-milestone by the caller,
+     * same split of responsibility as findInvoiceableByCustomer()).
+     *
+     * @return Customer[]
+     */
+    public function findCustomersWithInvoiceableMilestones(): array
+    {
+        $em = $this->getEntityManager();
+
+        $subQuery = $em->createQueryBuilder()
+            ->select('1')
+            ->from(Milestone::class, 'm')
+            ->join('m.project', 'p')
+            ->andWhere('p.customer = c')
+            ->andWhere('m.invoice IS NULL')
+            ->andWhere('m.value IS NOT NULL')
+            ->andWhere('m.currency IS NOT NULL');
+
+        $qb = $em->createQueryBuilder();
+
+        return $qb->select('c')
+            ->from(Customer::class, 'c')
+            ->andWhere($qb->expr()->exists($subQuery->getDQL()))
+            ->orderBy('c.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Links the given milestones to the invoice, skipping any milestone that
      * is already linked to another invoice (double-invoicing guard under
      * concurrency: the `invoice IS NULL` precondition is enforced by the
