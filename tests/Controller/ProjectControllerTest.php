@@ -743,6 +743,17 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $rawText = $row->filter('td')->eq(1)->text();
         $digitsOnly = preg_replace('/\D/', '', $rawText);
         self::assertSame('7000', $digitsOnly);
+
+        // the hour and milestone components must also be visible on their own
+        $hoursRow = $client->getCrawler()->filter('div.card#budget_box tr.timesheet_total_invoiced_row');
+        self::assertEquals(1, $hoursRow->count());
+        self::assertSame('2000', preg_replace('/\D/', '', $hoursRow->filter('td')->eq(1)->text()));
+
+        // milestone_total_row is the potential total of ALL milestones with a
+        // value (invoiced or not): 5,000 invoiced + 3,000 not yet invoiced
+        $milestoneRow = $client->getCrawler()->filter('div.card#budget_box tr.milestone_total_row');
+        self::assertEquals(1, $milestoneRow->count());
+        self::assertSame('8000', preg_replace('/\D/', '', $milestoneRow->filter('td')->eq(1)->text()));
     }
 
     public function testDetailsActionShowsMilestoneClpTotalWhenAllMilestonesConvertible(): void

@@ -91,6 +91,10 @@
                             <td>{{ 'costs'|trans }}</td>
                             <td class="text-nowrap text-end">{{ stats.internalRate|money(currency) }}</td>
                         </tr>
+                        <tr class="timesheet_total_invoiced_row">
+                            <td>{{ 'timesheet.total_invoiced'|trans }}</td>
+                            <td class="text-nowrap text-end">{{ stats.rateBillableInvoiced|money(currency) }}</td>
+                        </tr>
                         {% if milestone_total|default(null) is not null and (milestone_total.hasTotal() or milestone_total.isPartial()) %}
                             <tr class="milestone_total_row">
                                 <td>{{ 'milestone.total_clp'|trans }}</td>
