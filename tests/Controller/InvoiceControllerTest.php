@@ -21,6 +21,7 @@ use App\Entity\User;
 use App\Tests\DataFixtures\InvoiceTemplateFixtures;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 #[Group('integration')]
@@ -609,6 +610,70 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $this->assertHasFlashSuccess($client);
+    }
+
+    public function testEditTemplateActionUploadsAndRemovesLogo(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $fixture = new InvoiceTemplateFixtures();
+        $template = $this->importFixture($fixture);
+        $id = $template[0]->getId();
+
+        // smallest possible valid PNG (1x1 transparent pixel)
+        $pngData = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=');
+        $logoPath = tempnam(sys_get_temp_dir(), 'gppro_logo_test') . '.png';
+        file_put_contents($logoPath, $pngData);
+
+        $this->request($client, '/invoice/template/' . $id . '/edit?page=1');
+        $form = $client->getCrawler()->filter('form[name=invoice_template_form]')->form();
+        /** @var FileFormField $logoField */
+        $logoField = $form['invoice_template_form[logo]'];
+        $logoField->upload($logoPath);
+        $client->submit($form, [
+            'invoice_template_form' => [
+                'name' => $template[0]->getName(),
+                'title' => 'Test invoice template',
+                'customer' => 1,
+                'renderer' => 'default',
+                'calculator' => 'default',
+            ]
+        ]);
+
+        unlink($logoPath);
+
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/template'));
+        $client->followRedirect();
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $this->assertHasFlashSuccess($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        /** @var InvoiceTemplate $reloaded */
+        $reloaded = $em->getRepository(InvoiceTemplate::class)->find($id);
+        self::assertNotNull($reloaded->getLogo());
+        self::assertStringStartsWith('data:image/png;base64,', $reloaded->getLogo());
+
+        // now remove it via the checkbox
+        $this->request($client, '/invoice/template/' . $id . '/edit?page=1');
+        $form = $client->getCrawler()->filter('form[name=invoice_template_form]')->form();
+        $client->submit($form, [
+            'invoice_template_form' => [
+                'name' => $template[0]->getName(),
+                'title' => 'Test invoice template',
+                'customer' => 1,
+                'renderer' => 'default',
+                'calculator' => 'default',
+                'removeLogo' => '1',
+            ]
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/template'));
+
+        $em->clear();
+        /** @var InvoiceTemplate $reloadedAgain */
+        $reloadedAgain = $em->getRepository(InvoiceTemplate::class)->find($id);
+        self::assertNull($reloadedAgain->getLogo());
     }
 
     public function testDeleteTemplateAction(): void

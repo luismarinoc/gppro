@@ -107,6 +107,7 @@ class InvoiceModelDefaultHydratorTest extends TestCase
             'template.vat_id',
             'template.contact',
             'template.payment_details',
+            'template.logo',
             'query.day',
             'query.month',
             'query.month_number',

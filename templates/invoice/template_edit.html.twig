@@ -64,6 +64,25 @@
                     </div>
                 </div>
             </fieldset>
+            <fieldset class="form-fieldset pb-0">
+                {% if template.logo is not empty %}
+                    <div class="row">
+                        <div class="col-12">
+                            <img src="{{ template.logo }}" alt="{{ template.name }}" style="max-height: 60px; max-width: 220px;">
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.logo) }}
+                    </div>
+                    {% if template.logo is not empty %}
+                        <div class="col-md-6">
+                            {{ form_row(form.removeLogo) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </fieldset>
             {% if form.metaFields is defined and form.metaFields is not empty %}
             <fieldset class="form-fieldset pb-0">
                 <div class="row">

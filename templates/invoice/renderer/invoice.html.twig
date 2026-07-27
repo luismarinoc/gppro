@@ -11,6 +11,14 @@
     <div class="wrapper">
         <section class="invoice">
 
+            {% if invoice['template.logo'] is not empty %}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <img class="invoice-logo" src="{{ invoice['template.logo'] }}" alt="{{ invoice['template.company'] }}">
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="row">
                 <div class="col-xs-12">
                     <h2 class="page-header">

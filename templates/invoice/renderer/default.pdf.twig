@@ -12,6 +12,11 @@
 <htmlpageheader name="header">
     <table class="header">
         <tr>
+            {% if invoice['template.logo'] is not empty %}
+                <td class="logo">
+                    <img src="{{ invoice['template.logo'] }}" alt="{{ invoice['template.company'] }}">
+                </td>
+            {% endif %}
             <td class="title">
                 {{ invoice['template.title'] }}
             </td>

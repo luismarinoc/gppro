@@ -682,6 +682,18 @@
         <source>invoice_bank_account</source>
         <target>Cuenta bancaria</target>
       </trans-unit>
+      <trans-unit id="gpInvTplLogo1" resname="logo">
+        <source>logo</source>
+        <target>Logo</target>
+      </trans-unit>
+      <trans-unit id="gpInvTplLogo2" resname="logo.help">
+        <source>logo.help</source>
+        <target>PNG, JPEG o SVG, máximo 512 KB. Se muestra en el PDF y en la vista previa de la factura.</target>
+      </trans-unit>
+      <trans-unit id="gpInvTplLogo3" resname="logo.remove">
+        <source>logo.remove</source>
+        <target>Quitar el logo actual</target>
+      </trans-unit>
       <trans-unit id="1GruCMx" resname="export">
         <source>export</source>
         <target>Exportar</target>

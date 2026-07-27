@@ -22,6 +22,8 @@ table.addresses, p { line-height: 14pt; }
 table.addresses { margin-bottom: 30px; }
 table.header { padding-bottom: 4px; border-bottom: 1px solid #999; }
 table.header .title { font-weight: normal; font-size: 140%; }
+table.header .logo { width: 1px; padding-right: 10px; }
+table.header .logo img { max-height: 40px; max-width: 120px; }
 table.footer { border-top: 1px solid #999; font-size: 80%; padding-top: 8px; line-height: 14px; }
 table.footer td { vertical-align: top; }
 table.items { border-collapse: collapse; margin-top: 50px; margin-bottom: 60px; }
