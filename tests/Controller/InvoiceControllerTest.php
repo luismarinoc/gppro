@@ -389,10 +389,16 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
 
         $action = '/invoice/save-invoice/1/' . $token . '?' . http_build_query($urlParams);
         $this->request($client, $action);
-        $this->assertIsRedirect($client, '/invoice/show?id=', false);
+        $this->assertIsRedirect($client, '/invoice/show', false);
         $client->followRedirect();
         self::assertTrue($client->getResponse()->isSuccessful());
         $this->assertDataTableRowCount($client, 'datatable_invoices', 1);
+
+        // the freshly created invoice must NOT be auto-downloaded - the PDF
+        // is only fetched when the user explicitly clicks download
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringNotContainsString('admin_invoice_download', $html);
 
         $em = $this->getEntityManager();
         $em->clear();
@@ -512,7 +518,7 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
             'projects' => [1],
         ]);
 
-        $this->assertIsRedirect($client, '/invoice/show?id=', false);
+        $this->assertIsRedirect($client, '/invoice/show', false);
         $client->followRedirect();
         self::assertTrue($client->getResponse()->isSuccessful());
 

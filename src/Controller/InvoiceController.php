@@ -228,7 +228,7 @@ final class InvoiceController extends AbstractController
 
                 $this->flashSuccess('action.update.success');
 
-                return $this->redirectToRoute('admin_invoice_list', ['id' => $invoice->getId()]);
+                return $this->redirectToRoute('admin_invoice_list');
             } catch (Exception $ex) {
                 $this->flashUpdateException($ex);
             }
@@ -356,12 +356,6 @@ final class InvoiceController extends AbstractController
     #[IsGranted('view_invoice')]
     public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository, TimesheetRepository $timesheetRepository): Response
     {
-        $invoice = null;
-
-        if (null !== ($id = $request->query->get('id'))) {
-            $invoice = $invoiceRepository->find($id);
-        }
-
         $query = new InvoiceArchiveQuery();
         $query->setPage($page);
         $query->setCurrentUser($this->getUser());
@@ -426,7 +420,6 @@ final class InvoiceController extends AbstractController
         return $this->render('invoice/listing.html.twig', [
             'page_setup' => $page,
             'dataTable' => $table,
-            'download' => $invoice,
             'metaColumns' => $metaColumns,
             'milestone_invoice_ids' => $milestoneInvoiceIds,
             'invoice_milestones' => $invoiceMilestones,
