@@ -4,6 +4,9 @@
         {% block box_title %}{{ 'activities'|trans }}{% endblock %}
         {% block box_attributes %} data-reload="gppro.activityUpdate gppro.activityDelete" {% endblock %}
         {% block box_tools %}
+            {%- if is_granted('view', project) -%}
+                {{ widgets.card_tool_button('columns', {'title': 'activity_board.title', 'url': path('project_board', {'id': project.id})}) }}
+            {%- endif -%}
             {%- if project.visible and project.customer.visible and is_granted('create_activity') -%}
                 {{ widgets.card_tool_button('create', {'class': 'modal-ajax-form open-edit', 'title': 'create', 'url': path('admin_activity_create_with_project', {'project': project.id})}) }}
             {%- endif -%}
