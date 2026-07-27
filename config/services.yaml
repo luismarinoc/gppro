@@ -254,6 +254,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\FxRate']
 
+    App\Repository\ActivityBoardStateRepository:
+        class: App\Repository\ActivityBoardStateRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\ActivityBoardState']
+
     monolog.formatter.gppro:
         class: Monolog\Formatter\LineFormatter
         arguments:

@@ -2222,6 +2222,50 @@
         <source>invoice_type.milestone</source>
         <target>By milestone</target>
       </trans-unit>
+      <trans-unit id="gpActBrd1" resname="activity_board.title">
+        <source>activity_board.title</source>
+        <target>Activity board</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd2" resname="activity_board.status.todo">
+        <source>activity_board.status.todo</source>
+        <target>To Do</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd3" resname="activity_board.status.in_progress">
+        <source>activity_board.status.in_progress</source>
+        <target>In Progress</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd4" resname="activity_board.status.in_review">
+        <source>activity_board.status.in_review</source>
+        <target>In Review</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd5" resname="activity_board.status.done">
+        <source>activity_board.status.done</source>
+        <target>Done</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd6" resname="activity_board.priority.urgent">
+        <source>activity_board.priority.urgent</source>
+        <target>Urgent</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd7" resname="activity_board.priority.high">
+        <source>activity_board.priority.high</source>
+        <target>High</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd8" resname="activity_board.priority.medium">
+        <source>activity_board.priority.medium</source>
+        <target>Medium</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd9" resname="activity_board.priority.low">
+        <source>activity_board.priority.low</source>
+        <target>Low</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd10" resname="activity_board.empty">
+        <source>activity_board.empty</source>
+        <target>No activities in this column.</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd11" resname="activity_board.unassigned">
+        <source>activity_board.unassigned</source>
+        <target>Unassigned</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -2202,6 +2202,50 @@
         <source>invoice_type.milestone</source>
         <target state="translated">Por hito</target>
       </trans-unit>
+      <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
+        <source>activity_board.title</source>
+        <target state="translated">Tablero de actividades</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd2" resname="activity_board.status.todo" xml:space="preserve">
+        <source>activity_board.status.todo</source>
+        <target state="translated">Por hacer</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd3" resname="activity_board.status.in_progress" xml:space="preserve">
+        <source>activity_board.status.in_progress</source>
+        <target state="translated">En progreso</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd4" resname="activity_board.status.in_review" xml:space="preserve">
+        <source>activity_board.status.in_review</source>
+        <target state="translated">En revisión</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd5" resname="activity_board.status.done" xml:space="preserve">
+        <source>activity_board.status.done</source>
+        <target state="translated">Hecho</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd6" resname="activity_board.priority.urgent" xml:space="preserve">
+        <source>activity_board.priority.urgent</source>
+        <target state="translated">Urgente</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd7" resname="activity_board.priority.high" xml:space="preserve">
+        <source>activity_board.priority.high</source>
+        <target state="translated">Alta</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd8" resname="activity_board.priority.medium" xml:space="preserve">
+        <source>activity_board.priority.medium</source>
+        <target state="translated">Media</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd9" resname="activity_board.priority.low" xml:space="preserve">
+        <source>activity_board.priority.low</source>
+        <target state="translated">Baja</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd10" resname="activity_board.empty" xml:space="preserve">
+        <source>activity_board.empty</source>
+        <target state="translated">No hay actividades en esta columna.</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd11" resname="activity_board.unassigned" xml:space="preserve">
+        <source>activity_board.unassigned</source>
+        <target state="translated">Sin asignar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

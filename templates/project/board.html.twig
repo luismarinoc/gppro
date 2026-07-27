@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {% import "macros/widgets.html.twig" as widgets %}
+
+    {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+        {% block box_attributes %}id="activity_board_box"{% endblock %}
+        {% block box_title %}
+            {{ widgets.label_dot(project.name, project.color) }}
+        {% endblock %}
+        {% block box_body %}
+            <div class="activity_board d-flex">
+                {% for status, column in columns %}
+                    <div class="activity_board_column flex-fill" data-status="{{ status }}">
+                        <div class="activity_board_column_header d-flex align-items-center justify-content-between">
+                            <span class="activity_board_column_title">{{ ('activity_board.status.' ~ status)|trans }}</span>
+                            {{ widgets.badge_counted(column.cards|length) }}
+                        </div>
+                        <div class="activity_board_column_body">
+                            {% if column.cards|length == 0 %}
+                                <div class="comment activity_board_column_empty">{{ 'activity_board.empty'|trans }}</div>
+                            {% else %}
+                                {% for card in column.cards %}
+                                    {% include 'project/_board_card.html.twig' with {'card': card} %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
