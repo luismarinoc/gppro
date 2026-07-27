@@ -31,6 +31,11 @@
                         <th>{{ 'name'|trans }}</th>
                         <th class="d-none d-md-table-cell">{{ 'comment'|trans }}</th>
                         <th class="d-none d-sm-table-cell w-min text-end">{{ 'project_end'|trans }}</th>
+                        {% if project_financials|length > 0 %}
+                            <th class="d-none d-lg-table-cell w-min text-end">{{ 'revenue'|trans }}</th>
+                            <th class="d-none d-lg-table-cell w-min text-end">{{ 'costs'|trans }}</th>
+                            <th class="d-none d-lg-table-cell w-min text-end">{{ 'profit'|trans }}</th>
+                        {% endif %}
                         <th class="d-none d-sm-table-cell w-min text-center">{{ 'visible'|trans }}</th>
                         <th class="d-none d-sm-table-cell w-min text-center">{{ 'team'|trans }}</th>
                         <th class="actions"></th>
@@ -48,6 +53,15 @@
                                 &ndash;
                             {% endif %}
                         </td>
+                        {% if project_financials[project.id] is defined %}
+                            <td class="d-none d-lg-table-cell w-min text-end">{{ project_financials[project.id].income|money(customer.currency) }}</td>
+                            <td class="d-none d-lg-table-cell w-min text-end">{{ project_financials[project.id].cost|money(customer.currency) }}</td>
+                            <td class="d-none d-lg-table-cell w-min text-end">{{ project_financials[project.id].profit|money(customer.currency) }}</td>
+                        {% elseif project_financials|length > 0 %}
+                            <td class="d-none d-lg-table-cell"></td>
+                            <td class="d-none d-lg-table-cell"></td>
+                            <td class="d-none d-lg-table-cell"></td>
+                        {% endif %}
                         <td class="d-none d-sm-table-cell w-min text-center">{{ widgets.label_visible(project.visible) }}</td>
                         <td class="d-none d-sm-table-cell w-min text-center">{{ widgets.badge_team_access(project.teams) }}</td>
                         <td class="actions">{{ actions.project(project, 'customer_details', true) }}</td>
