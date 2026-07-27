@@ -18,6 +18,9 @@ use App\Repository\ActivityBoardStateRepository;
 use App\Repository\ActivityRepository;
 use App\Repository\Query\ActivityQuery;
 use App\Repository\Query\VisibilityInterface;
+use App\Repository\UserRepository;
+use App\Security\RolePermissionManager;
+use App\Validator\ValidationException;
 
 /**
  * @final
@@ -26,7 +29,9 @@ class ActivityBoardService
 {
     public function __construct(
         private readonly ActivityRepository $activityRepository,
-        private readonly ActivityBoardStateRepository $stateRepository
+        private readonly ActivityBoardStateRepository $stateRepository,
+        private readonly UserRepository $userRepository,
+        private readonly RolePermissionManager $permissionManager
     ) {
     }
 
@@ -75,6 +80,10 @@ class ActivityBoardService
      * ActivityBoardUpdateDTO::has*()); this method writes to
      * ActivityBoardState exclusively and never to Activity, Timesheet, or
      * any billing-related table (design's central non-goal invariant).
+     *
+     * @throws ValidationException when assignedTo references an unknown
+     *                             user id, or a user without access to the activity's project
+     *                             (RolePermissionManager::checkTeamAccessActivity())
      */
     public function updateCard(Activity $activity, ActivityBoardUpdateDTO $dto): ActivityBoardState
     {
@@ -93,9 +102,37 @@ class ActivityBoardService
             $state->setDueDate($dto->getDueDate());
         }
 
+        if ($dto->hasAssignedTo()) {
+            $state->setAssignedTo($this->resolveAssignee($activity, $dto->getAssignedToId()));
+        }
+
         $this->stateRepository->save($state);
 
         return $state;
+    }
+
+    /**
+     * Resolves and validates a candidate assignee id. A null id clears the
+     * assignment. Deliberately reads only User/Activity/Project/Customer/Team
+     * relations (via RolePermissionManager::checkTeamAccessActivity()) - no
+     * Timesheet or rate table is touched by this validation.
+     */
+    private function resolveAssignee(Activity $activity, ?int $assignedToId): ?User
+    {
+        if (null === $assignedToId) {
+            return null;
+        }
+
+        $candidate = $this->userRepository->find($assignedToId);
+        if (null === $candidate) {
+            throw new ValidationException(\sprintf('Unknown user id "%d"', $assignedToId));
+        }
+
+        if (!$this->permissionManager->checkTeamAccessActivity($activity, $candidate)) {
+            throw new ValidationException('Assignee does not have access to this activity');
+        }
+
+        return $candidate;
     }
 
     /**
