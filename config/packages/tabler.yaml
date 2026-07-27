@@ -14,7 +14,7 @@ tabler:
         boxed_layout: false
         rtl_mode: false
         user_menu_condensed: false
-        logo_url: "touch-icon-192x192.png"
+        logo_url: "logo-gpartner.png"
         theme_base: "neutral"
         theme_radius: 1.5
         theme_primary: "blue"
