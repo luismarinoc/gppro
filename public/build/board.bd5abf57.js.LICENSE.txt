@@ -1,0 +1,3 @@
+/*!
+ * [GPPRO] GpproActivityBoard: drag-and-drop kanban board for project activities
+ */
