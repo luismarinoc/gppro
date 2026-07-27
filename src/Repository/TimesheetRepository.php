@@ -840,6 +840,46 @@ class TimesheetRepository extends EntityRepository
     }
 
     /**
+     * @param int[] $invoiceIds
+     * @return list<array{invoiceId: int, projectId: int, projectName: string, amount: float, duration: int}>
+     */
+    public function getProjectSubtotalsByInvoiceIds(array $invoiceIds): array
+    {
+        if ([] === $invoiceIds) {
+            return [];
+        }
+
+        /** @var list<array{invoiceId: int|string, projectId: int|string, projectName: string, amount: int|string|float, duration: int|string}> $result */
+        $result = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.invoice) AS invoiceId')
+            ->addSelect('IDENTITY(t.project) AS projectId')
+            ->addSelect('p.name AS projectName')
+            ->addSelect('COALESCE(SUM(t.rate), 0) AS amount')
+            ->addSelect('COALESCE(SUM(t.duration), 0) AS duration')
+            ->join('t.project', 'p')
+            ->andWhere('t.invoice IN (:ids)')
+            ->groupBy('invoiceId')
+            ->addGroupBy('projectId')
+            ->addGroupBy('projectName')
+            ->setParameter('ids', $invoiceIds)
+            ->getQuery()
+            ->getScalarResult();
+
+        $rows = [];
+        foreach ($result as $row) {
+            $rows[] = [
+                'invoiceId' => (int) $row['invoiceId'],
+                'projectId' => (int) $row['projectId'],
+                'projectName' => (string) $row['projectName'],
+                'amount' => (float) $row['amount'],
+                'duration' => (int) $row['duration'],
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
      * @param Timesheet $timesheet
      * @return RateInterface[]
      */

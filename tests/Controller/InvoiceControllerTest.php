@@ -204,6 +204,155 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString($this->createUrl('/invoice/download/' . $milestoneInvoice->getId()), $html);
     }
 
+    public function testShowInvoicesActionRendersHistoryTotalsGroupedByCustomerProjectAndType(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $customerA = $this->createCustomer();
+        $projectMilestone = $this->createProject($customerA);
+        $projectTimesheet = $this->createProject($customerA);
+
+        $customerB = $this->createCustomer();
+        $projectB = $this->createProject($customerB);
+
+        // customer A / project milestone: a milestone invoice
+        $milestoneInvoice = new Invoice();
+        $milestoneInvoice->setCustomer($customerA);
+        $milestoneInvoice->setUser($user);
+        $milestoneInvoice->setInvoiceNumber('INV-' . uniqid());
+        $milestoneInvoice->setFilename('invoice-' . uniqid());
+        $milestoneInvoice->setCreatedAt(new \DateTime());
+        $milestoneInvoice->setCurrency('CLP');
+        $milestoneInvoice->setTotal(1000.0);
+        $milestoneInvoice->setVat(0.0);
+        $milestoneInvoice->setTax(0.0);
+        $milestoneInvoice->setDueDays(30);
+        $em->persist($milestoneInvoice);
+        $em->flush();
+
+        $milestone = $this->createMilestone($projectMilestone, 'History totals milestone');
+        $milestone->setInvoice($milestoneInvoice);
+        $em->flush();
+
+        // customer A / project timesheet: an hour invoice for exactly 1h at a fixed rate of 2000
+        $hourInvoice = new Invoice();
+        $hourInvoice->setCustomer($customerA);
+        $hourInvoice->setUser($user);
+        $hourInvoice->setInvoiceNumber('INV-' . uniqid());
+        $hourInvoice->setFilename('invoice-' . uniqid());
+        $hourInvoice->setCreatedAt(new \DateTime());
+        $hourInvoice->setCurrency('CLP');
+        $hourInvoice->setTotal(2000.0);
+        $hourInvoice->setVat(0.0);
+        $hourInvoice->setTax(0.0);
+        $hourInvoice->setDueDays(30);
+        $em->persist($hourInvoice);
+
+        $activity = new Activity();
+        $activity->setName('History totals activity');
+        $activity->setProject($projectTimesheet);
+        $em->persist($activity);
+        $em->flush();
+
+        $begin = new \DateTime('2026-07-01 09:00:00');
+        $timesheet = new Timesheet();
+        $timesheet->setProject($projectTimesheet);
+        $timesheet->setActivity($activity);
+        $timesheet->setUser($user);
+        $timesheet->setBegin($begin);
+        $timesheet->setEnd((clone $begin)->modify('+3600 seconds'));
+        $timesheet->setFixedRate(2000.0);
+        $timesheet->setBillable(true);
+        $timesheet->setInvoice($hourInvoice);
+        $em->persist($timesheet);
+        $em->flush();
+
+        // customer B / project B: a separate milestone invoice
+        $milestoneInvoiceB = new Invoice();
+        $milestoneInvoiceB->setCustomer($customerB);
+        $milestoneInvoiceB->setUser($user);
+        $milestoneInvoiceB->setInvoiceNumber('INV-' . uniqid());
+        $milestoneInvoiceB->setFilename('invoice-' . uniqid());
+        $milestoneInvoiceB->setCreatedAt(new \DateTime());
+        $milestoneInvoiceB->setCurrency('CLP');
+        $milestoneInvoiceB->setTotal(500.0);
+        $milestoneInvoiceB->setVat(0.0);
+        $milestoneInvoiceB->setTax(0.0);
+        $milestoneInvoiceB->setDueDays(30);
+        $em->persist($milestoneInvoiceB);
+        $em->flush();
+
+        $milestoneB = new Milestone();
+        $milestoneB->setProject($projectB);
+        $milestoneB->setName('History totals milestone B ' . uniqid());
+        $milestoneB->setValue('500.0000');
+        $milestoneB->setCurrency('CLP');
+        $milestoneB->setInvoice($milestoneInvoiceB);
+        $em->persist($milestoneB);
+        $em->flush();
+
+        $this->request($client, '/invoice/show/1');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+
+        $customerAName = $customerA->getName();
+        $customerBName = $customerB->getName();
+        $projectMilestoneName = $projectMilestone->getName();
+        $projectTimesheetName = $projectTimesheet->getName();
+        $projectBName = $projectB->getName();
+        self::assertNotNull($customerAName);
+        self::assertNotNull($customerBName);
+        self::assertNotNull($projectMilestoneName);
+        self::assertNotNull($projectTimesheetName);
+        self::assertNotNull($projectBName);
+
+        // the per-row "Proyecto" column on the main table must show each invoice's project(s)
+        $html = $client->getResponse()->getContent();
+        self::assertIsString($html);
+        self::assertStringContainsString($projectMilestoneName, $html);
+        self::assertStringContainsString($projectTimesheetName, $html);
+        self::assertStringContainsString($projectBName, $html);
+
+        // the totals summary box must contain one row per (customer, project, type)
+        $summaryBox = $crawler->filter('div.card#invoice_history_summary_box');
+        self::assertEquals(1, $summaryBox->count());
+
+        $summaryText = $summaryBox->text();
+        self::assertStringContainsString($customerAName, $summaryText);
+        self::assertStringContainsString($customerBName, $summaryText);
+        self::assertStringContainsString($projectMilestoneName, $summaryText);
+        self::assertStringContainsString($projectTimesheetName, $summaryText);
+        self::assertStringContainsString($projectBName, $summaryText);
+
+        // milestone total for customer A / projectMilestone must be 1000 CLP
+        $milestoneRows = $summaryBox->filter('tr.milestone_total_row');
+        self::assertEquals(2, $milestoneRows->count());
+
+        $rowForA = null;
+        $rowForB = null;
+        $milestoneRows->each(function ($row) use ($projectMilestoneName, $projectBName, &$rowForA, &$rowForB): void {
+            $projectCell = $row->filter('td')->eq(1)->text();
+            if (str_contains($projectCell, $projectMilestoneName)) {
+                $rowForA = $row;
+            } elseif (str_contains($projectCell, $projectBName)) {
+                $rowForB = $row;
+            }
+        });
+        self::assertNotNull($rowForA);
+        self::assertNotNull($rowForB);
+        self::assertSame('1000', preg_replace('/\D/', '', $rowForA->filter('td')->eq(4)->text()));
+        self::assertSame('500', preg_replace('/\D/', '', $rowForB->filter('td')->eq(4)->text()));
+
+        // timesheet total for customer A / projectTimesheet must show the invoiced duration and rate
+        $timesheetRows = $summaryBox->filter('tr.timesheet_total_invoiced_row');
+        self::assertEquals(1, $timesheetRows->count());
+        self::assertStringContainsString('1:00', $timesheetRows->filter('td')->eq(5)->text());
+        self::assertSame('2000', preg_replace('/\D/', '', $timesheetRows->filter('td')->eq(4)->text()));
+    }
+
     public function testIndexActionMilestoneModeListsInvoiceableMilestonesForSelectedCustomer(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

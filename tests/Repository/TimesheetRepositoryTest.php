@@ -10,6 +10,8 @@
 namespace App\Tests\Repository;
 
 use App\Entity\Activity;
+use App\Entity\Customer;
+use App\Entity\Invoice;
 use App\Entity\Project;
 use App\Entity\Tag;
 use App\Entity\Timesheet;
@@ -162,5 +164,149 @@ class TimesheetRepositoryTest extends AbstractRepositoryTestCase
         self::assertNotNull($timesheet->getTags()->get(0)->getId());
         self::assertEquals('Picture', $timesheet->getTags()->get(1)->getName());
         self::assertNotNull($timesheet->getTags()->get(1)->getId());
+    }
+
+    private function createCustomer(): Customer
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Timesheet repository test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+        $em->flush();
+
+        return $customer;
+    }
+
+    private function createProject(Customer $customer, string $name = 'Timesheet repository test project'): Project
+    {
+        $em = $this->getEntityManager();
+
+        $project = new Project();
+        $project->setName($name . ' ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+        $em->flush();
+
+        return $project;
+    }
+
+    private function createInvoice(Customer $customer): Invoice
+    {
+        $em = $this->getEntityManager();
+
+        $invoice = new Invoice();
+        $invoice->setStatus(Invoice::STATUS_NEW);
+        $invoice->setTotal(100.0);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setCustomer($customer);
+        $invoice->setInvoiceNumber('ts-repo-' . uniqid());
+        $invoice->setFilename('ts-repo-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setUser($this->getUserByRole(User::ROLE_USER));
+        $invoice->setDueDays(30);
+        $invoice->setCurrency('CLP');
+        $em->persist($invoice);
+        $em->flush();
+
+        return $invoice;
+    }
+
+    private function createTimesheet(Project $project, ?Invoice $invoice, float $rate, int $duration): Timesheet
+    {
+        $em = $this->getEntityManager();
+
+        $activity = new Activity();
+        $activity->setName('Timesheet repository test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        // aligned on a full minute boundary: the default rounding rules round
+        // "begin" down and "end" up to the full minute, which would otherwise
+        // shift the recorded duration away from the value asserted in tests
+        $begin = new \DateTime('-1 year');
+        $begin->setTime((int) $begin->format('H'), (int) $begin->format('i'), 0);
+        $end = (clone $begin)->modify('+' . $duration . ' seconds');
+
+        $timesheet = new Timesheet();
+        $timesheet
+            ->setBegin($begin)
+            ->setEnd($end)
+            ->setUser($this->getUserByRole(User::ROLE_USER))
+            ->setActivity($activity)
+            ->setProject($project)
+            ->setFixedRate($rate);
+        $timesheet->setInvoice($invoice);
+        $em->persist($timesheet);
+        $em->flush();
+
+        return $timesheet;
+    }
+
+    public function testGetProjectSubtotalsByInvoiceIdsReturnsEmptyArrayForEmptyInput(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        self::assertSame([], $repository->getProjectSubtotalsByInvoiceIds([]));
+    }
+
+    public function testGetProjectSubtotalsByInvoiceIdsGroupsByInvoiceAndProject(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        $customer = $this->createCustomer();
+        $projectOne = $this->createProject($customer, 'Project one');
+        $projectTwo = $this->createProject($customer, 'Project two');
+
+        $invoiceMulti = $this->createInvoice($customer);
+        $invoiceOther = $this->createInvoice($customer);
+
+        // same invoice, same project: must be summed into one row
+        $this->createTimesheet($projectOne, $invoiceMulti, 100.0, 3600);
+        $this->createTimesheet($projectOne, $invoiceMulti, 50.0, 1800);
+
+        // same invoice, different project: must be a separate row
+        $this->createTimesheet($projectTwo, $invoiceMulti, 25.0, 900);
+
+        // timesheet from another invoice: must be excluded entirely
+        $this->createTimesheet($projectOne, $invoiceOther, 999.0, 1);
+
+        // timesheet with no invoice at all: must be excluded entirely
+        $this->createTimesheet($projectOne, null, 999.0, 1);
+
+        $invoiceMultiId = $invoiceMulti->getId();
+        self::assertNotNull($invoiceMultiId);
+
+        $rows = $repository->getProjectSubtotalsByInvoiceIds([$invoiceMultiId]);
+
+        self::assertCount(2, $rows);
+
+        $byProject = [];
+        foreach ($rows as $row) {
+            self::assertSame($invoiceMultiId, $row['invoiceId']);
+            $byProject[$row['projectId']] = $row;
+        }
+
+        $projectOneId = $projectOne->getId();
+        $projectTwoId = $projectTwo->getId();
+        self::assertNotNull($projectOneId);
+        self::assertNotNull($projectTwoId);
+
+        self::assertArrayHasKey($projectOneId, $byProject);
+        self::assertSame(150.0, $byProject[$projectOneId]['amount']);
+        self::assertSame(5400, $byProject[$projectOneId]['duration']);
+        self::assertSame($projectOne->getName(), $byProject[$projectOneId]['projectName']);
+
+        self::assertArrayHasKey($projectTwoId, $byProject);
+        self::assertSame(25.0, $byProject[$projectTwoId]['amount']);
+        self::assertSame(900, $byProject[$projectTwoId]['duration']);
+        self::assertSame($projectTwo->getName(), $byProject[$projectTwoId]['projectName']);
     }
 }
