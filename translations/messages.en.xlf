@@ -2258,6 +2258,10 @@
         <source>activity_board.unassigned</source>
         <target>Unassigned</target>
       </trans-unit>
+      <trans-unit id="gpInvHistTot1" resname="invoice.history_totals">
+        <source>invoice.history_totals</source>
+        <target>Totals by customer, project and invoice type</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

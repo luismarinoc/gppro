@@ -187,6 +187,8 @@ class InvoiceRepository extends EntityRepository
             ->from(Invoice::class, 'i')
         ;
 
+        $qb->leftJoin('i.customer', 'customer');
+
         if ($query->getBegin() !== null) {
             $qb->andWhere($qb->expr()->gte('i.createdAt', ':begin'));
             $qb->setParameter('begin', $query->getBegin());
@@ -234,13 +236,15 @@ class InvoiceRepository extends EntityRepository
                 break;
         }
 
+        // primary sort key: group invoices by customer name first, the
+        // user-selected column (defaulting to "date") only orders within
+        // that group - see InvoiceArchiveQuery::INVOICE_ARCHIVE_ORDER_ALLOWED
+        $qb->addOrderBy('customer.name', 'ASC');
         $qb->addOrderBy($orderBy, $query->getOrder());
 
         $this->addPermissionCriteria($qb, $query->getCurrentUser());
 
         if ($query->hasSearchTerm()) {
-            $qb->leftJoin('i.customer', 'customer');
-
             $configuration = new SearchConfiguration(
                 ['i.comment', 'customer.name', 'customer.company'],
                 InvoiceMeta::class,

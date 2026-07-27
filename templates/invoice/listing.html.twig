@@ -10,6 +10,7 @@
         <td class="{{ tables.class(dataTable, 'user') }}">{{ widgets.label_user(entry.user) }}</td>
         <td class="{{ tables.class(dataTable, 'customer') }}">{{ widgets.label_customer(entry.customer) }}</td>
         <td class="{{ tables.class(dataTable, 'type') }}">{{ _self.invoice_type(entry, milestone_invoice_ids) }}</td>
+        <td class="{{ tables.class(dataTable, 'project') }}">{{ invoice_projects[entry.id]|default([])|join(', ') }}</td>
         <td class="{{ tables.class(dataTable, 'comment') }}">
             {% if entry.comment is not empty %}
                 {{ entry.comment }}
@@ -39,6 +40,65 @@
         <td class="{{ tables.class(dataTable, 'total_rate') }}">{{ entry.total|money(entry.currency) }}</td>
         <td class="{{ tables.class(dataTable, 'actions') }}">{{ actions.invoice(entry, 'index') }}</td>
     </tr>
+{% endblock %}
+
+{% block main %}
+    {{ parent() }}
+
+    {% if invoice_history_summary is defined and invoice_history_summary|length > 0 %}
+        {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+            {% block box_title %}{{ 'invoice.history_totals'|trans }}{% endblock %}
+            {% block box_attributes %}id="invoice_history_summary_box"{% endblock %}
+            {% block box_body_class %}p-0{% endblock %}
+            {% block box_body %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{{ 'customer'|trans }}</th>
+                                <th>{{ 'project'|trans }}</th>
+                                <th>{{ 'invoice_type'|trans }}</th>
+                                <th class="text-end">{{ 'invoice.number'|trans }}</th>
+                                <th class="text-end">{{ 'invoice.total'|trans }}</th>
+                                <th class="text-end">{{ 'duration'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in invoice_history_summary %}
+                            <tr class="{% if row.isMilestone() %}milestone_total_row{% else %}timesheet_total_invoiced_row{% endif %}">
+                                <td>{{ row.customerName }}</td>
+                                <td>{{ row.projectName }}</td>
+                                <td>
+                                    {% if row.isMilestone() %}
+                                        {{ 'invoice_type.milestone'|trans }}
+                                    {% else %}
+                                        {{ 'invoice_type.timesheet'|trans }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">{{ row.invoiceCount }}</td>
+                                <td class="text-end text-nowrap">
+                                    {% if row.amount is not null %}
+                                        {{ row.amount|money(row.currency) }}
+                                    {% else %}
+                                        &ndash;
+                                    {% endif %}
+                                    {% if row.isPartial %}
+                                        <span class="badge bg-warning text-warning-fg milestone_total_partial" data-toggle="tooltip" data-placement="top" title="{{ 'milestone.total_partial'|trans({'%count%': row.excludedCount}) }}">!</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    {% if row.durationSeconds is not null %}
+                                        {{ row.durationSeconds|duration }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
 {% endblock %}
 
 {% macro invoice_status(invoice) %}

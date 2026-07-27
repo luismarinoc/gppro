@@ -27,6 +27,7 @@ use App\Form\Toolbar\InvoiceArchiveToolbarForm;
 use App\Form\Toolbar\InvoiceToolbarForm;
 use App\Form\Type\DatePickerType;
 use App\Form\Type\InvoiceTemplateType;
+use App\Invoice\InvoiceHistorySummarizer;
 use App\Invoice\InvoiceService;
 use App\Milestone\InvoiceableMilestoneFinder;
 use App\Milestone\MilestoneInvoiceSelectionFormFactory;
@@ -354,7 +355,7 @@ final class InvoiceController extends AbstractController
 
     #[Route(path: '/show/{page}', defaults: ['page' => 1], requirements: ['page' => '[1-9]\d*'], name: 'admin_invoice_list', methods: ['GET'])]
     #[IsGranted('view_invoice')]
-    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository, TimesheetRepository $timesheetRepository): Response
+    public function showInvoicesAction(Request $request, int $page, InvoiceRepository $invoiceRepository, MilestoneRepository $milestoneRepository, TimesheetRepository $timesheetRepository, InvoiceHistorySummarizer $invoiceHistorySummarizer): Response
     {
         $query = new InvoiceArchiveQuery();
         $query->setPage($page);
@@ -387,6 +388,31 @@ final class InvoiceController extends AbstractController
 
         $invoiceDurations = $timesheetRepository->getDurationSumByInvoiceIds($invoiceIds);
 
+        // per-row (current page only) list of distinct project names an invoice touches,
+        // mirrors the existing scope of $invoiceDurations / the "Descripción" column
+        $invoiceProjects = [];
+        foreach ($invoiceMilestones as $invoiceIdWithMilestones => $milestonesForInvoice) {
+            foreach ($milestonesForInvoice as $milestone) {
+                $projectName = $milestone->getProject()?->getName();
+                if (null !== $projectName) {
+                    $invoiceProjects[$invoiceIdWithMilestones][$projectName] = true;
+                }
+            }
+        }
+        foreach ($timesheetRepository->getProjectSubtotalsByInvoiceIds($invoiceIds) as $projectSubtotal) {
+            $invoiceProjects[$projectSubtotal['invoiceId']][$projectSubtotal['projectName']] = true;
+        }
+        foreach ($invoiceProjects as $invoiceIdWithProjects => $projectNames) {
+            $names = array_keys($projectNames);
+            sort($names);
+            $invoiceProjects[$invoiceIdWithProjects] = $names;
+        }
+
+        // totals summary: computed across the FULL filtered result set (not just the
+        // current page), so it must not be scoped by pagination
+        $allInvoicesForQuery = $invoiceRepository->getInvoicesForQuery($query);
+        $invoiceHistorySummary = $invoiceHistorySummarizer->summarize($allInvoicesForQuery);
+
         $table = new DataTable('invoices', $query);
         $table->setPagination($entries);
         $table->setSearchForm($form);
@@ -398,6 +424,7 @@ final class InvoiceController extends AbstractController
         $table->addColumn('user', ['class' => 'd-none text-nowrap w-min', 'orderBy' => false]);
         $table->addColumn('customer', ['class' => 'alwaysVisible text-nowrap', 'orderBy' => false]);
         $table->addColumn('type', ['class' => 'd-none d-sm-table-cell w-min', 'title' => 'invoice_type', 'orderBy' => false]);
+        $table->addColumn('project', ['class' => 'd-none d-lg-table-cell', 'title' => 'project', 'orderBy' => false]);
         $table->addColumn('comment', ['class' => 'd-none d-lg-table-cell', 'title' => 'description']);
 
         foreach ($metaColumns as $metaColumn) {
@@ -424,6 +451,8 @@ final class InvoiceController extends AbstractController
             'milestone_invoice_ids' => $milestoneInvoiceIds,
             'invoice_milestones' => $invoiceMilestones,
             'invoice_durations' => $invoiceDurations,
+            'invoice_projects' => $invoiceProjects,
+            'invoice_history_summary' => $invoiceHistorySummary,
         ]);
     }
 

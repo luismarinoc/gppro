@@ -2238,6 +2238,10 @@
         <source>activity_board.unassigned</source>
         <target state="translated">Sin asignar</target>
       </trans-unit>
+      <trans-unit id="gpInvHistTot1" resname="invoice.history_totals" xml:space="preserve">
+        <source>invoice.history_totals</source>
+        <target state="translated">Totales por cliente, proyecto y tipo de factura</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
