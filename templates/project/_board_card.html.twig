@@ -1,10 +1,11 @@
 {% import "macros/widgets.html.twig" as widgets %}
+{% set priorityColors = {'urgent': 'red', 'high': 'orange', 'medium': 'azure', 'low': 'secondary'} %}
 <div class="activity_board_card" data-activity-id="{{ card.activity.id }}">
     <div class="activity_board_card_name">{{ card.activity.name }}</div>
     <div class="activity_board_card_meta d-flex align-items-center justify-content-between">
         <span class="activity_board_card_priority">
             {%- if card.priority is not null -%}
-                {{ widgets.badge(('activity_board.priority.' ~ card.priority.value)|trans) }}
+                {{ widgets.badge_type(('activity_board.priority.' ~ card.priority.value)|trans, priorityColors[card.priority.value]) }}
             {%- endif -%}
         </span>
         <span class="activity_board_card_due_date">

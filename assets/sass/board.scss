@@ -1,0 +1,94 @@
+.activity_board {
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: .5rem;
+    align-items: flex-start;
+}
+
+.activity_board_column {
+    min-width: 260px;
+    background-color: var(--tblr-bg-surface-secondary, #f4f6fb);
+    border-radius: 12px;
+    padding: .75rem;
+}
+
+.activity_board_column_header {
+    padding: .25rem .25rem .75rem;
+    font-weight: 600;
+    border-bottom: 3px solid var(--tblr-secondary, #6c757d);
+    margin-bottom: .75rem;
+}
+
+.activity_board_column[data-status="todo"] .activity_board_column_header {
+    border-bottom-color: var(--tblr-secondary, #6c757d);
+}
+
+.activity_board_column[data-status="in_progress"] .activity_board_column_header {
+    border-bottom-color: var(--tblr-yellow, #f59f00);
+}
+
+.activity_board_column[data-status="in_review"] .activity_board_column_header {
+    border-bottom-color: var(--tblr-blue, #206bc4);
+}
+
+.activity_board_column[data-status="done"] .activity_board_column_header {
+    border-bottom-color: var(--tblr-green, #2fb344);
+}
+
+.activity_board_column_title {
+    text-transform: uppercase;
+    font-size: .75rem;
+    letter-spacing: .03em;
+    color: var(--tblr-secondary, #6c757d);
+}
+
+.activity_board_column_body {
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    min-height: 60px;
+}
+
+.activity_board_column_empty {
+    font-size: .8125rem;
+    padding: .5rem .25rem;
+}
+
+.activity_board_card {
+    background-color: var(--tblr-card-bg, #fff);
+    border-radius: 8px;
+    padding: .75rem;
+    box-shadow: var(--tblr-card-box-shadow, 0 1px 3px rgba(0, 0, 0, .08));
+    cursor: grab;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.activity_board_card:hover {
+    box-shadow: 0 4px 14px rgba(27, 58, 107, .18);
+    transform: translateY(-1px);
+}
+
+.activity_board_card_name {
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.activity_board_card_meta {
+    font-size: .8125rem;
+    margin-bottom: .5rem;
+}
+
+.activity_board_card_due_date {
+    color: var(--tblr-secondary, #6c757d);
+}
+
+.activity_board_card_assignee {
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+    font-size: .8125rem;
+}
+
+.activity_board_card_ghost {
+    opacity: .4;
+}
