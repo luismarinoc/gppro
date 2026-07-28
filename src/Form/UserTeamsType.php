@@ -23,9 +23,29 @@ final class UserTeamsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // A user may only belong to a single team from this screen (UI-only
+        // restriction - see the "es uno o el otro" request): the underlying
+        // User<->Team relation stays many-to-many (addTeam()/removeTeam(),
+        // still used by other flows), so the field is unmapped here and
+        // synced manually in ProfileController::teamsAction(). If the user
+        // is currently in more than one team (legacy/inconsistent state),
+        // nothing is pre-selected - the admin must make an explicit choice
+        // instead of one team being silently dropped.
+        $user = $options['data'] ?? null;
+        $currentTeam = null;
+
+        if ($user instanceof User) {
+            $teams = $user->getTeams();
+            if (\count($teams) === 1) {
+                $currentTeam = $teams[0];
+            }
+        }
+
         $builder->add('teams', TeamType::class, [
-            'multiple' => true,
+            'multiple' => false,
             'expanded' => true,
+            'mapped' => false,
+            'data' => $currentTeam,
         ]);
     }
 

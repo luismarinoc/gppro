@@ -10,6 +10,7 @@
 namespace App\Form\Type;
 
 use App\Entity\User;
+use App\Entity\UserType as UserCategory;
 use App\Repository\Query\UserFormTypeQuery;
 use App\Repository\Query\VisibilityInterface;
 use App\Repository\UserRepository;
@@ -70,7 +71,11 @@ final class UserType extends AbstractType
             // includes the current user if it is a system-account, which is especially useful for forms pages,
             // which have a user switcher and display the logged-in user by default
             'include_current_user_if_system_account' => false,
+            // restrict the choices to users of this UserType category (functional/technical/guest) - null means unrestricted
+            'user_type' => null,
         ]);
+
+        $resolver->setAllowedTypes('user_type', [UserCategory::class, 'null']);
 
         $resolver->setDefault('documentation', function (Options $options) {
             $example = 0;
@@ -95,6 +100,10 @@ final class UserType extends AbstractType
 
             $qb = $this->userRepository->getQueryBuilderForFormType($query);
             $users = $qb->getQuery()->getResult();
+
+            if ($options['user_type'] instanceof UserCategory) {
+                $users = array_filter($users, static fn (User $user) => $user->getUserType() === $options['user_type']);
+            }
 
             $ignoreIds = [];
             /** @var User $user */

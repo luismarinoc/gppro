@@ -10,6 +10,7 @@
 namespace App\Controller;
 
 use App\Entity\AccessToken;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Entity\UserPreference;
 use App\Event\PrepareUserEvent;
@@ -346,6 +347,22 @@ final class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // the "teams" field is unmapped (see UserTeamsType) - a single
+            // Team|null, synced onto the many-to-many relation by hand
+            // instead of Symfony's addTeam()/removeTeam() collection mapping
+            /** @var Team|null $selectedTeam */
+            $selectedTeam = $form->get('teams')->getData();
+
+            foreach ($profile->getTeams() as $existingTeam) {
+                if ($existingTeam !== $selectedTeam) {
+                    $profile->removeTeam($existingTeam);
+                }
+            }
+
+            if ($selectedTeam !== null && !$profile->isInTeam($selectedTeam)) {
+                $profile->addTeam($selectedTeam);
+            }
+
             foreach ($originalMembers as $member) {
                 if (!$profile->hasMembership($member)) {
                     $member->setTeam(null);

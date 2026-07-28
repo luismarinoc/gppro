@@ -12,6 +12,7 @@ namespace App\Form;
 use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Milestone;
+use App\Entity\UserType as UserCategory;
 use App\Form\Type\InvoiceLabelType;
 use App\Form\Type\ProjectType;
 use App\Form\Type\TeamType;
@@ -130,18 +131,28 @@ class ActivityEditForm extends AbstractType
         if (!$isNew && !$isGlobal && $project !== null) {
             $boardState = $this->boardStateRepository->findByActivities([$entry])[$entry->getId()] ?? null;
 
+            $currentTechnicalUser = $boardState?->getTechnicalUser();
+            $currentFunctionalUser = $boardState?->getFunctionalUser();
+
             $builder
                 ->add('technicalUser', UserType::class, [
                     'mapped' => false,
                     'required' => false,
                     'label' => 'activity_board.technical_user',
-                    'data' => $boardState?->getTechnicalUser(),
+                    'data' => $currentTechnicalUser,
+                    'user_type' => UserCategory::TECHNICAL,
+                    // keeps a previously assigned user selectable even if their
+                    // userType no longer matches (changed later, or assigned
+                    // before this restriction existed) - never silently drops it
+                    'include_users' => $currentTechnicalUser !== null ? [$currentTechnicalUser] : [],
                 ])
                 ->add('functionalUser', UserType::class, [
                     'mapped' => false,
                     'required' => false,
                     'label' => 'activity_board.functional_user',
-                    'data' => $boardState?->getFunctionalUser(),
+                    'data' => $currentFunctionalUser,
+                    'user_type' => UserCategory::FUNCTIONAL,
+                    'include_users' => $currentFunctionalUser !== null ? [$currentFunctionalUser] : [],
                 ]);
         }
 
