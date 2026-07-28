@@ -10,6 +10,11 @@
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}
         {% block box_body %}
+            {% if project.comment is not empty %}
+                <div class="comment p-3">
+                    {{ project.comment|comment2html(true) }}
+                </div>
+            {% endif %}
             <div class="activity_board d-flex">
                 {% for status, column in columns %}
                     <div class="activity_board_column flex-fill" data-status="{{ status }}">
