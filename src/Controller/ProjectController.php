@@ -66,9 +66,17 @@ final class ProjectController extends AbstractController
 
     #[Route(path: '/', defaults: ['page' => 1], name: 'admin_project', methods: ['GET'])]
     #[Route(path: '/page/{page}', requirements: ['page' => '[1-9]\d*'], name: 'admin_project_paginated', methods: ['GET'])]
+    #[Route(path: '/board', defaults: ['page' => 1], name: 'admin_project_board_picker', methods: ['GET'])]
+    #[Route(path: '/board/page/{page}', requirements: ['page' => '[1-9]\d*'], name: 'admin_project_board_picker_paginated', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('listing', 'project')"))]
     public function indexAction(int $page, Request $request, EventDispatcherInterface $dispatcher): Response
     {
+        // "board picker" mode: same project list, but each row links to that
+        // project's Kanban board (project_board) instead of project_details -
+        // reached from the "activity_board.title" menu entry, which cannot
+        // link directly to a specific board since the board is per-project.
+        $boardMode = \in_array($request->attributes->get('_route'), ['admin_project_board_picker', 'admin_project_board_picker_paginated'], true);
+
         $query = new ProjectQuery();
         $query->loadTeams();
         $query->setCurrentUser($this->getUser());
@@ -76,7 +84,7 @@ final class ProjectController extends AbstractController
 
         $form = $this->getToolbarForm($query);
         if ($this->handleSearch($form, $request)) {
-            return $this->redirectToRoute('admin_project');
+            return $this->redirectToRoute($boardMode ? 'admin_project_board_picker' : 'admin_project');
         }
 
         $entries = $this->repository->getPagerfantaForQuery($query);
@@ -87,7 +95,7 @@ final class ProjectController extends AbstractController
         $table = new DataTable('project_admin', $query);
         $table->setPagination($entries);
         $table->setSearchForm($form);
-        $table->setPaginationRoute('admin_project_paginated');
+        $table->setPaginationRoute($boardMode ? 'admin_project_board_picker_paginated' : 'admin_project_paginated');
         $table->setReloadEvents('gppro.projectUpdate gppro.projectDelete gppro.projectTeamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
@@ -116,7 +124,7 @@ final class ProjectController extends AbstractController
         $table->addColumn('visible', ['class' => 'd-none text-center w-min']);
         $table->addColumn('actions', ['class' => 'actions']);
 
-        $page = $this->createPageSetup();
+        $page = $this->createPageSetup($boardMode);
         $page->setDataTable($table);
         $page->setActionName('projects');
 
@@ -125,6 +133,7 @@ final class ProjectController extends AbstractController
             'dataTable' => $table,
             'metaColumns' => $metaColumns,
             'now' => $this->getDateTimeFactory()->createDateTime(),
+            'board_mode' => $boardMode,
         ]);
     }
 
@@ -633,9 +642,9 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    private function createPageSetup(): PageSetup
+    private function createPageSetup(bool $boardMode = false): PageSetup
     {
-        $page = new PageSetup('projects');
+        $page = new PageSetup($boardMode ? 'activity_board.title' : 'projects');
         $page->setHelp('project.html');
 
         return $page;

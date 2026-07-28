@@ -146,14 +146,14 @@ final class MenuSubscriber implements EventSubscriberInterface
 
         if ($auth->isGranted('view_project') || $auth->isGranted('view_teamlead_project') || $auth->isGranted('view_team_project')) {
             $projects = new MenuItemModel('projects', 'projects', 'admin_project', [], 'project');
-            $projects->setChildRoutes(['admin_project_permissions', 'admin_project_create', 'project_details', 'admin_project_edit', 'admin_project_delete', 'project_board']);
+            $projects->setChildRoutes(['admin_project_permissions', 'admin_project_create', 'project_details', 'admin_project_edit', 'admin_project_delete']);
             $menu->addChild($projects);
         }
 
         if ($auth->isGranted('view_project') || $auth->isGranted('view_teamlead_project') || $auth->isGranted('view_team_project')) {
-            $menu->addChild(
-                new MenuItemModel('activity_board', 'activity_board.title', 'admin_project', [], 'columns')
-            );
+            $activityBoard = new MenuItemModel('activity_board', 'activity_board.title', 'admin_project_board_picker', [], 'columns');
+            $activityBoard->setChildRoutes(['admin_project_board_picker_paginated', 'project_board']);
+            $menu->addChild($activityBoard);
         }
 
         if ($auth->isGranted('view_activity') || $auth->isGranted('view_teamlead_activity') || $auth->isGranted('view_team_activity')) {

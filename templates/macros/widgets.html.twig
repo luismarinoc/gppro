@@ -473,12 +473,12 @@
     To be used like this:
     <tr {{ project_row_attr(project, now) }}>
 #}
-{% macro project_row_attr(project, now) %}
+{% macro project_row_attr(project, now, board) %}
     {%- set class = _self.class_project_row(project, now) %}
     {% set dataHref = '' %}
     {% if is_granted('view', project) %}
         {% set class = class ~ ' alternative-link open-edit' %}
-        {% set dataHref = path('project_details', {'id': project.id}) %}
+        {% set dataHref = board ? path('project_board', {'id': project.id}) : path('project_details', {'id': project.id}) %}
     {% endif -%}
     class="{{ class }}" data-href="{{ dataHref }}"
 {% endmacro %}
