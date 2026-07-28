@@ -89,6 +89,29 @@
     font-size: .8125rem;
 }
 
+.activity_board_card_roles {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    margin-top: .5rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--tblr-border-color, #e6e8ec);
+}
+
+.activity_board_card_role {
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+    font-size: .75rem;
+}
+
+.activity_board_card_role_label {
+    text-transform: uppercase;
+    font-size: .6875rem;
+    letter-spacing: .02em;
+    color: var(--tblr-secondary, #6c757d);
+}
+
 .activity_board_card_ghost {
     opacity: .4;
 }

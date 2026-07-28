@@ -15,6 +15,8 @@ use App\Entity\Milestone;
 use App\Form\Type\InvoiceLabelType;
 use App\Form\Type\ProjectType;
 use App\Form\Type\TeamType;
+use App\Form\Type\UserType;
+use App\Repository\ActivityBoardStateRepository;
 use App\Repository\MilestoneRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\Query\ProjectFormTypeQuery;
@@ -28,6 +30,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ActivityEditForm extends AbstractType
 {
     use EntityFormTrait;
+
+    public function __construct(private readonly ActivityBoardStateRepository $boardStateRepository)
+    {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -112,6 +118,30 @@ class ActivityEditForm extends AbstractType
                     'expanded' => false,
                     'by_reference' => false,
                     'help' => 'help.teams',
+                ]);
+        }
+
+        // board-only fields (see ActivityBoardState) - not mapped onto
+        // Activity itself (design decision A1/A5), so they are unmapped here
+        // and persisted separately by the controller via
+        // ActivityBoardService::updateCard(). Only shown for an existing,
+        // non-global activity that already belongs to a project - same gate
+        // as the milestone field above.
+        if (!$isNew && !$isGlobal && $project !== null) {
+            $boardState = $this->boardStateRepository->findByActivities([$entry])[$entry->getId()] ?? null;
+
+            $builder
+                ->add('technicalUser', UserType::class, [
+                    'mapped' => false,
+                    'required' => false,
+                    'label' => 'activity_board.technical_user',
+                    'data' => $boardState?->getTechnicalUser(),
+                ])
+                ->add('functionalUser', UserType::class, [
+                    'mapped' => false,
+                    'required' => false,
+                    'label' => 'activity_board.functional_user',
+                    'data' => $boardState?->getFunctionalUser(),
                 ]);
         }
 

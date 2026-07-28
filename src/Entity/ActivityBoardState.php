@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Board-specific state for an Activity (status/priority/due date/assignee).
+ * Board-specific state for an Activity (status/priority/due date/assignees).
  *
  * Unidirectional OneToOne from this entity to Activity - Activity itself
  * carries no relation back and no new columns, so it is never touched by
@@ -24,6 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'gppro_activities_board_state')]
 #[ORM\UniqueConstraint(name: 'UNIQ_GPPRO_ACTIVITIES_BOARD_ACTIVITY', columns: ['activity_id'])]
 #[ORM\Index(name: 'IDX_GPPRO_ACTIVITIES_BOARD_USER', columns: ['assigned_to'])]
+#[ORM\Index(name: 'IDX_GPPRO_ACTIVITIES_BOARD_TECHNICAL_USER', columns: ['technical_user_id'])]
+#[ORM\Index(name: 'IDX_GPPRO_ACTIVITIES_BOARD_FUNCTIONAL_USER', columns: ['functional_user_id'])]
 #[ORM\Entity(repositoryClass: ActivityBoardStateRepository::class)]
 class ActivityBoardState
 {
@@ -50,6 +52,14 @@ class ActivityBoardState
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'assigned_to', nullable: true, onDelete: 'SET NULL')]
     private ?User $assignedTo = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'technical_user_id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $technicalUser = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'functional_user_id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $functionalUser = null;
 
     public function getId(): ?int
     {
@@ -112,6 +122,30 @@ class ActivityBoardState
     public function setAssignedTo(?User $assignedTo): ActivityBoardState
     {
         $this->assignedTo = $assignedTo;
+
+        return $this;
+    }
+
+    public function getTechnicalUser(): ?User
+    {
+        return $this->technicalUser;
+    }
+
+    public function setTechnicalUser(?User $technicalUser): ActivityBoardState
+    {
+        $this->technicalUser = $technicalUser;
+
+        return $this;
+    }
+
+    public function getFunctionalUser(): ?User
+    {
+        return $this->functionalUser;
+    }
+
+    public function setFunctionalUser(?User $functionalUser): ActivityBoardState
+    {
+        $this->functionalUser = $functionalUser;
 
         return $this;
     }

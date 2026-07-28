@@ -52,4 +52,14 @@ final class ActivityBoardCard
     {
         return $this->state->getAssignedTo();
     }
+
+    public function getTechnicalUser(): ?User
+    {
+        return $this->state->getTechnicalUser();
+    }
+
+    public function getFunctionalUser(): ?User
+    {
+        return $this->state->getFunctionalUser();
+    }
 }

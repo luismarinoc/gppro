@@ -21,4 +21,20 @@
             <span class="text-muted">{{ 'activity_board.unassigned'|trans }}</span>
         {%- endif -%}
     </div>
+    {% if card.technicalUser is not null or card.functionalUser is not null %}
+        <div class="activity_board_card_roles">
+            {% if card.technicalUser is not null %}
+                <div class="activity_board_card_role">
+                    <span class="activity_board_card_role_label">{{ 'activity_board.technical_user'|trans }}</span>
+                    {{ widgets.user_avatar(card.technicalUser, card.technicalUser.displayName, 'avatar-sm') }} {{ card.technicalUser.displayName }}
+                </div>
+            {% endif %}
+            {% if card.functionalUser is not null %}
+                <div class="activity_board_card_role">
+                    <span class="activity_board_card_role_label">{{ 'activity_board.functional_user'|trans }}</span>
+                    {{ widgets.user_avatar(card.functionalUser, card.functionalUser.displayName, 'avatar-sm') }} {{ card.functionalUser.displayName }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>

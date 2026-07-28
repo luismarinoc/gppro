@@ -103,7 +103,15 @@ class ActivityBoardService
         }
 
         if ($dto->hasAssignedTo()) {
-            $state->setAssignedTo($this->resolveAssignee($activity, $dto->getAssignedToId()));
+            $state->setAssignedTo($this->resolveUser($activity, $dto->getAssignedToId()));
+        }
+
+        if ($dto->hasTechnicalUser()) {
+            $state->setTechnicalUser($this->resolveUser($activity, $dto->getTechnicalUserId()));
+        }
+
+        if ($dto->hasFunctionalUser()) {
+            $state->setFunctionalUser($this->resolveUser($activity, $dto->getFunctionalUserId()));
         }
 
         $this->stateRepository->save($state);
@@ -112,20 +120,22 @@ class ActivityBoardService
     }
 
     /**
-     * Resolves and validates a candidate assignee id. A null id clears the
-     * assignment. Deliberately reads only User/Activity/Project/Customer/Team
-     * relations (via RolePermissionManager::checkTeamAccessActivity()) - no
-     * Timesheet or rate table is touched by this validation.
+     * Resolves and validates a candidate user id for any of the board's
+     * assignee roles (assignedTo/technicalUser/functionalUser). A null id
+     * clears the assignment. Deliberately reads only
+     * User/Activity/Project/Customer/Team relations (via
+     * RolePermissionManager::checkTeamAccessActivity()) - no Timesheet or
+     * rate table is touched by this validation.
      */
-    private function resolveAssignee(Activity $activity, ?int $assignedToId): ?User
+    private function resolveUser(Activity $activity, ?int $userId): ?User
     {
-        if (null === $assignedToId) {
+        if (null === $userId) {
             return null;
         }
 
-        $candidate = $this->userRepository->find($assignedToId);
+        $candidate = $this->userRepository->find($userId);
         if (null === $candidate) {
-            throw new ValidationException(\sprintf('Unknown user id "%d"', $assignedToId));
+            throw new ValidationException(\sprintf('Unknown user id "%d"', $userId));
         }
 
         if (!$this->permissionManager->checkTeamAccessActivity($activity, $candidate)) {

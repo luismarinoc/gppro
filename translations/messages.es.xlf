@@ -2238,6 +2238,14 @@
         <source>activity_board.unassigned</source>
         <target state="translated">Sin asignar</target>
       </trans-unit>
+      <trans-unit id="gpActBrd12" resname="activity_board.technical_user" xml:space="preserve">
+        <source>activity_board.technical_user</source>
+        <target state="translated">Usuario técnico</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd13" resname="activity_board.functional_user" xml:space="preserve">
+        <source>activity_board.functional_user</source>
+        <target state="translated">Usuario funcional</target>
+      </trans-unit>
       <trans-unit id="gpInvHistTot1" resname="invoice.history_totals" xml:space="preserve">
         <source>invoice.history_totals</source>
         <target state="translated">Totales por cliente, proyecto y tipo de factura</target>

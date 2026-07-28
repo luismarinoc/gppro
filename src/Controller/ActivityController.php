@@ -9,12 +9,15 @@
 
 namespace App\Controller;
 
+use App\Activity\ActivityBoardService;
+use App\Activity\ActivityBoardUpdateDTO;
 use App\Activity\ActivityService;
 use App\Activity\ActivityStatisticService;
 use App\Configuration\SystemConfiguration;
 use App\Entity\Activity;
 use App\Entity\ActivityRate;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Event\ActivityDetailControllerEvent;
 use App\Event\ActivityMetaDisplayEvent;
 use App\Export\Spreadsheet\EntityWithMetaFieldsExporter;
@@ -307,7 +310,7 @@ final class ActivityController extends AbstractController
 
     #[Route(path: '/{id}/edit', name: 'admin_activity_edit', methods: ['GET', 'POST'])]
     #[IsGranted('edit', 'activity')]
-    public function editAction(Activity $activity, Request $request, ActivityService $activityService, SystemConfiguration $configuration): Response
+    public function editAction(Activity $activity, Request $request, ActivityService $activityService, SystemConfiguration $configuration, ActivityBoardService $boardService): Response
     {
         $activityService->loadMetaFields($activity);
 
@@ -317,6 +320,7 @@ final class ActivityController extends AbstractController
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             try {
                 $activityService->saveActivity($activity);
+                $this->saveBoardAssignees($editForm, $activity, $boardService);
                 $this->flashSuccess('action.update.success');
 
                 if ($this->isGranted('view', $activity)) {
@@ -334,6 +338,33 @@ final class ActivityController extends AbstractController
             'activity' => $activity,
             'form' => $editForm->createView()
         ]);
+    }
+
+    /**
+     * Persists the board-only technicalUser/functionalUser fields added by
+     * ActivityEditForm (unmapped, only present for an existing per-project
+     * activity - see the form's board-only fields comment). Writes via
+     * ActivityBoardService::updateCard(), never directly to
+     * ActivityBoardState, so the same validation as the board's PATCH
+     * endpoint applies (unknown user id, no project team access, ...).
+     */
+    private function saveBoardAssignees(FormInterface $editForm, Activity $activity, ActivityBoardService $boardService): void
+    {
+        if (!$editForm->has('technicalUser') || !$editForm->has('functionalUser')) {
+            return;
+        }
+
+        /** @var User|null $technicalUser */
+        $technicalUser = $editForm->get('technicalUser')->getData();
+        /** @var User|null $functionalUser */
+        $functionalUser = $editForm->get('functionalUser')->getData();
+
+        $dto = ActivityBoardUpdateDTO::fromArray([
+            'technicalUser' => $technicalUser?->getId(),
+            'functionalUser' => $functionalUser?->getId(),
+        ]);
+
+        $boardService->updateCard($activity, $dto);
     }
 
     #[Route(path: '/{id}/delete', name: 'admin_activity_delete', methods: ['GET', 'POST'])]

@@ -13,12 +13,32 @@ use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Project;
 use App\Form\ActivityEditForm;
+use App\Form\Type\UserType;
+use App\Repository\ActivityBoardStateRepository;
+use App\Repository\UserRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 #[CoversClass(ActivityEditForm::class)]
 class ActivityEditFormTest extends TypeTestCase
 {
+    /**
+     * @return FormTypeInterface[]
+     */
+    protected function getTypes(): array // @phpstan-ignore missingType.generics
+    {
+        $boardStateRepository = $this->createMock(ActivityBoardStateRepository::class);
+        $boardStateRepository->method('findByActivities')->willReturn([]);
+
+        $userRepository = $this->createMock(UserRepository::class);
+
+        return [
+            new ActivityEditForm($boardStateRepository),
+            new UserType($userRepository),
+        ];
+    }
+
     public function testWithGlobalNewActivity(): void
     {
         $model = new Activity();
@@ -37,6 +57,8 @@ class ActivityEditFormTest extends TypeTestCase
         self::assertFalse($form->has('budget'));
         self::assertFalse($form->has('timeBudget'));
         self::assertFalse($form->has('budgetType'));
+        self::assertFalse($form->has('technicalUser'));
+        self::assertFalse($form->has('functionalUser'));
     }
 
     public function testWithGlobalNewActivityAndOptionsBudget(): void
@@ -84,6 +106,8 @@ class ActivityEditFormTest extends TypeTestCase
         self::assertFalse($form->has('project'));
         self::assertTrue($form->has('budget'));
         self::assertFalse($form->has('timeBudget'));
+        self::assertFalse($form->has('technicalUser'));
+        self::assertFalse($form->has('functionalUser'));
     }
 
     public function testWithNonGlobalExistingActivityAndOptions(): void
@@ -108,5 +132,7 @@ class ActivityEditFormTest extends TypeTestCase
         self::assertTrue($form->has('project'));
         self::assertTrue($form->has('budget'));
         self::assertTrue($form->has('timeBudget'));
+        self::assertTrue($form->has('technicalUser'));
+        self::assertTrue($form->has('functionalUser'));
     }
 }

@@ -137,6 +137,7 @@ class ActionsControllerTest extends APIControllerBaseTestCase
         $views = [
             'index' => [
                 'details',
+                'board',
                 'edit',
                 'permissions',
                 'divider0',
@@ -147,6 +148,7 @@ class ActionsControllerTest extends APIControllerBaseTestCase
             ],
             'custom' => [
                 'details',
+                'board',
                 'edit',
                 'permissions',
                 'divider0',

@@ -2258,6 +2258,14 @@
         <source>activity_board.unassigned</source>
         <target>Unassigned</target>
       </trans-unit>
+      <trans-unit id="gpActBrd12" resname="activity_board.technical_user">
+        <source>activity_board.technical_user</source>
+        <target>Technical user</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd13" resname="activity_board.functional_user">
+        <source>activity_board.functional_user</source>
+        <target>Functional user</target>
+      </trans-unit>
       <trans-unit id="gpInvHistTot1" resname="invoice.history_totals">
         <source>invoice.history_totals</source>
         <target>Totals by customer, project and invoice type</target>

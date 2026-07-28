@@ -33,6 +33,10 @@ final class ActivityBoardUpdateDTO
     private ?\DateTime $dueDate = null;
     private bool $hasAssignedTo = false;
     private ?int $assignedToId = null;
+    private bool $hasTechnicalUser = false;
+    private ?int $technicalUserId = null;
+    private bool $hasFunctionalUser = false;
+    private ?int $functionalUserId = null;
 
     /**
      * @param array<string, mixed> $data
@@ -58,7 +62,17 @@ final class ActivityBoardUpdateDTO
 
         if (\array_key_exists('assignedTo', $data)) {
             $dto->hasAssignedTo = true;
-            $dto->assignedToId = self::parseAssignedTo($data['assignedTo']);
+            $dto->assignedToId = self::parseUserId($data['assignedTo']);
+        }
+
+        if (\array_key_exists('technicalUser', $data)) {
+            $dto->hasTechnicalUser = true;
+            $dto->technicalUserId = self::parseUserId($data['technicalUser']);
+        }
+
+        if (\array_key_exists('functionalUser', $data)) {
+            $dto->hasFunctionalUser = true;
+            $dto->functionalUserId = self::parseUserId($data['functionalUser']);
         }
 
         return $dto;
@@ -113,14 +127,14 @@ final class ActivityBoardUpdateDTO
         }
     }
 
-    private static function parseAssignedTo(mixed $value): ?int
+    private static function parseUserId(mixed $value): ?int
     {
         if (null === $value) {
             return null;
         }
 
         if (!\is_int($value)) {
-            throw new ValidationException('Assigned user id must be an integer or null');
+            throw new ValidationException('User id must be an integer or null');
         }
 
         return $value;
@@ -164,5 +178,25 @@ final class ActivityBoardUpdateDTO
     public function getAssignedToId(): ?int
     {
         return $this->assignedToId;
+    }
+
+    public function hasTechnicalUser(): bool
+    {
+        return $this->hasTechnicalUser;
+    }
+
+    public function getTechnicalUserId(): ?int
+    {
+        return $this->technicalUserId;
+    }
+
+    public function hasFunctionalUser(): bool
+    {
+        return $this->hasFunctionalUser;
+    }
+
+    public function getFunctionalUserId(): ?int
+    {
+        return $this->functionalUserId;
     }
 }
