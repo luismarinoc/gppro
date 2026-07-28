@@ -5,7 +5,7 @@
 
     {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
         {% import "macros/widgets.html.twig" as widgets %}
-        {% block box_attributes %}id="activity_board_box" data-update-url="{{ path('project_board_card_update', {id: project.id, activity: '000'}) }}"{% endblock %}
+        {% block box_attributes %}id="activity_board_box" data-update-url="{{ path('project_board_card_update', {id: project.id, activity: '000'}) }}" data-edit-url="{{ path('admin_activity_edit', {id: '000'}) }}"{% endblock %}
         {% block box_title %}
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}

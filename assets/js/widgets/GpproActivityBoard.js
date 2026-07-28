@@ -21,6 +21,7 @@ export default class GpproActivityBoard {
         this.gppro = gppro;
         this.element = element;
         this.updateUrlTemplate = element.dataset.updateUrl;
+        this.editUrlTemplate = element.dataset.editUrl;
         this.sortables = [];
 
         const columns = element.querySelectorAll('.activity_board_column_body');
@@ -32,6 +33,27 @@ export default class GpproActivityBoard {
                 onEnd: (event) => this.onCardMoved(event),
             }));
         }
+
+        this.element.addEventListener('dblclick', (event) => this.onCardDoubleClicked(event));
+    }
+
+    /**
+     * Opens the activity edit modal for the double-clicked card.
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    onCardDoubleClicked(event) {
+        const card = event.target.closest('.activity_board_card');
+        if (card === null || this.editUrlTemplate === undefined) {
+            return;
+        }
+
+        const url = this.editUrlTemplate.replace('000', card.dataset.activityId);
+
+        /** @type {GpproAjaxModalForm} */
+        const modal = this.gppro.getPlugin('modal');
+        modal.openUrlInModal(url);
     }
 
     /**

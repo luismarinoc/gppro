@@ -63,7 +63,7 @@
     "board": {
       "js": [
         "/build/runtime.0fbf07bc.js",
-        "/build/board.bd5abf57.js"
+        "/build/board.49ad2640.js"
       ]
     },
     "dashboard": {
@@ -100,7 +100,7 @@
     "/build/chart.0dd71b76.js": "sha384-zIFSBFUd6aYhPuDCk0eqYeZQxm8BinPR4RLtIvHFkQPGoBa6knIj3L8tMxqTiIu2",
     "/build/calendar.2f016849.js": "sha384-M28gnp0ago2eZEBgT9bmLhts4eC0RSugW+ZIcPItD1H+QdElCPScPF/MCgTgTzaS",
     "/build/calendar.287b9d06.css": "sha384-U1MhUddqhzynvw0SfqX+rVSrWakw85c2KAJgM+F3EtQ7b7rAJzBvakX0Apwy7Vu0",
-    "/build/board.bd5abf57.js": "sha384-y7xxqtbUafXVzqP5PJBHC4MMEBxvMncqotEO6Md2uGKprkbax6urtjcqHHRzRHp3",
+    "/build/board.49ad2640.js": "sha384-Kg8SXdFPAbkGGGXxhEgPjuu+T4bK9Tjz6VdE1YYXhEbnUpt1lGq9Hl4cqoJIYVTe",
     "/build/dashboard.433500a9.js": "sha384-TxVuAkzFHcyloLT9Q/L5LHPHqdnv4nAL9QreFzzb8jR0FQ2cF2s/pGmsWvfCRTeS",
     "/build/dashboard.b7129fa1.css": "sha384-2nn5hLA+3YedgHYBpge62S8Losj8aoPwK9Zk9EvN1xEYatvOUQ7H3rIR2UUJAGOS",
     "/build/highlight.fdd89fbc.js": "sha384-nNZS6VhyAkWpaEsc2xUzKQsv/12zMLR4LZq8G8PnMLUWLB600jQWiukp0Iw4SOuD",
