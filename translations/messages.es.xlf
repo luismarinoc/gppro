@@ -2246,6 +2246,26 @@
         <source>activity_board.functional_user</source>
         <target state="translated">Usuario funcional</target>
       </trans-unit>
+      <trans-unit id="gpUsrType1" resname="user_type" xml:space="preserve">
+        <source>user_type</source>
+        <target state="translated">Tipo de usuario</target>
+      </trans-unit>
+      <trans-unit id="gpUsrType2" resname="user_type.none" xml:space="preserve">
+        <source>user_type.none</source>
+        <target state="translated">Sin definir</target>
+      </trans-unit>
+      <trans-unit id="gpUsrType3" resname="user_type.functional" xml:space="preserve">
+        <source>user_type.functional</source>
+        <target state="translated">Funcional</target>
+      </trans-unit>
+      <trans-unit id="gpUsrType4" resname="user_type.technical" xml:space="preserve">
+        <source>user_type.technical</source>
+        <target state="translated">Técnico</target>
+      </trans-unit>
+      <trans-unit id="gpUsrType5" resname="user_type.guest" xml:space="preserve">
+        <source>user_type.guest</source>
+        <target state="translated">Invitado</target>
+      </trans-unit>
       <trans-unit id="gpInvHistTot1" resname="invoice.history_totals" xml:space="preserve">
         <source>invoice.history_totals</source>
         <target state="translated">Totales por cliente, proyecto y tipo de factura</target>

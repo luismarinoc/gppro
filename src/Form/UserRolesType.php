@@ -10,8 +10,10 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Form\Type\UserRoleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -27,6 +29,13 @@ final class UserRolesType extends AbstractType
             ->add('roles', UserRoleType::class, [
                 'multiple' => true,
                 'expanded' => true,
+            ])
+            ->add('userType', EnumType::class, [
+                'class' => UserType::class,
+                'required' => false,
+                'label' => 'user_type',
+                'placeholder' => 'user_type.none',
+                'choice_label' => static fn (UserType $type) => 'user_type.' . $type->value,
             ])
         ;
     }

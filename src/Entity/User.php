@@ -109,6 +109,14 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     #[Exporter\Expose(label: 'title')]
     private ?string $title = null;
     /**
+     * The user's business classification: functional, technical or guest.
+     * Set via the "roles" profile tab (UserRolesType), not part of the
+     * regular profile edit form - it is an admin-controlled classification,
+     * like the security roles it is edited alongside.
+     */
+    #[ORM\Column(name: 'user_type', type: Types::STRING, length: 20, nullable: true, enumType: UserType::class)]
+    private ?UserType $userType = null;
+    /**
      * URL to the user avatar
      */
     #[ORM\Column(name: 'avatar', type: Types::STRING, length: 255, nullable: true)]
@@ -292,6 +300,18 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     public function setTitle(?string $title): User
     {
         $this->title = StringHelper::ensureMaxLength($title, 50);
+
+        return $this;
+    }
+
+    public function getUserType(): ?UserType
+    {
+        return $this->userType;
+    }
+
+    public function setUserType(?UserType $userType): User
+    {
+        $this->userType = $userType;
 
         return $this;
     }
