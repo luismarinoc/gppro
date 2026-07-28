@@ -10,7 +10,6 @@
 namespace App\Controller;
 
 use App\Entity\AccessToken;
-use App\Entity\Team;
 use App\Entity\User;
 use App\Entity\UserPreference;
 use App\Event\PrepareUserEvent;
@@ -23,17 +22,14 @@ use App\Form\UserEditType;
 use App\Form\UserPasswordType;
 use App\Form\UserPreferencesForm;
 use App\Form\UserRolesType;
-use App\Form\UserTeamsType;
 use App\Form\UserTwoFactorType;
 use App\Repository\AccessTokenRepository;
 use App\Repository\Query\TimesheetStatisticQuery;
-use App\Repository\TeamRepository;
 use App\Repository\TimesheetRepository;
 use App\Repository\UserRepository;
 use App\Timesheet\TimesheetStatisticService;
 use App\User\UserService;
 use App\Utils\PageSetup;
-use Doctrine\Common\Collections\ArrayCollection;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
@@ -328,64 +324,6 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/{username}/teams', name: 'user_profile_teams', methods: ['GET', 'POST'])]
-    #[IsGranted('teams', 'profile')]
-    public function teamsAction(
-        #[MapEntity(mapping: ['username' => 'username'])]
-        User $profile,
-        Request $request,
-        UserRepository $userRepository,
-        TeamRepository $teamRepository
-    ): Response
-    {
-        $originalMembers = new ArrayCollection();
-        foreach ($profile->getMemberships() as $member) {
-            $originalMembers->add($member);
-        }
-
-        $form = $this->createTeamsForm($profile);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // the "teams" field is unmapped (see UserTeamsType) - a single
-            // Team|null, synced onto the many-to-many relation by hand
-            // instead of Symfony's addTeam()/removeTeam() collection mapping
-            /** @var Team|null $selectedTeam */
-            $selectedTeam = $form->get('teams')->getData();
-
-            foreach ($profile->getTeams() as $existingTeam) {
-                if ($existingTeam !== $selectedTeam) {
-                    $profile->removeTeam($existingTeam);
-                }
-            }
-
-            if ($selectedTeam !== null && !$profile->isInTeam($selectedTeam)) {
-                $profile->addTeam($selectedTeam);
-            }
-
-            foreach ($originalMembers as $member) {
-                if (!$profile->hasMembership($member)) {
-                    $member->setTeam(null);
-                    $member->setUser(null);
-                    $teamRepository->removeTeamMember($member);
-                }
-            }
-
-            $userRepository->saveUser($profile);
-
-            $this->flashSuccess('action.update.success');
-
-            return $this->redirectToRoute('user_profile_teams', ['username' => $profile->getUserIdentifier()]);
-        }
-
-        return $this->render('user/form.html.twig', [
-            'tab' => 'teams',
-            'page_setup' => $this->getPageSetup($profile, 'teams'),
-            'user' => $profile,
-            'form' => $form->createView(),
-        ]);
-    }
-
     #[Route(path: '/{username}/prefs', name: 'user_profile_preferences', methods: ['GET', 'POST'])]
     #[IsGranted('preferences', 'profile')]
     public function preferencesAction(
@@ -483,18 +421,6 @@ final class ProfileController extends AbstractController
             $user,
             [
                 'action' => $this->generateUrl('user_profile_roles', ['username' => $user->getUserIdentifier()]),
-                'method' => 'POST',
-            ]
-        );
-    }
-
-    private function createTeamsForm(User $user): FormInterface
-    {
-        return $this->createForm(
-            UserTeamsType::class,
-            $user,
-            [
-                'action' => $this->generateUrl('user_profile_teams', ['username' => $user->getUserIdentifier()]),
                 'method' => 'POST',
             ]
         );

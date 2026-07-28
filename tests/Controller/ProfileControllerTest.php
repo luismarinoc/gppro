@@ -13,7 +13,6 @@ use App\DataFixtures\UserFixtures;
 use App\Entity\User;
 use App\Entity\UserPreference;
 use App\Repository\AccessTokenRepository;
-use App\Tests\DataFixtures\TeamFixtures;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use App\WorkingTime\Mode\WorkingTimeModeDay;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -372,72 +371,6 @@ class ProfileControllerTest extends AbstractControllerBaseTestCase
         $user = $this->getUserByRole(User::ROLE_USER);
 
         self::assertEquals(['ROLE_TEAMLEAD', 'ROLE_SUPER_ADMIN', 'ROLE_USER'], $user->getRoles());
-    }
-
-    public function testTeamsActionIsSecured(): void
-    {
-        $this->assertUrlIsSecured('/profile/' . UserFixtures::USERNAME_USER . '/teams');
-    }
-
-    public function testTeamsActionIsSecuredForRole(): void
-    {
-        $this->assertUrlIsSecuredForRole(User::ROLE_TEAMLEAD, '/profile/' . UserFixtures::USERNAME_USER . '/teams');
-    }
-
-    public function testTeamsAction(): void
-    {
-        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
-
-        /** @var User $user */
-        $user = $this->getUserByRole(User::ROLE_USER);
-
-        $fixture = new TeamFixtures();
-        $fixture->setAmount(3);
-        $fixture->setAddCustomer(true);
-        $fixture->setAddUser(false);
-        $fixture->addUserToIgnore($user);
-        $this->importFixture($fixture);
-
-        $this->request($client, '/profile/' . UserFixtures::USERNAME_USER . '/teams');
-
-        /** @var User $user */
-        $user = $this->getUserByRole(User::ROLE_USER);
-        self::assertEquals([], $user->getTeams());
-
-        $crawler = $client->getCrawler();
-        $form = $crawler->filter('form[name=user_teams]')->form();
-        $firstTeamValue = $crawler->filter('input[name="user_teams[teams]"]')->first()->attr('value');
-        $form['user_teams[teams]'] = $firstTeamValue;
-
-        $client->submit($form);
-
-        $this->assertIsRedirect($client, $this->createUrl('/profile/' . urlencode(UserFixtures::USERNAME_USER) . '/teams'));
-        $client->followRedirect();
-        self::assertTrue($client->getResponse()->isSuccessful());
-
-        $this->assertHasFlashSuccess($client);
-
-        $user = $this->getUserByRole(User::ROLE_USER);
-
-        self::assertCount(1, $user->getTeams());
-        $firstTeamId = $user->getTeams()[0]->getId();
-
-        // selecting a different team replaces the previous one - a user
-        // may only be a member of a single team from this screen
-        $this->request($client, '/profile/' . UserFixtures::USERNAME_USER . '/teams');
-        $crawler = $client->getCrawler();
-        $form = $crawler->filter('form[name=user_teams]')->form();
-        $teamValues = $crawler->filter('input[name="user_teams[teams]"]')->extract(['value']);
-        $secondTeamValue = current(array_filter($teamValues, static fn ($value) => (int) $value !== $firstTeamId));
-        self::assertNotFalse($secondTeamValue);
-        $form['user_teams[teams]'] = $secondTeamValue;
-
-        $client->submit($form);
-        $client->followRedirect();
-
-        $user = $this->getUserByRole(User::ROLE_USER);
-        self::assertCount(1, $user->getTeams());
-        self::assertNotSame($firstTeamId, $user->getTeams()[0]->getId());
     }
 
     public static function getPreferencesTestData(): array
