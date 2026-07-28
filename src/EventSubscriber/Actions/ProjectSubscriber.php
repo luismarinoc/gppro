@@ -37,6 +37,10 @@ final class ProjectSubscriber extends AbstractActionsSubscriber
             $event->addAction('details', ['title' => 'details', 'url' => $this->path('project_details', ['id' => $project->getId()])]);
         }
 
+        if ($this->isGranted('view', $project)) {
+            $event->addAction('board', ['title' => 'activity_board.title', 'icon' => 'columns', 'url' => $this->path('project_board', ['id' => $project->getId()])]);
+        }
+
         if ($this->isGranted('edit', $project)) {
             $event->addEdit($this->path('admin_project_edit', ['id' => $project->getId()]), !$event->isView('edit'));
         }
