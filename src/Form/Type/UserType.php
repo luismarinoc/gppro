@@ -9,11 +9,13 @@
 
 namespace App\Form\Type;
 
+use App\Entity\Project;
 use App\Entity\User;
 use App\Entity\UserType as UserCategory;
 use App\Repository\Query\UserFormTypeQuery;
 use App\Repository\Query\VisibilityInterface;
 use App\Repository\UserRepository;
+use App\Security\RolePermissionManager;
 use App\Utils\Color;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -28,8 +30,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class UserType extends AbstractType
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly RolePermissionManager $permissionManager
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -73,9 +77,12 @@ final class UserType extends AbstractType
             'include_current_user_if_system_account' => false,
             // restrict the choices to users of this UserType category (functional/technical/guest) - null means unrestricted
             'user_type' => null,
+            // restrict the choices to users with access to this project - null means unrestricted
+            'project' => null,
         ]);
 
         $resolver->setAllowedTypes('user_type', [UserCategory::class, 'null']);
+        $resolver->setAllowedTypes('project', [Project::class, 'null']);
 
         $resolver->setDefault('documentation', function (Options $options) {
             $example = 0;
@@ -103,6 +110,11 @@ final class UserType extends AbstractType
 
             if ($options['user_type'] instanceof UserCategory) {
                 $users = array_filter($users, static fn (User $user) => $user->getUserType() === $options['user_type']);
+            }
+
+            if ($options['project'] instanceof Project) {
+                $project = $options['project'];
+                $users = array_filter($users, fn (User $user) => $this->permissionManager->checkTeamAccessProject($project, $user));
             }
 
             $ignoreIds = [];

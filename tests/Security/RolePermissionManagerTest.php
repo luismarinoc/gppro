@@ -276,6 +276,57 @@ class RolePermissionManagerTest extends TestCase
         self::assertTrue($sut->checkTeamAccessActivity($activity, $user));
     }
 
+    public function testCheckProjectAccessForActivityAllowsProjectAccessDespiteNarrowerActivityTeamScoping(): void
+    {
+        $sut = $this->createSut();
+        $customer = new Customer('Acme');
+        $customerTeam = new Team('Customer team');
+        $customer->addTeam($customerTeam);
+
+        $project = new Project();
+        $project->setCustomer($customer);
+        $projectTeam = new Team('Project team');
+        $project->addTeam($projectTeam);
+
+        $activity = new Activity();
+        $activity->setProject($project);
+        $activityTeam = new Team('Activity team');
+        $activity->addTeam($activityTeam); // candidate deliberately excluded
+
+        $user = new User();
+        $customerTeam->addUser($user);
+        $projectTeam->addUser($user);
+
+        self::assertTrue($sut->checkProjectAccessForActivity($activity, $user));
+    }
+
+    public function testCheckProjectAccessForActivityDeniesUserWithoutProjectAccess(): void
+    {
+        $sut = $this->createSut();
+        $customer = new Customer('Acme');
+        $customerTeam = new Team('Customer team');
+        $customer->addTeam($customerTeam);
+
+        $project = new Project();
+        $project->setCustomer($customer);
+
+        $activity = new Activity();
+        $activity->setProject($project);
+
+        $user = new User();
+
+        self::assertFalse($sut->checkProjectAccessForActivity($activity, $user));
+    }
+
+    public function testCheckProjectAccessForActivityDeniesGlobalActivityWithoutProject(): void
+    {
+        $sut = $this->createSut();
+        $activity = new Activity();
+
+        self::assertNull($activity->getProject());
+        self::assertFalse($sut->checkProjectAccessForActivity($activity, new User()));
+    }
+
     public function testCheckTeamAccessTimesheetGrantsAccessForOwner(): void
     {
         $sut = $this->createSut();

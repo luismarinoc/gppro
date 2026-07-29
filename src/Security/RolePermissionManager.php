@@ -173,6 +173,23 @@ final class RolePermissionManager
         return $this->checkTeamAccess($project->getTeams(), $user);
     }
 
+    /**
+     * Project-level access only, deliberately skipping the activity's own
+     * `teams` restriction. Used for the technicalUser/functionalUser board
+     * roles, which only need project access (see checkTeamAccessActivity()
+     * for the stricter, full-chain check used by assignedTo). Returns false
+     * for a global (project-less) activity - defense-in-depth only, since
+     * both current call sites already guarantee a project.
+     */
+    public function checkProjectAccessForActivity(Activity $activity, User $user): bool
+    {
+        if (null === $activity->getProject()) {
+            return false;
+        }
+
+        return $this->checkTeamAccessProject($activity->getProject(), $user);
+    }
+
     public function checkTeamAccessActivity(Activity $activity, User $user): bool
     {
         if ($activity->getProject() !== null && !$this->checkTeamAccessProject($activity->getProject(), $user)) {

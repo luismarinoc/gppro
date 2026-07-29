@@ -81,9 +81,12 @@ class ActivityBoardService
      * ActivityBoardState exclusively and never to Activity, Timesheet, or
      * any billing-related table (design's central non-goal invariant).
      *
-     * @throws ValidationException when assignedTo references an unknown
-     *                             user id, or a user without access to the activity's project
-     *                             (RolePermissionManager::checkTeamAccessActivity())
+     * @throws ValidationException when assignedTo/technicalUser/functionalUser
+     *                             references an unknown user id, or a user without the required
+     *                             access: assignedTo requires activity access
+     *                             (RolePermissionManager::checkTeamAccessActivity()), while
+     *                             technicalUser/functionalUser only require project access
+     *                             (RolePermissionManager::checkProjectAccessForActivity())
      */
     public function updateCard(Activity $activity, ActivityBoardUpdateDTO $dto): ActivityBoardState
     {
@@ -103,15 +106,15 @@ class ActivityBoardService
         }
 
         if ($dto->hasAssignedTo()) {
-            $state->setAssignedTo($this->resolveUser($activity, $dto->getAssignedToId()));
+            $state->setAssignedTo($this->resolveActivityUser($activity, $dto->getAssignedToId()));
         }
 
         if ($dto->hasTechnicalUser()) {
-            $state->setTechnicalUser($this->resolveUser($activity, $dto->getTechnicalUserId()));
+            $state->setTechnicalUser($this->resolveProjectUser($activity, $dto->getTechnicalUserId()));
         }
 
         if ($dto->hasFunctionalUser()) {
-            $state->setFunctionalUser($this->resolveUser($activity, $dto->getFunctionalUserId()));
+            $state->setFunctionalUser($this->resolveProjectUser($activity, $dto->getFunctionalUserId()));
         }
 
         $this->stateRepository->save($state);
@@ -120,14 +123,54 @@ class ActivityBoardService
     }
 
     /**
-     * Resolves and validates a candidate user id for any of the board's
-     * assignee roles (assignedTo/technicalUser/functionalUser). A null id
-     * clears the assignment. Deliberately reads only
-     * User/Activity/Project/Customer/Team relations (via
-     * RolePermissionManager::checkTeamAccessActivity()) - no Timesheet or
-     * rate table is touched by this validation.
+     * Resolves and validates a candidate user id for the assignedTo role.
+     * A null id clears the assignment. Requires full activity access, via
+     * RolePermissionManager::checkTeamAccessActivity() (customer -> project
+     * -> activity teams) - no Timesheet or rate table is touched by this
+     * validation.
      */
-    private function resolveUser(Activity $activity, ?int $userId): ?User
+    private function resolveActivityUser(Activity $activity, ?int $userId): ?User
+    {
+        $candidate = $this->findCandidate($userId);
+        if (null === $candidate) {
+            return null;
+        }
+
+        if (!$this->permissionManager->checkTeamAccessActivity($activity, $candidate)) {
+            throw new ValidationException('Assignee does not have access to this activity');
+        }
+
+        return $candidate;
+    }
+
+    /**
+     * Resolves and validates a candidate user id for the technicalUser/
+     * functionalUser roles. A null id clears the assignment. Requires only
+     * project-level access, via
+     * RolePermissionManager::checkProjectAccessForActivity() - deliberately
+     * NOT the activity's own `teams` restriction (design decision) - no
+     * Timesheet or rate table is touched by this validation.
+     */
+    private function resolveProjectUser(Activity $activity, ?int $userId): ?User
+    {
+        $candidate = $this->findCandidate($userId);
+        if (null === $candidate) {
+            return null;
+        }
+
+        if (!$this->permissionManager->checkProjectAccessForActivity($activity, $candidate)) {
+            throw new ValidationException('Assignee does not have access to this project');
+        }
+
+        return $candidate;
+    }
+
+    /**
+     * Shared user id lookup for all board assignee roles. A null id means
+     * "clear the assignment" and short-circuits to null; a non-null,
+     * unknown id throws.
+     */
+    private function findCandidate(?int $userId): ?User
     {
         if (null === $userId) {
             return null;
@@ -136,10 +179,6 @@ class ActivityBoardService
         $candidate = $this->userRepository->find($userId);
         if (null === $candidate) {
             throw new ValidationException(\sprintf('Unknown user id "%d"', $userId));
-        }
-
-        if (!$this->permissionManager->checkTeamAccessActivity($activity, $candidate)) {
-            throw new ValidationException('Assignee does not have access to this activity');
         }
 
         return $candidate;

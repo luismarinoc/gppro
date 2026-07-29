@@ -141,6 +141,10 @@ class ActivityEditForm extends AbstractType
                     'label' => 'activity_board.technical_user',
                     'data' => $currentTechnicalUser,
                     'user_type' => UserCategory::TECHNICAL,
+                    // restrict the dropdown to users with project access, so it
+                    // never offers a candidate the save would reject (spec's
+                    // "Technical/functional dropdown filtered by project access")
+                    'project' => $project,
                     // keeps a previously assigned user selectable even if their
                     // userType no longer matches (changed later, or assigned
                     // before this restriction existed) - never silently drops it
@@ -152,6 +156,7 @@ class ActivityEditForm extends AbstractType
                     'label' => 'activity_board.functional_user',
                     'data' => $currentFunctionalUser,
                     'user_type' => UserCategory::FUNCTIONAL,
+                    'project' => $project,
                     'include_users' => $currentFunctionalUser !== null ? [$currentFunctionalUser] : [],
                 ]);
         }

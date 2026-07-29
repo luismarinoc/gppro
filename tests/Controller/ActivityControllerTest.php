@@ -10,14 +10,19 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Activity;
+use App\Entity\ActivityBoardState;
 use App\Entity\ActivityMeta;
 use App\Entity\ActivityRate;
+use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\Project;
 use App\Entity\Role;
 use App\Entity\RolePermission;
+use App\Entity\Team;
 use App\Entity\Timesheet;
 use App\Entity\User;
+use App\Entity\UserType as UserCategory;
+use App\Repository\ActivityBoardStateRepository;
 use App\Tests\DataFixtures\ActivityFixtures;
 use App\Tests\DataFixtures\CustomerFixtures;
 use App\Tests\DataFixtures\ProjectFixtures;
@@ -393,6 +398,71 @@ class ActivityControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/admin/activity/1/edit');
         $editForm = $client->getCrawler()->filter('form[name=activity_edit_form]')->form();
         self::assertEquals('Test 2', $editForm->get('activity_edit_form[name]')->getValue());
+    }
+
+    public function testEditActionSavesTechnicalUserWithProjectAccess(): void
+    {
+        // zero prior coverage of saveBoardAssignees() (design's Test Impact
+        // Map): happy-path save of a project-access technical user through
+        // the activity edit form, exercising ActivityController::saveBoardAssignees()
+        // -> ActivityBoardService::updateCard() end to end.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Activity controller test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $project = new Project();
+        $project->setName('Activity controller test project ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+
+        $activity = new Activity();
+        $activity->setName('Activity for technical user save ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $candidate->setUserType(UserCategory::TECHNICAL);
+
+        $team = new Team('Activity controller technical project team ' . uniqid());
+        $team->addUser($candidate);
+        $em->persist($team);
+        $project->addTeam($team);
+        $em->persist($candidate);
+        $em->flush();
+
+        $activityId = $activity->getId();
+        self::assertNotNull($activityId);
+        $candidateId = $candidate->getId();
+        self::assertNotNull($candidateId);
+
+        $this->request($client, '/admin/activity/' . $activityId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $form = $client->getCrawler()->filter('form[name=activity_edit_form]')->form();
+        $client->submit($form, [
+            'activity_edit_form' => [
+                'technicalUser' => (string) $candidateId,
+            ]
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/activity/' . $activityId . '/details'));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em->clear();
+        $reloadedActivity = $em->getRepository(Activity::class)->find($activityId);
+        self::assertNotNull($reloadedActivity);
+
+        /** @var ActivityBoardStateRepository $stateRepository */
+        $stateRepository = $em->getRepository(ActivityBoardState::class);
+        $state = $stateRepository->findOneBy(['activity' => $reloadedActivity]);
+        self::assertNotNull($state);
+        self::assertNotNull($state->getTechnicalUser());
+        self::assertSame($candidateId, $state->getTechnicalUser()->getId());
     }
 
     public function testTeamPermissionAction(): void

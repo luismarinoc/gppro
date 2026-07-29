@@ -252,6 +252,129 @@ class ActivityBoardServiceTest extends AbstractRepositoryTestCase
         $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => 999999999]));
     }
 
+    public function testUpdateCardAcceptsTechnicalUserWithProjectAccessDespiteNarrowerActivityTeamScoping(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card with restrictive activity team');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $em = $this->getEntityManager();
+
+        // candidate has project-level access via a project team ...
+        $projectTeam = new Team('Board service technical project team ' . uniqid());
+        $projectTeam->addUser($candidate);
+        $em->persist($projectTeam);
+        $project->addTeam($projectTeam);
+
+        // ... but is deliberately excluded from the activity's own team, which
+        // would reject them under the stricter checkTeamAccessActivity() chain.
+        $activityTeam = new Team('Board service technical restrictive activity team ' . uniqid());
+        $em->persist($activityTeam);
+        $activity->addTeam($activityTeam);
+
+        $em->flush();
+
+        $sut = $this->getSut();
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['technicalUser' => $candidate->getId()]));
+
+        $em->clear();
+
+        $reloadedActivity = $em->getRepository(Activity::class)->find($activity->getId());
+        self::assertNotNull($reloadedActivity);
+
+        /** @var ActivityBoardStateRepository $stateRepository */
+        $stateRepository = $em->getRepository(ActivityBoardState::class);
+        $state = $stateRepository->findOrCreate($reloadedActivity);
+
+        self::assertNotNull($state->getTechnicalUser());
+        self::assertSame($candidate->getId(), $state->getTechnicalUser()->getId());
+    }
+
+    public function testUpdateCardAcceptsTechnicalUserWhenCandidateCanSeeAllData(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card for admin bypass');
+        $candidate = $this->getUserByRole(User::ROLE_SUPER_ADMIN);
+
+        $em = $this->getEntityManager();
+
+        // the project is restricted to a team the admin candidate is NOT a
+        // member of - only canSeeAllData() (checkTeamAccess()'s admin bypass,
+        // reached via checkProjectAccessForActivity() -> checkTeamAccessProject())
+        // can explain acceptance here.
+        $projectTeam = new Team('Board service admin bypass project team ' . uniqid());
+        $em->persist($projectTeam);
+        $project->addTeam($projectTeam);
+        $em->flush();
+
+        $sut = $this->getSut();
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['functionalUser' => $candidate->getId()]));
+
+        $em->clear();
+
+        $reloadedActivity = $em->getRepository(Activity::class)->find($activity->getId());
+        self::assertNotNull($reloadedActivity);
+
+        /** @var ActivityBoardStateRepository $stateRepository */
+        $stateRepository = $em->getRepository(ActivityBoardState::class);
+        $state = $stateRepository->findOrCreate($reloadedActivity);
+
+        self::assertNotNull($state->getFunctionalUser());
+        self::assertSame($candidate->getId(), $state->getFunctionalUser()->getId());
+    }
+
+    public function testUpdateCardStillRejectsAssignedToForSameUserExcludedFromActivityTeam(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card with restrictive activity team for assignedTo');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $em = $this->getEntityManager();
+
+        $projectTeam = new Team('Board service assignedTo project team ' . uniqid());
+        $projectTeam->addUser($candidate);
+        $em->persist($projectTeam);
+        $project->addTeam($projectTeam);
+
+        $activityTeam = new Team('Board service assignedTo restrictive activity team ' . uniqid());
+        $em->persist($activityTeam);
+        $activity->addTeam($activityTeam);
+
+        $em->flush();
+
+        $sut = $this->getSut();
+
+        $this->expectException(ValidationException::class);
+
+        // same candidate, same activity, but as assignedTo - must still be
+        // rejected exactly as before this change (full checkTeamAccessActivity chain).
+        $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['assignedTo' => $candidate->getId()]));
+    }
+
+    public function testUpdateCardRejectionMessageForTechnicalUserNamesProjectNotActivity(): void
+    {
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card rejecting technical user');
+        $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $em = $this->getEntityManager();
+        $customer = $project->getCustomer();
+        self::assertNotNull($customer);
+        $team = new Team('Board service foreign team technical ' . uniqid());
+        $em->persist($team);
+        $customer->addTeam($team);
+        $em->flush();
+
+        $sut = $this->getSut();
+
+        try {
+            $sut->updateCard($activity, ActivityBoardUpdateDTO::fromArray(['technicalUser' => $candidate->getId()]));
+            self::fail('Expected ValidationException was not thrown.');
+        } catch (ValidationException $e) {
+            self::assertSame('Assignee does not have access to this project', $e->getMessage());
+        }
+    }
+
     public function testUpdateCardExplicitNullClearsAssignedTo(): void
     {
         $project = $this->createProject();

@@ -12,11 +12,25 @@ namespace App\Tests\Form;
 use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Form\ActivityEditForm;
+use App\Form\Extension\UserExtension;
 use App\Form\Type\UserType;
 use App\Repository\ActivityBoardStateRepository;
+use App\Repository\RolePermissionRepository;
 use App\Repository\UserRepository;
+use App\Security\RolePermissionManager;
+use App\User\PermissionService;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Form\FormTypeExtensionInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
 
@@ -32,10 +46,51 @@ class ActivityEditFormTest extends TypeTestCase
         $boardStateRepository->method('findByActivities')->willReturn([]);
 
         $userRepository = $this->createMock(UserRepository::class);
+        $query = $this->createMock(Query::class);
+        $query->method('getResult')->willReturn([]);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder->method('getQuery')->willReturn($query);
+        $userRepository->method('getQueryBuilderForFormType')->willReturn($queryBuilder);
+
+        $permissionRepository = $this->getMockBuilder(RolePermissionRepository::class)
+            ->onlyMethods(['getAllAsArray'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $permissionRepository->method('getAllAsArray')->willReturn([]);
+        /** @var RolePermissionRepository $permissionRepository */
+        $permissionManager = new RolePermissionManager(new PermissionService($permissionRepository, new ArrayAdapter()), [], []);
+
+        // EntityType (UserType's parent) resolves 'em'/'id_reader' eagerly during
+        // option resolution even though UserType always supplies 'choices'
+        // explicitly - wire up the minimal Doctrine metadata chain it needs.
+        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata->method('getIdentifierFieldNames')->willReturn(['id']);
+        $classMetadata->method('getTypeOfField')->willReturn('integer');
+        $classMetadata->method('hasAssociation')->willReturn(false);
+
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager->method('getClassMetadata')->willReturn($classMetadata);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->method('getManagerForClass')->willReturn($objectManager);
 
         return [
             new ActivityEditForm($boardStateRepository),
-            new UserType($userRepository),
+            new UserType($userRepository, $permissionManager),
+            new EntityType($registry),
+        ];
+    }
+
+    /**
+     * @return FormTypeExtensionInterface[]
+     */
+    protected function getTypeExtensions(): array
+    {
+        $auth = $this->createMock(Security::class);
+        $auth->method('getUser')->willReturn(new User());
+
+        return [
+            new UserExtension($auth),
         ];
     }
 
@@ -134,5 +189,8 @@ class ActivityEditFormTest extends TypeTestCase
         self::assertTrue($form->has('timeBudget'));
         self::assertTrue($form->has('technicalUser'));
         self::assertTrue($form->has('functionalUser'));
+
+        self::assertSame($project, $form->get('technicalUser')->getOption('project'));
+        self::assertSame($project, $form->get('functionalUser')->getOption('project'));
     }
 }
