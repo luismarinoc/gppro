@@ -14,13 +14,11 @@
             {%- endif -%}
         </span>
     </div>
-    <div class="activity_board_card_assignee">
-        {%- if card.assignedTo is not null -%}
-            {{ widgets.user_avatar(card.assignedTo, card.assignedTo.displayName, 'avatar-sm') }} {{ card.assignedTo.displayName }}
-        {%- else -%}
+    {% if card.technicalUser is null and card.functionalUser is null %}
+        <div class="activity_board_card_assignee">
             <span class="text-muted">{{ 'activity_board.unassigned'|trans }}</span>
-        {%- endif -%}
-    </div>
+        </div>
+    {% endif %}
     {% if card.technicalUser is not null or card.functionalUser is not null %}
         <div class="activity_board_card_roles">
             {% if card.technicalUser is not null %}
