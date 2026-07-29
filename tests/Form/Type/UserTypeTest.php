@@ -53,7 +53,7 @@ class UserTypeTest extends TestCase
             ->getMock();
         $repository->method('getAllAsArray')->willReturn([]);
 
-        /** @var RolePermissionRepository $repository */
+        /* @var RolePermissionRepository $repository */
         return new RolePermissionManager(new PermissionService($repository, new ArrayAdapter()), [], []);
     }
 

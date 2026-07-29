@@ -17,7 +17,6 @@ use App\Tests\DataFixtures\TimesheetFixtures;
 use App\WorkingTime\Mode\WorkingTimeModeDay;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\HttpKernel\HttpKernelBrowser;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 

@@ -84,6 +84,7 @@ class ActivityEditFormTest extends TypeTestCase
     /**
      * @return FormTypeExtensionInterface[]
      */
+    // @phpstan-ignore missingType.generics
     protected function getTypeExtensions(): array
     {
         $auth = $this->createMock(Security::class);

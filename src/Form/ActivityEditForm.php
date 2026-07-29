@@ -43,6 +43,7 @@ class ActivityEditForm extends AbstractType
         $isNew = true;
         $isGlobal = false;
         $options['currency'] = null;
+        $entry = null;
 
         if (isset($options['data'])) {
             /** @var Activity $entry */
@@ -128,7 +129,7 @@ class ActivityEditForm extends AbstractType
         // ActivityBoardService::updateCard(). Only shown for an existing,
         // non-global activity that already belongs to a project - same gate
         // as the milestone field above.
-        if (!$isNew && !$isGlobal && $project !== null) {
+        if ($entry !== null && !$isNew && !$isGlobal && $project !== null) {
             $boardState = $this->boardStateRepository->findByActivities([$entry])[$entry->getId()] ?? null;
 
             $currentTechnicalUser = $boardState?->getTechnicalUser();
