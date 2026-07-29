@@ -13,20 +13,11 @@ concurrency:
 permissions: {}
 
 jobs:
-    correct_repository:
-        runs-on: ubuntu-latest
-        name: Verify repository
-        steps:
-            - name: fail on fork
-              if: github.repository_owner != 'kimai'
-              run: exit 1
-
     update_release_draft:
         name: Draft next release
         permissions:
             contents: write # to create a github release draft
             pull-requests: read # to identify changes that occurred
-        needs: correct_repository
         runs-on: ubuntu-latest
         steps:
             - uses: release-drafter/release-drafter@4d75298e00d9e34c483e5ff8c68d0ea1c1940c1e # v7.5.1
