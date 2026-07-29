@@ -2266,6 +2266,14 @@
         <source>activity_board.functional_user</source>
         <target>Functional user</target>
       </trans-unit>
+      <trans-unit id="gpActBrd14" resname="activity_board.no_matches">
+        <source>activity_board.no_matches</source>
+        <target>No matches</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd15" resname="activity_board.search_placeholder">
+        <source>activity_board.search_placeholder</source>
+        <target>Search by technical or functional user...</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type">
         <source>user_type</source>
         <target>User type</target>

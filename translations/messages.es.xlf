@@ -2246,6 +2246,14 @@
         <source>activity_board.functional_user</source>
         <target state="translated">Usuario funcional</target>
       </trans-unit>
+      <trans-unit id="gpActBrd14" resname="activity_board.no_matches" xml:space="preserve">
+        <source>activity_board.no_matches</source>
+        <target state="translated">Sin coincidencias</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd15" resname="activity_board.search_placeholder" xml:space="preserve">
+        <source>activity_board.search_placeholder</source>
+        <target state="translated">Buscar por usuario técnico o funcional...</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type" xml:space="preserve">
         <source>user_type</source>
         <target state="translated">Tipo de usuario</target>

@@ -15,12 +15,15 @@
             </span>
         {% endblock %}
         {% block box_body %}
+            <div class="activity_board_toolbar">
+                <input type="text" class="form-control" id="activity_board_search" placeholder="{{ 'activity_board.search_placeholder'|trans }}" autocomplete="off">
+            </div>
             <div class="activity_board d-flex">
                 {% for status, column in columns %}
                     <div class="activity_board_column flex-fill" data-status="{{ status }}">
                         <div class="activity_board_column_header d-flex align-items-center justify-content-between">
                             <span class="activity_board_column_title">{{ ('activity_board.status.' ~ status)|trans }}</span>
-                            {{ widgets.badge_counted(column.cards|length) }}
+                            <span class="activity_board_column_count">{{ widgets.badge_counted(column.cards|length) }}</span>
                         </div>
                         <div class="activity_board_column_body">
                             {% if column.cards|length == 0 %}
@@ -30,6 +33,7 @@
                                     {% include 'project/_board_card.html.twig' with {'card': card} %}
                                 {% endfor %}
                             {% endif %}
+                            <div class="comment activity_board_column_no_matches d-none">{{ 'activity_board.no_matches'|trans }}</div>
                         </div>
                     </div>
                 {% endfor %}

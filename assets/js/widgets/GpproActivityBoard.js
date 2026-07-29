@@ -35,6 +35,11 @@ export default class GpproActivityBoard {
         }
 
         this.element.addEventListener('dblclick', (event) => this.onCardDoubleClicked(event));
+
+        this.searchInput = document.getElementById('activity_board_search');
+        if (this.searchInput !== null) {
+            this.searchInput.addEventListener('input', () => this.filterCards(this.searchInput.value));
+        }
     }
 
     /**
@@ -154,15 +159,49 @@ export default class GpproActivityBoard {
     }
 
     /**
+     * Re-applies the current search filter, which recomputes every column's
+     * visible-card count as a side effect - kept as the single source of
+     * truth for counts so a drag-drop move never shows a stale total while
+     * a filter is active.
+     *
      * @private
      */
     updateColumnCounts() {
+        this.filterCards(this.searchInput !== null ? this.searchInput.value : '');
+    }
+
+    /**
+     * Filters cards by technical/functional user (see the card's
+     * data-search attribute, rendered server-side) purely in the DOM - the
+     * board already renders every card up front, so no request is needed.
+     *
+     * @param {string} query
+     * @private
+     */
+    filterCards(query) {
+        const needle = query.trim().toLowerCase();
+
         for (const column of this.element.querySelectorAll('.activity_board_column')) {
-            const counter = column.querySelector('.activity_board_column_header .badge');
-            if (counter === null) {
-                continue;
+            const cards = column.querySelectorAll('.activity_board_card');
+            let visibleCount = 0;
+
+            for (const card of cards) {
+                const matches = needle === '' || (card.dataset.search ?? '').includes(needle);
+                card.classList.toggle('activity_board_card_filtered', !matches);
+                if (matches) {
+                    visibleCount++;
+                }
             }
-            counter.textContent = String(column.querySelectorAll('.activity_board_card').length);
+
+            const counter = column.querySelector('.activity_board_column_header .badge');
+            if (counter !== null) {
+                counter.textContent = String(visibleCount);
+            }
+
+            const noMatches = column.querySelector('.activity_board_column_no_matches');
+            if (noMatches !== null) {
+                noMatches.classList.toggle('d-none', !(needle !== '' && cards.length > 0 && visibleCount === 0));
+            }
         }
     }
 }
