@@ -358,11 +358,12 @@ class ActivityBoardServiceTest extends AbstractRepositoryTestCase
         $candidate = $this->getUserByRole(User::ROLE_TEAMLEAD);
 
         $em = $this->getEntityManager();
-        $customer = $project->getCustomer();
-        self::assertNotNull($customer);
+        // restrict the PROJECT itself (not the customer) - project access is
+        // checked via the project's own team list only, see
+        // checkTeamAccessProjectOnly()
         $team = new Team('Board service foreign team technical ' . uniqid());
         $em->persist($team);
-        $customer->addTeam($team);
+        $project->addTeam($team);
         $em->flush();
 
         $sut = $this->getSut();

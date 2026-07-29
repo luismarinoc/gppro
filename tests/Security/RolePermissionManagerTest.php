@@ -304,9 +304,33 @@ class RolePermissionManagerTest extends TestCase
     {
         $sut = $this->createSut();
         $customer = new Customer('Acme');
+
+        $project = new Project();
+        $project->setCustomer($customer);
+        $projectTeam = new Team('Project team');
+        $project->addTeam($projectTeam);
+
+        $activity = new Activity();
+        $activity->setProject($project);
+
+        $user = new User();
+
+        // project access is checked via the PROJECT's own team list only -
+        // the customer's team (if any) is deliberately irrelevant here, see
+        // checkTeamAccessProjectOnly()'s docblock
+        self::assertFalse($sut->checkProjectAccessForActivity($activity, $user));
+    }
+
+    public function testCheckProjectAccessForActivityIgnoresCustomerTeamRestriction(): void
+    {
+        $sut = $this->createSut();
+        $customer = new Customer('Acme');
         $customerTeam = new Team('Customer team');
         $customer->addTeam($customerTeam);
 
+        // the project itself has no team restriction, but its customer does -
+        // a user who is a member of neither must still be granted access,
+        // because customer-level scoping does not apply to this check
         $project = new Project();
         $project->setCustomer($customer);
 
@@ -315,7 +339,7 @@ class RolePermissionManagerTest extends TestCase
 
         $user = new User();
 
-        self::assertFalse($sut->checkProjectAccessForActivity($activity, $user));
+        self::assertTrue($sut->checkProjectAccessForActivity($activity, $user));
     }
 
     public function testCheckProjectAccessForActivityDeniesGlobalActivityWithoutProject(): void

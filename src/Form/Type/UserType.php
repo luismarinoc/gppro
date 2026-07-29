@@ -114,7 +114,7 @@ final class UserType extends AbstractType
 
             if ($options['project'] instanceof Project) {
                 $project = $options['project'];
-                $users = array_filter($users, fn (User $user) => $this->permissionManager->checkTeamAccessProject($project, $user));
+                $users = array_filter($users, fn (User $user) => $this->permissionManager->checkTeamAccessProjectOnly($project, $user));
             }
 
             $ignoreIds = [];
