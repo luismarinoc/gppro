@@ -2272,7 +2272,7 @@
       </trans-unit>
       <trans-unit id="gpActBrd15" resname="activity_board.search_placeholder">
         <source>activity_board.search_placeholder</source>
-        <target>Search by technical or functional user...</target>
+        <target>Search by activity or technical/functional user...</target>
       </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type">
         <source>user_type</source>

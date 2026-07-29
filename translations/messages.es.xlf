@@ -2252,7 +2252,7 @@
       </trans-unit>
       <trans-unit id="gpActBrd15" resname="activity_board.search_placeholder" xml:space="preserve">
         <source>activity_board.search_placeholder</source>
-        <target state="translated">Buscar por usuario técnico o funcional...</target>
+        <target state="translated">Buscar por actividad o usuario técnico/funcional...</target>
       </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type" xml:space="preserve">
         <source>user_type</source>

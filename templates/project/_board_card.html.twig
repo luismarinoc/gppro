@@ -1,6 +1,6 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% set priorityColors = {'urgent': 'red', 'high': 'orange', 'medium': 'azure', 'low': 'secondary'} %}
-{% set searchNames = [] %}
+{% set searchNames = [card.activity.name] %}
 {% if card.technicalUser is not null %}{% set searchNames = searchNames|merge([card.technicalUser.displayName]) %}{% endif %}
 {% if card.functionalUser is not null %}{% set searchNames = searchNames|merge([card.functionalUser.displayName]) %}{% endif %}
 <div class="activity_board_card" data-activity-id="{{ card.activity.id }}" data-search="{{ searchNames|join(' ')|lower }}">
