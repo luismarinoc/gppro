@@ -3,6 +3,21 @@
 {% import "macros/datatables.html.twig" as tables %}
 
 {% set manageAllowed = is_granted('manage_fx_rate') %}
+{% set currentIndicator = app.request.query.get('indicator') %}
+
+{% block datatable_before %}
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link{% if currentIndicator is empty %} active{% endif %}" href="{{ path('fx_rates') }}">{{ 'all'|trans }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if currentIndicator == constant('App\\Entity\\FxRate::INDICATOR_UF') %} active{% endif %}" href="{{ path('fx_rates', {indicator: constant('App\\Entity\\FxRate::INDICATOR_UF')}) }}">{{ 'fx_rate.indicator.uf'|trans }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if currentIndicator == constant('App\\Entity\\FxRate::INDICATOR_USD') %} active{% endif %}" href="{{ path('fx_rates', {indicator: constant('App\\Entity\\FxRate::INDICATOR_USD')}) }}">{{ 'fx_rate.indicator.dolar'|trans }}</a>
+        </li>
+    </ul>
+{% endblock %}
 
 {% block datatable_row_attr %}{% if manageAllowed %} class="modal-ajax-form open-edit" data-href="{{ path('fx_rates_edit', {'id': entry.id}) }}"{% endif %}{% endblock %}
 

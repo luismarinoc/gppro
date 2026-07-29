@@ -38,6 +38,11 @@ final class FxRateController extends AbstractController
             return $this->redirectToRoute('fx_rates');
         }
 
+        if ($query->getIndicator() !== null) {
+            // single-indicator view (UF or USD): show every date, never paginate it away
+            $query->setPageSize(1000);
+        }
+
         $entries = $repository->getPagerfantaForQuery($query);
 
         $table = new DataTable('admin_fx_rates', $query);

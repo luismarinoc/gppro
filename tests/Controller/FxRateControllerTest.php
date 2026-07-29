@@ -119,6 +119,39 @@ class FxRateControllerTest extends AbstractControllerBaseTestCase
         $this->assertDataTableRowCount($client, 'datatable_admin_fx_rates', 2);
     }
 
+    public function testIndexActionFiltersByIndicator(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $this->importFxRates();
+
+        $this->assertAccessIsGranted($client, '/admin/fx-rates/?indicator=' . FxRate::INDICATOR_UF);
+        $this->assertHasDataTable($client);
+        $this->assertDataTableRowCount($client, 'datatable_admin_fx_rates', 1);
+    }
+
+    public function testIndexActionWithIndicatorFilterShowsEveryDateOnOnePage(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        // Default page size is 50 - importing more than that for a single
+        // indicator proves the "show every date" override actually applies,
+        // instead of silently paginating rows away.
+        $em = $this->getEntityManager();
+        $date = new \DateTimeImmutable('2026-01-01');
+        for ($i = 0; $i < 60; $i++) {
+            $uf = new FxRate();
+            $uf->setDate($date->modify('+' . $i . ' days'));
+            $uf->setIndicator(FxRate::INDICATOR_UF);
+            $uf->setRateValue('39000.000000');
+            $em->persist($uf);
+        }
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/fx-rates/?indicator=' . FxRate::INDICATOR_UF);
+        $this->assertHasDataTable($client);
+        $this->assertDataTableRowCount($client, 'datatable_admin_fx_rates', 60);
+    }
+
     public function testCreateAction(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
