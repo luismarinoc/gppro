@@ -157,6 +157,86 @@ class ActivityBoardControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString('Urgent', $cardText);
         self::assertStringContainsString($this->formatDate($dueDate), $cardText);
         self::assertStringContainsString($assignee->getDisplayName(), $cardText);
+        self::assertStringContainsString(mb_strtolower($assignee->getDisplayName()), (string) $card->attr('data-search'));
+        self::assertStringNotContainsString('Unassigned', $cardText);
+    }
+
+    public function testBoardActionPreservesRoleUsersAndShowsUnassignedOnlyForEmptyUserSet(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+        $assignedOnly = $this->createActivity($project, 'Assigned-only card');
+        $technicalOnly = $this->createActivity($project, 'Technical-only card');
+        $allUsers = $this->createActivity($project, 'All-users card');
+        $noUsers = $this->createActivity($project, 'No-users card');
+        $assignedUser = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $technicalUser = $this->getUserByRole(User::ROLE_USER);
+        $functionalUser = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $em = $this->getEntityManager();
+        $assignedState = (new ActivityBoardState())->setActivity($assignedOnly)->setAssignedTo($assignedUser);
+        $technicalState = (new ActivityBoardState())->setActivity($technicalOnly)->setTechnicalUser($technicalUser);
+        $allUsersState = (new ActivityBoardState())
+            ->setActivity($allUsers)
+            ->setAssignedTo($assignedUser)
+            ->setTechnicalUser($technicalUser)
+            ->setFunctionalUser($functionalUser);
+        $noUsersState = (new ActivityBoardState())->setActivity($noUsers);
+        $em->persist($assignedState);
+        $em->persist($technicalState);
+        $em->persist($allUsersState);
+        $em->persist($noUsersState);
+        $em->flush();
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $cards = $client->getCrawler()->filter('.activity_board_card');
+        self::assertCount(4, $cards);
+
+        $assignedOnlyCard = $cards->filter('[data-activity-id="' . $assignedOnly->getId() . '"]');
+        self::assertCount(1, $assignedOnlyCard);
+        self::assertStringContainsString($assignedUser->getDisplayName(), $assignedOnlyCard->text());
+        self::assertStringNotContainsString('Unassigned', $assignedOnlyCard->text());
+
+        $technicalOnlyCard = $cards->filter('[data-activity-id="' . $technicalOnly->getId() . '"]');
+        self::assertCount(1, $technicalOnlyCard);
+        self::assertStringContainsString($technicalUser->getDisplayName(), $technicalOnlyCard->html());
+        self::assertStringNotContainsString('Unassigned', $technicalOnlyCard->text());
+
+        $allUsersCard = $cards->filter('[data-activity-id="' . $allUsers->getId() . '"]');
+        self::assertCount(1, $allUsersCard);
+        self::assertStringContainsString($assignedUser->getDisplayName(), $allUsersCard->text());
+        self::assertStringContainsString($technicalUser->getDisplayName(), $allUsersCard->html());
+        self::assertStringContainsString($functionalUser->getDisplayName(), $allUsersCard->html());
+        self::assertCount(2, $allUsersCard->filter('.activity_board_card_roles [title]'));
+        self::assertStringNotContainsString('Unassigned', $allUsersCard->text());
+
+        $noUsersCard = $cards->filter('[data-activity-id="' . $noUsers->getId() . '"]');
+        self::assertCount(1, $noUsersCard);
+        self::assertStringContainsString('Unassigned', $noUsersCard->text());
+    }
+
+    public function testBoardActionEscapesAssignedDisplayNameInCardAndSearchMetadata(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Escaped assigned user');
+        $assignee = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $assignee->setAlias('<Alex & Co>');
+
+        $em = $this->getEntityManager();
+        $state = (new ActivityBoardState())->setActivity($activity)->setAssignedTo($assignee);
+        $em->persist($state);
+        $em->flush();
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $card = $client->getCrawler()->filter('.activity_board_card')->first();
+        self::assertStringContainsString('<Alex & Co>', $card->text());
+        self::assertStringContainsString('<alex & co>', (string) $card->attr('data-search'));
+        self::assertStringContainsString('&lt;Alex &amp; Co&gt;', (string) $card->html());
     }
 
     private function updateCardUrl(Project $project, Activity $activity): string
