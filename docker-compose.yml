@@ -12,6 +12,7 @@ services:
       ADMINMAIL: ${ADMINMAIL}
       ADMINPASS: ${ADMINPASS}
       TRUSTED_PROXIES: "*"
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS}
     volumes:
       - gppro_data:/opt/gppro/var/data
       - gppro_plugins:/opt/gppro/var/plugins
