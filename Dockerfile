@@ -38,6 +38,18 @@ ARG TIMEZONE="Europe/Berlin"
 FROM composer:latest AS composer
 
 ###########################
+# Frontend assets
+###########################
+
+FROM node:24-alpine AS frontend
+WORKDIR /build
+RUN corepack enable
+COPY package.json pnpm-lock.yaml webpack.config.js ./
+RUN pnpm install --frozen-lockfile --ignore-scripts
+COPY assets ./assets
+RUN pnpm build
+
+###########################
 # PHP extensions
 ###########################
 
@@ -297,6 +309,7 @@ ENV memory_limit=512M
 FROM base AS prod
 # copy gppro source from local build context (see .dockerignore for what is excluded)
 COPY --chown=www-data:www-data . /opt/gppro
+COPY --from=frontend --chown=www-data:www-data /build/public/build /opt/gppro/public/build
 COPY .docker /assets
 # do the composer deps installation
 RUN \
