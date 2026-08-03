@@ -86,6 +86,23 @@ table.dataTable thead > tr > th.hw-min {
     max-height: 340px;
 }
 
+.content.dashboard {
+    .row-deck.row-cards {
+        --bs-gutter-x: 1.25rem;
+        --bs-gutter-y: 1.25rem;
+    }
+
+    .card {
+        border: 1px solid var(--tblr-primary-border-subtle, #9bb3d1);
+        box-shadow: 0 2px 12px rgba(27, 58, 107, .07);
+        transition: border-color .15s ease, box-shadow .15s ease;
+
+        &.card-sm .card-body {
+            padding: .875rem 1rem;
+        }
+    }
+}
+
 #customer_details_box,
 #project_details_box,
 #activity_details_box {
