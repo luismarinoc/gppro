@@ -108,9 +108,18 @@ final class MenuSubscriber implements EventSubscriberInterface
             $menu->addChild($reporting);
         }
 
+        $quotations = new MenuItemModel('quotations', 'quotations', null, [], 'file-invoice');
         if ($auth->isGranted('view_quotation')) {
-            $quotations = new MenuItemModel('quotations', 'budget', 'quotation_list', [], 'file-invoice');
-            $quotations->setChildRoutes(['quotation_create', 'quotation_edit', 'quotation_view', 'quotation_send', 'quotation_convert']);
+            $quotationList = new MenuItemModel('quotation_list', 'quotation_quote', 'quotation_list', [], 'file-invoice');
+            $quotationList->setChildRoutes(['quotation_create', 'quotation_edit', 'quotation_view', 'quotation_send', 'quotation_convert']);
+            $quotations->addChild($quotationList);
+        }
+        if ($auth->isGranted('manage_quotation_catalog')) {
+            $catalog = new MenuItemModel('quotation_catalog', 'quotation_catalog', 'admin_quotation_catalog', [], 'file-invoice-dollar');
+            $catalog->setChildRoutes(['admin_quotation_catalog_create', 'admin_quotation_catalog_edit', 'admin_quotation_catalog_delete']);
+            $quotations->addChild($catalog);
+        }
+        if ($quotations->hasChildren()) {
             $menu->addChild($quotations);
         }
 
@@ -148,12 +157,6 @@ final class MenuSubscriber implements EventSubscriberInterface
             $customers = new MenuItemModel('customers', 'customers', 'admin_customer', [], 'customer');
             $customers->setChildRoutes(['admin_customer_create', 'admin_customer_permissions', 'customer_details', 'admin_customer_edit', 'admin_customer_delete']);
             $menu->addChild($customers);
-        }
-
-        if ($auth->isGranted('manage_quotation_catalog')) {
-            $catalog = new MenuItemModel('quotation_catalog', 'quotation_catalog', 'admin_quotation_catalog', [], 'file-invoice-dollar');
-            $catalog->setChildRoutes(['admin_quotation_catalog_create', 'admin_quotation_catalog_edit', 'admin_quotation_catalog_delete']);
-            $menu->addChild($catalog);
         }
 
         if ($auth->isGranted('view_project') || $auth->isGranted('view_teamlead_project') || $auth->isGranted('view_team_project')) {
