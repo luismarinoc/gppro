@@ -42,12 +42,15 @@ class MenuSubscriberTest extends TestCase
 
         $quotation = $event->getMenu()->findChild('quotations');
         self::assertNotNull($quotation);
-        self::assertSame('quotation_list', $quotation->getRoute());
-        self::assertTrue($quotation->isChildRoute('quotation_create'));
-        self::assertTrue($quotation->isChildRoute('quotation_edit'));
-        self::assertTrue($quotation->isChildRoute('quotation_view'));
-        self::assertTrue($quotation->isChildRoute('quotation_send'));
-        self::assertTrue($quotation->isChildRoute('quotation_convert'));
+        self::assertNull($quotation->getRoute());
+        $quotationList = $quotation->findChild('quotation_list');
+        self::assertNotNull($quotationList);
+        self::assertSame('quotation_list', $quotationList->getRoute());
+        self::assertTrue($quotationList->isChildRoute('quotation_create'));
+        self::assertTrue($quotationList->isChildRoute('quotation_edit'));
+        self::assertTrue($quotationList->isChildRoute('quotation_view'));
+        self::assertTrue($quotationList->isChildRoute('quotation_send'));
+        self::assertTrue($quotationList->isChildRoute('quotation_convert'));
     }
 
     public function testQuotationCatalogMenuIsVisibleForCatalogManagers(): void
@@ -61,7 +64,7 @@ class MenuSubscriberTest extends TestCase
         $event = new ConfigureMainMenuEvent();
         (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
 
-        $catalog = $event->getAdminMenu()->findChild('quotation_catalog');
+        $catalog = $event->getMenu()->findChild('quotation_catalog');
         self::assertNotNull($catalog);
         self::assertSame('admin_quotation_catalog', $catalog->getRoute());
         self::assertTrue($catalog->isChildRoute('admin_quotation_catalog_create'));

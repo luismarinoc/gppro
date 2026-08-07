@@ -5,7 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ customer ? 'Quotation history for '~customer.name : 'Quotations' }}</h3>
             {% if is_granted('create_quotation') %}
-                <div class="card-actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">New quotation</a></div>
+                <div class="card-actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">Crear cotización</a></div>
             {% endif %}
         </div>
         <div class="card-body border-bottom">

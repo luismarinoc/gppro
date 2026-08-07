@@ -2218,6 +2218,14 @@
         <source>quotation_catalog</source>
         <target>Quotation catalog</target>
       </trans-unit>
+      <trans-unit id="quotationsMenu" resname="quotations">
+        <source>quotations</source>
+        <target>Quotations</target>
+      </trans-unit>
+      <trans-unit id="quotationQuoteMenu" resname="quotation_quote">
+        <source>quotation_quote</source>
+        <target>Quote</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title">
         <source>activity_board.title</source>
         <target>Activity board</target>

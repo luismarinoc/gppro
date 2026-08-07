@@ -2198,6 +2198,14 @@
         <source>quotation_catalog</source>
         <target state="translated">Catálogo de presupuestos</target>
       </trans-unit>
+      <trans-unit id="quotationsMenu" resname="quotations" xml:space="preserve">
+        <source>quotations</source>
+        <target state="translated">Cotizaciones</target>
+      </trans-unit>
+      <trans-unit id="quotationQuoteMenu" resname="quotation_quote" xml:space="preserve">
+        <source>quotation_quote</source>
+        <target state="translated">Cotizar</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>
