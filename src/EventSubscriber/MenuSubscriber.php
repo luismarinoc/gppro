@@ -150,6 +150,12 @@ final class MenuSubscriber implements EventSubscriberInterface
             $menu->addChild($customers);
         }
 
+        if ($auth->isGranted('manage_quotation_catalog')) {
+            $catalog = new MenuItemModel('quotation_catalog', 'quotation_catalog', 'admin_quotation_catalog', [], 'file-invoice-dollar');
+            $catalog->setChildRoutes(['admin_quotation_catalog_create', 'admin_quotation_catalog_edit', 'admin_quotation_catalog_delete']);
+            $menu->addChild($catalog);
+        }
+
         if ($auth->isGranted('view_project') || $auth->isGranted('view_teamlead_project') || $auth->isGranted('view_team_project')) {
             $projects = new MenuItemModel('projects', 'projects', 'admin_project', [], 'project');
             $projects->setChildRoutes(['admin_project_permissions', 'admin_project_create', 'project_details', 'admin_project_edit', 'admin_project_delete']);

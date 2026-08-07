@@ -14,6 +14,7 @@
                 <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
             </div>
             <h4>Lines</h4>
+            {% set quotation_line_prototype = form_widget(form.lines.vars.prototype) %}
             <div data-quotation-lines>
                 {% for line in form.lines %}
                     <div class="border rounded p-2 mb-2">{{ form_widget(line) }}</div>
@@ -35,7 +36,7 @@
             if (!collection || !button) return;
             let index = collection.children.length;
             button.addEventListener('click', function () {
-                const prototype = '{{ form_widget(form.lines.vars.prototype)|e('js') }}'.replace(/__name__/g, index++);
+                const prototype = '{{ quotation_line_prototype|e('js') }}'.replace(/__name__/g, index++);
                 collection.insertAdjacentHTML('beforeend', '<div class="border rounded p-2 mb-2">' + prototype + '</div>');
             });
         });

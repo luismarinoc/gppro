@@ -49,4 +49,21 @@ class MenuSubscriberTest extends TestCase
         self::assertTrue($quotation->isChildRoute('quotation_send'));
         self::assertTrue($quotation->isChildRoute('quotation_convert'));
     }
+
+    public function testQuotationCatalogMenuIsVisibleForCatalogManagers(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'manage_quotation_catalog'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $catalog = $event->getAdminMenu()->findChild('quotation_catalog');
+        self::assertNotNull($catalog);
+        self::assertSame('admin_quotation_catalog', $catalog->getRoute());
+        self::assertTrue($catalog->isChildRoute('admin_quotation_catalog_create'));
+    }
 }
