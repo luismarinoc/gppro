@@ -2194,6 +2194,10 @@
         <source>invoice_type.milestone</source>
         <target state="translated">Por hito</target>
       </trans-unit>
+      <trans-unit id="quotationCatalogMenu" resname="quotation_catalog" xml:space="preserve">
+        <source>quotation_catalog</source>
+        <target state="translated">Catálogo de presupuestos</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>
