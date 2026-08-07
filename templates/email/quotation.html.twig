@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en">
+<body>
+    <h1>Quotation #{{ quotation.id }}</h1>
+    <p>Please review the quotation for {{ quotation.customer.name }}.</p>
+    <p><a href="{{ accept_url }}">Accept quotation</a></p>
+    <p><a href="{{ reject_url }}">Reject quotation</a></p>
+    <p>Both links open a confirmation page before recording your response.</p>
+</body>
+</html>

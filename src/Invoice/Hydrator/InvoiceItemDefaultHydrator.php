@@ -41,8 +41,8 @@ final class InvoiceItemDefaultHydrator implements InvoiceItemHydrator
 
         $activity = $item->getActivity();
         $project = $item->getProject();
-        $customer = $project->getCustomer();
-        $currency = $customer->getCurrency();
+        $customer = $project?->getCustomer();
+        $currency = $customer?->getCurrency() ?? $this->model->getCustomer()->getCurrency();
         $user = $item->getUser();
         $begin = $item->getBegin();
         $end = $item->getEnd();

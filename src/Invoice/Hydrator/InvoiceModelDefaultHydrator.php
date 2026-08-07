@@ -112,6 +112,22 @@ final class InvoiceModelDefaultHydrator implements InvoiceModelHydrator
             ];
         }
 
+        $adjustments = [];
+        foreach ([
+            'discount' => ['label' => 'quotation.discount_amount', 'sign' => -1],
+            'surcharge' => ['label' => 'quotation.surcharge_amount', 'sign' => 1],
+            'tax' => ['label' => 'quotation.tax_amount', 'sign' => 1],
+        ] as $name => $adjustment) {
+            $amount = (float) ($model->getOptions()['quotation.' . $name] ?? 0);
+            if ($amount !== 0.0) {
+                $adjustments[] = [
+                    'label' => $adjustment['label'],
+                    'amount' => $amount * $adjustment['sign'],
+                ];
+            }
+        }
+        $values['invoice.adjustments'] = $adjustments;
+
         $seller = $template->getCustomer();
         if ($seller !== null) {
             $country = $seller->getCountry();

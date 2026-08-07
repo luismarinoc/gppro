@@ -144,6 +144,14 @@
 
     {{ render(controller('App\\Controller\\CustomerController::projectsAction', {'customer': customer.id, 'page': 1})) }}
 
+    {% if is_granted('view_quotation') %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <a href="{{ path('customer_quotation_list', {'id': customer.id}) }}">View quotation history</a>
+            </div>
+        </div>
+    {% endif %}
+
     {% if can_edit %}
         {{ include('embeds/rates-table.html.twig', {'id': 'customer_rates_box', 'entity': customer, 'create_url': path('admin_customer_rate_add', {'id': customer.id}), 'delete_route': 'delete_customer_rate', 'currency': customer.currency, 'edit_route': 'admin_customer_rate_edit'}) }}
     {% endif %}
