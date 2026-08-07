@@ -2196,7 +2196,7 @@
       </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
-        <target state="translated">Tablero de actividades</target>
+        <target state="translated">Kamba</target>
       </trans-unit>
       <trans-unit id="gpActBrd2" resname="activity_board.status.todo" xml:space="preserve">
         <source>activity_board.status.todo</source>

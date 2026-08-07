@@ -22,6 +22,14 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $this->assertUrlIsSecured('/admin/quotation/catalog/');
     }
 
+    public function testAdminCanOpenQuotationCreationForm(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $this->request($client, '/quotation/create');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+    }
+
     public function testAdminCanListAndCreateCatalogItems(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);

@@ -35,7 +35,7 @@
             if (!collection || !button) return;
             let index = collection.children.length;
             button.addEventListener('click', function () {
-                const prototype = '{{ form.lines.vars.prototype|e('js') }}'.replace(/__name__/g, index++);
+                const prototype = '{{ form_widget(form.lines.vars.prototype)|e('js') }}'.replace(/__name__/g, index++);
                 collection.insertAdjacentHTML('beforeend', '<div class="border rounded p-2 mb-2">' + prototype + '</div>');
             });
         });
