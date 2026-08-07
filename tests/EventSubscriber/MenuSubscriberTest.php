@@ -9,10 +9,13 @@
 
 namespace App\Tests\EventSubscriber;
 
+use App\Entity\User;
 use App\Event\ConfigureMainMenuEvent;
 use App\EventSubscriber\MenuSubscriber;
+use KevinPapst\TablerBundle\Helper\ContextHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[CoversClass(MenuSubscriber::class)]
 class MenuSubscriberTest extends TestCase
@@ -24,5 +27,26 @@ class MenuSubscriberTest extends TestCase
         $methodName = $events[ConfigureMainMenuEvent::class][0];
         self::assertIsString($methodName);
         self::assertTrue(method_exists(MenuSubscriber::class, $methodName));
+    }
+
+    public function testQuotationMenuIsVisibleForUsersWithViewPermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'view_quotation'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $quotation = $event->getMenu()->findChild('quotations');
+        self::assertNotNull($quotation);
+        self::assertSame('quotation_list', $quotation->getRoute());
+        self::assertTrue($quotation->isChildRoute('quotation_create'));
+        self::assertTrue($quotation->isChildRoute('quotation_edit'));
+        self::assertTrue($quotation->isChildRoute('quotation_view'));
+        self::assertTrue($quotation->isChildRoute('quotation_send'));
+        self::assertTrue($quotation->isChildRoute('quotation_convert'));
     }
 }
