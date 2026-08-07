@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Quotation catalog</h3>
+            <div class="card-actions">
+                <a class="btn btn-primary" href="{{ path('admin_quotation_catalog_create') }}">Add catalog item</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead><tr><th>Name</th><th>Unit</th><th>Default price</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.unit }}</td>
+                        <td>{{ item.defaultPrice }}</td>
+                        <td>{{ item.active ? 'Active' : 'Inactive' }}</td>
+                        <td class="text-end">
+                            <a href="{{ path('admin_quotation_catalog_edit', {id: item.id}) }}">Edit</a>
+                            {% if item.active %}
+                                <form class="d-inline" method="post" action="{{ path('admin_quotation_catalog_delete', {id: item.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('quotation_catalog_item') }}">
+                                    <button class="btn btn-link text-danger" type="submit">Deactivate</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5">No catalog items found.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

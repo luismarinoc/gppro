@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Quotation response</title></head>
+<body>
+    <h1>Quotation #{{ quotation.id }}</h1>
+    <p>Do you want to accept or reject this quotation?</p>
+    <form method="post">
+        <input type="hidden" name="token" value="{{ token }}">
+        <button type="submit" name="response" value="accepted">Accept quotation</button>
+        <button type="submit" name="response" value="rejected">Reject quotation</button>
+    </form>
+</body>
+</html>

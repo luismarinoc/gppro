@@ -2274,6 +2274,38 @@
         <source>activity_board.search_placeholder</source>
         <target>Search by activity or technical/functional user...</target>
       </trans-unit>
+      <trans-unit id="gpActBrd16" resname="activity_board.search">
+        <source>activity_board.search</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd17" resname="activity_board.filter_status">
+        <source>activity_board.filter_status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd18" resname="activity_board.filter_priority">
+        <source>activity_board.filter_priority</source>
+        <target>Priority</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd19" resname="activity_board.filter_assignee">
+        <source>activity_board.filter_assignee</source>
+        <target>Assignee</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd20" resname="activity_board.all_statuses">
+        <source>activity_board.all_statuses</source>
+        <target>All statuses</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd21" resname="activity_board.all_priorities">
+        <source>activity_board.all_priorities</source>
+        <target>All priorities</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd22" resname="activity_board.all_assignees">
+        <source>activity_board.all_assignees</source>
+        <target>All assignees</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd23" resname="activity_board.new_activity">
+        <source>activity_board.new_activity</source>
+        <target>New activity</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type">
         <source>user_type</source>
         <target>User type</target>
@@ -2297,6 +2329,34 @@
       <trans-unit id="gpInvHistTot1" resname="invoice.history_totals">
         <source>invoice.history_totals</source>
         <target>Totals by customer, project and invoice type</target>
+      </trans-unit>
+      <trans-unit id="quotationDiscount" resname="quotation.discount">
+        <source>quotation.discount</source>
+        <target>Quotation discount (%)</target>
+      </trans-unit>
+      <trans-unit id="quotationSurcharge" resname="quotation.surcharge">
+        <source>quotation.surcharge</source>
+        <target>Quotation surcharge (%)</target>
+      </trans-unit>
+      <trans-unit id="quotationTax" resname="quotation.tax">
+        <source>quotation.tax</source>
+        <target>Quotation tax (%)</target>
+      </trans-unit>
+      <trans-unit id="quotationPercentageHelp" resname="quotation.percentage_help">
+        <source>quotation.percentage_help</source>
+        <target>Optional percentage from 0 to 100. Leave empty to disable.</target>
+      </trans-unit>
+      <trans-unit id="quotationDiscountAmount" resname="quotation.discount_amount">
+        <source>quotation.discount_amount</source>
+        <target>Quotation discount</target>
+      </trans-unit>
+      <trans-unit id="quotationSurchargeAmount" resname="quotation.surcharge_amount">
+        <source>quotation.surcharge_amount</source>
+        <target>Quotation surcharge</target>
+      </trans-unit>
+      <trans-unit id="quotationTaxAmount" resname="quotation.tax_amount">
+        <source>quotation.tax_amount</source>
+        <target>Quotation tax</target>
       </trans-unit>
     </body>
   </file>

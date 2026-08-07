@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">{{ quotation.id ? 'Edit quotation' : 'New quotation' }}</h3></div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.customer) }}
+            {{ form_row(form.project) }}
+            <div class="row">
+                <div class="col-md-4">{{ form_row(form.validUntil) }}</div>
+                <div class="col-md-4">{{ form_row(form.tax) }}</div>
+                <div class="col-md-4">{{ form_row(form.discount) }}</div>
+                <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
+            </div>
+            <h4>Lines</h4>
+            <div data-quotation-lines>
+                {% for line in form.lines %}
+                    <div class="border rounded p-2 mb-2">{{ form_widget(line) }}</div>
+                {% endfor %}
+            </div>
+            <button class="btn btn-secondary" type="button" data-add-quotation-line>Add line</button>
+            <button class="btn btn-primary" type="submit">Save quotation</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const collection = document.querySelector('[data-quotation-lines]');
+            const button = document.querySelector('[data-add-quotation-line]');
+            if (!collection || !button) return;
+            let index = collection.children.length;
+            button.addEventListener('click', function () {
+                const prototype = '{{ form.lines.vars.prototype|e('js') }}'.replace(/__name__/g, index++);
+                collection.insertAdjacentHTML('beforeend', '<div class="border rounded p-2 mb-2">' + prototype + '</div>');
+            });
+        });
+    </script>
+{% endblock %}

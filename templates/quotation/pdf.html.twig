@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Quotation #{{ quotation.id }}</title>
+    <style>
+        body { font-family: sans-serif; font-size: 11pt; color: #222; }
+        h1 { margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 7px 4px; border-bottom: 1px solid #ddd; }
+        th, .number { text-align: right; }
+        th:first-child, td:first-child { text-align: left; }
+        .summary { margin-top: 18px; margin-left: auto; width: 45%; }
+        .summary td { border: 0; }
+        .summary .total td { border-top: 2px solid #222; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Quotation #{{ quotation.id }}</h1>
+    <p><strong>Customer:</strong> {{ quotation.customer.name }}</p>
+    {% if quotation.project %}<p><strong>Project:</strong> {{ quotation.project.name }}</p>{% endif %}
+    {% if quotation.validUntil %}<p><strong>Valid until:</strong> {{ quotation.validUntil|date('Y-m-d') }}</p>{% endif %}
+
+    <table>
+        <thead><tr><th>Description</th><th>Unit</th><th>Quantity</th><th>Unit price</th><th>Total</th></tr></thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.description }}</td>
+                <td>{{ item.line.unit }}</td>
+                <td class="number">{{ item.amount }}</td>
+                <td class="number">{{ item.fixedRate|money(currency) }}</td>
+                <td class="number">{{ item.rate|money(currency) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="summary">
+        <tr><td>Subtotal</td><td class="number">{{ subtotal|money(currency) }}</td></tr>
+        {% if quotation.discount is not null %}<tr><td>Discount ({{ quotation.discount }}%)</td><td class="number">-{{ discount_amount|money(currency) }}</td></tr>{% endif %}
+        {% if quotation.surcharge is not null %}<tr><td>Surcharge ({{ quotation.surcharge }}%)</td><td class="number">{{ surcharge_amount|money(currency) }}</td></tr>{% endif %}
+        <tr><td>Adjusted subtotal</td><td class="number">{{ adjusted_subtotal|money(currency) }}</td></tr>
+        {% if tax_amount is not null %}<tr><td>Tax ({{ quotation.tax }}%)</td><td class="number">{{ tax_amount|money(currency) }}</td></tr>{% endif %}
+        <tr class="total"><td>Total</td><td class="number">{{ total|money(currency) }}</td></tr>
+    </table>
+
+    <p><strong>Response:</strong> Please use the accept or reject link in the quotation email.</p>
+</body>
+</html>

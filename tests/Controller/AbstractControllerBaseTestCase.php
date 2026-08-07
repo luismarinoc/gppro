@@ -208,12 +208,14 @@ abstract class AbstractControllerBaseTestCase extends WebTestCase
 
     protected function assertUrlIsSecured(string $url, string $method = 'GET'): void
     {
+        self::ensureKernelShutdown();
         $client = self::createClient();
         $this->assertRequestIsSecured($client, $url, $method);
     }
 
     protected function assertUrlIsSecuredForRole(string $role, string $url, string $method = 'GET'): void
     {
+        self::ensureKernelShutdown();
         $client = $this->getClientForAuthenticatedUser($role);
         $client->request($method, $this->createUrl($url));
         self::assertFalse(

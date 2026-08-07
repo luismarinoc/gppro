@@ -51,6 +51,24 @@ services:
     App\Configuration\MailConfiguration:
         arguments: ['%env(MAILER_FROM)%']
 
+    App\Service\QuotationPdfRendererInterface: '@App\Service\QuotationPdfRenderer'
+
+    # Doctrine repositories extending EntityRepository need an explicit factory
+    # when injected into controllers/services. The factory supplies the
+    # EntityManager metadata that EntityRepository's inherited constructor
+    # requires.
+    App\Repository\QuotationRepository:
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments: [App\Entity\Quotation]
+
+    App\Repository\QuotationCatalogItemRepository:
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments: [App\Entity\QuotationCatalogItem]
+
+    App\Repository\QuotationEmailRepository:
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments: [App\Entity\QuotationEmail]
+
     App\Configuration\LocaleService:
         arguments: ['%gppro.languages%']
 

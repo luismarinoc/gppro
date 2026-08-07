@@ -74,6 +74,14 @@
         <source>milestone_invoice.error.no_hours_logged</source>
         <target>One of the selected milestones has no billable hours logged yet and cannot be invoiced.</target>
       </trans-unit>
+      <trans-unit id="quotationConvertSuccess" resname="quotation.convert.success">
+        <source>quotation.convert.success</source>
+        <target>Quotation was converted to an invoice.</target>
+      </trans-unit>
+      <trans-unit id="quotationConvertError" resname="quotation.convert.error">
+        <source>quotation.convert.error</source>
+        <target>The quotation could not be converted: %reason%</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

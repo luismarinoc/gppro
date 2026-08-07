@@ -123,6 +123,12 @@
                         {% endfor %}
                         </tbody>
                         <tfoot>
+                            {% for adjustment in invoice['invoice.adjustments']|default([]) %}
+                                <tr>
+                                    <td colspan="4" class="text-end">{{ adjustment['label']|trans }}</td>
+                                    <td class="text-end">{{ adjustment['amount']|money(invoice['invoice.currency']) }}</td>
+                                </tr>
+                            {% endfor %}
                             <tr>
                                 <td colspan="4" class="text-end">
                                     {{ 'invoice.subtotal'|trans }}

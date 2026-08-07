@@ -92,6 +92,9 @@ gppro:
             INVOICE: ['view_invoice','create_invoice']
             INVOICE_ADMIN: ['manage_invoice_template']
             INVOICE_ALL: ['delete_invoice']
+            QUOTATIONS: ['view_quotation','create_quotation','edit_quotation','send_quotation','convert_quotation']
+            QUOTATIONS_ADMIN: ['manage_quotation_catalog']
+            QUOTATIONS_ALL: ['delete_quotation']
             TIMESHEET: ['view_own_timesheet','start_own_timesheet','stop_own_timesheet','create_own_timesheet','edit_own_timesheet','export_own_timesheet','delete_own_timesheet','weekly_own_timesheet']
             TIMESHEET_OTHER: ['view_other_timesheet','start_other_timesheet','stop_other_timesheet','create_other_timesheet','edit_other_timesheet','export_other_timesheet','delete_other_timesheet']
             PROFILE: ['view_own_profile','edit_own_profile','password_own_profile','preferences_own_profile','api-token_own_profile']
@@ -113,9 +116,9 @@ gppro:
         # mapping a "role name" to an array of "set names"
         maps:
             ROLE_USER: ['TIMESHEET','PROFILE', 'EVERYONE']
-            ROLE_TEAMLEAD: ['ACTIVITIES_TEAMLEAD','PROJECTS_TEAMLEAD','CUSTOMERS_TEAMLEAD','TIMESHEET_OTHER','INVOICE','TIMESHEET','PROFILE','EXPORT','BILLABLE','TAGS','REPORTING', 'EVERYONE']
-            ROLE_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
-            ROLE_SUPER_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','INVOICE_ALL','TIMESHEET','TIMESHEET_OTHER','PROFILE','PROFILE_OTHER','USER','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
+            ROLE_TEAMLEAD: ['ACTIVITIES_TEAMLEAD','PROJECTS_TEAMLEAD','CUSTOMERS_TEAMLEAD','TIMESHEET_OTHER','INVOICE','QUOTATIONS','TIMESHEET','PROFILE','EXPORT','BILLABLE','TAGS','REPORTING', 'EVERYONE']
+            ROLE_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','QUOTATIONS','QUOTATIONS_ADMIN','TIMESHEET','TIMESHEET_OTHER','PROFILE','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
+            ROLE_SUPER_ADMIN: ['ACTIVITIES','PROJECTS','CUSTOMERS','INVOICE','INVOICE_ADMIN','INVOICE_ALL','QUOTATIONS','QUOTATIONS_ADMIN','QUOTATIONS_ALL','TIMESHEET','TIMESHEET_OTHER','PROFILE','PROFILE_OTHER','USER','TEAMS','RATE','RATE_OTHER','EXPORT','BILLABLE','TAGS','FX_RATES','LOCKDOWN','REPORTING', 'EVERYONE']
         # mapping a "role name" to an array of "permission names"
         roles:
             ROLE_USER: ['view_team_member','time_team_project','create_tag','view_reporting']
