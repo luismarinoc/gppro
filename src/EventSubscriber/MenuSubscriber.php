@@ -109,7 +109,7 @@ final class MenuSubscriber implements EventSubscriberInterface
         }
 
         if ($auth->isGranted('view_quotation')) {
-            $quotations = new MenuItemModel('quotations', 'quotations', 'quotation_list', [], 'file-invoice');
+            $quotations = new MenuItemModel('quotations', 'budget', 'quotation_list', [], 'file-invoice');
             $quotations->setChildRoutes(['quotation_create', 'quotation_edit', 'quotation_view', 'quotation_send', 'quotation_convert']);
             $menu->addChild($quotations);
         }
