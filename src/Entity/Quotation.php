@@ -88,6 +88,7 @@ class Quotation implements CreatedAt, ModifiedAt
 
     /** @var Collection<int, QuotationLine> */
     #[ORM\OneToMany(mappedBy: 'quotation', targetEntity: QuotationLine::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Assert\Count(min: 1, minMessage: 'quotation.lines_minimum')]
     private Collection $lines;
 
     public function __construct()

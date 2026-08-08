@@ -2290,6 +2290,24 @@
         <source>invoice.history_totals</source>
         <target state="translated">Totales por cliente, proyecto y tipo de factura</target>
       </trans-unit>
+      <trans-unit id="quotationLines" resname="quotation.lines" xml:space="preserve"><source>quotation.lines</source><target state="translated">Líneas de la cotización</target></trans-unit>
+      <trans-unit id="quotationLinesHelp" resname="quotation.lines_help" xml:space="preserve"><source>quotation.lines_help</source><target state="translated">Agregá una línea del catálogo SAP o ingresá una línea manual. Podés editar los valores del catálogo.</target></trans-unit>
+      <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item" xml:space="preserve"><source>quotation.catalog_item</source><target state="translated">Ítem del catálogo SAP</target></trans-unit>
+      <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder" xml:space="preserve"><source>quotation.catalog_item_placeholder</source><target state="translated">Seleccioná un ítem del catálogo</target></trans-unit>
+      <trans-unit id="quotationDescription" resname="quotation.description" xml:space="preserve"><source>quotation.description</source><target state="translated">Descripción</target></trans-unit>
+      <trans-unit id="quotationUnit" resname="quotation.unit" xml:space="preserve"><source>quotation.unit</source><target state="translated">Unidad</target></trans-unit>
+      <trans-unit id="quotationQuantity" resname="quotation.quantity" xml:space="preserve"><source>quotation.quantity</source><target state="translated">Cantidad</target></trans-unit>
+      <trans-unit id="quotationUnitPrice" resname="quotation.unit_price" xml:space="preserve"><source>quotation.unit_price</source><target state="translated">Precio unitario</target></trans-unit>
+      <trans-unit id="quotationLineSubtotal" resname="quotation.line_subtotal" xml:space="preserve"><source>quotation.line_subtotal</source><target state="translated">Subtotal de línea</target></trans-unit>
+      <trans-unit id="quotationRemoveLine" resname="quotation.remove_line" xml:space="preserve"><source>quotation.remove_line</source><target state="translated">Quitar línea</target></trans-unit>
+      <trans-unit id="quotationAddCatalogLine" resname="quotation.add_catalog_line" xml:space="preserve"><source>quotation.add_catalog_line</source><target state="translated">Agregar línea del catálogo SAP</target></trans-unit>
+      <trans-unit id="quotationAddManualLine" resname="quotation.add_manual_line" xml:space="preserve"><source>quotation.add_manual_line</source><target state="translated">Agregar línea manual</target></trans-unit>
+      <trans-unit id="quotationSummary" resname="quotation.summary" xml:space="preserve"><source>quotation.summary</source><target state="translated">Resumen</target></trans-unit>
+      <trans-unit id="quotationSubtotal" resname="quotation.subtotal" xml:space="preserve"><source>quotation.subtotal</source><target state="translated">Subtotal</target></trans-unit>
+      <trans-unit id="quotationTotal" resname="quotation.total" xml:space="preserve"><source>quotation.total</source><target state="translated">Total</target></trans-unit>
+      <trans-unit id="quotationServerAuthoritative" resname="quotation.server_authoritative" xml:space="preserve"><source>quotation.server_authoritative</source><target state="translated">El precio final se calcula y valida en el servidor.</target></trans-unit>
+      <trans-unit id="quotationSave" resname="quotation.save" xml:space="preserve"><source>quotation.save</source><target state="translated">Guardar cotización</target></trans-unit>
+      <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum" xml:space="preserve"><source>quotation.lines_minimum</source><target state="translated">Agregá al menos una línea a la cotización.</target></trans-unit>
     </body>
   </file>
 </xliff>

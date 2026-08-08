@@ -11,6 +11,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\Quotation;
+use App\Entity\QuotationLine;
 use App\Form\QuotationForm;
 use App\Invoice\QuotationInvoiceService;
 use App\Repository\QuotationCatalogItemRepository;
@@ -127,6 +128,10 @@ final class QuotationController extends AbstractController
     /** @param array<string, int|null> $parameters */
     private function form(Quotation $quotation, Request $request, QuotationRepository $repository, QuotationCatalogItemRepository $catalogRepository, string $route, array $parameters = []): Response
     {
+        if ($quotation->getLines()->isEmpty()) {
+            $quotation->addLine(new QuotationLine());
+        }
+
         $form = $this->createForm(QuotationForm::class, $quotation, [
             'action' => $this->generateUrl($route, $parameters),
             'method' => 'POST',

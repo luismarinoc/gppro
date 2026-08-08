@@ -60,12 +60,24 @@ final class QuotationLineForm extends AbstractType
                 'choice_label' => 'name',
                 'choices' => $options['catalog_items'],
                 'required' => false,
-                'placeholder' => 'Free-text line',
+                'placeholder' => 'quotation.catalog_item_placeholder',
+                'label' => 'quotation.catalog_item',
+                'choice_attr' => static function (?QuotationCatalogItem $item): array {
+                    if ($item === null) {
+                        return [];
+                    }
+
+                    return [
+                        'data-description' => $item->getDescription() ?: $item->getName(),
+                        'data-unit' => $item->getUnit(),
+                        'data-unit-price' => $item->getDefaultPrice(),
+                    ];
+                },
             ])
-            ->add('description', TextType::class)
-            ->add('unit', TextType::class)
-            ->add('quantity', NumberType::class, ['scale' => 4])
-            ->add('unitPrice', MoneyType::class, ['currency' => false, 'scale' => 4]);
+            ->add('description', TextType::class, ['label' => 'quotation.description'])
+            ->add('unit', TextType::class, ['label' => 'quotation.unit'])
+            ->add('quantity', NumberType::class, ['scale' => 4, 'label' => 'quotation.quantity'])
+            ->add('unitPrice', MoneyType::class, ['currency' => false, 'scale' => 4, 'label' => 'quotation.unit_price']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

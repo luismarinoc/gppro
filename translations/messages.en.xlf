@@ -2370,6 +2370,24 @@
         <source>quotation.tax_amount</source>
         <target>Quotation tax</target>
       </trans-unit>
+      <trans-unit id="quotationLines" resname="quotation.lines"><source>quotation.lines</source><target>Quotation lines</target></trans-unit>
+      <trans-unit id="quotationLinesHelp" resname="quotation.lines_help"><source>quotation.lines_help</source><target>Add a line from the SAP catalog or enter a manual line. Catalog values can be edited.</target></trans-unit>
+      <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item"><source>quotation.catalog_item</source><target>SAP catalog item</target></trans-unit>
+      <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder"><source>quotation.catalog_item_placeholder</source><target>Select a catalog item</target></trans-unit>
+      <trans-unit id="quotationDescription" resname="quotation.description"><source>quotation.description</source><target>Description</target></trans-unit>
+      <trans-unit id="quotationUnit" resname="quotation.unit"><source>quotation.unit</source><target>Unit</target></trans-unit>
+      <trans-unit id="quotationQuantity" resname="quotation.quantity"><source>quotation.quantity</source><target>Quantity</target></trans-unit>
+      <trans-unit id="quotationUnitPrice" resname="quotation.unit_price"><source>quotation.unit_price</source><target>Unit price</target></trans-unit>
+      <trans-unit id="quotationLineSubtotal" resname="quotation.line_subtotal"><source>quotation.line_subtotal</source><target>Line subtotal</target></trans-unit>
+      <trans-unit id="quotationRemoveLine" resname="quotation.remove_line"><source>quotation.remove_line</source><target>Remove line</target></trans-unit>
+      <trans-unit id="quotationAddCatalogLine" resname="quotation.add_catalog_line"><source>quotation.add_catalog_line</source><target>Add SAP catalog line</target></trans-unit>
+      <trans-unit id="quotationAddManualLine" resname="quotation.add_manual_line"><source>quotation.add_manual_line</source><target>Add manual line</target></trans-unit>
+      <trans-unit id="quotationSummary" resname="quotation.summary"><source>quotation.summary</source><target>Summary</target></trans-unit>
+      <trans-unit id="quotationSubtotal" resname="quotation.subtotal"><source>quotation.subtotal</source><target>Subtotal</target></trans-unit>
+      <trans-unit id="quotationTotal" resname="quotation.total"><source>quotation.total</source><target>Total</target></trans-unit>
+      <trans-unit id="quotationServerAuthoritative" resname="quotation.server_authoritative"><source>quotation.server_authoritative</source><target>Final pricing is calculated and validated by the server.</target></trans-unit>
+      <trans-unit id="quotationSave" resname="quotation.save"><source>quotation.save</source><target>Save quotation</target></trans-unit>
+      <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum"><source>quotation.lines_minimum</source><target>Add at least one quotation line.</target></trans-unit>
     </body>
   </file>
 </xliff>
