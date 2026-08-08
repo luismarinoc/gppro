@@ -28,6 +28,13 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/quotation/create');
 
         self::assertTrue($client->getResponse()->isSuccessful());
+        $content = $client->getResponse()->getContent();
+        self::assertIsString($content);
+        self::assertStringContainsString('data-add-catalog-line', $content);
+        self::assertStringContainsString('data-add-manual-line', $content);
+        self::assertStringContainsString('data-remove-quotation-line', $content);
+        self::assertStringContainsString('data-line-subtotal', $content);
+        self::assertStringContainsString('SAP', $content);
     }
 
     public function testAdminCanListAndCreateCatalogItems(): void
@@ -53,6 +60,13 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $item = $this->getEntityManager()->getRepository(QuotationCatalogItem::class)->findOneBy(['name' => 'Consulting']);
         self::assertInstanceOf(QuotationCatalogItem::class, $item);
         self::assertEquals(100.0, (float) $item->getDefaultPrice());
+
+        $this->request($client, '/quotation/create');
+        $content = $client->getResponse()->getContent();
+        self::assertIsString($content);
+        self::assertStringContainsString('data-description="Consulting service"', $content);
+        self::assertStringContainsString('data-unit="hour"', $content);
+        self::assertStringContainsString('data-unit-price="100.0000"', $content);
     }
 
     public function testRegularUserCannotAccessQuotationManagement(): void

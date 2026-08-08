@@ -15,6 +15,7 @@ use App\Entity\Quotation;
 use App\Entity\QuotationLine;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Validation;
 
 #[CoversClass(Quotation::class)]
 class QuotationTest extends TestCase
@@ -57,6 +58,13 @@ class QuotationTest extends TestCase
         $sut->removeLine($line);
         self::assertNull($line->getQuotation());
         self::assertCount(0, $sut->getLines());
+    }
+
+    public function testAtLeastOneLineIsRequired(): void
+    {
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+
+        self::assertNotEmpty($validator->validate(new Quotation()));
     }
 
     public function testOptionalCommercialFieldsAndStatuses(): void

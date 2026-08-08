@@ -1,5 +1,26 @@
 {% extends 'base.html.twig' %}
 
+{% macro quotation_line(line) %}
+    <div class="border rounded p-3 mb-2" data-quotation-line>
+        <div class="row g-2 align-items-end">
+            <div class="col-lg-3">{{ form_row(line.catalogItem) }}</div>
+            <div class="col-lg-3">{{ form_row(line.description) }}</div>
+            <div class="col-sm-6 col-lg-1">{{ form_row(line.unit) }}</div>
+            <div class="col-sm-6 col-lg-2">{{ form_row(line.quantity) }}</div>
+            <div class="col-sm-6 col-lg-2">{{ form_row(line.unitPrice) }}</div>
+            <div class="col-sm-6 col-lg-1">
+                <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
+                <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
+            </div>
+            <div class="col-12 col-lg-1 text-lg-end">
+                <button class="btn btn-outline-danger" type="button" data-remove-quotation-line>{{ 'quotation.remove_line'|trans }}</button>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% import _self as quotation_macros %}
+
 {% block main %}
     <div class="card">
         <div class="card-header"><h3 class="card-title">{{ quotation.id ? 'Editar cotización' : 'Nueva cotización' }}</h3></div>
@@ -13,15 +34,34 @@
                 <div class="col-md-4">{{ form_row(form.discount) }}</div>
                 <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
             </div>
-            <h4>Lines</h4>
-            {% set quotation_line_prototype = form_widget(form.lines.vars.prototype) %}
+            <h4>{{ 'quotation.lines'|trans }}</h4>
+            <p class="text-muted">{{ 'quotation.lines_help'|trans }}</p>
+            {{ form_errors(form.lines) }}
+            {% set quotation_line_prototype = quotation_macros.quotation_line(form.lines.vars.prototype) %}
             <div data-quotation-lines>
                 {% for line in form.lines %}
-                    <div class="border rounded p-2 mb-2">{{ form_widget(line) }}</div>
+                    {{ quotation_macros.quotation_line(line) }}
                 {% endfor %}
             </div>
-            <button class="btn btn-secondary" type="button" data-add-quotation-line>Add line</button>
-            <button class="btn btn-primary" type="submit">Save quotation</button>
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <button class="btn btn-secondary" type="button" data-add-catalog-line>{{ 'quotation.add_catalog_line'|trans }}</button>
+                <button class="btn btn-outline-secondary" type="button" data-add-manual-line>{{ 'quotation.add_manual_line'|trans }}</button>
+            </div>
+            <div class="card bg-light mb-4" data-quotation-summary>
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'quotation.summary'|trans }}</h5>
+                    <div class="row">
+                        <div class="col-md-6"><span>{{ 'quotation.subtotal'|trans }}</span><strong class="float-end" data-summary-subtotal>0.00</strong></div>
+                        <div class="col-md-6"><span>{{ 'quotation.discount_amount'|trans }}</span><strong class="float-end" data-summary-discount>0.00</strong></div>
+                        <div class="col-md-6"><span>{{ 'quotation.surcharge_amount'|trans }}</span><strong class="float-end" data-summary-surcharge>0.00</strong></div>
+                        <div class="col-md-6"><span>{{ 'quotation.tax_amount'|trans }}</span><strong class="float-end" data-summary-tax>0.00</strong></div>
+                    </div>
+                    <hr>
+                    <div class="fs-3"><span>{{ 'quotation.total'|trans }}</span><strong class="float-end" data-summary-total>0.00</strong></div>
+                    <small class="text-muted">{{ 'quotation.server_authoritative'|trans }}</small>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ 'quotation.save'|trans }}</button>
             {{ form_end(form) }}
         </div>
     </div>
@@ -32,13 +72,67 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const collection = document.querySelector('[data-quotation-lines]');
-            const button = document.querySelector('[data-add-quotation-line]');
-            if (!collection || !button) return;
+            const catalogButton = document.querySelector('[data-add-catalog-line]');
+            const manualButton = document.querySelector('[data-add-manual-line]');
+            if (!collection || !catalogButton || !manualButton) return;
             let index = collection.children.length;
-            button.addEventListener('click', function () {
+            const getEmptyLine = function () {
+                return Array.from(collection.querySelectorAll('[data-quotation-line]')).find(function (line) {
+                    return !line.querySelector('input[name$="[description]"]')?.value;
+                });
+            };
+            const addLine = function (catalog) {
+                const emptyLine = getEmptyLine();
+                if (emptyLine) {
+                    (catalog ? emptyLine.querySelector('select[name$="[catalogItem]"]') : emptyLine.querySelector('input[name$="[description]"]'))?.focus();
+                    return emptyLine;
+                }
                 const prototype = '{{ quotation_line_prototype|e('js') }}'.replace(/__name__/g, index++);
-                collection.insertAdjacentHTML('beforeend', '<div class="border rounded p-2 mb-2">' + prototype + '</div>');
+                collection.insertAdjacentHTML('beforeend', prototype);
+                return collection.lastElementChild;
+            };
+            catalogButton.addEventListener('click', function () { addLine(true); });
+            manualButton.addEventListener('click', function () { addLine(false); });
+
+            const number = function (field) { return Number.parseFloat(field?.value || '0') || 0; };
+            const currency = function (value) { return Math.round((value + Number.EPSILON) * 100) / 100; };
+            const updateSummary = function () {
+                let subtotal = 0;
+                collection.querySelectorAll('[data-quotation-line]').forEach(function (line) {
+                    const lineSubtotal = number(line.querySelector('input[name$="[quantity]"]')) * number(line.querySelector('input[name$="[unitPrice]"]'));
+                    subtotal += lineSubtotal;
+                    line.querySelector('[data-line-subtotal]')?.replaceChildren(lineSubtotal.toFixed(2));
+                });
+                const percentage = function (selector) { return number(document.querySelector(selector)) / 100; };
+                const discount = currency(subtotal * percentage('[name$="[discount]"]'));
+                const surcharge = currency(subtotal * percentage('[name$="[surcharge]"]'));
+                const adjustedSubtotal = currency(subtotal - discount + surcharge);
+                const tax = currency(adjustedSubtotal * percentage('[name$="[tax]"]'));
+                document.querySelector('[data-summary-subtotal]')?.replaceChildren(subtotal.toFixed(2));
+                document.querySelector('[data-summary-discount]')?.replaceChildren(discount.toFixed(2));
+                document.querySelector('[data-summary-surcharge]')?.replaceChildren(surcharge.toFixed(2));
+                document.querySelector('[data-summary-tax]')?.replaceChildren(tax.toFixed(2));
+                document.querySelector('[data-summary-total]')?.replaceChildren((adjustedSubtotal + tax).toFixed(2));
+            };
+            collection.addEventListener('change', function (event) {
+                const select = event.target.closest('select[name$="[catalogItem]"]');
+                if (select) {
+                    const option = select.selectedOptions[0];
+                    const line = select.closest('[data-quotation-line]');
+                    if (option?.dataset.description) line.querySelector('input[name$="[description]"]').value = option.dataset.description;
+                    if (option?.dataset.unit) line.querySelector('input[name$="[unit]"]').value = option.dataset.unit;
+                    if (option?.dataset.unitPrice) line.querySelector('input[name$="[unitPrice]"]').value = option.dataset.unitPrice;
+                }
+                updateSummary();
             });
+            collection.addEventListener('input', updateSummary);
+            document.querySelectorAll('[name$="[discount]"], [name$="[surcharge]"], [name$="[tax]"]').forEach(function (field) { field.addEventListener('input', updateSummary); });
+            collection.addEventListener('click', function (event) {
+                const button = event.target.closest('[data-remove-quotation-line]');
+                if (button) button.closest('[data-quotation-line]')?.remove();
+                updateSummary();
+            });
+            updateSummary();
         });
     </script>
 {% endblock %}
