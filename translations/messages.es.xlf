@@ -2292,6 +2292,8 @@
       </trans-unit>
       <trans-unit id="quotationLines" resname="quotation.lines" xml:space="preserve"><source>quotation.lines</source><target state="translated">Líneas de la cotización</target></trans-unit>
       <trans-unit id="quotationLinesHelp" resname="quotation.lines_help" xml:space="preserve"><source>quotation.lines_help</source><target state="translated">Agregá una línea del catálogo SAP o ingresá una línea manual. Podés editar los valores del catálogo.</target></trans-unit>
+      <trans-unit id="quotationLinesEmpty" resname="quotation.lines_empty" xml:space="preserve"><source>quotation.lines_empty</source><target state="translated">Todavía no hay líneas. Usá uno de los botones de abajo para agregar una línea.</target></trans-unit>
+      <trans-unit id="quotationLinesMaximum" resname="quotation.lines_maximum" xml:space="preserve"><source>quotation.lines_maximum</source><target state="translated">Una cotización puede tener como máximo 10 líneas.</target></trans-unit>
       <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item" xml:space="preserve"><source>quotation.catalog_item</source><target state="translated">Ítem del catálogo SAP</target></trans-unit>
       <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder" xml:space="preserve"><source>quotation.catalog_item_placeholder</source><target state="translated">Seleccioná un ítem del catálogo</target></trans-unit>
       <trans-unit id="quotationDescription" resname="quotation.description" xml:space="preserve"><source>quotation.description</source><target state="translated">Descripción</target></trans-unit>

@@ -32,6 +32,9 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertIsString($content);
         self::assertStringContainsString('data-add-catalog-line', $content);
         self::assertStringContainsString('data-add-manual-line', $content);
+        self::assertStringContainsString('data-quotation-lines-empty', $content);
+        self::assertStringContainsString('__name__', $content);
+        self::assertCount(0, $client->getCrawler()->filter('[data-quotation-lines] > [data-quotation-line]'));
         self::assertStringContainsString('data-remove-quotation-line', $content);
         self::assertStringContainsString('data-line-subtotal', $content);
         self::assertStringContainsString('SAP', $content);

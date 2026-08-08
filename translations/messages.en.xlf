@@ -2372,6 +2372,8 @@
       </trans-unit>
       <trans-unit id="quotationLines" resname="quotation.lines"><source>quotation.lines</source><target>Quotation lines</target></trans-unit>
       <trans-unit id="quotationLinesHelp" resname="quotation.lines_help"><source>quotation.lines_help</source><target>Add a line from the SAP catalog or enter a manual line. Catalog values can be edited.</target></trans-unit>
+      <trans-unit id="quotationLinesEmpty" resname="quotation.lines_empty"><source>quotation.lines_empty</source><target>No quotation lines yet. Use one of the buttons below to add a line.</target></trans-unit>
+      <trans-unit id="quotationLinesMaximum" resname="quotation.lines_maximum"><source>quotation.lines_maximum</source><target>A quotation can contain a maximum of 10 lines.</target></trans-unit>
       <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item"><source>quotation.catalog_item</source><target>SAP catalog item</target></trans-unit>
       <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder"><source>quotation.catalog_item_placeholder</source><target>Select a catalog item</target></trans-unit>
       <trans-unit id="quotationDescription" resname="quotation.description"><source>quotation.description</source><target>Description</target></trans-unit>

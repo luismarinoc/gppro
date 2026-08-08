@@ -37,11 +37,31 @@
             <h4>{{ 'quotation.lines'|trans }}</h4>
             <p class="text-muted">{{ 'quotation.lines_help'|trans }}</p>
             {{ form_errors(form.lines) }}
-            {% set quotation_line_prototype = quotation_macros.quotation_line(form.lines.vars.prototype) %}
+            <template data-quotation-line-prototype>
+                <div class="border rounded p-3 mb-2" data-quotation-line>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.catalogItem) }}</div>
+                        <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.description) }}</div>
+                        <div class="col-sm-6 col-lg-1">{{ form_row(form.lines.vars.prototype.unit) }}</div>
+                        <div class="col-sm-6 col-lg-2">{{ form_row(form.lines.vars.prototype.quantity) }}</div>
+                        <div class="col-sm-6 col-lg-2">{{ form_row(form.lines.vars.prototype.unitPrice) }}</div>
+                        <div class="col-sm-6 col-lg-1">
+                            <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
+                            <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
+                        </div>
+                        <div class="col-12 col-lg-1 text-lg-end">
+                            <button class="btn btn-outline-danger" type="button" data-remove-quotation-line>{{ 'quotation.remove_line'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
             <div data-quotation-lines>
                 {% for line in form.lines %}
                     {{ quotation_macros.quotation_line(line) }}
                 {% endfor %}
+                <div class="text-muted border rounded p-3" data-quotation-lines-empty>
+                    {{ 'quotation.lines_empty'|trans }}
+                </div>
             </div>
             <div class="d-flex flex-wrap gap-2 mb-4">
                 <button class="btn btn-secondary" type="button" data-add-catalog-line>{{ 'quotation.add_catalog_line'|trans }}</button>
@@ -74,22 +94,25 @@
             const collection = document.querySelector('[data-quotation-lines]');
             const catalogButton = document.querySelector('[data-add-catalog-line]');
             const manualButton = document.querySelector('[data-add-manual-line]');
-            if (!collection || !catalogButton || !manualButton) return;
-            let index = collection.children.length;
-            const getEmptyLine = function () {
-                return Array.from(collection.querySelectorAll('[data-quotation-line]')).find(function (line) {
-                    return !line.querySelector('input[name$="[description]"]')?.value;
-                });
+            const prototypeTemplate = document.querySelector('[data-quotation-line-prototype]');
+            if (!collection || !catalogButton || !manualButton || !prototypeTemplate) return;
+            const maximumLines = 10;
+            let index = collection.querySelectorAll('[data-quotation-line]').length;
+            const emptyState = collection.querySelector('[data-quotation-lines-empty]');
+            const updateLineActions = function () {
+                const atMaximum = collection.querySelectorAll('[data-quotation-line]').length >= maximumLines;
+                catalogButton.disabled = atMaximum;
+                manualButton.disabled = atMaximum;
             };
             const addLine = function (catalog) {
-                const emptyLine = getEmptyLine();
-                if (emptyLine) {
-                    (catalog ? emptyLine.querySelector('select[name$="[catalogItem]"]') : emptyLine.querySelector('input[name$="[description]"]'))?.focus();
-                    return emptyLine;
-                }
-                const prototype = '{{ quotation_line_prototype|e('js') }}'.replace(/__name__/g, index++);
+                if (collection.querySelectorAll('[data-quotation-line]').length >= maximumLines) return null;
+                const prototype = prototypeTemplate.innerHTML.replace(/__name__/g, index++);
                 collection.insertAdjacentHTML('beforeend', prototype);
-                return collection.lastElementChild;
+                if (emptyState) emptyState.hidden = true;
+                const line = collection.lastElementChild;
+                (catalog ? line.querySelector('select[name$="[catalogItem]"]') : line.querySelector('input[name$="[description]"]'))?.focus();
+                updateLineActions();
+                return line;
             };
             catalogButton.addEventListener('click', function () { addLine(true); });
             manualButton.addEventListener('click', function () { addLine(false); });
@@ -129,9 +152,15 @@
             document.querySelectorAll('[name$="[discount]"], [name$="[surcharge]"], [name$="[tax]"]').forEach(function (field) { field.addEventListener('input', updateSummary); });
             collection.addEventListener('click', function (event) {
                 const button = event.target.closest('[data-remove-quotation-line]');
-                if (button) button.closest('[data-quotation-line]')?.remove();
+                if (button) {
+                    button.closest('[data-quotation-line]')?.remove();
+                    if (emptyState) emptyState.hidden = collection.querySelectorAll('[data-quotation-line]').length === 0;
+                    updateLineActions();
+                }
                 updateSummary();
             });
+            if (emptyState) emptyState.hidden = collection.querySelectorAll('[data-quotation-line]').length > 0;
+            updateLineActions();
             updateSummary();
         });
     </script>
