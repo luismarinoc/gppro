@@ -67,6 +67,18 @@ class QuotationTest extends TestCase
         self::assertNotEmpty($validator->validate(new Quotation()));
     }
 
+    public function testNoMoreThanTenLinesAreAllowed(): void
+    {
+        $quotation = new Quotation();
+        for ($index = 0; $index < 11; ++$index) {
+            $quotation->addLine(new QuotationLine());
+        }
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+
+        self::assertNotEmpty($validator->validate($quotation));
+    }
+
     public function testOptionalCommercialFieldsAndStatuses(): void
     {
         $sut = new Quotation();
