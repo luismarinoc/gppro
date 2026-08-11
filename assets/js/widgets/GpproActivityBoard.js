@@ -37,8 +37,20 @@ export default class GpproActivityBoard {
         this.element.addEventListener('dblclick', (event) => this.onCardDoubleClicked(event));
 
         this.searchInput = document.getElementById('activity_board_search');
+        this.filters = {
+            status: document.getElementById('activity_board_status_filter'),
+            priority: document.getElementById('activity_board_priority_filter'),
+            assignee: document.getElementById('activity_board_assignee_filter'),
+        };
+        this.populateAssigneeFilter();
+
         if (this.searchInput !== null) {
-            this.searchInput.addEventListener('input', () => this.filterCards(this.searchInput.value));
+            this.searchInput.addEventListener('input', () => this.filterCards());
+        }
+        for (const filter of Object.values(this.filters)) {
+            if (filter !== null) {
+                filter.addEventListener('change', () => this.filterCards());
+            }
         }
     }
 
@@ -167,26 +179,52 @@ export default class GpproActivityBoard {
      * @private
      */
     updateColumnCounts() {
-        this.filterCards(this.searchInput !== null ? this.searchInput.value : '');
+        this.filterCards();
+    }
+
+    populateAssigneeFilter() {
+        const filter = this.filters.assignee;
+        if (filter === null) {
+            return;
+        }
+
+        const assignees = new Map();
+        for (const card of this.element.querySelectorAll('.activity_board_card')) {
+            const values = (card.dataset.assignees ?? '').split('|').filter(Boolean);
+            const labels = (card.dataset.assigneeLabels ?? '').split('|');
+            values.forEach((value, index) => assignees.set(value, labels[index] ?? value));
+        }
+
+        for (const [value, label] of [...assignees.entries()].sort((a, b) => a[1].localeCompare(b[1]))) {
+            filter.add(new Option(label, value));
+        }
+        filter.add(new Option(filter.dataset.unassignedLabel ?? 'Unassigned', '__unassigned__'));
     }
 
     /**
-     * Filters cards by technical/functional user (see the card's
-     * data-search attribute, rendered server-side) purely in the DOM - the
-     * board already renders every card up front, so no request is needed.
+     * Filters cards using server-rendered card metadata purely in the DOM -
+     * the board already renders every card up front, so no request is needed.
      *
-     * @param {string} query
      * @private
      */
-    filterCards(query) {
-        const needle = query.trim().toLowerCase();
+    filterCards() {
+        const needle = this.searchInput === null ? '' : this.searchInput.value.trim().toLowerCase();
+        const status = this.filters.status === null ? '' : this.filters.status.value;
+        const priority = this.filters.priority === null ? '' : this.filters.priority.value;
+        const assignee = this.filters.assignee === null ? '' : this.filters.assignee.value;
 
         for (const column of this.element.querySelectorAll('.activity_board_column')) {
             const cards = column.querySelectorAll('.activity_board_card');
             let visibleCount = 0;
 
             for (const card of cards) {
-                const matches = needle === '' || (card.dataset.search ?? '').includes(needle);
+                const cardAssignees = card.dataset.assignees ?? '';
+                const matchesSearch = needle === '' || (card.dataset.search ?? '').includes(needle);
+                const matchesStatus = status === '' || card.dataset.status === status;
+                const matchesPriority = priority === '' || card.dataset.priority === priority;
+                const matchesAssignee = assignee === ''
+                    || (assignee === '__unassigned__' ? cardAssignees === '' : cardAssignees.split('|').includes(assignee));
+                const matches = matchesSearch && matchesStatus && matchesPriority && matchesAssignee;
                 card.classList.toggle('activity_board_card_filtered', !matches);
                 if (matches) {
                     visibleCount++;
@@ -200,7 +238,7 @@ export default class GpproActivityBoard {
 
             const noMatches = column.querySelector('.activity_board_column_no_matches');
             if (noMatches !== null) {
-                noMatches.classList.toggle('d-none', !(needle !== '' && cards.length > 0 && visibleCount === 0));
+                noMatches.classList.toggle('d-none', !(cards.length > 0 && visibleCount === 0));
             }
         }
     }

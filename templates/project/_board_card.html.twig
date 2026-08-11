@@ -1,27 +1,30 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% set priorityColors = {'urgent': 'red', 'high': 'orange', 'medium': 'azure', 'low': 'secondary'} %}
 {% set searchNames = [card.activity.name] %}
+{% set assigneeNames = [] %}
 {% if card.assignedTo is not null %}{% set searchNames = searchNames|merge([card.assignedTo.displayName]) %}{% endif %}
+{% if card.assignedTo is not null %}{% set assigneeNames = assigneeNames|merge([card.assignedTo.displayName]) %}{% endif %}
 {% if card.technicalUser is not null %}{% set searchNames = searchNames|merge([card.technicalUser.displayName]) %}{% endif %}
 {% if card.functionalUser is not null %}{% set searchNames = searchNames|merge([card.functionalUser.displayName]) %}{% endif %}
-<div class="activity_board_card" data-activity-id="{{ card.activity.id }}" data-search="{{ searchNames|join(' ')|lower }}">
+<div class="activity_board_card" data-activity-id="{{ card.activity.id }}" data-status="{{ card.status.value }}" data-priority="{{ card.priority is not null ? card.priority.value : '' }}" data-search="{{ searchNames|join(' ')|lower }}" data-assignees="{{ assigneeNames|join('|')|lower }}" data-assignee-labels="{{ assigneeNames|join('|') }}">
     <div class="activity_board_card_name">{{ card.activity.name }}</div>
     <div class="activity_board_card_meta d-flex align-items-center justify-content-between">
-        <span class="activity_board_card_priority">
+        <span class="activity_board_card_badges d-flex align-items-center gap-1">
+            <span class="activity_board_card_status">{{ ('activity_board.status.' ~ card.status.value)|trans }}</span>
             {%- if card.priority is not null -%}
                 {{ widgets.badge_type(('activity_board.priority.' ~ card.priority.value)|trans, priorityColors[card.priority.value]) }}
             {%- endif -%}
         </span>
         <span class="activity_board_card_due_date">
             {%- if card.dueDate is not null -%}
-                {{ card.dueDate|date_short }}
+                {{ icon('calendar') }} {{ card.dueDate|date_short }}
             {%- endif -%}
         </span>
     </div>
     {% if card.assignedTo is not null %}
         <div class="activity_board_card_assignee d-flex align-items-center">
             {{ widgets.user_avatar(card.assignedTo, card.assignedTo.displayName, 'avatar-sm') }}
-            <span class="ms-2">{{ card.assignedTo.displayName }}</span>
+            <span class="ms-2 text-truncate">{{ card.assignedTo.displayName }}</span>
         </div>
     {% elseif card.technicalUser is null and card.functionalUser is null %}
         <div class="activity_board_card_assignee">

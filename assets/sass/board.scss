@@ -5,6 +5,30 @@
     align-items: flex-start;
 }
 
+.activity_board_toolbar {
+    margin-bottom: 1.25rem;
+    padding: .75rem;
+    background: var(--tblr-bg-surface-secondary, #f4f6fb);
+    border: 1px solid var(--tblr-border-color, #e6e8ec);
+    border-radius: 10px;
+}
+
+.activity_board_search {
+    min-width: 220px;
+}
+
+.activity_board_filter {
+    min-width: 145px;
+}
+
+.activity_board_toolbar .form-label {
+    margin-bottom: .3rem;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
 .activity_board_column {
     min-width: 260px;
     background-color: var(--tblr-bg-surface-secondary, #f4f6fb);
@@ -55,15 +79,11 @@
     padding: .5rem .25rem;
 }
 
-.activity_board_toolbar {
-    margin-bottom: 1rem;
-    max-width: 320px;
-}
-
 .activity_board_card {
     background-color: var(--tblr-card-bg, #fff);
     border-radius: 8px;
-    padding: .75rem;
+    padding: .875rem;
+    border: 1px solid var(--tblr-border-color, #e6e8ec);
     box-shadow: var(--tblr-card-box-shadow, 0 1px 3px rgba(0, 0, 0, .08));
     cursor: grab;
     transition: box-shadow .15s ease, transform .15s ease;
@@ -76,6 +96,7 @@
 
 .activity_board_card_name {
     font-weight: 600;
+    line-height: 1.35;
     margin-bottom: .5rem;
 }
 
@@ -86,6 +107,14 @@
 
 .activity_board_card_due_date {
     color: var(--tblr-secondary, #6c757d);
+    white-space: nowrap;
+}
+
+.activity_board_card_status {
+    color: var(--tblr-secondary, #6c757d);
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .activity_board_card_assignee {
@@ -110,4 +139,14 @@
 
 .activity_board_card_filtered {
     display: none;
+}
+
+@media (max-width: 767.98px) {
+    .activity_board_toolbar > * {
+        flex: 1 1 100%;
+    }
+
+    .activity_board_toolbar .btn {
+        width: 100%;
+    }
 }
