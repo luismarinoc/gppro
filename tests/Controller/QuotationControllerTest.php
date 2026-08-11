@@ -133,11 +133,45 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString('data-quotation-line-edit', $content);
 
         $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('[data-quotation-lines] > [data-quotation-line]'));
         self::assertStringContainsString('d-none', $crawler->filter('[data-quotation-line-edit]')->attr('class') ?? '');
 
         // the actual input values must still be present and machine-parseable (period-decimal), even hidden
-        $quantityValue = $crawler->filter('input[name$="[quantity]"]')->first()->attr('value');
+        // scoped to the real saved line, not the empty <template> prototype (which DomCrawler parses as live DOM)
+        $quantityValue = $crawler->filter('[data-quotation-lines] > [data-quotation-line] input[name$="[quantity]"]')->first()->attr('value');
         self::assertNotNull($quantityValue);
         self::assertMatchesRegularExpression('/^\d+(\.\d+)?$/', $quantityValue);
+    }
+
+    public function testAdminCanSubmitEditFormForASavedQuotationWithLines(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Edit submit test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer);
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('3.0000')->setUnitPrice('95.0000'));
+        $em->persist($quotation);
+        $em->flush();
+        $quotationId = $quotation->getId();
+
+        $this->request($client, '/quotation/' . $quotationId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $client->getCrawler()->filter('form')->form();
+        $form['quotation_form[lines][0][quantity]'] = '5.0000';
+        $client->submit($form);
+
+        $this->assertIsRedirect($client, $this->createUrl('/quotation/' . $quotationId));
+
+        $em->clear();
+        $reloaded = $em->getRepository(Quotation::class)->find($quotationId);
+        self::assertInstanceOf(Quotation::class, $reloaded);
+        self::assertCount(1, $reloaded->getLines());
+        self::assertEquals(5.0, (float) $reloaded->getLines()->first()->getQuantity());
     }
 }
