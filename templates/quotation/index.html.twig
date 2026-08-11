@@ -23,10 +23,17 @@
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for quotation in quotations %}
                     <tr>
+                        <td>
+                            {% if is_granted('edit_quotation', quotation) %}
+                                <a href="{{ path('quotation_edit', {id: quotation.id}) }}">#{{ quotation.id }}</a>
+                            {% else %}
+                                <a href="{{ path('quotation_view', {id: quotation.id}) }}">#{{ quotation.id }}</a>
+                            {% endif %}
+                        </td>
                         <td>{{ quotation.customer.name }}</td>
                         <td>{{ quotation.project ? quotation.project.name : '-' }}</td>
                         <td>{{ quotation.createdAt|date('Y-m-d') }}</td>
@@ -34,7 +41,7 @@
                         <td class="text-end"><a href="{{ path('quotation_view', {id: quotation.id}) }}">{{ 'view'|trans }}</a></td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="5">{{ 'quotation.none_found'|trans }}</td></tr>
+                    <tr><td colspan="6">{{ 'quotation.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
