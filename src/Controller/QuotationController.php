@@ -13,6 +13,7 @@ use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Form\QuotationForm;
 use App\Invoice\QuotationInvoiceService;
+use App\Invoice\QuotationSummary;
 use App\Pdf\PdfContext;
 use App\Pdf\PdfRendererTrait;
 use App\Repository\QuotationCatalogItemRepository;
@@ -126,6 +127,8 @@ final class QuotationController extends AbstractController
         return $this->render('quotation/view.html.twig', [
             'page_setup' => $this->createPageSetup(),
             'quotation' => $quotation,
+            'summary' => QuotationSummary::fromQuotation($quotation),
+            'currency' => $quotation->getCustomer()?->getCurrency() ?? Customer::DEFAULT_CURRENCY,
         ]);
     }
 

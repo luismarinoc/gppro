@@ -11,8 +11,7 @@ namespace App\Service;
 
 use App\Entity\Customer;
 use App\Entity\Quotation;
-use App\Invoice\QuotationInvoiceItem;
-use App\Invoice\QuotationPricing;
+use App\Invoice\QuotationSummary;
 use App\Pdf\HtmlToPdfConverter;
 use Twig\Environment;
 
@@ -31,25 +30,19 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
             throw new \DomainException('A saved quotation with a customer is required to render its PDF.');
         }
 
-        $items = array_map(static fn ($line): QuotationInvoiceItem => new QuotationInvoiceItem($line), $quotation->getLines()->toArray());
-        $subtotal = round(array_sum(array_map(static fn (QuotationInvoiceItem $item): float => $item->getRate(), $items)), 2, PHP_ROUND_HALF_UP);
-        $pricing = new QuotationPricing($quotation);
-        $discount = $pricing->discountAmount($subtotal);
-        $surcharge = $pricing->surchargeAmount($subtotal);
-        $adjustedSubtotal = $pricing->adjustedSubtotal($subtotal);
-        $tax = $pricing->customTaxAmount($adjustedSubtotal);
+        $summary = QuotationSummary::fromQuotation($quotation);
 
         $currency = $customer->getCurrency() ?? Customer::DEFAULT_CURRENCY;
         $html = $this->twig->render('quotation/pdf.html.twig', [
             'quotation' => $quotation,
-            'items' => $items,
+            'items' => $summary->items,
             'currency' => $currency,
-            'subtotal' => $subtotal,
-            'discount_amount' => $discount,
-            'surcharge_amount' => $surcharge,
-            'adjusted_subtotal' => $adjustedSubtotal,
-            'tax_amount' => $tax,
-            'total' => round($adjustedSubtotal + ($tax ?? 0), 2, PHP_ROUND_HALF_UP),
+            'subtotal' => $summary->subtotal,
+            'discount_amount' => $summary->discountAmount,
+            'surcharge_amount' => $summary->surchargeAmount,
+            'adjusted_subtotal' => $summary->adjustedSubtotal,
+            'tax_amount' => $summary->taxAmount,
+            'total' => $summary->total,
         ]);
 
         try {
