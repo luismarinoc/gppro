@@ -2370,6 +2370,9 @@
         <source>quotation.tax_amount</source>
         <target>Quotation tax</target>
       </trans-unit>
+      <trans-unit id="quotationCreateTitle" resname="quotation.create_title"><source>quotation.create_title</source><target>New quotation</target></trans-unit>
+      <trans-unit id="quotationEditTitle" resname="quotation.edit_title"><source>quotation.edit_title</source><target>Edit quotation</target></trans-unit>
+      <trans-unit id="quotationGeneralInfo" resname="quotation.general_info"><source>quotation.general_info</source><target>General information</target></trans-unit>
       <trans-unit id="quotationLines" resname="quotation.lines"><source>quotation.lines</source><target>Quotation lines</target></trans-unit>
       <trans-unit id="quotationLinesHelp" resname="quotation.lines_help"><source>quotation.lines_help</source><target>Add a line from the SAP catalog or enter a manual line. Catalog values can be edited.</target></trans-unit>
       <trans-unit id="quotationLinesEmpty" resname="quotation.lines_empty"><source>quotation.lines_empty</source><target>No quotation lines yet. Use one of the buttons below to add a line.</target></trans-unit>

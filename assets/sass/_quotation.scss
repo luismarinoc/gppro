@@ -1,0 +1,10 @@
+.quotation_summary_sticky {
+    position: sticky;
+    top: 1rem;
+}
+
+.quotation_line:last-child {
+    border-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}

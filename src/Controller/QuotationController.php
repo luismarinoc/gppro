@@ -152,14 +152,14 @@ final class QuotationController extends AbstractController
         }
 
         return $this->render('quotation/edit.html.twig', [
-            'page_setup' => $this->createPageSetup(),
+            'page_setup' => $this->createPageSetup($quotation->getId() !== null ? 'quotation.edit_title' : 'quotation.create_title'),
             'quotation' => $quotation,
             'form' => $form->createView(),
         ]);
     }
 
-    private function createPageSetup(): PageSetup
+    private function createPageSetup(string $title = 'quotations'): PageSetup
     {
-        return new PageSetup('quotations');
+        return new PageSetup($title);
     }
 }

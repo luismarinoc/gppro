@@ -2322,6 +2322,9 @@
         <source>invoice.history_totals</source>
         <target state="translated">Totales por cliente, proyecto y tipo de factura</target>
       </trans-unit>
+      <trans-unit id="quotationCreateTitle" resname="quotation.create_title" xml:space="preserve"><source>quotation.create_title</source><target state="translated">Nueva cotización</target></trans-unit>
+      <trans-unit id="quotationEditTitle" resname="quotation.edit_title" xml:space="preserve"><source>quotation.edit_title</source><target state="translated">Editar cotización</target></trans-unit>
+      <trans-unit id="quotationGeneralInfo" resname="quotation.general_info" xml:space="preserve"><source>quotation.general_info</source><target state="translated">Información general</target></trans-unit>
       <trans-unit id="quotationLines" resname="quotation.lines" xml:space="preserve"><source>quotation.lines</source><target state="translated">Líneas de la cotización</target></trans-unit>
       <trans-unit id="quotationLinesHelp" resname="quotation.lines_help" xml:space="preserve"><source>quotation.lines_help</source><target state="translated">Agregá una línea del catálogo SAP o ingresá una línea manual. Podés editar los valores del catálogo.</target></trans-unit>
       <trans-unit id="quotationLinesEmpty" resname="quotation.lines_empty" xml:space="preserve"><source>quotation.lines_empty</source><target state="translated">Todavía no hay líneas. Usá uno de los botones de abajo para agregar una línea.</target></trans-unit>
