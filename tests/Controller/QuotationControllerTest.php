@@ -106,4 +106,38 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
         self::assertStringContainsString('application/pdf', (string) $client->getResponse()->headers->get('Content-Type'));
     }
+
+    public function testEditingASavedQuotationShowsLinesReadOnlyWithAnEditToggle(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Edit toggle test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setSurcharge('10')->setTax('19');
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('3.0000')->setUnitPrice('95.0000'));
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/' . $quotation->getId() . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = $client->getResponse()->getContent();
+        self::assertIsString($content);
+
+        self::assertStringContainsString('data-quotation-line-view', $content);
+        self::assertStringContainsString('data-edit-quotation-line', $content);
+        self::assertStringContainsString('Consulting', $content);
+        self::assertStringContainsString('data-quotation-line-edit', $content);
+
+        $crawler = $client->getCrawler();
+        self::assertStringContainsString('d-none', $crawler->filter('[data-quotation-line-edit]')->attr('class') ?? '');
+
+        // the actual input values must still be present and machine-parseable (period-decimal), even hidden
+        $quantityValue = $crawler->filter('input[name$="[quantity]"]')->first()->attr('value');
+        self::assertNotNull($quantityValue);
+        self::assertMatchesRegularExpression('/^\d+(\.\d+)?$/', $quantityValue);
+    }
 }

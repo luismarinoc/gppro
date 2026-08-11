@@ -182,6 +182,7 @@ final class QuotationController extends AbstractController
             'page_setup' => $this->createPageSetup($quotation->getId() !== null ? 'quotation.edit_title' : 'quotation.create_title'),
             'quotation' => $quotation,
             'form' => $form->createView(),
+            'currency' => $quotation->getCustomer()?->getCurrency() ?? Customer::DEFAULT_CURRENCY,
         ]);
     }
 
