@@ -2374,6 +2374,14 @@
         <source>quotation.tax_amount</source>
         <target>Quotation tax</target>
       </trans-unit>
+      <trans-unit id="quotationClpEquivalent" resname="quotation.clp_equivalent">
+        <source>quotation.clp_equivalent</source>
+        <target>CLP equivalent</target>
+      </trans-unit>
+      <trans-unit id="quotationFxRateAsOf" resname="quotation.fx_rate_as_of">
+        <source>quotation.fx_rate_as_of</source>
+        <target>Exchange rate as of %date%</target>
+      </trans-unit>
       <trans-unit id="quotationCreateTitle" resname="quotation.create_title"><source>quotation.create_title</source><target>New quotation</target></trans-unit>
       <trans-unit id="quotationEditTitle" resname="quotation.edit_title"><source>quotation.edit_title</source><target>Edit quotation</target></trans-unit>
       <trans-unit id="quotationGeneralInfo" resname="quotation.general_info"><source>quotation.general_info</source><target>General information</target></trans-unit>

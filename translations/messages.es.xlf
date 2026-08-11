@@ -2322,6 +2322,8 @@
         <source>invoice.history_totals</source>
         <target state="translated">Totales por cliente, proyecto y tipo de factura</target>
       </trans-unit>
+      <trans-unit id="quotationClpEquivalent" resname="quotation.clp_equivalent" xml:space="preserve"><source>quotation.clp_equivalent</source><target state="translated">Equivalente en CLP</target></trans-unit>
+      <trans-unit id="quotationFxRateAsOf" resname="quotation.fx_rate_as_of" xml:space="preserve"><source>quotation.fx_rate_as_of</source><target state="translated">Tipo de cambio al %date%</target></trans-unit>
       <trans-unit id="quotationCreateTitle" resname="quotation.create_title" xml:space="preserve"><source>quotation.create_title</source><target state="translated">Nueva cotización</target></trans-unit>
       <trans-unit id="quotationEditTitle" resname="quotation.edit_title" xml:space="preserve"><source>quotation.edit_title</source><target state="translated">Editar cotización</target></trans-unit>
       <trans-unit id="quotationGeneralInfo" resname="quotation.general_info" xml:space="preserve"><source>quotation.general_info</source><target state="translated">Información general</target></trans-unit>

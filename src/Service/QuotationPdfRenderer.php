@@ -10,6 +10,7 @@
 namespace App\Service;
 
 use App\Entity\Quotation;
+use App\FxRate\ClpConverter;
 use App\Invoice\QuotationSummary;
 use App\Pdf\HtmlToPdfConverter;
 use Twig\Environment;
@@ -19,6 +20,7 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
     public function __construct(
         private readonly Environment $twig,
         private readonly HtmlToPdfConverter $converter,
+        private readonly ClpConverter $clpConverter,
     ) {
     }
 
@@ -42,6 +44,11 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
             'adjusted_subtotal' => $summary->adjustedSubtotal,
             'tax_amount' => $summary->taxAmount,
             'total' => $summary->total,
+            'clpConversion' => $this->clpConverter->convert(
+                number_format($summary->total, 4, '.', ''),
+                $currency,
+                $quotation->getValidUntil()
+            ),
         ]);
 
         try {

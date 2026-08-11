@@ -62,6 +62,12 @@
         <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="number">{{ adjusted_subtotal|money(currency) }}</td></tr>
         {% if tax_amount is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="number">{{ tax_amount|money(currency) }}</td></tr>{% endif %}
         <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ total|money(currency) }}</td></tr>
+        {% if clpConversion is not null and clpConversion.isConverted() %}
+            <tr>
+                <td>{{ 'quotation.clp_equivalent'|trans }}<br><small>{{ 'quotation.fx_rate_as_of'|trans({'%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small></td>
+                <td class="number">≈ {{ clpConversion.clpAmount|money('CLP') }}</td>
+            </tr>
+        {% endif %}
     </table>
 
     <p class="response-hint">{{ 'quotation.response_hint'|trans }}</p>

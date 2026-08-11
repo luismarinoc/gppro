@@ -10,6 +10,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Customer;
+use App\Entity\FxRate;
 use App\Entity\Quotation;
 use App\Entity\QuotationCatalogItem;
 use App\Entity\QuotationLine;
@@ -220,5 +221,37 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $row = $client->getCrawler()->filter('tr[data-href$="/quotation/' . $quotation->getId() . '/edit"]');
         self::assertCount(1, $row);
         self::assertStringContainsString('alternative-link', $row->attr('class') ?? '');
+    }
+
+    public function testViewAndPdfShowClpEquivalentForNonClpQuotationsUsingTheValidUntilDate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable('2026-08-01'));
+        $fxRate->setIndicator(FxRate::INDICATOR_USD);
+        $fxRate->setRateValue('950.000000');
+        $em->persist($fxRate);
+
+        $customer = new Customer('FX equivalent test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setCurrency(Quotation::CURRENCY_USD);
+        $quotation->setValidUntil(new \DateTimeImmutable('2026-08-05'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('2')->setUnitPrice('100'));
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/' . $quotation->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $viewContent = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('CLP equivalent', $viewContent);
+        self::assertStringContainsString('190', $viewContent);
+
+        $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
+        self::assertTrue($client->getResponse()->isSuccessful());
     }
 }

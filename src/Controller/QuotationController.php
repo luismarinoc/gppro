@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Form\QuotationForm;
+use App\FxRate\ClpConverter;
 use App\Invoice\QuotationInvoiceService;
 use App\Invoice\QuotationSummary;
 use App\Pdf\PdfContext;
@@ -122,13 +123,20 @@ final class QuotationController extends AbstractController
 
     #[Route(path: '/{id}', name: 'quotation_view', methods: ['GET'])]
     #[IsGranted('view_quotation', 'quotation')]
-    public function view(Quotation $quotation): Response
+    public function view(Quotation $quotation, ClpConverter $clpConverter): Response
     {
+        $summary = QuotationSummary::fromQuotation($quotation);
+
         return $this->render('quotation/view.html.twig', [
             'page_setup' => $this->createPageSetup(),
             'quotation' => $quotation,
-            'summary' => QuotationSummary::fromQuotation($quotation),
+            'summary' => $summary,
             'currency' => $quotation->getCurrency(),
+            'clpConversion' => $clpConverter->convert(
+                number_format($summary->total, 4, '.', ''),
+                $quotation->getCurrency(),
+                $quotation->getValidUntil()
+            ),
         ]);
     }
 
