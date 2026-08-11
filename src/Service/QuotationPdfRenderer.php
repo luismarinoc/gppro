@@ -9,7 +9,6 @@
 
 namespace App\Service;
 
-use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Invoice\QuotationSummary;
 use App\Pdf\HtmlToPdfConverter;
@@ -32,7 +31,7 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
 
         $summary = QuotationSummary::fromQuotation($quotation);
 
-        $currency = $customer->getCurrency() ?? Customer::DEFAULT_CURRENCY;
+        $currency = $quotation->getCurrency();
         $html = $this->twig->render('quotation/pdf.html.twig', [
             'quotation' => $quotation,
             'items' => $summary->items,

@@ -33,6 +33,7 @@ class QuotationTest extends TestCase
         self::assertNull($sut->getTax());
         self::assertNull($sut->getDiscount());
         self::assertNull($sut->getSurcharge());
+        self::assertSame(Quotation::CURRENCY_CLP, $sut->getCurrency());
         self::assertNull($sut->getInvoice());
         self::assertCount(0, $sut->getLines());
         self::assertNotNull($sut->getCreatedAt());
@@ -90,6 +91,39 @@ class QuotationTest extends TestCase
         self::assertSame('10.0000', $sut->getDiscount());
         self::assertSame('5.0000', $sut->getSurcharge());
         self::assertSame(Quotation::STATUS_SENT, $sut->getStatus());
+    }
+
+    public function testCurrencyCanBeSetToAnAllowedValue(): void
+    {
+        $sut = new Quotation();
+
+        $sut->setCurrency(Quotation::CURRENCY_USD);
+        self::assertSame(Quotation::CURRENCY_USD, $sut->getCurrency());
+
+        $sut->setCurrency(Quotation::CURRENCY_UF);
+        self::assertSame('CLF', $sut->getCurrency());
+    }
+
+    public function testSettingAnUnknownCurrencyIsRejected(): void
+    {
+        $sut = new Quotation();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $sut->setCurrency('BTC');
+    }
+
+    public function testValidatorRejectsAnUnknownCurrency(): void
+    {
+        $sut = new Quotation();
+        $sut->setCustomer(new Customer('Currency validation customer'));
+        $sut->addLine((new QuotationLine())->setDescription('Item')->setUnit('unit')->setQuantity('1')->setUnitPrice('1'));
+
+        $reflection = new \ReflectionProperty(Quotation::class, 'currency');
+        $reflection->setValue($sut, 'BTC');
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+
+        self::assertNotEmpty($validator->validate($sut));
     }
 
     public function testTransitionsDoNotAllowDirectTerminalEscalation(): void

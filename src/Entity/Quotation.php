@@ -42,6 +42,18 @@ class Quotation implements CreatedAt, ModifiedAt
         self::STATUS_INVOICED,
     ];
 
+    public const CURRENCY_CLP = 'CLP';
+    public const CURRENCY_USD = 'USD';
+    // ISO 4217 code for Chile's "Unidad de Fomento" (displayed to users as "UF", see LocaleFormatter::money())
+    public const CURRENCY_UF = 'CLF';
+
+    /** @var string[] */
+    public const CURRENCIES = [
+        self::CURRENCY_CLP,
+        self::CURRENCY_USD,
+        self::CURRENCY_UF,
+    ];
+
     use CreatedTrait;
     use ModifiedTrait;
 
@@ -70,6 +82,11 @@ class Quotation implements CreatedAt, ModifiedAt
     #[ORM\Column(name: 'status', type: Types::STRING, length: 20, nullable: false, options: ['default' => self::STATUS_DRAFT])]
     #[Assert\Choice(choices: self::STATUSES)]
     private string $status = self::STATUS_DRAFT;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false, options: ['default' => self::CURRENCY_CLP])]
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: self::CURRENCIES)]
+    private string $currency = self::CURRENCY_CLP;
 
     #[ORM\Column(name: 'valid_until', type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $validUntil = null;
@@ -159,6 +176,21 @@ class Quotation implements CreatedAt, ModifiedAt
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(string $currency): Quotation
+    {
+        if (!\in_array($currency, self::CURRENCIES, true)) {
+            throw new \InvalidArgumentException('Unknown quotation currency');
+        }
+        $this->currency = $currency;
+
+        return $this;
     }
 
     private function setStatus(string $status): Quotation

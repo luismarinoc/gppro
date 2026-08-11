@@ -15,6 +15,7 @@ use App\Form\Type\CustomerType;
 use App\Form\Type\DatePickerType;
 use App\Form\Type\ProjectType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -40,6 +41,15 @@ final class QuotationForm extends AbstractType
                 'ignore_date' => true,
             ])
             ->add('validUntil', DatePickerType::class, ['required' => false])
+            ->add('currency', ChoiceType::class, [
+                'required' => true,
+                'label' => 'quotation.currency',
+                'choices' => [
+                    'CLP' => Quotation::CURRENCY_CLP,
+                    'USD' => Quotation::CURRENCY_USD,
+                    'UF' => Quotation::CURRENCY_UF,
+                ],
+            ])
             ->add('tax', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.tax', 'help' => 'quotation.percentage_help'])
             ->add('discount', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.discount', 'help' => 'quotation.percentage_help'])
             ->add('surcharge', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.surcharge', 'help' => 'quotation.percentage_help'])

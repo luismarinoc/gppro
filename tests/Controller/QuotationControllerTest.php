@@ -164,6 +164,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
 
         $form = $client->getCrawler()->filter('form')->form();
         $form['quotation_form[lines][0][quantity]'] = '5.0000';
+        $form['quotation_form[currency]'] = 'USD';
         $client->submit($form);
 
         $this->assertIsRedirect($client, $this->createUrl('/quotation/' . $quotationId));
@@ -173,6 +174,31 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertInstanceOf(Quotation::class, $reloaded);
         self::assertCount(1, $reloaded->getLines());
         self::assertEquals(5.0, (float) $reloaded->getLines()->first()->getQuantity());
+        self::assertSame('USD', $reloaded->getCurrency());
+    }
+
+    public function testEditFormOffersTheThreeAllowedCurrencies(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Currency select test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer);
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('1')->setUnitPrice('1'));
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/' . $quotation->getId() . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $options = $client->getCrawler()->filter('select[name="quotation_form[currency]"] option')
+            ->each(static fn ($node) => $node->attr('value'));
+
+        self::assertSame(['CLP', 'USD', 'CLF'], $options);
     }
 
     public function testQuotationListRowIsClickableToEditForUsersWithEditPermission(): void

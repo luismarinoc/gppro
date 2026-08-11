@@ -24,9 +24,10 @@ class QuotationPdfRendererTest extends TestCase
     public function testRendersQuotationDataWithoutCreatingARepositoryFile(): void
     {
         $customer = new Customer('PDF customer');
-        $customer->setCurrency('USD');
+        $customer->setCurrency('EUR');
         $quotation = (new Quotation())
             ->setCustomer($customer)
+            ->setCurrency(Quotation::CURRENCY_USD)
             ->setTax('20')
             ->setDiscount('10')
             ->setSurcharge('5');
@@ -36,7 +37,9 @@ class QuotationPdfRendererTest extends TestCase
 
         $twig = $this->createMock(Environment::class);
         $twig->expects(self::once())->method('render')->with('quotation/pdf.html.twig', self::callback(static function (array $context): bool {
-            return $context['subtotal'] === 200.0 && $context['discount_amount'] === 20.0 && $context['surcharge_amount'] === 10.0 && $context['tax_amount'] === 38.0;
+            // the quotation's own currency wins, not the (differing) customer currency
+            return $context['currency'] === Quotation::CURRENCY_USD
+                && $context['subtotal'] === 200.0 && $context['discount_amount'] === 20.0 && $context['surcharge_amount'] === 10.0 && $context['tax_amount'] === 38.0;
         }))->willReturn('<html></html>');
         $converter = $this->createMock(HtmlToPdfConverter::class);
         $converter->expects(self::once())->method('convertToPdf')->with('<html></html>', self::arrayHasKey('filename'))->willReturn('%PDF');

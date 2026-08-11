@@ -2342,6 +2342,10 @@
         <source>invoice.history_totals</source>
         <target>Totals by customer, project and invoice type</target>
       </trans-unit>
+      <trans-unit id="quotationCurrency" resname="quotation.currency">
+        <source>quotation.currency</source>
+        <target>Currency</target>
+      </trans-unit>
       <trans-unit id="quotationDiscount" resname="quotation.discount">
         <source>quotation.discount</source>
         <target>Quotation discount (%)</target>

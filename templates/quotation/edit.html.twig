@@ -11,6 +11,7 @@
                     {{ form_row(form.project) }}
                     <div class="row">
                         <div class="col-md-4">{{ form_row(form.validUntil) }}</div>
+                        <div class="col-md-4">{{ form_row(form.currency) }}</div>
                         <div class="col-md-4">{{ form_row(form.tax) }}</div>
                         <div class="col-md-4">{{ form_row(form.discount) }}</div>
                         <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
@@ -167,9 +168,25 @@
             manualButton.addEventListener('click', function () { addLine(false); });
 
             const number = function (field) { return Number.parseFloat(field?.value || '0') || 0; };
-            const currency = function (value) { return Math.round((value + Number.EPSILON) * 100) / 100; };
-            const moneyFormatter = new Intl.NumberFormat(document.documentElement.lang || 'es-CL', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            const formatMoney = function (value) { return moneyFormatter.format(value); };
+            const round2 = function (value) { return Math.round((value + Number.EPSILON) * 100) / 100; };
+            const locale = document.documentElement.lang || 'es-CL';
+            const currencyField = document.querySelector('[name$="[currency]"]');
+            const fractionDigitsCache = {};
+            const fractionDigitsForCurrency = function (code) {
+                if (fractionDigitsCache[code] !== undefined) return fractionDigitsCache[code];
+                let digits = 2;
+                try {
+                    digits = new Intl.NumberFormat(locale, {style: 'currency', currency: code}).resolvedOptions().maximumFractionDigits;
+                } catch (error) {
+                    digits = 2;
+                }
+                fractionDigitsCache[code] = digits;
+                return digits;
+            };
+            const formatMoney = function (value) {
+                const digits = fractionDigitsForCurrency(currencyField?.value || 'CLP');
+                return new Intl.NumberFormat(locale, {minimumFractionDigits: digits, maximumFractionDigits: digits}).format(value);
+            };
             const updateSummary = function () {
                 let subtotal = 0;
                 collection.querySelectorAll('[data-quotation-line]').forEach(function (line) {
@@ -178,16 +195,17 @@
                     line.querySelector('[data-line-subtotal]')?.replaceChildren(formatMoney(lineSubtotal));
                 });
                 const percentage = function (selector) { return number(document.querySelector(selector)) / 100; };
-                const discount = currency(subtotal * percentage('[name$="[discount]"]'));
-                const surcharge = currency(subtotal * percentage('[name$="[surcharge]"]'));
-                const adjustedSubtotal = currency(subtotal - discount + surcharge);
-                const tax = currency(adjustedSubtotal * percentage('[name$="[tax]"]'));
+                const discount = round2(subtotal * percentage('[name$="[discount]"]'));
+                const surcharge = round2(subtotal * percentage('[name$="[surcharge]"]'));
+                const adjustedSubtotal = round2(subtotal - discount + surcharge);
+                const tax = round2(adjustedSubtotal * percentage('[name$="[tax]"]'));
                 document.querySelector('[data-summary-subtotal]')?.replaceChildren(formatMoney(subtotal));
                 document.querySelector('[data-summary-discount]')?.replaceChildren(formatMoney(discount));
                 document.querySelector('[data-summary-surcharge]')?.replaceChildren(formatMoney(surcharge));
                 document.querySelector('[data-summary-tax]')?.replaceChildren(formatMoney(tax));
                 document.querySelector('[data-summary-total]')?.replaceChildren(formatMoney(adjustedSubtotal + tax));
             };
+            currencyField?.addEventListener('change', updateSummary);
             collection.addEventListener('change', function (event) {
                 const select = event.target.closest('select[name$="[catalogItem]"]');
                 if (select) {
