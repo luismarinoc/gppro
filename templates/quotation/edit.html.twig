@@ -1,19 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% macro quotation_line(line) %}
-    <div class="border rounded p-3 mb-2" data-quotation-line>
+    <div class="quotation_line border-bottom pb-3 mb-3" data-quotation-line>
         <div class="row g-2 align-items-end">
             <div class="col-lg-3">{{ form_row(line.catalogItem) }}</div>
             <div class="col-lg-3">{{ form_row(line.description) }}</div>
-            <div class="col-sm-6 col-lg-1">{{ form_row(line.unit) }}</div>
-            <div class="col-sm-6 col-lg-2">{{ form_row(line.quantity) }}</div>
-            <div class="col-sm-6 col-lg-2">{{ form_row(line.unitPrice) }}</div>
-            <div class="col-sm-6 col-lg-1">
+            <div class="col-sm-4 col-lg-1">{{ form_row(line.unit) }}</div>
+            <div class="col-sm-4 col-lg-2">{{ form_row(line.quantity) }}</div>
+            <div class="col-sm-4 col-lg-2">{{ form_row(line.unitPrice) }}</div>
+            <div class="col-8 col-lg-1">
                 <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
                 <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
             </div>
-            <div class="col-12 col-lg-1 text-lg-end">
-                <button class="btn btn-outline-danger" type="button" data-remove-quotation-line>{{ 'quotation.remove_line'|trans }}</button>
+            <div class="col-4 col-lg-1 text-end">
+                <button class="btn btn-icon btn-outline-danger" type="button" data-remove-quotation-line title="{{ 'quotation.remove_line'|trans }}">
+                    {{ icon('trash', true) }}
+                </button>
             </div>
         </div>
     </div>
@@ -22,69 +24,100 @@
 {% import _self as quotation_macros %}
 
 {% block main %}
-    <div class="card">
-        <div class="card-header"><h3 class="card-title">{{ quotation.id ? 'Editar cotización' : 'Nueva cotización' }}</h3></div>
-        <div class="card-body">
-            {{ form_start(form) }}
-            {{ form_row(form.customer) }}
-            {{ form_row(form.project) }}
-            <div class="row">
-                <div class="col-md-4">{{ form_row(form.validUntil) }}</div>
-                <div class="col-md-4">{{ form_row(form.tax) }}</div>
-                <div class="col-md-4">{{ form_row(form.discount) }}</div>
-                <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
-            </div>
-            <h4>{{ 'quotation.lines'|trans }}</h4>
-            <p class="text-muted">{{ 'quotation.lines_help'|trans }}</p>
-            {{ form_errors(form.lines) }}
-            <template data-quotation-line-prototype>
-                <div class="border rounded p-3 mb-2" data-quotation-line>
-                    <div class="row g-2 align-items-end">
-                        <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.catalogItem) }}</div>
-                        <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.description) }}</div>
-                        <div class="col-sm-6 col-lg-1">{{ form_row(form.lines.vars.prototype.unit) }}</div>
-                        <div class="col-sm-6 col-lg-2">{{ form_row(form.lines.vars.prototype.quantity) }}</div>
-                        <div class="col-sm-6 col-lg-2">{{ form_row(form.lines.vars.prototype.unitPrice) }}</div>
-                        <div class="col-sm-6 col-lg-1">
-                            <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
-                            <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
-                        </div>
-                        <div class="col-12 col-lg-1 text-lg-end">
-                            <button class="btn btn-outline-danger" type="button" data-remove-quotation-line>{{ 'quotation.remove_line'|trans }}</button>
-                        </div>
-                    </div>
-                </div>
-            </template>
-            <div data-quotation-lines>
-                {% for line in form.lines %}
-                    {{ quotation_macros.quotation_line(line) }}
-                {% endfor %}
-                <div class="text-muted border rounded p-3" data-quotation-lines-empty>
-                    {{ 'quotation.lines_empty'|trans }}
-                </div>
-            </div>
-            <div class="d-flex flex-wrap gap-2 mb-4">
-                <button class="btn btn-secondary" type="button" data-add-catalog-line>{{ 'quotation.add_catalog_line'|trans }}</button>
-                <button class="btn btn-outline-secondary" type="button" data-add-manual-line>{{ 'quotation.add_manual_line'|trans }}</button>
-            </div>
-            <div class="card bg-light mb-4" data-quotation-summary>
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'quotation.summary'|trans }}</h5>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg-8">
+            {% embed '@theme/embeds/card.html.twig' %}
+                {% block box_title %}{{ 'quotation.general_info'|trans }}{% endblock %}
+                {% block box_body %}
+                    {{ form_row(form.customer) }}
+                    {{ form_row(form.project) }}
                     <div class="row">
-                        <div class="col-md-6"><span>{{ 'quotation.subtotal'|trans }}</span><strong class="float-end" data-summary-subtotal>0.00</strong></div>
-                        <div class="col-md-6"><span>{{ 'quotation.discount_amount'|trans }}</span><strong class="float-end" data-summary-discount>0.00</strong></div>
-                        <div class="col-md-6"><span>{{ 'quotation.surcharge_amount'|trans }}</span><strong class="float-end" data-summary-surcharge>0.00</strong></div>
-                        <div class="col-md-6"><span>{{ 'quotation.tax_amount'|trans }}</span><strong class="float-end" data-summary-tax>0.00</strong></div>
+                        <div class="col-md-4">{{ form_row(form.validUntil) }}</div>
+                        <div class="col-md-4">{{ form_row(form.tax) }}</div>
+                        <div class="col-md-4">{{ form_row(form.discount) }}</div>
+                        <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
                     </div>
-                    <hr>
-                    <div class="fs-3"><span>{{ 'quotation.total'|trans }}</span><strong class="float-end" data-summary-total>0.00</strong></div>
-                    <small class="text-muted">{{ 'quotation.server_authoritative'|trans }}</small>
-                </div>
+                {% endblock %}
+            {% endembed %}
+
+            {% embed '@theme/embeds/card.html.twig' %}
+                {% block box_title %}{{ 'quotation.lines'|trans }}{% endblock %}
+                {% block box_tools %}
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-add-catalog-line>{{ icon('create', true) }} {{ 'quotation.add_catalog_line'|trans }}</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-add-manual-line>{{ icon('create', true) }} {{ 'quotation.add_manual_line'|trans }}</button>
+                    </div>
+                {% endblock %}
+                {% block box_body %}
+                    <p class="text-muted">{{ 'quotation.lines_help'|trans }}</p>
+                    {{ form_errors(form.lines) }}
+                    <template data-quotation-line-prototype>
+                        <div class="quotation_line border-bottom pb-3 mb-3" data-quotation-line>
+                            <div class="row g-2 align-items-end">
+                                <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.catalogItem) }}</div>
+                                <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.description) }}</div>
+                                <div class="col-sm-4 col-lg-1">{{ form_row(form.lines.vars.prototype.unit) }}</div>
+                                <div class="col-sm-4 col-lg-2">{{ form_row(form.lines.vars.prototype.quantity) }}</div>
+                                <div class="col-sm-4 col-lg-2">{{ form_row(form.lines.vars.prototype.unitPrice) }}</div>
+                                <div class="col-8 col-lg-1">
+                                    <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
+                                    <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
+                                </div>
+                                <div class="col-4 col-lg-1 text-end">
+                                    <button class="btn btn-icon btn-outline-danger" type="button" data-remove-quotation-line title="{{ 'quotation.remove_line'|trans }}">
+                                        {{ icon('trash', true) }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <div data-quotation-lines>
+                        {% for line in form.lines %}
+                            {{ quotation_macros.quotation_line(line) }}
+                        {% endfor %}
+                        <div class="text-muted text-center py-4" data-quotation-lines-empty>
+                            {{ icon('info', true) }} {{ 'quotation.lines_empty'|trans }}
+                        </div>
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="quotation_summary_sticky" data-quotation-summary>
+                {% embed '@theme/embeds/card.html.twig' %}
+                    {% block box_title %}{{ 'quotation.summary'|trans }}{% endblock %}
+                    {% block box_body %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ 'quotation.subtotal'|trans }}</span>
+                            <strong data-summary-subtotal>0.00</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ 'quotation.discount_amount'|trans }}</span>
+                            <strong data-summary-discount>0.00</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ 'quotation.surcharge_amount'|trans }}</span>
+                            <strong data-summary-surcharge>0.00</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ 'quotation.tax_amount'|trans }}</span>
+                            <strong data-summary-tax>0.00</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fs-5">{{ 'quotation.total'|trans }}</span>
+                            <strong class="fs-2" data-summary-total>0.00</strong>
+                        </div>
+                        <small class="text-muted d-block mb-3">{{ 'quotation.server_authoritative'|trans }}</small>
+                        <button class="btn btn-primary w-100" type="submit">{{ 'quotation.save'|trans }}</button>
+                    {% endblock %}
+                {% endembed %}
             </div>
-            <button class="btn btn-primary" type="submit">{{ 'quotation.save'|trans }}</button>
-            {{ form_end(form) }}
         </div>
     </div>
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}
