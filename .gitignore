@@ -5,7 +5,8 @@
 /.idea/
 .DS_Store
 var/templates/
-/.atl/
+.atl/
+/.codegraph/
 
 
 # custom apache rules e.g. to deactivate ioncube loader
