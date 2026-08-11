@@ -74,6 +74,18 @@
         <source>milestone_invoice.error.no_hours_logged</source>
         <target state="translated">Uno de los hitos seleccionados no tiene horas facturables cargadas todavía y no se puede facturar.</target>
       </trans-unit>
+      <trans-unit id="quotationSendSuccess" resname="quotation.send.success" xml:space="preserve">
+        <source>quotation.send.success</source>
+        <target state="translated">Cotización enviada correctamente.</target>
+      </trans-unit>
+      <trans-unit id="quotationConvertSuccess" resname="quotation.convert.success" xml:space="preserve">
+        <source>quotation.convert.success</source>
+        <target state="translated">La cotización se convirtió en factura.</target>
+      </trans-unit>
+      <trans-unit id="quotationConvertError" resname="quotation.convert.error" xml:space="preserve">
+        <source>quotation.convert.error</source>
+        <target state="translated">No se pudo convertir la cotización: %reason%</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

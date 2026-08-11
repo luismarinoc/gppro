@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ app.request.locale }}">
 <body>
-    <h1>Quotation #{{ quotation.id }}</h1>
-    <p>Please review the quotation for {{ quotation.customer.name }}.</p>
-    <p><a href="{{ accept_url }}">Accept quotation</a></p>
-    <p><a href="{{ reject_url }}">Reject quotation</a></p>
-    <p>Both links open a confirmation page before recording your response.</p>
+    <h1>{{ 'quotation.view_title'|trans }} #{{ quotation.id }}</h1>
+    <p>{{ 'quotation.email.review_prompt'|trans({'%customer%': quotation.customer.name}) }}</p>
+    <p><a href="{{ accept_url }}">{{ 'quotation.accept_action'|trans }}</a></p>
+    <p><a href="{{ reject_url }}">{{ 'quotation.reject_action'|trans }}</a></p>
+    <p>{{ 'quotation.email.confirmation_hint'|trans }}</p>
 </body>
 </html>

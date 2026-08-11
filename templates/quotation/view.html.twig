@@ -3,26 +3,27 @@
 {% block main %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Quotation #{{ quotation.id }}</h3>
+            <h3 class="card-title">{{ 'quotation.view_title'|trans }} #{{ quotation.id }}</h3>
             <div class="card-actions">
-                {% if is_granted('edit_quotation', quotation) %}<a class="btn btn-primary" href="{{ path('quotation_edit', {id: quotation.id}) }}">Edit</a>{% endif %}
+                <a class="btn btn-outline-secondary" href="{{ path('quotation_pdf', {id: quotation.id}) }}" target="_blank" rel="noopener">{{ icon('print', true) }} {{ 'quotation.view_pdf'|trans }}</a>
+                {% if is_granted('edit_quotation', quotation) %}<a class="btn btn-primary" href="{{ path('quotation_edit', {id: quotation.id}) }}">{{ 'edit'|trans }}</a>{% endif %}
                 {% if quotation.status == 'draft' and is_granted('send_quotation', quotation) %}
-                    <form method="post" action="{{ path('quotation_send', {id: quotation.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quotation_send_' ~ quotation.id) }}"><button class="btn btn-success" type="submit">Send quotation</button></form>
+                    <form method="post" action="{{ path('quotation_send', {id: quotation.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quotation_send_' ~ quotation.id) }}"><button class="btn btn-success" type="submit">{{ 'quotation.send_action'|trans }}</button></form>
                 {% endif %}
                 {% if quotation.status == 'accepted' and is_granted('convert_quotation', quotation) %}
-                    <form method="post" action="{{ path('quotation_convert', {id: quotation.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quotation_convert_' ~ quotation.id) }}"><button class="btn btn-primary" type="submit">Convert to invoice</button></form>
+                    <form method="post" action="{{ path('quotation_convert', {id: quotation.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quotation_convert_' ~ quotation.id) }}"><button class="btn btn-primary" type="submit">{{ 'quotation.convert_action'|trans }}</button></form>
                 {% endif %}
             </div>
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Customer</dt><dd class="col-sm-9">{{ quotation.customer.name }}</dd>
-                <dt class="col-sm-3">Project</dt><dd class="col-sm-9">{{ quotation.project ? quotation.project.name : '-' }}</dd>
-                <dt class="col-sm-3">Status</dt><dd class="col-sm-9">{{ quotation.status|capitalize }}</dd>
-                <dt class="col-sm-3">Valid until</dt><dd class="col-sm-9">{{ quotation.validUntil ? quotation.validUntil|date('Y-m-d') : '-' }}</dd>
+                <dt class="col-sm-3">{{ 'customer'|trans }}</dt><dd class="col-sm-9">{{ quotation.customer.name }}</dd>
+                <dt class="col-sm-3">{{ 'project'|trans }}</dt><dd class="col-sm-9">{{ quotation.project ? quotation.project.name : '-' }}</dd>
+                <dt class="col-sm-3">{{ 'status'|trans }}</dt><dd class="col-sm-9">{{ ('quotation.status.' ~ quotation.status)|trans }}</dd>
+                <dt class="col-sm-3">{{ 'quotation.valid_until'|trans }}</dt><dd class="col-sm-9">{{ quotation.validUntil ? quotation.validUntil|date('Y-m-d') : '-' }}</dd>
             </dl>
             <table class="table table-vcenter">
-                <thead><tr><th>Description</th><th>Unit</th><th class="text-end">Quantity</th><th class="text-end">Unit price</th></tr></thead>
+                <thead><tr><th>{{ 'quotation.description'|trans }}</th><th>{{ 'quotation.unit'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th></tr></thead>
                 <tbody>
                 {% for line in quotation.lines %}
                     <tr><td>{{ line.description }}</td><td>{{ line.unit }}</td><td class="text-end">{{ line.quantity }}</td><td class="text-end">{{ line.unitPrice }}</td></tr>

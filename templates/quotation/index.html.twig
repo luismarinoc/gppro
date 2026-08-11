@@ -3,38 +3,38 @@
 {% block main %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ customer ? 'Quotation history for '~customer.name : 'Quotations' }}</h3>
+            <h3 class="card-title">{{ customer ? 'quotation.history_title'|trans({'%customer%': customer.name}) : 'quotations'|trans }}</h3>
             {% if is_granted('create_quotation') %}
-                <div class="card-actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">Crear cotización</a></div>
+                <div class="card-actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">{{ 'quotation.create_action'|trans }}</a></div>
             {% endif %}
         </div>
         <div class="card-body border-bottom">
             <form method="get" class="row g-2">
                 <div class="col-auto">
                     <select class="form-select" name="status">
-                        <option value="">All statuses</option>
+                        <option value="">{{ 'quotation.all_statuses'|trans }}</option>
                         {% for option in constant('App\\Entity\\Quotation::STATUSES') %}
-                            <option value="{{ option }}"{% if status == option %} selected{% endif %}>{{ option|capitalize }}</option>
+                            <option value="{{ option }}"{% if status == option %} selected{% endif %}>{{ ('quotation.status.' ~ option)|trans }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-auto"><button class="btn btn-secondary" type="submit">Filter</button></div>
+                <div class="col-auto"><button class="btn btn-secondary" type="submit">{{ 'filter'|trans }}</button></div>
             </form>
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Customer</th><th>Project</th><th>Created</th><th>Status</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for quotation in quotations %}
                     <tr>
                         <td>{{ quotation.customer.name }}</td>
                         <td>{{ quotation.project ? quotation.project.name : '-' }}</td>
                         <td>{{ quotation.createdAt|date('Y-m-d') }}</td>
-                        <td>{{ quotation.status|capitalize }}</td>
-                        <td class="text-end"><a href="{{ path('quotation_view', {id: quotation.id}) }}">View</a></td>
+                        <td>{{ ('quotation.status.' ~ quotation.status)|trans }}</td>
+                        <td class="text-end"><a href="{{ path('quotation_view', {id: quotation.id}) }}">{{ 'view'|trans }}</a></td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="5">No quotations found.</td></tr>
+                    <tr><td colspan="5">{{ 'quotation.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

@@ -13,9 +13,12 @@ use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Form\QuotationForm;
 use App\Invoice\QuotationInvoiceService;
+use App\Pdf\PdfContext;
+use App\Pdf\PdfRendererTrait;
 use App\Repository\QuotationCatalogItemRepository;
 use App\Repository\QuotationRepository;
 use App\Service\QuotationMailService;
+use App\Service\QuotationPdfRendererInterface;
 use App\Utils\PageSetup;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +31,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('view_quotation')]
 final class QuotationController extends AbstractController
 {
+    use PdfRendererTrait;
+
     #[Route(path: '/', name: 'quotation_list', methods: ['GET'])]
     public function index(Request $request, QuotationRepository $repository): Response
     {
@@ -85,7 +90,7 @@ final class QuotationController extends AbstractController
         }
 
         $mailService->send($quotation);
-        $this->flashSuccess('Quotation sent successfully.');
+        $this->flashSuccess('quotation.send.success');
 
         return $this->redirectToRoute('quotation_view', ['id' => $quotation->getId()]);
     }
@@ -122,6 +127,25 @@ final class QuotationController extends AbstractController
             'page_setup' => $this->createPageSetup(),
             'quotation' => $quotation,
         ]);
+    }
+
+    #[Route(path: '/{id}/pdf', name: 'quotation_pdf', methods: ['GET'])]
+    #[IsGranted('view_quotation', 'quotation')]
+    public function pdf(Quotation $quotation, QuotationPdfRendererInterface $pdfRenderer): Response
+    {
+        try {
+            $content = $pdfRenderer->render($quotation);
+        } catch (\Exception $exception) {
+            $this->flashUpdateException($exception);
+
+            return $this->redirectToRoute('quotation_view', ['id' => $quotation->getId()]);
+        }
+
+        $this->setDispositionInline(true);
+        $context = new PdfContext();
+        $context->setOption('filename', 'quotation-' . $quotation->getId());
+
+        return $this->createPdfResponse($content, $context);
     }
 
     /** @param array<string, int|null> $parameters */

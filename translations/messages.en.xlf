@@ -2392,6 +2392,32 @@
       <trans-unit id="quotationTotal" resname="quotation.total"><source>quotation.total</source><target>Total</target></trans-unit>
       <trans-unit id="quotationServerAuthoritative" resname="quotation.server_authoritative"><source>quotation.server_authoritative</source><target>Final pricing is calculated and validated by the server.</target></trans-unit>
       <trans-unit id="quotationSave" resname="quotation.save"><source>quotation.save</source><target>Save quotation</target></trans-unit>
+      <trans-unit id="quotationViewPdf" resname="quotation.view_pdf"><source>quotation.view_pdf</source><target>View PDF</target></trans-unit>
+      <trans-unit id="quotationViewTitle" resname="quotation.view_title"><source>quotation.view_title</source><target>Quotation</target></trans-unit>
+      <trans-unit id="quotationCreateAction" resname="quotation.create_action"><source>quotation.create_action</source><target>Create quotation</target></trans-unit>
+      <trans-unit id="quotationHistoryTitle" resname="quotation.history_title"><source>quotation.history_title</source><target>Quotation history for %customer%</target></trans-unit>
+      <trans-unit id="quotationAllStatuses" resname="quotation.all_statuses"><source>quotation.all_statuses</source><target>All statuses</target></trans-unit>
+      <trans-unit id="quotationStatusDraft" resname="quotation.status.draft"><source>quotation.status.draft</source><target>Draft</target></trans-unit>
+      <trans-unit id="quotationStatusSent" resname="quotation.status.sent"><source>quotation.status.sent</source><target>Sent</target></trans-unit>
+      <trans-unit id="quotationStatusAccepted" resname="quotation.status.accepted"><source>quotation.status.accepted</source><target>Accepted</target></trans-unit>
+      <trans-unit id="quotationStatusRejected" resname="quotation.status.rejected"><source>quotation.status.rejected</source><target>Rejected</target></trans-unit>
+      <trans-unit id="quotationStatusExpired" resname="quotation.status.expired"><source>quotation.status.expired</source><target>Expired</target></trans-unit>
+      <trans-unit id="quotationStatusInvoiced" resname="quotation.status.invoiced"><source>quotation.status.invoiced</source><target>Invoiced</target></trans-unit>
+      <trans-unit id="quotationNoneFound" resname="quotation.none_found"><source>quotation.none_found</source><target>No quotations found.</target></trans-unit>
+      <trans-unit id="quotationSendAction" resname="quotation.send_action"><source>quotation.send_action</source><target>Send quotation</target></trans-unit>
+      <trans-unit id="quotationConvertAction" resname="quotation.convert_action"><source>quotation.convert_action</source><target>Convert to invoice</target></trans-unit>
+      <trans-unit id="quotationValidUntil" resname="quotation.valid_until"><source>quotation.valid_until</source><target>Valid until</target></trans-unit>
+      <trans-unit id="quotationAdjustedSubtotal" resname="quotation.adjusted_subtotal"><source>quotation.adjusted_subtotal</source><target>Adjusted subtotal</target></trans-unit>
+      <trans-unit id="quotationResponseHint" resname="quotation.response_hint"><source>quotation.response_hint</source><target>Please use the accept or reject link in the quotation email to respond.</target></trans-unit>
+      <trans-unit id="quotationAcceptAction" resname="quotation.accept_action"><source>quotation.accept_action</source><target>Accept quotation</target></trans-unit>
+      <trans-unit id="quotationRejectAction" resname="quotation.reject_action"><source>quotation.reject_action</source><target>Reject quotation</target></trans-unit>
+      <trans-unit id="quotationEmailReviewPrompt" resname="quotation.email.review_prompt"><source>quotation.email.review_prompt</source><target>Please review the quotation for %customer%.</target></trans-unit>
+      <trans-unit id="quotationEmailConfirmationHint" resname="quotation.email.confirmation_hint"><source>quotation.email.confirmation_hint</source><target>Both links open a confirmation page before recording your response.</target></trans-unit>
+      <trans-unit id="quotationResponseTitle" resname="quotation.response.title"><source>quotation.response.title</source><target>Quotation response</target></trans-unit>
+      <trans-unit id="quotationResponsePrompt" resname="quotation.response.prompt"><source>quotation.response.prompt</source><target>Do you want to accept or reject this quotation?</target></trans-unit>
+      <trans-unit id="quotationResponseRecordedTitle" resname="quotation.response.recorded_title"><source>quotation.response.recorded_title</source><target>Quotation response recorded</target></trans-unit>
+      <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you"><source>quotation.response.thank_you</source><target>Thank you</target></trans-unit>
+      <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message"><source>quotation.response.recorded_message</source><target>Your quotation has been marked as %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum"><source>quotation.lines_minimum</source><target>Add at least one quotation line.</target></trans-unit>
     </body>
   </file>

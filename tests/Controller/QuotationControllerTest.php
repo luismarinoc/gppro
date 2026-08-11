@@ -9,7 +9,10 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Customer;
+use App\Entity\Quotation;
 use App\Entity\QuotationCatalogItem;
+use App\Entity\QuotationLine;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -76,5 +79,31 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
     {
         $this->assertUrlIsSecuredForRole(User::ROLE_USER, '/quotation/');
         $this->assertUrlIsSecuredForRole(User::ROLE_USER, '/admin/quotation/catalog/');
+    }
+
+    public function testAdminCanViewSavedQuotationAsPdf(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('PDF view test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer);
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('2.0000')->setUnitPrice('100.0000'));
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/' . $quotation->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = $client->getResponse()->getContent();
+        self::assertIsString($content);
+        self::assertStringContainsString($this->createUrl('/quotation/' . $quotation->getId() . '/pdf'), $content);
+
+        $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringContainsString('application/pdf', (string) $client->getResponse()->headers->get('Content-Type'));
     }
 }

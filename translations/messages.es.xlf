@@ -2344,6 +2344,32 @@
       <trans-unit id="quotationTotal" resname="quotation.total" xml:space="preserve"><source>quotation.total</source><target state="translated">Total</target></trans-unit>
       <trans-unit id="quotationServerAuthoritative" resname="quotation.server_authoritative" xml:space="preserve"><source>quotation.server_authoritative</source><target state="translated">El precio final se calcula y valida en el servidor.</target></trans-unit>
       <trans-unit id="quotationSave" resname="quotation.save" xml:space="preserve"><source>quotation.save</source><target state="translated">Guardar cotización</target></trans-unit>
+      <trans-unit id="quotationViewPdf" resname="quotation.view_pdf" xml:space="preserve"><source>quotation.view_pdf</source><target state="translated">Ver PDF</target></trans-unit>
+      <trans-unit id="quotationViewTitle" resname="quotation.view_title" xml:space="preserve"><source>quotation.view_title</source><target state="translated">Cotización</target></trans-unit>
+      <trans-unit id="quotationCreateAction" resname="quotation.create_action" xml:space="preserve"><source>quotation.create_action</source><target state="translated">Crear cotización</target></trans-unit>
+      <trans-unit id="quotationHistoryTitle" resname="quotation.history_title" xml:space="preserve"><source>quotation.history_title</source><target state="translated">Historial de cotizaciones de %customer%</target></trans-unit>
+      <trans-unit id="quotationAllStatuses" resname="quotation.all_statuses" xml:space="preserve"><source>quotation.all_statuses</source><target state="translated">Todos los estados</target></trans-unit>
+      <trans-unit id="quotationStatusDraft" resname="quotation.status.draft" xml:space="preserve"><source>quotation.status.draft</source><target state="translated">Borrador</target></trans-unit>
+      <trans-unit id="quotationStatusSent" resname="quotation.status.sent" xml:space="preserve"><source>quotation.status.sent</source><target state="translated">Enviada</target></trans-unit>
+      <trans-unit id="quotationStatusAccepted" resname="quotation.status.accepted" xml:space="preserve"><source>quotation.status.accepted</source><target state="translated">Aceptada</target></trans-unit>
+      <trans-unit id="quotationStatusRejected" resname="quotation.status.rejected" xml:space="preserve"><source>quotation.status.rejected</source><target state="translated">Rechazada</target></trans-unit>
+      <trans-unit id="quotationStatusExpired" resname="quotation.status.expired" xml:space="preserve"><source>quotation.status.expired</source><target state="translated">Vencida</target></trans-unit>
+      <trans-unit id="quotationStatusInvoiced" resname="quotation.status.invoiced" xml:space="preserve"><source>quotation.status.invoiced</source><target state="translated">Facturada</target></trans-unit>
+      <trans-unit id="quotationNoneFound" resname="quotation.none_found" xml:space="preserve"><source>quotation.none_found</source><target state="translated">No se encontraron cotizaciones.</target></trans-unit>
+      <trans-unit id="quotationSendAction" resname="quotation.send_action" xml:space="preserve"><source>quotation.send_action</source><target state="translated">Enviar cotización</target></trans-unit>
+      <trans-unit id="quotationConvertAction" resname="quotation.convert_action" xml:space="preserve"><source>quotation.convert_action</source><target state="translated">Convertir a factura</target></trans-unit>
+      <trans-unit id="quotationValidUntil" resname="quotation.valid_until" xml:space="preserve"><source>quotation.valid_until</source><target state="translated">Válida hasta</target></trans-unit>
+      <trans-unit id="quotationAdjustedSubtotal" resname="quotation.adjusted_subtotal" xml:space="preserve"><source>quotation.adjusted_subtotal</source><target state="translated">Subtotal ajustado</target></trans-unit>
+      <trans-unit id="quotationResponseHint" resname="quotation.response_hint" xml:space="preserve"><source>quotation.response_hint</source><target state="translated">Para responder, usá el enlace de aceptar o rechazar del email de la cotización.</target></trans-unit>
+      <trans-unit id="quotationAcceptAction" resname="quotation.accept_action" xml:space="preserve"><source>quotation.accept_action</source><target state="translated">Aceptar cotización</target></trans-unit>
+      <trans-unit id="quotationRejectAction" resname="quotation.reject_action" xml:space="preserve"><source>quotation.reject_action</source><target state="translated">Rechazar cotización</target></trans-unit>
+      <trans-unit id="quotationEmailReviewPrompt" resname="quotation.email.review_prompt" xml:space="preserve"><source>quotation.email.review_prompt</source><target state="translated">Por favor, revisá la cotización de %customer%.</target></trans-unit>
+      <trans-unit id="quotationEmailConfirmationHint" resname="quotation.email.confirmation_hint" xml:space="preserve"><source>quotation.email.confirmation_hint</source><target state="translated">Ambos enlaces abren una página de confirmación antes de registrar tu respuesta.</target></trans-unit>
+      <trans-unit id="quotationResponseTitle" resname="quotation.response.title" xml:space="preserve"><source>quotation.response.title</source><target state="translated">Respuesta de la cotización</target></trans-unit>
+      <trans-unit id="quotationResponsePrompt" resname="quotation.response.prompt" xml:space="preserve"><source>quotation.response.prompt</source><target state="translated">¿Querés aceptar o rechazar esta cotización?</target></trans-unit>
+      <trans-unit id="quotationResponseRecordedTitle" resname="quotation.response.recorded_title" xml:space="preserve"><source>quotation.response.recorded_title</source><target state="translated">Respuesta registrada</target></trans-unit>
+      <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you" xml:space="preserve"><source>quotation.response.thank_you</source><target state="translated">Gracias</target></trans-unit>
+      <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message" xml:space="preserve"><source>quotation.response.recorded_message</source><target state="translated">Tu cotización quedó marcada como %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum" xml:space="preserve"><source>quotation.lines_minimum</source><target state="translated">Agregá al menos una línea a la cotización.</target></trans-unit>
     </body>
   </file>
