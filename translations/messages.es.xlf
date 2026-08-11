@@ -2337,7 +2337,6 @@
       <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item" xml:space="preserve"><source>quotation.catalog_item</source><target state="translated">Ítem del catálogo SAP</target></trans-unit>
       <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder" xml:space="preserve"><source>quotation.catalog_item_placeholder</source><target state="translated">Seleccioná un ítem del catálogo</target></trans-unit>
       <trans-unit id="quotationDescription" resname="quotation.description" xml:space="preserve"><source>quotation.description</source><target state="translated">Descripción</target></trans-unit>
-      <trans-unit id="quotationUnit" resname="quotation.unit" xml:space="preserve"><source>quotation.unit</source><target state="translated">Unidad</target></trans-unit>
       <trans-unit id="quotationQuantity" resname="quotation.quantity" xml:space="preserve"><source>quotation.quantity</source><target state="translated">Cantidad</target></trans-unit>
       <trans-unit id="quotationUnitPrice" resname="quotation.unit_price" xml:space="preserve"><source>quotation.unit_price</source><target state="translated">Precio unitario</target></trans-unit>
       <trans-unit id="quotationLineSubtotal" resname="quotation.line_subtotal" xml:space="preserve"><source>quotation.line_subtotal</source><target state="translated">Subtotal de línea</target></trans-unit>

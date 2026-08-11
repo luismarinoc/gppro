@@ -36,11 +36,6 @@ class QuotationLine
     #[Assert\NotBlank]
     private ?string $description = null;
 
-    #[ORM\Column(name: 'unit', type: Types::STRING, length: 50, nullable: false)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 50)]
-    private ?string $unit = null;
-
     #[ORM\Column(name: 'unit_price', type: Types::DECIMAL, precision: 18, scale: 4, nullable: false)]
     #[Assert\Range(min: 0)]
     private ?string $unitPrice = null;
@@ -86,18 +81,6 @@ class QuotationLine
     public function setDescription(string $description): QuotationLine
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getUnit(): ?string
-    {
-        return $this->unit;
-    }
-
-    public function setUnit(string $unit): QuotationLine
-    {
-        $this->unit = $unit;
 
         return $this;
     }

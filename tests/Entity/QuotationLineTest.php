@@ -26,13 +26,11 @@ class QuotationLineTest extends TestCase
         $sut = (new QuotationLine())
             ->setCatalogItem($catalogItem)
             ->setDescription('Catalog service snapshot')
-            ->setUnit('hour')
             ->setUnitPrice('125.0000')
             ->setQuantity('3.0000');
 
         self::assertSame($catalogItem, $sut->getCatalogItem());
         self::assertSame('Catalog service snapshot', $sut->getDescription());
-        self::assertSame('hour', $sut->getUnit());
         self::assertSame('125.0000', $sut->getUnitPrice());
         self::assertSame('3.0000', $sut->getQuantity());
 

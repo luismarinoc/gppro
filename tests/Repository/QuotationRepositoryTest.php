@@ -97,7 +97,7 @@ class QuotationRepositoryTest extends AbstractRepositoryTestCase
         $customer = $this->createCustomer('Quotation customer');
         $otherCustomer = $this->createCustomer('Other quotation customer');
         $quotation = (new Quotation())->setCustomer($customer);
-        $quotation->addLine((new QuotationLine())->setDescription('Snapshot')->setUnit('hour')->setUnitPrice('125.5000')->setQuantity('2.0000'));
+        $quotation->addLine((new QuotationLine())->setDescription('Snapshot')->setUnitPrice('125.5000')->setQuantity('2.0000'));
         $otherQuotation = (new Quotation())->setCustomer($otherCustomer);
         $repository->saveQuotation($quotation);
         $repository->saveQuotation($otherQuotation);

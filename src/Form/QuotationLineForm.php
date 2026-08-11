@@ -43,9 +43,6 @@ final class QuotationLineForm extends AbstractType
                 if (empty($data['description'])) {
                     $data['description'] = $item->getDescription() ?: $item->getName();
                 }
-                if (empty($data['unit'])) {
-                    $data['unit'] = $item->getUnit();
-                }
                 if (empty($data['unitPrice'])) {
                     $data['unitPrice'] = $item->getDefaultPrice();
                 }
@@ -69,13 +66,11 @@ final class QuotationLineForm extends AbstractType
 
                     return [
                         'data-description' => $item->getDescription() ?: $item->getName(),
-                        'data-unit' => $item->getUnit(),
                         'data-unit-price' => $item->getDefaultPrice(),
                     ];
                 },
             ])
             ->add('description', TextType::class, ['label' => 'quotation.description'])
-            ->add('unit', TextType::class, ['label' => 'quotation.unit'])
             ->add('quantity', NumberType::class, ['scale' => 4, 'html5' => true, 'label' => 'quotation.quantity'])
             ->add('unitPrice', MoneyType::class, ['currency' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.unit_price']);
     }

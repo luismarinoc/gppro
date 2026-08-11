@@ -64,7 +64,7 @@ final class QuotationInvoiceItem implements ExportableItem
 
     public function getDescription(): string
     {
-        return ($this->line->getDescription() ?? '') . ' [' . ($this->line->getUnit() ?? '') . ']';
+        return $this->line->getDescription() ?? '';
     }
 
     public function getVisibleMetaFields(): array { return []; }

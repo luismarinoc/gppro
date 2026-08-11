@@ -2384,7 +2384,6 @@
       <trans-unit id="quotationCatalogItem" resname="quotation.catalog_item"><source>quotation.catalog_item</source><target>SAP catalog item</target></trans-unit>
       <trans-unit id="quotationCatalogItemPlaceholder" resname="quotation.catalog_item_placeholder"><source>quotation.catalog_item_placeholder</source><target>Select a catalog item</target></trans-unit>
       <trans-unit id="quotationDescription" resname="quotation.description"><source>quotation.description</source><target>Description</target></trans-unit>
-      <trans-unit id="quotationUnit" resname="quotation.unit"><source>quotation.unit</source><target>Unit</target></trans-unit>
       <trans-unit id="quotationQuantity" resname="quotation.quantity"><source>quotation.quantity</source><target>Quantity</target></trans-unit>
       <trans-unit id="quotationUnitPrice" resname="quotation.unit_price"><source>quotation.unit_price</source><target>Unit price</target></trans-unit>
       <trans-unit id="quotationLineSubtotal" resname="quotation.line_subtotal"><source>quotation.line_subtotal</source><target>Line subtotal</target></trans-unit>

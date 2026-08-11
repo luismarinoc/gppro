@@ -71,7 +71,6 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString('data-description="Consulting service"', $content);
-        self::assertStringContainsString('data-unit="hour"', $content);
         self::assertStringContainsString('data-unit-price="100.0000"', $content);
     }
 
@@ -92,7 +91,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $em->persist($customer);
 
         $quotation = (new Quotation())->setCustomer($customer);
-        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('2.0000')->setUnitPrice('100.0000'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('2.0000')->setUnitPrice('100.0000'));
         $em->persist($quotation);
         $em->flush();
 
@@ -118,7 +117,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $em->persist($customer);
 
         $quotation = (new Quotation())->setCustomer($customer)->setSurcharge('10')->setTax('19');
-        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('3.0000')->setUnitPrice('95.0000'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('3.0000')->setUnitPrice('95.0000'));
         $em->persist($quotation);
         $em->flush();
 
@@ -154,7 +153,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $em->persist($customer);
 
         $quotation = (new Quotation())->setCustomer($customer);
-        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('3.0000')->setUnitPrice('95.0000'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('3.0000')->setUnitPrice('95.0000'));
         $em->persist($quotation);
         $em->flush();
         $quotationId = $quotation->getId();
@@ -188,7 +187,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $em->persist($customer);
 
         $quotation = (new Quotation())->setCustomer($customer);
-        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setUnit('hour')->setQuantity('1')->setUnitPrice('1'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('1')->setUnitPrice('1'));
         $em->persist($quotation);
         $em->flush();
 

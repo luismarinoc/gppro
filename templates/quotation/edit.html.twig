@@ -34,8 +34,7 @@
                         <div class="quotation_line border-bottom pb-3 mb-3" data-quotation-line>
                             <div class="row g-2 align-items-end">
                                 <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.catalogItem) }}</div>
-                                <div class="col-lg-3">{{ form_row(form.lines.vars.prototype.description) }}</div>
-                                <div class="col-sm-4 col-lg-1">{{ form_row(form.lines.vars.prototype.unit) }}</div>
+                                <div class="col-lg-4">{{ form_row(form.lines.vars.prototype.description) }}</div>
                                 <div class="col-sm-4 col-lg-2">{{ form_row(form.lines.vars.prototype.quantity) }}</div>
                                 <div class="col-sm-4 col-lg-2">{{ form_row(form.lines.vars.prototype.unitPrice) }}</div>
                                 <div class="col-8 col-lg-1">
@@ -56,8 +55,7 @@
                             <div class="quotation_line border-bottom pb-3 mb-3" data-quotation-line>
                                 <div class="d-flex align-items-center justify-content-between gap-2" data-quotation-line-view>
                                     <div class="row g-2 flex-grow-1">
-                                        <div class="col-lg-4" data-view-description>{{ data.description }}</div>
-                                        <div class="col-lg-1" data-view-unit>{{ data.unit }}</div>
+                                        <div class="col-lg-5" data-view-description>{{ data.description }}</div>
                                         <div class="col-lg-2 text-end" data-view-quantity>{{ data.quantity }}</div>
                                         <div class="col-lg-2 text-end" data-view-unit-price>{{ data.unitPrice|money(currency) }}</div>
                                         <div class="col-lg-2 text-end fw-bold" data-view-line-subtotal>{{ (data.quantity * data.unitPrice)|money(currency) }}</div>
@@ -73,8 +71,7 @@
                                 </div>
                                 <div class="row g-2 align-items-end d-none" data-quotation-line-edit>
                                     <div class="col-lg-3">{{ form_row(line.catalogItem) }}</div>
-                                    <div class="col-lg-3">{{ form_row(line.description) }}</div>
-                                    <div class="col-sm-4 col-lg-1">{{ form_row(line.unit) }}</div>
+                                    <div class="col-lg-4">{{ form_row(line.description) }}</div>
                                     <div class="col-sm-4 col-lg-2">{{ form_row(line.quantity) }}</div>
                                     <div class="col-sm-4 col-lg-2">{{ form_row(line.unitPrice) }}</div>
                                     <div class="col-8 col-lg-1">
@@ -212,7 +209,6 @@
                     const option = select.selectedOptions[0];
                     const line = select.closest('[data-quotation-line]');
                     if (option?.dataset.description) line.querySelector('input[name$="[description]"]').value = option.dataset.description;
-                    if (option?.dataset.unit) line.querySelector('input[name$="[unit]"]').value = option.dataset.unit;
                     if (option?.dataset.unitPrice) line.querySelector('input[name$="[unitPrice]"]').value = option.dataset.unitPrice;
                 }
                 updateSummary();
@@ -233,9 +229,7 @@
                         const quantity = number(line.querySelector('input[name$="[quantity]"]'));
                         const unitPrice = number(line.querySelector('input[name$="[unitPrice]"]'));
                         const description = line.querySelector('input[name$="[description]"]')?.value ?? '';
-                        const unit = line.querySelector('input[name$="[unit]"]')?.value ?? '';
                         line.querySelector('[data-view-description]')?.replaceChildren(description);
-                        line.querySelector('[data-view-unit]')?.replaceChildren(unit);
                         line.querySelector('[data-view-quantity]')?.replaceChildren(String(quantity));
                         line.querySelector('[data-view-unit-price]')?.replaceChildren(formatMoney(unitPrice));
                         line.querySelector('[data-view-line-subtotal]')?.replaceChildren(formatMoney(quantity * unitPrice));

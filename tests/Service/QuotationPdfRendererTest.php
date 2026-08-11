@@ -31,7 +31,7 @@ class QuotationPdfRendererTest extends TestCase
             ->setTax('20')
             ->setDiscount('10')
             ->setSurcharge('5');
-        $quotation->addLine((new QuotationLine())->setDescription('Service')->setUnit('hour')->setQuantity('2')->setUnitPrice('100'));
+        $quotation->addLine((new QuotationLine())->setDescription('Service')->setQuantity('2')->setUnitPrice('100'));
         $id = new \ReflectionProperty(Quotation::class, 'id');
         $id->setValue($quotation, 7);
 

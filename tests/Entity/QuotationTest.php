@@ -46,7 +46,6 @@ class QuotationTest extends TestCase
         $customer = new Customer('Quotation test customer');
         $line = (new QuotationLine())
             ->setDescription('Free text service')
-            ->setUnit('item')
             ->setUnitPrice('100.0000')
             ->setQuantity('2.0000');
 
@@ -116,7 +115,7 @@ class QuotationTest extends TestCase
     {
         $sut = new Quotation();
         $sut->setCustomer(new Customer('Currency validation customer'));
-        $sut->addLine((new QuotationLine())->setDescription('Item')->setUnit('unit')->setQuantity('1')->setUnitPrice('1'));
+        $sut->addLine((new QuotationLine())->setDescription('Item')->setQuantity('1')->setUnitPrice('1'));
 
         $reflection = new \ReflectionProperty(Quotation::class, 'currency');
         $reflection->setValue($sut, 'BTC');
