@@ -15,8 +15,41 @@
             </span>
         {% endblock %}
         {% block box_body %}
-            <div class="activity_board_toolbar">
-                <input type="text" class="form-control" id="activity_board_search" placeholder="{{ 'activity_board.search_placeholder'|trans }}" autocomplete="off">
+            <div class="activity_board_toolbar d-flex flex-wrap align-items-end gap-2">
+                <div class="activity_board_search flex-grow-1">
+                    <label class="form-label visually-hidden" for="activity_board_search">{{ 'activity_board.search'|trans }}</label>
+                    <div class="input-icon">
+                        <span class="input-icon-addon">{{ icon('search') }}</span>
+                        <input type="search" class="form-control" id="activity_board_search" placeholder="{{ 'activity_board.search_placeholder'|trans }}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="activity_board_filter">
+                    <label class="form-label" for="activity_board_status_filter">{{ 'activity_board.filter_status'|trans }}</label>
+                    <select class="form-select" id="activity_board_status_filter">
+                        <option value="">{{ 'activity_board.all_statuses'|trans }}</option>
+                        {% for status in ['todo', 'in_progress', 'in_review', 'done'] %}
+                            <option value="{{ status }}">{{ ('activity_board.status.' ~ status)|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="activity_board_filter">
+                    <label class="form-label" for="activity_board_priority_filter">{{ 'activity_board.filter_priority'|trans }}</label>
+                    <select class="form-select" id="activity_board_priority_filter">
+                        <option value="">{{ 'activity_board.all_priorities'|trans }}</option>
+                        {% for priority in ['urgent', 'high', 'medium', 'low'] %}
+                            <option value="{{ priority }}">{{ ('activity_board.priority.' ~ priority)|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="activity_board_filter">
+                    <label class="form-label" for="activity_board_assignee_filter">{{ 'activity_board.filter_assignee'|trans }}</label>
+                    <select class="form-select" id="activity_board_assignee_filter" data-unassigned-label="{{ 'activity_board.unassigned'|trans }}">
+                        <option value="">{{ 'activity_board.all_assignees'|trans }}</option>
+                    </select>
+                </div>
+                {% if project.visible and project.customer.visible and is_granted('create_activity') %}
+                    {{ widgets.action_button('create', {'url': path('admin_activity_create_with_project', {'project': project.id}), 'class': 'btn btn-primary modal-ajax-form open-edit', 'title': 'activity_board.new_activity'|trans}) }}
+                {% endif %}
             </div>
             <div class="activity_board d-flex">
                 {% for status, column in columns %}

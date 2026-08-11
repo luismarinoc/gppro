@@ -2266,6 +2266,38 @@
         <source>activity_board.search_placeholder</source>
         <target state="translated">Buscar por actividad o usuario técnico/funcional...</target>
       </trans-unit>
+      <trans-unit id="gpActBrd16" resname="activity_board.search" xml:space="preserve">
+        <source>activity_board.search</source>
+        <target state="translated">Buscar</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd17" resname="activity_board.filter_status" xml:space="preserve">
+        <source>activity_board.filter_status</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd18" resname="activity_board.filter_priority" xml:space="preserve">
+        <source>activity_board.filter_priority</source>
+        <target state="translated">Prioridad</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd19" resname="activity_board.filter_assignee" xml:space="preserve">
+        <source>activity_board.filter_assignee</source>
+        <target state="translated">Asignado a</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd20" resname="activity_board.all_statuses" xml:space="preserve">
+        <source>activity_board.all_statuses</source>
+        <target state="translated">Todos los estados</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd21" resname="activity_board.all_priorities" xml:space="preserve">
+        <source>activity_board.all_priorities</source>
+        <target state="translated">Todas las prioridades</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd22" resname="activity_board.all_assignees" xml:space="preserve">
+        <source>activity_board.all_assignees</source>
+        <target state="translated">Todos los asignados</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd23" resname="activity_board.new_activity" xml:space="preserve">
+        <source>activity_board.new_activity</source>
+        <target state="translated">Nueva actividad</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type" xml:space="preserve">
         <source>user_type</source>
         <target state="translated">Tipo de usuario</target>
