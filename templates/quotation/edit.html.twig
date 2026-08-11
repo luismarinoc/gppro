@@ -55,11 +55,11 @@
                             <div class="quotation_line border-bottom pb-3 mb-3" data-quotation-line>
                                 <div class="d-flex align-items-center justify-content-between gap-2" data-quotation-line-view>
                                     <div class="row g-2 flex-grow-1">
-                                        <div class="col-lg-4">{{ data.description }}</div>
-                                        <div class="col-lg-1">{{ data.unit }}</div>
-                                        <div class="col-lg-2 text-end">{{ data.quantity }}</div>
-                                        <div class="col-lg-2 text-end">{{ data.unitPrice|money(currency) }}</div>
-                                        <div class="col-lg-2 text-end fw-bold">{{ (data.quantity * data.unitPrice)|money(currency) }}</div>
+                                        <div class="col-lg-4" data-view-description>{{ data.description }}</div>
+                                        <div class="col-lg-1" data-view-unit>{{ data.unit }}</div>
+                                        <div class="col-lg-2 text-end" data-view-quantity>{{ data.quantity }}</div>
+                                        <div class="col-lg-2 text-end" data-view-unit-price>{{ data.unitPrice|money(currency) }}</div>
+                                        <div class="col-lg-2 text-end fw-bold" data-view-line-subtotal>{{ (data.quantity * data.unitPrice)|money(currency) }}</div>
                                     </div>
                                     <div class="d-flex gap-1">
                                         <button class="btn btn-icon btn-outline-secondary" type="button" data-edit-quotation-line title="{{ 'edit'|trans }}">
@@ -80,7 +80,10 @@
                                         <label class="form-label">{{ 'quotation.line_subtotal'|trans }}</label>
                                         <output class="form-control-plaintext fw-bold" data-line-subtotal>0.00</output>
                                     </div>
-                                    <div class="col-4 col-lg-1 text-end">
+                                    <div class="col-4 col-lg-1 text-end d-flex gap-1 justify-content-end">
+                                        <button class="btn btn-icon btn-outline-success" type="button" data-confirm-quotation-line title="{{ 'confirm'|trans }}">
+                                            {{ icon('success', true) }}
+                                        </button>
                                         <button class="btn btn-icon btn-outline-danger" type="button" data-remove-quotation-line title="{{ 'quotation.remove_line'|trans }}">
                                             {{ icon('trash', true) }}
                                         </button>
@@ -101,26 +104,26 @@
                 {% embed '@theme/embeds/card.html.twig' %}
                     {% block box_title %}{{ 'quotation.summary'|trans }}{% endblock %}
                     {% block box_body %}
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted">{{ 'quotation.subtotal'|trans }}</span>
-                            <strong data-summary-subtotal>0.00</strong>
+                            <strong class="fs-3" data-summary-subtotal>0.00</strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted">{{ 'quotation.discount_amount'|trans }}</span>
-                            <strong data-summary-discount>0.00</strong>
+                            <strong class="fs-3" data-summary-discount>0.00</strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted">{{ 'quotation.surcharge_amount'|trans }}</span>
-                            <strong data-summary-surcharge>0.00</strong>
+                            <strong class="fs-3" data-summary-surcharge>0.00</strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted">{{ 'quotation.tax_amount'|trans }}</span>
-                            <strong data-summary-tax>0.00</strong>
+                            <strong class="fs-3" data-summary-tax>0.00</strong>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="fs-5">{{ 'quotation.total'|trans }}</span>
-                            <strong class="fs-2" data-summary-total>0.00</strong>
+                            <strong class="fs-1 text-primary" data-summary-total>0.00</strong>
                         </div>
                         <small class="text-muted d-block mb-3">{{ 'quotation.server_authoritative'|trans }}</small>
                         <button class="btn btn-primary w-100" type="submit">{{ 'quotation.save'|trans }}</button>
@@ -165,23 +168,25 @@
 
             const number = function (field) { return Number.parseFloat(field?.value || '0') || 0; };
             const currency = function (value) { return Math.round((value + Number.EPSILON) * 100) / 100; };
+            const moneyFormatter = new Intl.NumberFormat(document.documentElement.lang || 'es-CL', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formatMoney = function (value) { return moneyFormatter.format(value); };
             const updateSummary = function () {
                 let subtotal = 0;
                 collection.querySelectorAll('[data-quotation-line]').forEach(function (line) {
                     const lineSubtotal = number(line.querySelector('input[name$="[quantity]"]')) * number(line.querySelector('input[name$="[unitPrice]"]'));
                     subtotal += lineSubtotal;
-                    line.querySelector('[data-line-subtotal]')?.replaceChildren(lineSubtotal.toFixed(2));
+                    line.querySelector('[data-line-subtotal]')?.replaceChildren(formatMoney(lineSubtotal));
                 });
                 const percentage = function (selector) { return number(document.querySelector(selector)) / 100; };
                 const discount = currency(subtotal * percentage('[name$="[discount]"]'));
                 const surcharge = currency(subtotal * percentage('[name$="[surcharge]"]'));
                 const adjustedSubtotal = currency(subtotal - discount + surcharge);
                 const tax = currency(adjustedSubtotal * percentage('[name$="[tax]"]'));
-                document.querySelector('[data-summary-subtotal]')?.replaceChildren(subtotal.toFixed(2));
-                document.querySelector('[data-summary-discount]')?.replaceChildren(discount.toFixed(2));
-                document.querySelector('[data-summary-surcharge]')?.replaceChildren(surcharge.toFixed(2));
-                document.querySelector('[data-summary-tax]')?.replaceChildren(tax.toFixed(2));
-                document.querySelector('[data-summary-total]')?.replaceChildren((adjustedSubtotal + tax).toFixed(2));
+                document.querySelector('[data-summary-subtotal]')?.replaceChildren(formatMoney(subtotal));
+                document.querySelector('[data-summary-discount]')?.replaceChildren(formatMoney(discount));
+                document.querySelector('[data-summary-surcharge]')?.replaceChildren(formatMoney(surcharge));
+                document.querySelector('[data-summary-tax]')?.replaceChildren(formatMoney(tax));
+                document.querySelector('[data-summary-total]')?.replaceChildren(formatMoney(adjustedSubtotal + tax));
             };
             collection.addEventListener('change', function (event) {
                 const select = event.target.closest('select[name$="[catalogItem]"]');
@@ -202,6 +207,23 @@
                     const line = editButton.closest('[data-quotation-line]');
                     line?.querySelector('[data-quotation-line-view]')?.classList.add('d-none');
                     line?.querySelector('[data-quotation-line-edit]')?.classList.remove('d-none');
+                }
+                const confirmButton = event.target.closest('[data-confirm-quotation-line]');
+                if (confirmButton) {
+                    const line = confirmButton.closest('[data-quotation-line]');
+                    if (line) {
+                        const quantity = number(line.querySelector('input[name$="[quantity]"]'));
+                        const unitPrice = number(line.querySelector('input[name$="[unitPrice]"]'));
+                        const description = line.querySelector('input[name$="[description]"]')?.value ?? '';
+                        const unit = line.querySelector('input[name$="[unit]"]')?.value ?? '';
+                        line.querySelector('[data-view-description]')?.replaceChildren(description);
+                        line.querySelector('[data-view-unit]')?.replaceChildren(unit);
+                        line.querySelector('[data-view-quantity]')?.replaceChildren(String(quantity));
+                        line.querySelector('[data-view-unit-price]')?.replaceChildren(formatMoney(unitPrice));
+                        line.querySelector('[data-view-line-subtotal]')?.replaceChildren(formatMoney(quantity * unitPrice));
+                        line.querySelector('[data-quotation-line-edit]')?.classList.add('d-none');
+                        line.querySelector('[data-quotation-line-view]')?.classList.remove('d-none');
+                    }
                 }
                 const button = event.target.closest('[data-remove-quotation-line]');
                 if (button) {

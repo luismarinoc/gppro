@@ -174,4 +174,26 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertCount(1, $reloaded->getLines());
         self::assertEquals(5.0, (float) $reloaded->getLines()->first()->getQuantity());
     }
+
+    public function testQuotationListRowIsClickableToEditForUsersWithEditPermission(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Clickable row test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer);
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $row = $client->getCrawler()->filter('tr[data-href$="/quotation/' . $quotation->getId() . '/edit"]');
+        self::assertCount(1, $row);
+        self::assertStringContainsString('alternative-link', $row->attr('class') ?? '');
+    }
 }

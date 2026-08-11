@@ -23,12 +23,11 @@
                 <dt class="col-sm-3">{{ 'quotation.valid_until'|trans }}</dt><dd class="col-sm-9">{{ quotation.validUntil ? quotation.validUntil|date('Y-m-d') : '-' }}</dd>
             </dl>
             <table class="table table-vcenter">
-                <thead><tr><th>{{ 'quotation.description'|trans }}</th><th>{{ 'quotation.unit'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th><th class="text-end">{{ 'quotation.line_subtotal'|trans }}</th></tr></thead>
+                <thead><tr><th>{{ 'quotation.description'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th><th class="text-end">{{ 'quotation.line_subtotal'|trans }}</th></tr></thead>
                 <tbody>
                 {% for item in summary.items %}
                     <tr>
                         <td>{{ item.line.description }}</td>
-                        <td>{{ item.line.unit }}</td>
                         <td class="text-end">{{ item.amount }}</td>
                         <td class="text-end">{{ item.fixedRate|money(currency) }}</td>
                         <td class="text-end">{{ item.rate|money(currency) }}</td>

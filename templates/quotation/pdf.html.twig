@@ -38,7 +38,6 @@
         <thead>
             <tr>
                 <th>{{ 'quotation.description'|trans }}</th>
-                <th>{{ 'quotation.unit'|trans }}</th>
                 <th>{{ 'quotation.quantity'|trans }}</th>
                 <th>{{ 'quotation.unit_price'|trans }}</th>
                 <th>{{ 'quotation.line_subtotal'|trans }}</th>
@@ -48,7 +47,6 @@
         {% for item in items %}
             <tr>
                 <td>{{ item.description }}</td>
-                <td>{{ item.line.unit }}</td>
                 <td class="number">{{ item.amount }}</td>
                 <td class="number">{{ item.fixedRate|money(currency) }}</td>
                 <td class="number">{{ item.rate|money(currency) }}</td>

@@ -26,7 +26,8 @@
                 <thead><tr><th>#</th><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for quotation in quotations %}
-                    <tr>
+                    {% set quotation_row_url = is_granted('edit_quotation', quotation) ? path('quotation_edit', {id: quotation.id}) : path('quotation_view', {id: quotation.id}) %}
+                    <tr class="alternative-link cursor-pointer" data-href="{{ quotation_row_url }}">
                         <td>
                             {% if is_granted('edit_quotation', quotation) %}
                                 <a href="{{ path('quotation_edit', {id: quotation.id}) }}">#{{ quotation.id }}</a>
