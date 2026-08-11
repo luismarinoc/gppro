@@ -76,8 +76,8 @@ final class QuotationLineForm extends AbstractType
             ])
             ->add('description', TextType::class, ['label' => 'quotation.description'])
             ->add('unit', TextType::class, ['label' => 'quotation.unit'])
-            ->add('quantity', NumberType::class, ['scale' => 4, 'label' => 'quotation.quantity'])
-            ->add('unitPrice', MoneyType::class, ['currency' => false, 'scale' => 4, 'label' => 'quotation.unit_price']);
+            ->add('quantity', NumberType::class, ['scale' => 4, 'html5' => true, 'label' => 'quotation.quantity'])
+            ->add('unitPrice', MoneyType::class, ['currency' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.unit_price']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -40,9 +40,9 @@ final class QuotationForm extends AbstractType
                 'ignore_date' => true,
             ])
             ->add('validUntil', DatePickerType::class, ['required' => false])
-            ->add('tax', NumberType::class, ['required' => false, 'scale' => 4, 'label' => 'quotation.tax', 'help' => 'quotation.percentage_help'])
-            ->add('discount', NumberType::class, ['required' => false, 'scale' => 4, 'label' => 'quotation.discount', 'help' => 'quotation.percentage_help'])
-            ->add('surcharge', NumberType::class, ['required' => false, 'scale' => 4, 'label' => 'quotation.surcharge', 'help' => 'quotation.percentage_help'])
+            ->add('tax', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.tax', 'help' => 'quotation.percentage_help'])
+            ->add('discount', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.discount', 'help' => 'quotation.percentage_help'])
+            ->add('surcharge', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.surcharge', 'help' => 'quotation.percentage_help'])
             ->add('lines', CollectionType::class, [
                 'entry_type' => QuotationLineForm::class,
                 'entry_options' => ['catalog_items' => $options['catalog_items']],
