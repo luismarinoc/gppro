@@ -31,27 +31,42 @@ final class ExpenseApprovalPolicy
 
     public function canApprove(Expense $expense, User $approver): bool
     {
+        return $this->canDecide($expense, $approver);
+    }
+
+    /**
+     * Rejecting the pending level is governed by the same four-eyes rule as
+     * approving it (spec: "Approve each level" / "Reject discards
+     * accumulated approvals" - both act on the same pending level).
+     */
+    public function canReject(Expense $expense, User $rejecter): bool
+    {
+        return $this->canDecide($expense, $rejecter);
+    }
+
+    private function canDecide(Expense $expense, User $user): bool
+    {
         $pendingLevel = $expense->nextPendingLevel();
 
         if (null === $pendingLevel) {
             return false;
         }
 
-        if ($expense->getCreatedBy() === $approver) {
+        if ($expense->getCreatedBy() === $user) {
             return false;
         }
 
-        if ($this->approvalRepository->hasUserApprovedAnyLevel($expense, $approver)) {
+        if ($this->approvalRepository->hasUserApprovedAnyLevel($expense, $user)) {
             return false;
         }
 
-        if ($approver->isSuperAdmin()) {
+        if ($user->isSuperAdmin()) {
             return true;
         }
 
         $level = $this->findLevel($pendingLevel);
 
-        return null !== $level && $approver->hasRole($level->getRequiredRole());
+        return null !== $level && $user->hasRole($level->getRequiredRole());
     }
 
     private function findLevel(int $levelNumber): ?ExpenseApprovalLevel

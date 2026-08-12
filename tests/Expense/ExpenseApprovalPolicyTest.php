@@ -110,4 +110,23 @@ class ExpenseApprovalPolicyTest extends TestCase
 
         self::assertFalse($sut->canApprove($expense, $approver));
     }
+
+    public function testUserWithMatchingRoleCanRejectThePendingLevel(): void
+    {
+        $creator = $this->makeUser();
+        $rejecter = $this->makeUser('ROLE_TEAMLEAD');
+        $expense = $this->makePendingExpense($creator);
+        $sut = $this->makeSut([$this->makeLevel(1, 'ROLE_TEAMLEAD')]);
+
+        self::assertTrue($sut->canReject($expense, $rejecter));
+    }
+
+    public function testCreatorCannotRejectOwnExpense(): void
+    {
+        $creator = $this->makeUser('ROLE_TEAMLEAD');
+        $expense = $this->makePendingExpense($creator);
+        $sut = $this->makeSut([$this->makeLevel(1, 'ROLE_TEAMLEAD')]);
+
+        self::assertFalse($sut->canReject($expense, $creator));
+    }
 }
