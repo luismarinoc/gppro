@@ -16,6 +16,7 @@ use App\Entity\QuotationCatalogItem;
 use App\Entity\QuotationLine;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpKernel\HttpKernelBrowser;
 
 #[Group('integration')]
 class QuotationControllerTest extends AbstractControllerBaseTestCase
@@ -153,7 +154,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $customer->setTimezone('America/Santiago');
         $em->persist($customer);
 
-        $quotation = (new Quotation())->setCustomer($customer);
+        $quotation = (new Quotation())->setCustomer($customer)->setValidUntil(new \DateTimeImmutable('2026-08-20'));
         $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('3.0000')->setUnitPrice('95.0000'));
         $em->persist($quotation);
         $em->flush();
@@ -173,7 +174,9 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $reloaded = $em->getRepository(Quotation::class)->find($quotationId);
         self::assertInstanceOf(Quotation::class, $reloaded);
         self::assertCount(1, $reloaded->getLines());
-        self::assertEquals(5.0, (float) $reloaded->getLines()->first()->getQuantity());
+        $reloadedLine = $reloaded->getLines()->first();
+        self::assertInstanceOf(QuotationLine::class, $reloadedLine);
+        self::assertEquals(5.0, (float) $reloadedLine->getQuantity());
         self::assertSame('USD', $reloaded->getCurrency());
     }
 
@@ -253,5 +256,106 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
 
         $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
         self::assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function testFxRateEndpointReturnsTheRateAsOfTheGivenDate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable('2026-08-01'));
+        $fxRate->setIndicator(FxRate::INDICATOR_USD);
+        $fxRate->setRateValue('950.000000');
+        $em->persist($fxRate);
+        $em->flush();
+
+        $this->request($client, '/quotation/fx-rate?currency=USD&date=2026-08-05');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertTrue($data['available']);
+        self::assertSame('950.000000', $data['rate']);
+        self::assertSame('2026-08-01', $data['rateDate']);
+
+        $this->request($client, '/quotation/fx-rate?currency=CLP&date=2026-08-05');
+        self::assertFalse($this->decodeJsonResponse($client)['available']);
+
+        $this->request($client, '/quotation/fx-rate?currency=CLF&date=2026-08-05');
+        self::assertFalse($this->decodeJsonResponse($client)['available']);
+
+        $this->request($client, '/quotation/fx-rate?currency=BOGUS&date=2026-08-05');
+        self::assertFalse($this->decodeJsonResponse($client)['available']);
+    }
+
+    /** @return array<string, mixed> */
+    private function decodeJsonResponse(HttpKernelBrowser $client): array
+    {
+        $data = json_decode((string) $client->getResponse()->getContent(), true);
+        self::assertIsArray($data);
+
+        return $data;
+    }
+
+    public function testEditFormRequiresTheValidUntilDate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Required date test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setValidUntil(new \DateTimeImmutable('2026-08-20'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('1')->setUnitPrice('1'));
+        $em->persist($quotation);
+        $em->flush();
+        $quotationId = $quotation->getId();
+
+        $this->request($client, '/quotation/' . $quotationId . '/edit');
+        $form = $client->getCrawler()->filter('form')->form();
+        $form['quotation_form[validUntil]'] = '';
+        $client->submit($form);
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertFalse($client->getResponse()->isRedirect());
+
+        $em->clear();
+        $reloaded = $em->getRepository(Quotation::class)->find($quotationId);
+        self::assertInstanceOf(Quotation::class, $reloaded);
+        self::assertNotNull($reloaded->getValidUntil());
+    }
+
+    public function testPaymentTermCanBeSetToThirtySixtyOrNinetyDays(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Payment term test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setValidUntil(new \DateTimeImmutable('2026-08-20'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('1')->setUnitPrice('1'));
+        $em->persist($quotation);
+        $em->flush();
+        $quotationId = $quotation->getId();
+
+        $this->request($client, '/quotation/' . $quotationId . '/edit');
+        $options = $client->getCrawler()->filter('select[name="quotation_form[paymentTermDays]"] option:not([value=""])')
+            ->each(static fn ($node) => $node->attr('value'));
+        self::assertSame(['30', '60', '90'], $options);
+
+        $form = $client->getCrawler()->filter('form')->form();
+        $form['quotation_form[paymentTermDays]'] = '60';
+        $client->submit($form);
+
+        $this->assertIsRedirect($client, $this->createUrl('/quotation/' . $quotationId));
+
+        $em->clear();
+        $reloaded = $em->getRepository(Quotation::class)->find($quotationId);
+        self::assertInstanceOf(Quotation::class, $reloaded);
+        self::assertSame(60, $reloaded->getPaymentTermDays());
     }
 }

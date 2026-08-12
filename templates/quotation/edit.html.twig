@@ -12,6 +12,7 @@
                     <div class="row">
                         <div class="col-md-4">{{ form_row(form.validUntil) }}</div>
                         <div class="col-md-4">{{ form_row(form.currency) }}</div>
+                        <div class="col-md-4">{{ form_row(form.paymentTermDays) }}</div>
                         <div class="col-md-4">{{ form_row(form.tax) }}</div>
                         <div class="col-md-4">{{ form_row(form.discount) }}</div>
                         <div class="col-md-4">{{ form_row(form.surcharge) }}</div>
@@ -98,7 +99,10 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="quotation_summary_sticky" data-quotation-summary>
+            <div class="quotation_summary_sticky"
+                 data-quotation-summary
+                 data-fx-rate-url="{{ path('quotation_fx_rate') }}"
+                 data-fx-as-of-label="{{ 'quotation.fx_rate_as_of'|trans({'%date%': '__DATE__'}) }}">
                 {% embed '@theme/embeds/card.html.twig' %}
                     {% block box_title %}{{ 'quotation.summary'|trans }}{% endblock %}
                     {% block box_body %}
@@ -122,6 +126,13 @@
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="fs-5">{{ 'quotation.total'|trans }}</span>
                             <strong class="fs-1 text-primary" data-summary-total>0.00</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3 text-muted d-none" data-summary-clp-row>
+                            <span>
+                                {{ 'quotation.clp_equivalent'|trans }}
+                                <br><small data-summary-clp-date></small>
+                            </span>
+                            <strong data-summary-clp>—</strong>
                         </div>
                         <small class="text-muted d-block mb-3">{{ 'quotation.server_authoritative'|trans }}</small>
                         <button class="btn btn-primary w-100" type="submit">{{ 'quotation.save'|trans }}</button>
@@ -168,6 +179,53 @@
             const round2 = function (value) { return Math.round((value + Number.EPSILON) * 100) / 100; };
             const locale = document.documentElement.lang || 'es-CL';
             const currencyField = document.querySelector('[name$="[currency]"]');
+            const validUntilField = document.querySelector('[name$="[validUntil]"]');
+            const summaryContainer = document.querySelector('[data-quotation-summary]');
+            const fxRateUrl = summaryContainer?.dataset.fxRateUrl;
+            const fxAsOfLabel = summaryContainer?.dataset.fxAsOfLabel || '';
+            let currentRate = null;
+            let currentRateDate = null;
+
+            const parseDateWithFormat = function (value, format) {
+                if (!value || !format) return null;
+                const formatParts = format.match(/[A-Za-z]+/g);
+                const valueParts = value.match(/[0-9]+/g);
+                if (!formatParts || !valueParts || formatParts.length !== valueParts.length) return null;
+                let day = null, month = null, year = null;
+                formatParts.forEach(function (token, i) {
+                    const v = Number.parseInt(valueParts[i], 10);
+                    if (token.charAt(0) === 'D') day = v;
+                    else if (token.charAt(0) === 'M') month = v;
+                    else if (token.charAt(0) === 'Y') year = v;
+                });
+                if (!day || !month || !year) return null;
+                return String(year).padStart(4, '0') + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            };
+
+            const fetchRate = function () {
+                const code = currencyField?.value;
+                if (!fxRateUrl || !code || code === 'CLP') {
+                    currentRate = null;
+                    currentRateDate = null;
+                    updateSummary();
+                    return;
+                }
+                const isoDate = parseDateWithFormat(validUntilField?.value, validUntilField?.dataset.format);
+                const params = new URLSearchParams({currency: code});
+                if (isoDate) params.set('date', isoDate);
+                fetch(fxRateUrl + '?' + params.toString(), {headers: {'Accept': 'application/json'}})
+                    .then(function (response) { return response.ok ? response.json() : {available: false}; })
+                    .then(function (data) {
+                        currentRate = data.available ? Number.parseFloat(data.rate) : null;
+                        currentRateDate = data.available ? data.rateDate : null;
+                        updateSummary();
+                    })
+                    .catch(function () {
+                        currentRate = null;
+                        currentRateDate = null;
+                        updateSummary();
+                    });
+            };
             const fractionDigitsCache = {};
             const fractionDigitsForCurrency = function (code) {
                 if (fractionDigitsCache[code] !== undefined) return fractionDigitsCache[code];
@@ -201,8 +259,21 @@
                 document.querySelector('[data-summary-surcharge]')?.replaceChildren(formatMoney(surcharge));
                 document.querySelector('[data-summary-tax]')?.replaceChildren(formatMoney(tax));
                 document.querySelector('[data-summary-total]')?.replaceChildren(formatMoney(adjustedSubtotal + tax));
+
+                const clpRow = document.querySelector('[data-summary-clp-row]');
+                if (clpRow) {
+                    if (currentRate !== null && currencyField?.value && currencyField.value !== 'CLP') {
+                        const clpAmount = (adjustedSubtotal + tax) * currentRate;
+                        clpRow.classList.remove('d-none');
+                        document.querySelector('[data-summary-clp]')?.replaceChildren('≈ ' + new Intl.NumberFormat(locale, {minimumFractionDigits: 0, maximumFractionDigits: 0}).format(clpAmount) + ' CLP');
+                        document.querySelector('[data-summary-clp-date]')?.replaceChildren(currentRateDate ? fxAsOfLabel.replace('__DATE__', currentRateDate) : '');
+                    } else {
+                        clpRow.classList.add('d-none');
+                    }
+                }
             };
-            currencyField?.addEventListener('change', updateSummary);
+            currencyField?.addEventListener('change', function () { updateSummary(); fetchRate(); });
+            validUntilField?.addEventListener('change', fetchRate);
             collection.addEventListener('change', function (event) {
                 const select = event.target.closest('select[name$="[catalogItem]"]');
                 if (select) {
@@ -248,6 +319,7 @@
             if (emptyState) emptyState.hidden = collection.querySelectorAll('[data-quotation-line]').length > 0;
             updateLineActions();
             updateSummary();
+            fetchRate();
         });
     </script>
 {% endblock %}

@@ -2346,6 +2346,14 @@
         <source>quotation.currency</source>
         <target>Currency</target>
       </trans-unit>
+      <trans-unit id="quotationPaymentTerm" resname="quotation.payment_term">
+        <source>quotation.payment_term</source>
+        <target>Payment term</target>
+      </trans-unit>
+      <trans-unit id="quotationPaymentTermPlaceholder" resname="quotation.payment_term_placeholder">
+        <source>quotation.payment_term_placeholder</source>
+        <target>No payment term</target>
+      </trans-unit>
       <trans-unit id="quotationDiscount" resname="quotation.discount">
         <source>quotation.discount</source>
         <target>Quotation discount (%)</target>

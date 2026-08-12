@@ -2332,6 +2332,8 @@
       <trans-unit id="quotationLinesEmpty" resname="quotation.lines_empty" xml:space="preserve"><source>quotation.lines_empty</source><target state="translated">Todavía no hay líneas. Usá uno de los botones de abajo para agregar una línea.</target></trans-unit>
       <trans-unit id="quotationLinesMaximum" resname="quotation.lines_maximum" xml:space="preserve"><source>quotation.lines_maximum</source><target state="translated">Una cotización puede tener como máximo 10 líneas.</target></trans-unit>
       <trans-unit id="quotationCurrency" resname="quotation.currency" xml:space="preserve"><source>quotation.currency</source><target state="translated">Moneda</target></trans-unit>
+      <trans-unit id="quotationPaymentTerm" resname="quotation.payment_term" xml:space="preserve"><source>quotation.payment_term</source><target state="translated">Vencimiento</target></trans-unit>
+      <trans-unit id="quotationPaymentTermPlaceholder" resname="quotation.payment_term_placeholder" xml:space="preserve"><source>quotation.payment_term_placeholder</source><target state="translated">Sin vencimiento</target></trans-unit>
       <trans-unit id="quotationTax" resname="quotation.tax" xml:space="preserve"><source>quotation.tax</source><target state="translated">Impuesto de la cotización (%)</target></trans-unit>
       <trans-unit id="quotationDiscount" resname="quotation.discount" xml:space="preserve"><source>quotation.discount</source><target state="translated">Descuento de la cotización (%)</target></trans-unit>
       <trans-unit id="quotationSurcharge" resname="quotation.surcharge" xml:space="preserve"><source>quotation.surcharge</source><target state="translated">Recargo de la cotización (%)</target></trans-unit>

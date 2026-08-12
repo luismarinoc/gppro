@@ -40,7 +40,7 @@ final class QuotationForm extends AbstractType
                 'query_builder_for_user' => true,
                 'ignore_date' => true,
             ])
-            ->add('validUntil', DatePickerType::class, ['required' => false])
+            ->add('validUntil', DatePickerType::class, ['required' => true])
             ->add('currency', ChoiceType::class, [
                 'required' => true,
                 'label' => 'quotation.currency',
@@ -48,6 +48,16 @@ final class QuotationForm extends AbstractType
                     'CLP' => Quotation::CURRENCY_CLP,
                     'USD' => Quotation::CURRENCY_USD,
                     'UF' => Quotation::CURRENCY_UF,
+                ],
+            ])
+            ->add('paymentTermDays', ChoiceType::class, [
+                'required' => false,
+                'placeholder' => 'quotation.payment_term_placeholder',
+                'label' => 'quotation.payment_term',
+                'choices' => [
+                    '30' => 30,
+                    '60' => 60,
+                    '90' => 90,
                 ],
             ])
             ->add('tax', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.tax', 'help' => 'quotation.percentage_help'])

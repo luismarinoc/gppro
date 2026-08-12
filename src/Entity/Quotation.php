@@ -54,6 +54,9 @@ class Quotation implements CreatedAt, ModifiedAt
         self::CURRENCY_UF,
     ];
 
+    /** @var int[] */
+    public const PAYMENT_TERM_DAYS = [30, 60, 90];
+
     use CreatedTrait;
     use ModifiedTrait;
 
@@ -89,7 +92,12 @@ class Quotation implements CreatedAt, ModifiedAt
     private string $currency = self::CURRENCY_CLP;
 
     #[ORM\Column(name: 'valid_until', type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $validUntil = null;
+
+    #[ORM\Column(name: 'payment_term_days', type: Types::INTEGER, nullable: true)]
+    #[Assert\Choice(choices: self::PAYMENT_TERM_DAYS)]
+    private ?int $paymentTermDays = null;
 
     #[ORM\Column(name: 'tax', type: Types::DECIMAL, precision: 18, scale: 4, nullable: true)]
     #[Assert\Range(min: 0, max: 100)]
@@ -238,6 +246,21 @@ class Quotation implements CreatedAt, ModifiedAt
     public function setValidUntil(?\DateTimeImmutable $validUntil): Quotation
     {
         $this->validUntil = $validUntil;
+
+        return $this;
+    }
+
+    public function getPaymentTermDays(): ?int
+    {
+        return $this->paymentTermDays;
+    }
+
+    public function setPaymentTermDays(?int $paymentTermDays): Quotation
+    {
+        if (null !== $paymentTermDays && !\in_array($paymentTermDays, self::PAYMENT_TERM_DAYS, true)) {
+            throw new \InvalidArgumentException('Unknown quotation payment term');
+        }
+        $this->paymentTermDays = $paymentTermDays;
 
         return $this;
     }

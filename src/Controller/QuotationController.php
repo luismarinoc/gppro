@@ -66,6 +66,34 @@ final class QuotationController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/fx-rate', name: 'quotation_fx_rate', methods: ['GET'])]
+    public function fxRate(Request $request, ClpConverter $clpConverter): Response
+    {
+        $currency = $request->query->getString('currency');
+        $dateString = $request->query->getString('date');
+
+        if (!\in_array($currency, Quotation::CURRENCIES, true)) {
+            return $this->json(['available' => false]);
+        }
+
+        $date = null;
+        if ('' !== $dateString) {
+            $date = \DateTimeImmutable::createFromFormat('Y-m-d', $dateString) ?: null;
+        }
+
+        $conversion = $clpConverter->convert('1', $currency, $date);
+
+        if (null === $conversion || !$conversion->isConverted()) {
+            return $this->json(['available' => false]);
+        }
+
+        return $this->json([
+            'available' => true,
+            'rate' => $conversion->rate,
+            'rateDate' => $conversion->rateDate?->format('Y-m-d'),
+        ]);
+    }
+
     #[Route(path: '/create', name: 'quotation_create', methods: ['GET', 'POST'])]
     #[IsGranted('create_quotation')]
     public function create(Request $request, QuotationRepository $repository, QuotationCatalogItemRepository $catalogRepository): Response
@@ -121,7 +149,7 @@ final class QuotationController extends AbstractController
         return $this->redirectToRoute('quotation_view', ['id' => $quotation->getId()]);
     }
 
-    #[Route(path: '/{id}', name: 'quotation_view', methods: ['GET'])]
+    #[Route(path: '/{id}', name: 'quotation_view', methods: ['GET'], requirements: ['id' => '\d+'])]
     #[IsGranted('view_quotation', 'quotation')]
     public function view(Quotation $quotation, ClpConverter $clpConverter): Response
     {
