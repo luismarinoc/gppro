@@ -40,11 +40,6 @@ class QuotationCatalogItem implements CreatedAt
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(name: 'unit', type: Types::STRING, length: 50, nullable: false)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 50)]
-    private ?string $unit = null;
-
     #[ORM\Column(name: 'default_price', type: Types::DECIMAL, precision: 18, scale: 4, nullable: false)]
     #[Assert\Range(min: 0)]
     private ?string $defaultPrice = null;
@@ -77,18 +72,6 @@ class QuotationCatalogItem implements CreatedAt
     public function setDescription(?string $description): QuotationCatalogItem
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getUnit(): ?string
-    {
-        return $this->unit;
-    }
-
-    public function setUnit(string $unit): QuotationCatalogItem
-    {
-        $this->unit = $unit;
 
         return $this;
     }

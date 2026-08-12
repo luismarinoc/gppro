@@ -36,7 +36,7 @@ final class QuotationCatalogController extends AbstractController
     public function create(Request $request, QuotationCatalogItemRepository $repository): Response
     {
         $item = new QuotationCatalogItem();
-        $item->setUnit('unit')->setDefaultPrice('0');
+        $item->setDefaultPrice('0');
 
         return $this->form($item, $request, $repository, 'admin_quotation_catalog_create');
     }

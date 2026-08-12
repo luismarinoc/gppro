@@ -23,7 +23,6 @@ class QuotationCatalogItemTest extends TestCase
         self::assertNull($sut->getId());
         self::assertNull($sut->getName());
         self::assertNull($sut->getDescription());
-        self::assertNull($sut->getUnit());
         self::assertNull($sut->getDefaultPrice());
         self::assertTrue($sut->isActive());
         self::assertNotNull($sut->getCreatedAt());
@@ -35,12 +34,10 @@ class QuotationCatalogItemTest extends TestCase
 
         self::assertSame($sut, $sut->setName('Consulting'));
         self::assertSame($sut, $sut->setDescription('Professional consulting service'));
-        self::assertSame($sut, $sut->setUnit('hour'));
         self::assertSame($sut, $sut->setDefaultPrice('125.5000'));
         self::assertSame($sut, $sut->setActive(false));
         self::assertSame('Consulting', $sut->getName());
         self::assertSame('Professional consulting service', $sut->getDescription());
-        self::assertSame('hour', $sut->getUnit());
         self::assertSame('125.5000', $sut->getDefaultPrice());
         self::assertFalse($sut->isActive());
     }

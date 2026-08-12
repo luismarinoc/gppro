@@ -80,8 +80,8 @@ class QuotationRepositoryTest extends AbstractRepositoryTestCase
     public function testFindActiveCatalogItemsExcludesInactiveItems(): void
     {
         $repository = $this->getCatalogRepository();
-        $active = (new QuotationCatalogItem())->setName('Active ' . uniqid())->setUnit('item')->setDefaultPrice('10.0000');
-        $inactive = (new QuotationCatalogItem())->setName('Inactive ' . uniqid())->setUnit('item')->setDefaultPrice('20.0000')->setActive(false);
+        $active = (new QuotationCatalogItem())->setName('Active ' . uniqid())->setDefaultPrice('10.0000');
+        $inactive = (new QuotationCatalogItem())->setName('Inactive ' . uniqid())->setDefaultPrice('20.0000')->setActive(false);
         $repository->saveCatalogItem($active);
         $repository->saveCatalogItem($inactive);
 

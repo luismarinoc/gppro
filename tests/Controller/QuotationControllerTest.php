@@ -58,7 +58,6 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
             'quotation_catalog_item_form' => [
                 'name' => 'Consulting',
                 'description' => 'Consulting service',
-                'unit' => 'hour',
                 'defaultPrice' => '100.00',
                 'active' => 1,
             ],

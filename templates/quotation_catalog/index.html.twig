@@ -10,12 +10,11 @@
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Nombre</th><th>Unidad</th><th>Precio predeterminado</th><th>Estado</th><th></th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Precio predeterminado</th><th>Estado</th><th></th></tr></thead>
                 <tbody>
                 {% for item in items %}
                     <tr>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.unit }}</td>
                         <td>{{ item.defaultPrice }}</td>
                         <td>{{ item.active ? 'Activo' : 'Inactivo' }}</td>
                         <td class="text-end">
@@ -29,7 +28,7 @@
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="5">No hay ítems en el catálogo.</td></tr>
+                    <tr><td colspan="4">No hay ítems en el catálogo.</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

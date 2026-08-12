@@ -21,7 +21,6 @@ class QuotationLineTest extends TestCase
     {
         $catalogItem = (new QuotationCatalogItem())
             ->setName('Catalog service')
-            ->setUnit('hour')
             ->setDefaultPrice('100.0000');
         $sut = (new QuotationLine())
             ->setCatalogItem($catalogItem)

@@ -25,7 +25,6 @@ final class QuotationCatalogItemForm extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', TextareaType::class, ['required' => false])
-            ->add('unit', TextType::class)
             ->add('defaultPrice', MoneyType::class, ['currency' => false])
             ->add('active', CheckboxType::class, ['required' => false]);
     }
