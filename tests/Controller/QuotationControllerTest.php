@@ -253,6 +253,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $viewContent = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('CLP equivalent', $viewContent);
         self::assertStringContainsString('190', $viewContent);
+        self::assertStringContainsString('1 USD = 950.00 CLP', $viewContent);
 
         $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
         self::assertTrue($client->getResponse()->isSuccessful());

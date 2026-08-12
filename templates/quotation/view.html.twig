@@ -47,7 +47,7 @@
                         <tr class="text-muted">
                             <td>
                                 {{ 'quotation.clp_equivalent'|trans }}
-                                <br><small>{{ 'quotation.fx_rate_as_of'|trans({'%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small>
+                                <br><small>{{ 'quotation.fx_rate_as_of'|trans({'%currency%': clpConversion.sourceCurrency == 'CLF' ? 'UF' : clpConversion.sourceCurrency, '%rate%': clpConversion.rate|number_format(2), '%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small>
                             </td>
                             <td class="text-end">≈ {{ clpConversion.clpAmount|money('CLP') }}</td>
                         </tr>

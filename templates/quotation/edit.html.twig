@@ -102,7 +102,7 @@
             <div class="quotation_summary_sticky"
                  data-quotation-summary
                  data-fx-rate-url="{{ path('quotation_fx_rate') }}"
-                 data-fx-as-of-label="{{ 'quotation.fx_rate_as_of'|trans({'%date%': '__DATE__'}) }}">
+                 data-fx-as-of-label="{{ 'quotation.fx_rate_as_of'|trans({'%currency%': '__CURRENCY__', '%rate%': '__RATE__', '%date%': '__DATE__'}) }}">
                 {% embed '@theme/embeds/card.html.twig' %}
                     {% block box_title %}{{ 'quotation.summary'|trans }}{% endblock %}
                     {% block box_body %}
@@ -266,7 +266,11 @@
                         const clpAmount = (adjustedSubtotal + tax) * currentRate;
                         clpRow.classList.remove('d-none');
                         document.querySelector('[data-summary-clp]')?.replaceChildren('≈ ' + new Intl.NumberFormat(locale, {minimumFractionDigits: 0, maximumFractionDigits: 0}).format(clpAmount) + ' CLP');
-                        document.querySelector('[data-summary-clp-date]')?.replaceChildren(currentRateDate ? fxAsOfLabel.replace('__DATE__', currentRateDate) : '');
+                        const currencyLabel = currencyField.value === 'CLF' ? 'UF' : currencyField.value;
+                        const rateLabel = new Intl.NumberFormat(locale, {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(currentRate);
+                        document.querySelector('[data-summary-clp-date]')?.replaceChildren(currentRateDate
+                            ? fxAsOfLabel.replace('__CURRENCY__', currencyLabel).replace('__RATE__', rateLabel).replace('__DATE__', currentRateDate)
+                            : '');
                     } else {
                         clpRow.classList.add('d-none');
                     }

@@ -64,7 +64,7 @@
         <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ total|money(currency) }}</td></tr>
         {% if clpConversion is not null and clpConversion.isConverted() %}
             <tr>
-                <td>{{ 'quotation.clp_equivalent'|trans }}<br><small>{{ 'quotation.fx_rate_as_of'|trans({'%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small></td>
+                <td>{{ 'quotation.clp_equivalent'|trans }}<br><small>{{ 'quotation.fx_rate_as_of'|trans({'%currency%': clpConversion.sourceCurrency == 'CLF' ? 'UF' : clpConversion.sourceCurrency, '%rate%': clpConversion.rate|number_format(2), '%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small></td>
                 <td class="number">≈ {{ clpConversion.clpAmount|money('CLP') }}</td>
             </tr>
         {% endif %}
