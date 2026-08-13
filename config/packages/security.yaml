@@ -80,6 +80,8 @@ security:
                 # link becomes invalid as soon as the user changes the password
                 signature_properties: ['email', 'password', 'signatureDate']
 
+            switch_user: { role: ROLE_ALLOWED_TO_SWITCH, parameter: _switch_user }
+
     access_decision_manager:
         # only grants access if there is no voter denying access
         strategy: unanimous
@@ -89,7 +91,7 @@ security:
         ROLE_USER: ~
         ROLE_TEAMLEAD: ROLE_USER
         ROLE_ADMIN: ROLE_TEAMLEAD
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     access_control:
         - {path: '^/auth/2fa', role: IS_AUTHENTICATED_2FA_IN_PROGRESS}
