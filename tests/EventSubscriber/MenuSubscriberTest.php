@@ -69,4 +69,62 @@ class MenuSubscriberTest extends TestCase
         self::assertSame('admin_quotation_catalog', $catalog->getRoute());
         self::assertTrue($catalog->isChildRoute('admin_quotation_catalog_create'));
     }
+
+    public function testExpenseMenuIsVisibleForUsersWithViewPermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'view_expense'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $expenses = $event->getMenu()->findChild('expenses');
+        self::assertNotNull($expenses);
+        self::assertNull($expenses->getRoute());
+
+        $expenseList = $expenses->findChild('expense_list');
+        self::assertNotNull($expenseList);
+        self::assertSame('expense_list', $expenseList->getRoute());
+        self::assertTrue($expenseList->isChildRoute('expense_create'));
+        self::assertTrue($expenseList->isChildRoute('expense_edit'));
+        self::assertTrue($expenseList->isChildRoute('expense_view'));
+        self::assertTrue($expenseList->isChildRoute('expense_submit'));
+        self::assertTrue($expenseList->isChildRoute('expense_approve'));
+        self::assertTrue($expenseList->isChildRoute('expense_reject'));
+        self::assertTrue($expenseList->isChildRoute('expense_delete'));
+        self::assertTrue($expenseList->isChildRoute('expense_allocation_charge'));
+
+        $expensePending = $expenses->findChild('expense_pending');
+        self::assertNotNull($expensePending);
+        self::assertSame('expense_pending', $expensePending->getRoute());
+
+        self::assertNull($expenses->findChild('expense_approval_level_list'));
+    }
+
+    public function testExpenseApprovalLevelMenuIsVisibleForLevelManagers(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'manage_expense_approval_levels'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $expenses = $event->getMenu()->findChild('expenses');
+        self::assertNotNull($expenses);
+
+        $levels = $expenses->findChild('expense_approval_level_list');
+        self::assertNotNull($levels);
+        self::assertSame('admin_expense_approval_level_list', $levels->getRoute());
+        self::assertTrue($levels->isChildRoute('admin_expense_approval_level_create'));
+        self::assertTrue($levels->isChildRoute('admin_expense_approval_level_edit'));
+        self::assertTrue($levels->isChildRoute('admin_expense_approval_level_delete'));
+
+        self::assertNull($expenses->findChild('expense_list'));
+    }
 }
