@@ -2,12 +2,12 @@
 
 {% block main %}
     <div class="card">
-        <div class="card-header"><h3 class="card-title">{{ level.id ? 'Edit approval level' : 'Add approval level' }}</h3></div>
+        <div class="card-header"><h3 class="card-title">{{ (level.id ? 'expense_approval_level.edit_title' : 'expense_approval_level.create_title')|trans }}</h3></div>
         <div class="card-body">
             {{ form_start(form) }}
             {{ form_widget(form) }}
-            <button class="btn btn-primary" type="submit">Save</button>
-            <a class="btn btn-link" href="{{ path('admin_expense_approval_level_list') }}">Cancel</a>
+            <button class="btn btn-primary" type="submit">{{ 'action.save'|trans }}</button>
+            <a class="btn btn-link" href="{{ path('admin_expense_approval_level_list') }}">{{ 'cancel'|trans }}</a>
             {{ form_end(form) }}
         </div>
     </div>

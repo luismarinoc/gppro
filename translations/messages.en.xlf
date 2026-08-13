@@ -2250,6 +2250,142 @@
         <source>expense_approval_level</source>
         <target>Expense approval levels</target>
       </trans-unit>
+      <trans-unit id="gpExpense7" resname="expense.description">
+        <source>expense.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="gpExpense8" resname="expense.amount">
+        <source>expense.amount</source>
+        <target>Amount</target>
+      </trans-unit>
+      <trans-unit id="gpExpense9" resname="expense.date">
+        <source>expense.date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="gpExpense10" resname="expense.recurrence">
+        <source>expense.recurrence</source>
+        <target>Recurrence</target>
+      </trans-unit>
+      <trans-unit id="gpExpense11" resname="expense.recurrence_placeholder">
+        <source>expense.recurrence_placeholder</source>
+        <target>One-time expense</target>
+      </trans-unit>
+      <trans-unit id="gpExpense12" resname="expense.recurrence_month">
+        <source>expense.recurrence_month</source>
+        <target>Monthly</target>
+      </trans-unit>
+      <trans-unit id="gpExpense13" resname="expense.allocations">
+        <source>expense.allocations</source>
+        <target>Project allocations</target>
+      </trans-unit>
+      <trans-unit id="gpExpense14" resname="expense.charge_quotation">
+        <source>expense.charge_quotation</source>
+        <target>Quotation</target>
+      </trans-unit>
+      <trans-unit id="gpExpense15" resname="expense.charge_quotation_placeholder">
+        <source>expense.charge_quotation_placeholder</source>
+        <target>Select a quotation</target>
+      </trans-unit>
+      <trans-unit id="gpExpense16" resname="expense.approval_note">
+        <source>expense.approval_note</source>
+        <target>Note</target>
+      </trans-unit>
+      <trans-unit id="gpExpense17" resname="expense.allocation_project">
+        <source>expense.allocation_project</source>
+        <target>Project</target>
+      </trans-unit>
+      <trans-unit id="gpExpense18" resname="expense.allocation_percentage">
+        <source>expense.allocation_percentage</source>
+        <target>Percentage</target>
+      </trans-unit>
+      <trans-unit id="gpExpense19" resname="expense_approval_level.level">
+        <source>expense_approval_level.level</source>
+        <target>Level</target>
+      </trans-unit>
+      <trans-unit id="gpExpense20" resname="expense_approval_level.min_amount">
+        <source>expense_approval_level.min_amount</source>
+        <target>Minimum amount</target>
+      </trans-unit>
+      <trans-unit id="gpExpense21" resname="expense_approval_level.required_role">
+        <source>expense_approval_level.required_role</source>
+        <target>Required role</target>
+      </trans-unit>
+      <trans-unit id="gpExpense22" resname="expense.none_found">
+        <source>expense.none_found</source>
+        <target>No expenses found.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense23" resname="expense.none_pending">
+        <source>expense.none_pending</source>
+        <target>No expenses are awaiting your approval.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense24" resname="expense.review">
+        <source>expense.review</source>
+        <target>Review</target>
+      </trans-unit>
+      <trans-unit id="gpExpense25" resname="expense.submit">
+        <source>expense.submit</source>
+        <target>Submit for approval</target>
+      </trans-unit>
+      <trans-unit id="gpExpense26" resname="expense.charged">
+        <source>expense.charged</source>
+        <target>Charged</target>
+      </trans-unit>
+      <trans-unit id="gpExpense27" resname="expense.charge_action">
+        <source>expense.charge_action</source>
+        <target>Charge</target>
+      </trans-unit>
+      <trans-unit id="gpExpense28" resname="expense.decision">
+        <source>expense.decision</source>
+        <target>Decision</target>
+      </trans-unit>
+      <trans-unit id="gpExpense29" resname="expense.approval_progress">
+        <source>expense.approval_progress</source>
+        <target>Approval progress</target>
+      </trans-unit>
+      <trans-unit id="gpExpense30" resname="expense.note_placeholder">
+        <source>expense.note_placeholder</source>
+        <target>Optional note</target>
+      </trans-unit>
+      <trans-unit id="gpExpense31" resname="expense_approval_level.none_found">
+        <source>expense_approval_level.none_found</source>
+        <target>No approval levels configured.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense32" resname="expense_approval_level.add">
+        <source>expense_approval_level.add</source>
+        <target>Add level</target>
+      </trans-unit>
+      <trans-unit id="gpExpense33" resname="expense_approval_level.edit_title">
+        <source>expense_approval_level.edit_title</source>
+        <target>Edit approval level</target>
+      </trans-unit>
+      <trans-unit id="gpExpense34" resname="expense_approval_level.create_title">
+        <source>expense_approval_level.create_title</source>
+        <target>Add approval level</target>
+      </trans-unit>
+      <trans-unit id="gpExpense35" resname="expense.status.draft">
+        <source>expense.status.draft</source>
+        <target>Draft</target>
+      </trans-unit>
+      <trans-unit id="gpExpense36" resname="expense.status.pending_approval">
+        <source>expense.status.pending_approval</source>
+        <target>Pending approval</target>
+      </trans-unit>
+      <trans-unit id="gpExpense37" resname="expense.status.approved">
+        <source>expense.status.approved</source>
+        <target>Approved</target>
+      </trans-unit>
+      <trans-unit id="gpExpense38" resname="expense.status.rejected">
+        <source>expense.status.rejected</source>
+        <target>Rejected</target>
+      </trans-unit>
+      <trans-unit id="gpExpense39" resname="expense.allocation_add">
+        <source>expense.allocation_add</source>
+        <target>Add allocation</target>
+      </trans-unit>
+      <trans-unit id="gpExpense40" resname="expense.allocation_remove">
+        <source>expense.allocation_remove</source>
+        <target>Remove</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title">
         <source>activity_board.title</source>
         <target>Activity board</target>

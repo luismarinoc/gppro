@@ -2230,6 +2230,142 @@
         <source>expense_approval_level</source>
         <target state="translated">Niveles de aprobación de gastos</target>
       </trans-unit>
+      <trans-unit id="gpExpense7" resname="expense.description" xml:space="preserve">
+        <source>expense.description</source>
+        <target state="translated">Descripción</target>
+      </trans-unit>
+      <trans-unit id="gpExpense8" resname="expense.amount" xml:space="preserve">
+        <source>expense.amount</source>
+        <target state="translated">Monto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense9" resname="expense.date" xml:space="preserve">
+        <source>expense.date</source>
+        <target state="translated">Fecha</target>
+      </trans-unit>
+      <trans-unit id="gpExpense10" resname="expense.recurrence" xml:space="preserve">
+        <source>expense.recurrence</source>
+        <target state="translated">Recurrencia</target>
+      </trans-unit>
+      <trans-unit id="gpExpense11" resname="expense.recurrence_placeholder" xml:space="preserve">
+        <source>expense.recurrence_placeholder</source>
+        <target state="translated">Gasto único</target>
+      </trans-unit>
+      <trans-unit id="gpExpense12" resname="expense.recurrence_month" xml:space="preserve">
+        <source>expense.recurrence_month</source>
+        <target state="translated">Mensual</target>
+      </trans-unit>
+      <trans-unit id="gpExpense13" resname="expense.allocations" xml:space="preserve">
+        <source>expense.allocations</source>
+        <target state="translated">Asignación por proyecto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense14" resname="expense.charge_quotation" xml:space="preserve">
+        <source>expense.charge_quotation</source>
+        <target state="translated">Cotización</target>
+      </trans-unit>
+      <trans-unit id="gpExpense15" resname="expense.charge_quotation_placeholder" xml:space="preserve">
+        <source>expense.charge_quotation_placeholder</source>
+        <target state="translated">Seleccioná una cotización</target>
+      </trans-unit>
+      <trans-unit id="gpExpense16" resname="expense.approval_note" xml:space="preserve">
+        <source>expense.approval_note</source>
+        <target state="translated">Nota</target>
+      </trans-unit>
+      <trans-unit id="gpExpense17" resname="expense.allocation_project" xml:space="preserve">
+        <source>expense.allocation_project</source>
+        <target state="translated">Proyecto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense18" resname="expense.allocation_percentage" xml:space="preserve">
+        <source>expense.allocation_percentage</source>
+        <target state="translated">Porcentaje</target>
+      </trans-unit>
+      <trans-unit id="gpExpense19" resname="expense_approval_level.level" xml:space="preserve">
+        <source>expense_approval_level.level</source>
+        <target state="translated">Nivel</target>
+      </trans-unit>
+      <trans-unit id="gpExpense20" resname="expense_approval_level.min_amount" xml:space="preserve">
+        <source>expense_approval_level.min_amount</source>
+        <target state="translated">Monto mínimo</target>
+      </trans-unit>
+      <trans-unit id="gpExpense21" resname="expense_approval_level.required_role" xml:space="preserve">
+        <source>expense_approval_level.required_role</source>
+        <target state="translated">Rol requerido</target>
+      </trans-unit>
+      <trans-unit id="gpExpense22" resname="expense.none_found" xml:space="preserve">
+        <source>expense.none_found</source>
+        <target state="translated">No se encontraron gastos.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense23" resname="expense.none_pending" xml:space="preserve">
+        <source>expense.none_pending</source>
+        <target state="translated">No hay gastos esperando tu aprobación.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense24" resname="expense.review" xml:space="preserve">
+        <source>expense.review</source>
+        <target state="translated">Revisar</target>
+      </trans-unit>
+      <trans-unit id="gpExpense25" resname="expense.submit" xml:space="preserve">
+        <source>expense.submit</source>
+        <target state="translated">Enviar a aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense26" resname="expense.charged" xml:space="preserve">
+        <source>expense.charged</source>
+        <target state="translated">Cobrado</target>
+      </trans-unit>
+      <trans-unit id="gpExpense27" resname="expense.charge_action" xml:space="preserve">
+        <source>expense.charge_action</source>
+        <target state="translated">Cobrar</target>
+      </trans-unit>
+      <trans-unit id="gpExpense28" resname="expense.decision" xml:space="preserve">
+        <source>expense.decision</source>
+        <target state="translated">Decisión</target>
+      </trans-unit>
+      <trans-unit id="gpExpense29" resname="expense.approval_progress" xml:space="preserve">
+        <source>expense.approval_progress</source>
+        <target state="translated">Progreso de aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense30" resname="expense.note_placeholder" xml:space="preserve">
+        <source>expense.note_placeholder</source>
+        <target state="translated">Nota opcional</target>
+      </trans-unit>
+      <trans-unit id="gpExpense31" resname="expense_approval_level.none_found" xml:space="preserve">
+        <source>expense_approval_level.none_found</source>
+        <target state="translated">No hay niveles de aprobación configurados.</target>
+      </trans-unit>
+      <trans-unit id="gpExpense32" resname="expense_approval_level.add" xml:space="preserve">
+        <source>expense_approval_level.add</source>
+        <target state="translated">Agregar nivel</target>
+      </trans-unit>
+      <trans-unit id="gpExpense33" resname="expense_approval_level.edit_title" xml:space="preserve">
+        <source>expense_approval_level.edit_title</source>
+        <target state="translated">Editar nivel de aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense34" resname="expense_approval_level.create_title" xml:space="preserve">
+        <source>expense_approval_level.create_title</source>
+        <target state="translated">Agregar nivel de aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense35" resname="expense.status.draft" xml:space="preserve">
+        <source>expense.status.draft</source>
+        <target state="translated">Borrador</target>
+      </trans-unit>
+      <trans-unit id="gpExpense36" resname="expense.status.pending_approval" xml:space="preserve">
+        <source>expense.status.pending_approval</source>
+        <target state="translated">Pendiente de aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense37" resname="expense.status.approved" xml:space="preserve">
+        <source>expense.status.approved</source>
+        <target state="translated">Aprobado</target>
+      </trans-unit>
+      <trans-unit id="gpExpense38" resname="expense.status.rejected" xml:space="preserve">
+        <source>expense.status.rejected</source>
+        <target state="translated">Rechazado</target>
+      </trans-unit>
+      <trans-unit id="gpExpense39" resname="expense.allocation_add" xml:space="preserve">
+        <source>expense.allocation_add</source>
+        <target state="translated">Agregar asignación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense40" resname="expense.allocation_remove" xml:space="preserve">
+        <source>expense.allocation_remove</source>
+        <target state="translated">Quitar</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>

@@ -3,14 +3,14 @@
 {% block main %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Expense approval levels</h3>
+            <h3 class="card-title">{{ 'expense_approval_level'|trans }}</h3>
             <div class="card-actions">
-                <a class="btn btn-primary" href="{{ path('admin_expense_approval_level_create') }}">Add level</a>
+                <a class="btn btn-primary" href="{{ path('admin_expense_approval_level_create') }}">{{ 'expense_approval_level.add'|trans }}</a>
             </div>
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Level</th><th>Minimum amount</th><th>Required role</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'expense_approval_level.level'|trans }}</th><th>{{ 'expense_approval_level.min_amount'|trans }}</th><th>{{ 'expense_approval_level.required_role'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for level in levels %}
                     <tr>
@@ -18,17 +18,17 @@
                         <td>{{ level.minAmount }}</td>
                         <td>{{ level.requiredRole }}</td>
                         <td class="text-end">
-                            <a href="{{ path('admin_expense_approval_level_edit', {id: level.id}) }}">Edit</a>
+                            <a href="{{ path('admin_expense_approval_level_edit', {id: level.id}) }}">{{ 'action.edit'|trans }}</a>
                             {% if level.level != 1 %}
                                 <form class="d-inline" method="post" action="{{ path('admin_expense_approval_level_delete', {id: level.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_level') }}">
-                                    <button class="btn btn-link text-danger" type="submit">Delete</button>
+                                    <button class="btn btn-link text-danger" type="submit">{{ 'action.delete'|trans }}</button>
                                 </form>
                             {% endif %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="4">No approval levels configured.</td></tr>
+                    <tr><td colspan="4">{{ 'expense_approval_level.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

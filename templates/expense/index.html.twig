@@ -3,26 +3,26 @@
 {% block main %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Expenses</h3>
+            <h3 class="card-title">{{ 'expenses'|trans }}</h3>
             <div class="card-actions">
-                <a class="btn btn-primary" href="{{ path('expense_create') }}">New expense</a>
-                <a class="btn btn-link" href="{{ path('expense_pending') }}">Pending my approval</a>
+                <a class="btn btn-primary" href="{{ path('expense_create') }}">{{ 'expense.create_title'|trans }}</a>
+                <a class="btn btn-link" href="{{ path('expense_pending') }}">{{ 'expense.pending_title'|trans }}</a>
             </div>
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Description</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'date'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for expense in expenses %}
                     <tr>
                         <td>{{ expense.description }}</td>
                         <td>{{ expense.amount }}</td>
                         <td>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</td>
-                        <td>{{ expense.status }}</td>
-                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">View</a></td>
+                        <td>{{ ('expense.status.' ~ expense.status)|trans }}</td>
+                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">{{ 'view'|trans }}</a></td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="5">No expenses found.</td></tr>
+                    <tr><td colspan="5">{{ 'expense.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
