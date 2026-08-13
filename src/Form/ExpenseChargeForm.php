@@ -58,6 +58,19 @@ final class ExpenseChargeForm extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'csrf_token_id' => 'expense_charge',
+            // The 'quotation' field's 'query_builder' above already restricts
+            // choices to draft/CLP/same-project quotations. Without disabling
+            // validation for this form, Symfony's Form Validator additionally
+            // cascades onto the SELECTED Quotation's own class-level
+            // constraints (Assert\Count(min: 1) on lines, Assert\NotNull on
+            // validUntil) because EntityType's model data is that entity
+            // object - rejecting a freshly-created draft quotation that has
+            // no lines yet, even though it is a perfectly valid cross-charge
+            // target (this form only REFERENCES the quotation; it never
+            // edits it, and ExpenseCrossChargeService performs its own
+            // explicit business validation - project/status/currency/
+            // already-charged - independently of this form).
+            'validation_groups' => false,
         ]);
         $resolver->setRequired('project');
         $resolver->setAllowedTypes('project', Project::class);

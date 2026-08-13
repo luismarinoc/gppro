@@ -75,5 +75,5 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 
 ## Phase 6: Cross-Charge / Quotation Integration Verification
 
-- [ ] 6.1 Extend `ExpenseCrossChargeServiceTest.php` — assert real `QuotationLine` created on target `Quotation` (qty `'1'`, unitPrice=amountClp, description `"<desc> (<date>)"`), no duplicated quotation logic
-- [ ] 6.2 Integration test: `(source_expense_id, period_key)` unique index enforces idempotency under concurrent command runs
+- [x] 6.1 Extend `ExpenseCrossChargeServiceTest.php` — assert real `QuotationLine` created on target `Quotation` (qty `'1'`, unitPrice=amountClp, description `"<desc> (<date>)"`), no duplicated quotation logic
+- [x] 6.2 Integration test: `(source_expense_id, period_key)` unique index enforces idempotency under concurrent command runs
