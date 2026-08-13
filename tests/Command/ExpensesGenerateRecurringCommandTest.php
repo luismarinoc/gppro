@@ -216,4 +216,55 @@ class ExpensesGenerateRecurringCommandTest extends KernelTestCase
 
         self::assertSame(Command::SUCCESS, $exitCode);
     }
+
+    /**
+     * Task 6.2: proves `UNIQ_GPPRO_EXPENSES_SOURCE_PERIOD (source_expense_id,
+     * period_key)` — not just the application-level `findGeneratedCopy`
+     * pre-check — is what actually enforces idempotency for a race window
+     * two concurrent `generate-recurring` runs can hit: both processes can
+     * independently observe "no copy yet" before either has committed, then
+     * both attempt to insert. This test bypasses
+     * `RecurringExpenseGenerator`'s own pre-check on purpose (it directly
+     * persists a second, colliding `Expense` for the SAME
+     * (source_expense_id, period_key) pair right after the first one was
+     * generated) to prove the database constraint itself — the "final
+     * guarantee under concurrency" `RecurringExpenseGenerator`'s own
+     * docblock refers to — rejects the duplicate even when the application
+     * guard is skipped.
+     *
+     * Genuine cross-connection concurrency (two real, separate DB sessions
+     * racing at the same instant) cannot be exercised in this suite: DAMA
+     * DoctrineTestBundle (`phpunit.xml.dist` bootstrap) wraps each test
+     * method in one outer, never-committed transaction, so a second,
+     * independently-opened DBAL connection would not see this test's
+     * uncommitted fixtures at all and would silently miss the real
+     * constraint (verified empirically — it also inserts `NULL` for
+     * `source_expense_id`, and MySQL treats every `NULL` as distinct for
+     * uniqueness purposes, masking the exact race this test needs to prove).
+     * Exercising the constraint within the same connection, with the
+     * application-level guard intentionally bypassed, is the reliable way to
+     * prove the DB-level safety net under this test infrastructure.
+     */
+    public function testDatabaseUniqueIndexRejectsADuplicateSourcePeriodPairEvenWhenTheAppLevelPreCheckIsBypassed(): void
+    {
+        $project = $this->createProject();
+        $source = $this->createRecurringSource($project);
+
+        $generator = new RecurringExpenseGenerator($this->entityManager, $this->repository);
+        $result = $generator->generateOne($source, '2026-08');
+        self::assertSame(\App\Expense\ExpenseRecurrenceStatus::GENERATED, $result->status);
+
+        $duplicate = new Expense();
+        $duplicate->setDescription('Monthly rent');
+        $duplicate->setAmount(100000);
+        $duplicate->setExpenseDate(new \DateTimeImmutable('2026-08-01'));
+        $duplicate->setRecurrence(Expense::RECURRENCE_MONTH);
+        $duplicate->setSourceExpense($source);
+        $duplicate->setPeriodKey('2026-08');
+        $this->entityManager->persist($duplicate);
+
+        $this->expectException(\Doctrine\DBAL\Exception\UniqueConstraintViolationException::class);
+
+        $this->entityManager->flush();
+    }
 }

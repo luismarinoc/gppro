@@ -88,8 +88,13 @@ class ExpenseCrossChargeServiceTest extends AbstractRepositoryTestCase
         self::assertTrue($allocation->isCharged());
         self::assertSame($line, $allocation->getQuotationLine());
         self::assertContains($line, $quotation->getLines()->toArray());
-        self::assertSame('150000.0000', $line->getUnitPrice());
+        // Exact QuotationLine shape (task 6.1): qty '1', unitPrice=amountClp,
+        // description "<expense description> (<expense date Y-m-d>)". No
+        // quotation pricing/line logic is duplicated - QuotationLine is
+        // created and added via the existing App\Entity\Quotation aggregate.
         self::assertSame('1', $line->getQuantity());
+        self::assertSame('150000.0000', $line->getUnitPrice());
+        self::assertSame('Consulting fee (2026-08-01)', $line->getDescription());
     }
 
     public function testChargeIsRejectedWhenQuotationCurrencyIsNotClp(): void

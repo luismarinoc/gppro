@@ -338,11 +338,10 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
         $em = $this->getEntityManager();
         [$customer, $project] = $this->createCustomerAndProject();
-        // A pre-existing line and a validUntil date are required: the
-        // ExpenseChargeForm's 'quotation' EntityType field cascades validation
-        // onto the chosen Quotation's own constraints (Assert\Count(min: 1) on
-        // Quotation::$lines, Assert\NotNull on Quotation::$validUntil) - see
-        // "Issues Found" in the apply-progress notes for this PR.
+        // This quotation already has a line and a validUntil date to cover
+        // the "existing draft quotation" cross-charge target scenario; see
+        // testChargeSucceedsForFreshlyCreatedQuotationWithNoLinesOrValidUntil
+        // below for the freshly-created (no line/no validUntil) scenario.
         $quotation = (new Quotation())->setCustomer($customer)->setProject($project)->setCurrency(Quotation::CURRENCY_CLP);
         $quotation->setValidUntil(new \DateTimeImmutable('2026-08-20'));
         $quotation->addLine((new QuotationLine())->setDescription('Existing item')->setQuantity('1')->setUnitPrice('1'));
@@ -378,6 +377,63 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $reloadedQuotation = $em->getRepository(Quotation::class)->find($quotation->getId());
         self::assertInstanceOf(Quotation::class, $reloadedQuotation);
         self::assertCount(2, $reloadedQuotation->getLines());
+    }
+
+    /**
+     * Regression test for the `ExpenseChargeForm` cascade-validation bug
+     * (fixed in Phase 6, see `ExpenseChargeForm::configureOptions`): a
+     * freshly-created draft quotation with no lines and no `validUntil` yet
+     * MUST still be a valid cross-charge target. Before the fix, Symfony's
+     * Form Validator cascaded onto `Quotation`'s own class-level constraints
+     * (`Assert\Count(min: 1)` on lines, `Assert\NotNull` on `validUntil`)
+     * because the 'quotation' field's model data is that entity object,
+     * silently rejecting the charge with a generic error and no field-level
+     * feedback.
+     */
+    public function testChargeSucceedsForFreshlyCreatedQuotationWithNoLinesOrValidUntil(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+        [$customer, $project] = $this->createCustomerAndProject();
+        $quotation = (new Quotation())->setCustomer($customer)->setProject($project)->setCurrency(Quotation::CURRENCY_CLP);
+        $em->persist($quotation);
+
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $expense->submitForApproval(1);
+        $expense->clearLevel(1);
+        $allocation = $expense->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        $allocation->setAmountClp(100000);
+        $em->flush();
+        $allocationId = $allocation->getId();
+
+        $crawler = $this->request($client, '/expense/' . $expense->getId());
+        $options = $crawler->filter('select[name="expense_charge_form[quotation]"] option')->each(static fn ($node) => $node->attr('value'));
+        self::assertContains((string) $quotation->getId(), $options, 'The freshly-created quotation must be a selectable choice.');
+
+        $token = $this->extractToken(
+            $client,
+            '/expense/' . $expense->getId(),
+            'form[action$="/allocation/' . $allocationId . '/charge"] input[name="expense_charge_form[_token]"]'
+        );
+        $this->request($client, '/expense/allocation/' . $allocationId . '/charge', 'POST', [
+            'expense_charge_form' => [
+                'quotation' => $quotation->getId(),
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/expense/' . $expense->getId()));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em->clear();
+        $reloadedAllocation = $em->getRepository(ExpenseAllocation::class)->find($allocationId);
+        self::assertInstanceOf(ExpenseAllocation::class, $reloadedAllocation);
+        self::assertTrue($reloadedAllocation->isCharged());
+        $reloadedQuotation = $em->getRepository(Quotation::class)->find($quotation->getId());
+        self::assertInstanceOf(Quotation::class, $reloadedQuotation);
+        self::assertCount(1, $reloadedQuotation->getLines());
     }
 
     public function testPendingListShowsExpensesAwaitingApprovalExcludingOwnExpenses(): void
