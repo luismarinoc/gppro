@@ -2422,6 +2422,14 @@
         <source>expense.category.other</source>
         <target>Other</target>
       </trans-unit>
+      <trans-unit id="gpExpense50" resname="expense_approval_level.approver_user">
+        <source>expense_approval_level.approver_user</source>
+        <target>Named approver</target>
+      </trans-unit>
+      <trans-unit id="gpExpense51" resname="expense_approval_level.approver_user.help">
+        <source>expense_approval_level.approver_user.help</source>
+        <target>Optional. This person can clear the level in addition to anyone holding the required role. Leave it empty to use the role only.</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title">
         <source>activity_board.title</source>
         <target>Activity board</target>

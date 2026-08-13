@@ -11,13 +11,14 @@
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>{{ 'expense_approval_level.level'|trans }}</th><th>{{ 'expense_approval_level.min_amount'|trans }}</th><th>{{ 'expense_approval_level.required_role'|trans }}</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'expense_approval_level.level'|trans }}</th><th>{{ 'expense_approval_level.min_amount'|trans }}</th><th>{{ 'expense_approval_level.required_role'|trans }}</th><th>{{ 'expense_approval_level.approver_user'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for level in levels %}
                     <tr>
                         <td>{{ level.level }}</td>
                         <td>{{ level.minAmount }}</td>
                         <td>{{ widgets.label_role(level.requiredRole) }}</td>
+                        <td>{% if level.approverUser %}{{ widgets.label_user(level.approverUser) }}{% else %}<span class="text-muted">&mdash;</span>{% endif %}</td>
                         <td class="text-end">
                             <a href="{{ path('admin_expense_approval_level_edit', {id: level.id}) }}">{{ 'action.edit'|trans }}</a>
                             {% if level.level != 1 %}
@@ -29,7 +30,7 @@
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="4">{{ 'expense_approval_level.none_found'|trans }}</td></tr>
+                    <tr><td colspan="5">{{ 'expense_approval_level.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
