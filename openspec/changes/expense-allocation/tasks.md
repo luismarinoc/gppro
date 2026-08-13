@@ -55,8 +55,8 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 
 ## Phase 3: Voter + Permissions
 
-- [ ] 3.1 RED→GREEN: `tests/Voter/ExpenseVoterTest.php` then `src/Voter/ExpenseVoter.php` — static attrs via `RolePermissionManager`, approve/reject via `ExpenseApprovalPolicy`, edit/delete require `isEditable()`, charge requires `isApproved()`
-- [ ] 3.2 `config/packages/gppro.yaml` — EXPENSES/EXPENSES_ALL sets, role maps, `manage_expense_approval_levels` on SUPER_ADMIN (no `approve_expense` permission — D2)
+- [x] 3.1 RED→GREEN: `tests/Voter/ExpenseVoterTest.php` then `src/Voter/ExpenseVoter.php` — static attrs via `RolePermissionManager`, approve/reject via `ExpenseApprovalPolicy`, edit/delete require `isEditable()`, charge requires `isApproved()`
+- [x] 3.2 `config/packages/gppro.yaml` — EXPENSES/EXPENSES_ALL sets, role maps, `manage_expense_approval_levels` on SUPER_ADMIN (no `approve_expense` permission — D2)
 
 ## Phase 4: Forms + Controllers + Templates
 
