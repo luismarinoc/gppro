@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
 
 {% block main %}
     <div class="card">
@@ -16,7 +17,7 @@
                     <tr>
                         <td>{{ level.level }}</td>
                         <td>{{ level.minAmount }}</td>
-                        <td>{{ level.requiredRole }}</td>
+                        <td>{{ widgets.label_role(level.requiredRole) }}</td>
                         <td class="text-end">
                             <a href="{{ path('admin_expense_approval_level_edit', {id: level.id}) }}">{{ 'action.edit'|trans }}</a>
                             {% if level.level != 1 %}
