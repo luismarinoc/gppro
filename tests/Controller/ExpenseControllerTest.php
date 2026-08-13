@@ -105,6 +105,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
                 'description' => 'Client dinner',
                 'amount' => '100000',
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
+                'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [
                     0 => ['project' => $project->getId(), 'percentage' => '100.00'],
                 ],
@@ -136,6 +137,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
                 'description' => 'Overspent expense',
                 'amount' => '100000',
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
+                'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [
                     0 => ['project' => $projectA->getId(), 'percentage' => '60.00'],
                     1 => ['project' => $projectB->getId(), 'percentage' => '50.00'],
@@ -166,6 +168,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
                 'description' => $description,
                 'amount' => '200000',
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
+                'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [
                     0 => ['project' => $project->getId(), 'percentage' => '100.00'],
                 ],
