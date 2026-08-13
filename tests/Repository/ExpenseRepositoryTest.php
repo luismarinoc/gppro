@@ -167,4 +167,29 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
         self::assertNotContains($copy->getId(), $sourceIds);
         self::assertNotContains($notRecurring->getId(), $sourceIds);
     }
+
+    public function testFindGeneratedCopyReturnsExistingCopyForSourceAndPeriod(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+
+        $source = $this->createExpense($project);
+        $source->setRecurrence(Expense::RECURRENCE_MONTH);
+        $repository->saveExpense($source);
+
+        $copy = new Expense();
+        $copy->setDescription('Generated copy');
+        $copy->setAmount(100000);
+        $copy->setExpenseDate(new \DateTimeImmutable('today'));
+        $copy->setRecurrence(Expense::RECURRENCE_MONTH);
+        $copy->setSourceExpense($source);
+        $copy->setPeriodKey('2026-08');
+        $repository->saveExpense($copy);
+
+        $found = $repository->findGeneratedCopy($source, '2026-08');
+        self::assertNotNull($found);
+        self::assertSame($copy->getId(), $found->getId());
+
+        self::assertNull($repository->findGeneratedCopy($source, '2026-09'));
+    }
 }

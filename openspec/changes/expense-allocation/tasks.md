@@ -49,9 +49,9 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 - [x] 2.2 RED→GREEN: `AllocationPercentageValidatorTest.php` then `AllocationPercentageValidator.php` — ≤100% draft, ===100% submit
 - [x] 2.3 RED→GREEN: `ApprovalLevelResolverTest.php` then `ApprovalLevelResolver.php` — 500k→1, 2M→2, boundary `amount===minAmount`
 - [x] 2.4 RED→GREEN: `ExpenseApprovalPolicyTest.php` then `ExpenseApprovalPolicy.php` — creator exclusion, repeat-approver exclusion, role match, SUPER_ADMIN break-glass
-- [ ] 2.5 RED→GREEN (KernelTestCase): `ExpenseApprovalServiceTest.php` then `ExpenseApprovalService.php` — transactional submit/approve/reject, audit row+counter+status
-- [ ] 2.6 RED→GREEN: `ExpenseCrossChargeServiceTest.php` then `ExpenseCrossChargeService.php` — project match, draft+CLP quotation, double-charge rejected
-- [ ] 2.7 RED→GREEN: `RecurringExpenseGeneratorTest.php` then `RecurringExpenseGenerator.php` + result VO/status enum — GENERATED/SKIPPED_EXISTING/SKIPPED_NOT_RECURRING
+- [x] 2.5 RED→GREEN (KernelTestCase): `ExpenseApprovalServiceTest.php` then `ExpenseApprovalService.php` — transactional submit/approve/reject, audit row+counter+status
+- [x] 2.6 RED→GREEN: `ExpenseCrossChargeServiceTest.php` then `ExpenseCrossChargeService.php` — project match, draft+CLP quotation, double-charge rejected
+- [x] 2.7 RED→GREEN: `RecurringExpenseGeneratorTest.php` then `RecurringExpenseGenerator.php` + result VO/status enum — GENERATED/SKIPPED_EXISTING/SKIPPED_NOT_RECURRING
 
 ## Phase 3: Voter + Permissions
 

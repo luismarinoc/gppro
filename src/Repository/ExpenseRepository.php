@@ -76,4 +76,21 @@ class ExpenseRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Pre-check used by RecurringExpenseGenerator before inserting a new
+     * copy - the DB-level unique index (source_expense_id, period_key) is
+     * the final idempotency guarantee under concurrency (design D6/File
+     * Changes: "DB-level idempotency for the cron, safe under concurrency").
+     */
+    public function findGeneratedCopy(Expense $source, string $periodKey): ?Expense
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.sourceExpense = :source')
+            ->andWhere('e.periodKey = :periodKey')
+            ->setParameter('source', $source)
+            ->setParameter('periodKey', $periodKey)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
