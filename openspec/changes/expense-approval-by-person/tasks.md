@@ -43,26 +43,30 @@ Single additive nullable column plus one policy branch, one form field, one temp
 
 ## Phase 3: Form
 
-- [ ] 3.1 RED: extend `tests/Form/ExpenseApprovalLevelFormTest.php` — assert `approverUser` field is present and `required === false`. Traces: "Level saved with and without a named approver".
-- [ ] 3.2 GREEN: `src/Form/ExpenseApprovalLevelForm.php` — add `use App\Form\Type\UserType;`; add `approverUser` field (`UserType::class`, `required: false`, `label`/`help` translation keys, `include_users` set to the level's current `approverUser` when non-null per D6). Run 3.1 green.
-- [ ] 3.3 RED: extend `tests/Controller/ExpenseApprovalLevelControllerTest.php` — POST a level create/edit with `approverUser` set (succeeds, persists), and separately without it (succeeds, behaves as before). Traces: "Level saved with and without a named approver".
-- [ ] 3.4 Verify 3.3 green with no controller change (`isMonotonic()` reads only `level`/`minAmount`, A7); existing POSTs that omit `approverUser` stay green.
+- [x] 3.1 RED: extend `tests/Form/ExpenseApprovalLevelFormTest.php` — assert `approverUser` field is present and `required === false`. Traces: "Level saved with and without a named approver". (Presence-only assertion, matching the `requiredRole`/`UserType` unmockable-constructor caveat already documented in this file; `required === false` is covered by the controller integration test in 3.3 instead of `$form->get()`, which would eagerly instantiate `UserType` and fail in `TypeTestCase`.)
+- [x] 3.2 GREEN: `src/Form/ExpenseApprovalLevelForm.php` — add `use App\Form\Type\UserType;`; add `approverUser` field (`UserType::class`, `required: false`, `label`/`help` translation keys, `include_users` set to the level's current `approverUser` when non-null per D6). Run 3.1 green.
+- [x] 3.3 RED: extend `tests/Controller/ExpenseApprovalLevelControllerTest.php` — POST a level create/edit with `approverUser` set (succeeds, persists), and separately without it (succeeds, behaves as before). Traces: "Level saved with and without a named approver". (The "without it" case was already covered by the pre-existing `testSuperAdminCanListAndCreateApprovalLevel`.)
+- [x] 3.4 Verify 3.3 green with no controller change (`isMonotonic()` reads only `level`/`minAmount`, A7); existing POSTs that omit `approverUser` stay green.
 
 ## Phase 4: Templates
 
-- [ ] 4.1 `templates/expense_approval_level/index.html.twig` — insert `<th>{{ 'expense_approval_level.approver_user'|trans }}</th>` after the `required_role` header.
-- [ ] 4.2 Same file — insert `<td>` rendering `widgets.label_user(level.approverUser)` when set, else a muted `&mdash;`, after the role badge `<td>`.
-- [ ] 4.3 Same file — change the empty-state row's `colspan="4"` to `colspan="5"`.
-- [ ] 4.4 Verify: `templates/expense_approval_level/edit.html.twig` needs NO change — `form_widget(form)` already renders the new field and its `help` text generically (D5); confirm via `lint:twig` only.
+- [x] 4.1 `templates/expense_approval_level/index.html.twig` — insert `<th>{{ 'expense_approval_level.approver_user'|trans }}</th>` after the `required_role` header.
+- [x] 4.2 Same file — insert `<td>` rendering `widgets.label_user(level.approverUser)` when set, else a muted `&mdash;`, after the role badge `<td>`.
+- [x] 4.3 Same file — change the empty-state row's `colspan="4"` to `colspan="5"`.
+- [x] 4.4 Verify: `templates/expense_approval_level/edit.html.twig` needs NO change — `form_widget(form)` already renders the new field and its `help` text generically (D5); confirm via `lint:twig` only.
 
 ## Phase 5: Translations
 
-- [ ] 5.1 `translations/messages.en.xlf` — insert `gpExpense50` (`expense_approval_level.approver_user` → "Named approver") and `gpExpense51` (`.help` → the OR-semantics help text) after `gpExpense49`.
-- [ ] 5.2 `translations/messages.es.xlf` — same ids/resnames, `xml:space="preserve"`, `state="translated"`: "Aprobador designado" / "Opcional. Esta persona puede aprobar el nivel además de cualquier usuario con el rol requerido. Déjalo vacío para usar solo el rol."
+- [x] 5.1 `translations/messages.en.xlf` — insert `gpExpense50` (`expense_approval_level.approver_user` → "Named approver") and `gpExpense51` (`.help` → the OR-semantics help text) after `gpExpense49`.
+- [x] 5.2 `translations/messages.es.xlf` — same ids/resnames, `xml:space="preserve"`, `state="translated"`: "Aprobador designado" / "Opcional. Esta persona puede aprobar el nivel además de cualquier usuario con el rol requerido. Déjalo vacío para usar solo el rol."
 
 ## Phase 6: Full Regression + Verification
 
-- [ ] 6.1 Run `phpunit tests/Entity/ExpenseApprovalLevelTest.php tests/Expense/ExpenseApprovalPolicyTest.php tests/Form/ExpenseApprovalLevelFormTest.php tests/Controller/ExpenseApprovalLevelControllerTest.php` — all green.
-- [ ] 6.2 Confirm unaffected existing scenarios stay green: "Correct-role user clears a role-only level", "Creator cannot approve own expense", "SUPER_ADMIN clears any level", "Final level completes approval", "Same approver cannot clear two levels" (base case), "Unauthorized user cannot edit levels", "Non-monotonic threshold is rejected", "Last remaining level cannot be deleted".
-- [ ] 6.3 Run `lint:twig` on `index.html.twig`/`edit.html.twig` and `lint:xliff` on both translation files.
-- [ ] 6.4 Manual/staging: no staging environment in this sandbox — automated equivalent only (6.1–6.3); true visual confirmation of both locales deferred to a human reviewer with browser access.
+- [x] 6.1 Run `phpunit tests/Entity/ExpenseApprovalLevelTest.php tests/Expense/ExpenseApprovalPolicyTest.php tests/Form/ExpenseApprovalLevelFormTest.php tests/Controller/ExpenseApprovalLevelControllerTest.php` — all green. (Also ran `tests/Expense/ExpenseApprovalServiceTest.php` and `tests/Repository/ExpenseApprovalLevelRepositoryTest.php` together: 35/35 tests, 100 assertions, OK.)
+- [x] 6.2 Confirm unaffected existing scenarios stay green: "Correct-role user clears a role-only level", "Creator cannot approve own expense", "SUPER_ADMIN clears any level", "Final level completes approval", "Same approver cannot clear two levels" (base case), "Unauthorized user cannot edit levels", "Non-monotonic threshold is rejected", "Last remaining level cannot be deleted". (All present in the 35/35 run above — no regressions.)
+- [x] 6.3 Run `lint:twig` on `index.html.twig`/`edit.html.twig` and `lint:xliff` on both translation files. (Both `[OK]`.)
+- [x] 6.4 Manual/staging: no staging environment in this sandbox — automated equivalent only (6.1–6.3); true visual confirmation of both locales deferred to a human reviewer with browser access.
+
+## Verification: phpstan
+
+`vendor/bin/phpstan analyse -c tests/phpstan.neon --no-progress` — 1 error found, and it is the pre-existing, unrelated `Controller/QuotationControllerTest.php::decodeJsonResponse()` return-type error. No new phpstan errors were introduced by this change.
