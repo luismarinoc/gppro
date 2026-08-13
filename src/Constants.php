@@ -17,11 +17,11 @@ final class Constants
     /**
      * The current release version
      */
-    public const VERSION = '2.62.60';
+    public const VERSION = '2.62.61';
     /**
      * The current release: major * 10000 + minor * 100 + patch
      */
-    public const VERSION_ID = 26260;
+    public const VERSION_ID = 26261;
     /**
      * The software name
      */
