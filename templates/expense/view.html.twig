@@ -6,42 +6,42 @@
             <h3 class="card-title">{{ expense.description }}</h3>
             <div class="card-actions">
                 {% if expense.editable %}
-                    <a class="btn btn-link" href="{{ path('expense_edit', {id: expense.id}) }}">Edit</a>
+                    <a class="btn btn-link" href="{{ path('expense_edit', {id: expense.id}) }}">{{ 'action.edit'|trans }}</a>
                     <form class="d-inline" method="post" action="{{ path('expense_submit', {id: expense.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('expense_submit_' ~ expense.id) }}">
-                        <button class="btn btn-primary" type="submit">Submit for approval</button>
+                        <button class="btn btn-primary" type="submit">{{ 'expense.submit'|trans }}</button>
                     </form>
                 {% endif %}
                 {% if expense.status in ['draft', 'rejected'] %}
                     <form class="d-inline" method="post" action="{{ path('expense_delete', {id: expense.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('expense_delete_' ~ expense.id) }}">
-                        <button class="btn btn-link text-danger" type="submit">Delete</button>
+                        <button class="btn btn-link text-danger" type="submit">{{ 'action.delete'|trans }}</button>
                     </form>
                 {% endif %}
             </div>
         </div>
         <div class="card-body">
-            <p>Amount: {{ expense.amount }}</p>
-            <p>Date: {{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</p>
-            <p>Status: {{ expense.status }}</p>
+            <p>{{ 'expense.amount'|trans }}: {{ expense.amount }}</p>
+            <p>{{ 'date'|trans }}: {{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</p>
+            <p>{{ 'status'|trans }}: {{ ('expense.status.' ~ expense.status)|trans }}</p>
             {% if expense.requiredLevels is not null %}
-                <p>Approval progress: {{ expense.currentLevel }} / {{ expense.requiredLevels }}</p>
+                <p>{{ 'expense.approval_progress'|trans }}: {{ expense.currentLevel }} / {{ expense.requiredLevels }}</p>
             {% endif %}
 
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Project</th><th>Percentage</th><th>Amount</th><th>Charged</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'expense.allocation_project'|trans }}</th><th>{{ 'expense.allocation_percentage'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'expense.charged'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for allocation in expense.allocations %}
                     <tr>
                         <td>{{ allocation.project ? allocation.project.name : '' }}</td>
                         <td>{{ allocation.percentage }}%</td>
                         <td>{{ allocation.amountClp }}</td>
-                        <td>{{ allocation.charged ? 'Yes' : 'No' }}</td>
+                        <td>{{ (allocation.charged ? 'yes' : 'no')|trans }}</td>
                         <td>
                             {% if charge_forms[allocation.id] is defined %}
                                 {{ form_start(charge_forms[allocation.id]) }}
                                 {{ form_widget(charge_forms[allocation.id]) }}
-                                <button class="btn btn-sm btn-primary" type="submit">Charge</button>
+                                <button class="btn btn-sm btn-primary" type="submit">{{ 'expense.charge_action'|trans }}</button>
                                 {{ form_end(charge_forms[allocation.id]) }}
                             {% endif %}
                         </td>
@@ -54,17 +54,17 @@
 
     {% if expense.nextPendingLevel %}
         <div class="card mt-3">
-            <div class="card-header"><h3 class="card-title">Decision</h3></div>
+            <div class="card-header"><h3 class="card-title">{{ 'expense.decision'|trans }}</h3></div>
             <div class="card-body">
                 <form method="post" action="{{ path('expense_approve', {id: expense.id}) }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_decision') }}">
-                    <textarea name="expense_approval_decision_form[note]" placeholder="Optional note"></textarea>
-                    <button class="btn btn-primary" type="submit">Approve</button>
+                    <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
+                    <button class="btn btn-primary" type="submit">{{ 'approve'|trans }}</button>
                 </form>
                 <form method="post" action="{{ path('expense_reject', {id: expense.id}) }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_decision') }}">
-                    <textarea name="expense_approval_decision_form[note]" placeholder="Optional note"></textarea>
-                    <button class="btn btn-danger" type="submit">Reject</button>
+                    <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
+                    <button class="btn btn-danger" type="submit">{{ 'reject'|trans }}</button>
                 </form>
             </div>
         </div>

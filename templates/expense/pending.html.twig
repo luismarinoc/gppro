@@ -2,20 +2,20 @@
 
 {% block main %}
     <div class="card">
-        <div class="card-header"><h3 class="card-title">Pending my approval</h3></div>
+        <div class="card-header"><h3 class="card-title">{{ 'expense.pending_title'|trans }}</h3></div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Description</th><th>Amount</th><th>Level</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'expense_approval_level.level'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for expense in expenses %}
                     <tr>
                         <td>{{ expense.description }}</td>
                         <td>{{ expense.amount }}</td>
                         <td>{{ expense.currentLevel + 1 }} / {{ expense.requiredLevels }}</td>
-                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">Review</a></td>
+                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">{{ 'expense.review'|trans }}</a></td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="4">No expenses are awaiting your approval.</td></tr>
+                    <tr><td colspan="4">{{ 'expense.none_pending'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

@@ -2,17 +2,71 @@
 
 {% block main %}
     <div class="card">
-        <div class="card-header"><h3 class="card-title">{{ expense.id ? 'Edit expense' : 'New expense' }}</h3></div>
+        <div class="card-header"><h3 class="card-title">{{ (expense.id ? 'expense.edit_title' : 'expense.create_title')|trans }}</h3></div>
         <div class="card-body">
             {{ form_start(form) }}
-            {{ form_widget(form) }}
-            <button class="btn btn-primary" type="submit">Save</button>
-            {% if expense.id %}
-                <a class="btn btn-link" href="{{ path('expense_view', {id: expense.id}) }}">Cancel</a>
-            {% else %}
-                <a class="btn btn-link" href="{{ path('expense_list') }}">Cancel</a>
-            {% endif %}
-            {{ form_end(form) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.amount) }}
+            {{ form_row(form.expenseDate) }}
+            {{ form_row(form.recurrence) }}
+
+            <label class="form-label">{{ 'expense.allocations'|trans }}</label>
+            {{ form_errors(form.allocations) }}
+            <template data-expense-allocation-prototype>
+                <div class="row g-2 align-items-end mb-2" data-expense-allocation>
+                    <div class="col-md-6">{{ form_row(form.allocations.vars.prototype.project) }}</div>
+                    <div class="col-md-4">{{ form_row(form.allocations.vars.prototype.percentage) }}</div>
+                    <div class="col-md-2 text-end">
+                        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-expense-allocation>{{ 'expense.allocation_remove'|trans }}</button>
+                    </div>
+                </div>
+            </template>
+            <div data-expense-allocations>
+                {% for allocation in form.allocations %}
+                    <div class="row g-2 align-items-end mb-2" data-expense-allocation>
+                        <div class="col-md-6">{{ form_row(allocation.project) }}</div>
+                        <div class="col-md-4">{{ form_row(allocation.percentage) }}</div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-outline-danger btn-sm" type="button" data-remove-expense-allocation>{{ 'expense.allocation_remove'|trans }}</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="btn btn-outline-secondary btn-sm mb-3" type="button" data-add-expense-allocation>{{ 'expense.allocation_add'|trans }}</button>
+            <div>
+                <button class="btn btn-primary" type="submit">{{ 'action.save'|trans }}</button>
+                {% if expense.id %}
+                    <a class="btn btn-link" href="{{ path('expense_view', {id: expense.id}) }}">{{ 'cancel'|trans }}</a>
+                {% else %}
+                    <a class="btn btn-link" href="{{ path('expense_list') }}">{{ 'cancel'|trans }}</a>
+                {% endif %}
+            </div>
+            {{ form_widget(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const collection = document.querySelector('[data-expense-allocations]');
+            const addButton = document.querySelector('[data-add-expense-allocation]');
+            const prototypeTemplate = document.querySelector('[data-expense-allocation-prototype]');
+            if (!collection || !addButton || !prototypeTemplate) return;
+            let index = collection.querySelectorAll('[data-expense-allocation]').length;
+            addButton.addEventListener('click', function () {
+                const markup = prototypeTemplate.innerHTML.replace(/__name__/g, index++);
+                collection.insertAdjacentHTML('beforeend', markup);
+            });
+            collection.addEventListener('click', function (event) {
+                const button = event.target.closest('[data-remove-expense-allocation]');
+                if (button) {
+                    button.closest('[data-expense-allocation]')?.remove();
+                }
+            });
+        });
+    </script>
 {% endblock %}
