@@ -10,6 +10,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\ExpenseApprovalLevel;
+use App\Entity\User;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +25,7 @@ class ExpenseApprovalLevelTest extends TestCase
         self::assertNull($sut->getLevel());
         self::assertNull($sut->getMinAmount());
         self::assertNull($sut->getRequiredRole());
+        self::assertNull($sut->getApproverUser());
     }
 
     public function testSettersAndGetters(): void
@@ -36,5 +38,17 @@ class ExpenseApprovalLevelTest extends TestCase
         self::assertSame(2, $sut->getLevel());
         self::assertSame(1000000, $sut->getMinAmount());
         self::assertSame('ROLE_ADMIN', $sut->getRequiredRole());
+    }
+
+    public function testApproverUserSetterAcceptsUserAndNull(): void
+    {
+        $approver = new User();
+        $sut = new ExpenseApprovalLevel();
+
+        $sut->setApproverUser($approver);
+        self::assertSame($approver, $sut->getApproverUser());
+
+        $sut->setApproverUser(null);
+        self::assertNull($sut->getApproverUser());
     }
 }

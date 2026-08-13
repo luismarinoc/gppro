@@ -48,4 +48,18 @@ class ExpenseApprovalLevelFormTest extends TypeTestCase
 
         self::assertEquals('expense_approval_level_edit', $form->getFormConfig()->getOption('csrf_token_id'));
     }
+
+    public function testApproverUserFieldIsPresent(): void
+    {
+        $model = new ExpenseApprovalLevel();
+        $form = $this->factory->createBuilder(ExpenseApprovalLevelForm::class, $model);
+
+        // 'approverUser' uses App\Form\Type\UserType, which requires
+        // UserRepository/RolePermissionManager (unmockable in TypeTestCase) -
+        // only presence is asserted here, mirroring the 'requiredRole'
+        // precedent above; 'required === false' is passed explicitly in
+        // ExpenseApprovalLevelForm and covered by the controller integration
+        // test (task 3.3).
+        self::assertTrue($form->has('approverUser'));
+    }
 }

@@ -32,12 +32,13 @@ class ExpenseApprovalPolicyTest extends TestCase
         return $user;
     }
 
-    private function makeLevel(int $level, string $requiredRole): ExpenseApprovalLevel
+    private function makeLevel(int $level, string $requiredRole, ?User $approverUser = null): ExpenseApprovalLevel
     {
         return (new ExpenseApprovalLevel())
             ->setLevel($level)
             ->setMinAmount(0)
-            ->setRequiredRole($requiredRole);
+            ->setRequiredRole($requiredRole)
+            ->setApproverUser($approverUser);
     }
 
     private function makePendingExpense(User $creator, int $requiredLevels = 1): Expense
@@ -128,5 +129,74 @@ class ExpenseApprovalPolicyTest extends TestCase
         $sut = $this->makeSut([$this->makeLevel(1, 'ROLE_TEAMLEAD')]);
 
         self::assertFalse($sut->canReject($expense, $creator));
+    }
+
+    /**
+     * D2 branch-ordering invariant (RED-first, MANDATORY): the named-approver
+     * match must never bypass the creator exclusion.
+     */
+    public function testCreatorNamedAsApproverIsStillDenied(): void
+    {
+        $creator = $this->makeUser();
+        $expense = $this->makePendingExpense($creator);
+        $level = $this->makeLevel(1, 'ROLE_TEAMLEAD', $creator);
+        $sut = $this->makeSut([$level]);
+
+        self::assertFalse($sut->canApprove($expense, $creator));
+    }
+
+    /**
+     * D2 branch-ordering invariant (RED-first, MANDATORY): the named-approver
+     * match must never bypass the distinct-approver (four-eyes) exclusion.
+     */
+    public function testAlreadyApprovedUserNamedOnLaterLevelIsStillDenied(): void
+    {
+        $creator = $this->makeUser();
+        $approver = $this->makeUser('ROLE_ADMIN');
+        $expense = $this->makePendingExpense($creator, 2);
+        $levelTwo = $this->makeLevel(2, 'ROLE_ADMIN', $approver);
+        $sut = $this->makeSut([$this->makeLevel(1, 'ROLE_TEAMLEAD'), $levelTwo], userAlreadyApproved: true);
+
+        self::assertFalse($sut->canApprove($expense, $approver));
+    }
+
+    public function testNamedApproverClearsALevelWithoutHoldingTheRole(): void
+    {
+        $creator = $this->makeUser();
+        $namedApprover = $this->makeUser(); // holds no roles
+        $expense = $this->makePendingExpense($creator);
+        $level = $this->makeLevel(1, 'ROLE_TEAMLEAD', $namedApprover);
+        $sut = $this->makeSut([$level]);
+
+        self::assertTrue($sut->canApprove($expense, $namedApprover));
+    }
+
+    public function testRoleHolderClearsALevelThatNamesADifferentApprover(): void
+    {
+        $creator = $this->makeUser();
+        $namedApprover = $this->makeUser();
+        $roleHolder = $this->makeUser('ROLE_TEAMLEAD');
+        $expense = $this->makePendingExpense($creator);
+        $level = $this->makeLevel(1, 'ROLE_TEAMLEAD', $namedApprover);
+        $sut = $this->makeSut([$level]);
+
+        self::assertTrue($sut->canApprove($expense, $roleHolder));
+    }
+
+    public function testReassigningTheNamedApproverAppliesLiveToAPendingLevel(): void
+    {
+        $creator = $this->makeUser();
+        $originalApprover = $this->makeUser();
+        $newApprover = $this->makeUser();
+        $expense = $this->makePendingExpense($creator);
+        $level = $this->makeLevel(1, 'ROLE_TEAMLEAD', $originalApprover);
+        $sut = $this->makeSut([$level]);
+
+        self::assertTrue($sut->canApprove($expense, $originalApprover));
+
+        $level->setApproverUser($newApprover);
+
+        self::assertTrue($sut->canApprove($expense, $newApprover));
+        self::assertFalse($sut->canApprove($expense, $originalApprover));
     }
 }

@@ -9,6 +9,7 @@
 
 namespace App\Tests\Controller;
 
+use App\DataFixtures\UserFixtures;
 use App\Entity\ExpenseApprovalLevel;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -67,6 +68,35 @@ class ExpenseApprovalLevelControllerTest extends AbstractControllerBaseTestCase
         $level = $em->getRepository(ExpenseApprovalLevel::class)->findOneBy(['level' => 2]);
         self::assertInstanceOf(ExpenseApprovalLevel::class, $level);
         self::assertSame(500000, $level->getMinAmount());
+    }
+
+    public function testSuperAdminCanCreateApprovalLevelWithANamedApprover(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $approverUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_TEAMLEAD);
+
+        $token = $this->extractToken(
+            $client,
+            '/admin/expense/approval-levels/create',
+            'input[name="expense_approval_level_form[_token]"]'
+        );
+        $this->request($client, '/admin/expense/approval-levels/create', 'POST', [
+            'expense_approval_level_form' => [
+                'level' => '2',
+                'minAmount' => '500000',
+                'requiredRole' => User::ROLE_ADMIN,
+                'approverUser' => (string) $approverUser->getId(),
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/expense/approval-levels/'));
+
+        $em = $this->getEntityManager();
+        $level = $em->getRepository(ExpenseApprovalLevel::class)->findOneBy(['level' => 2]);
+        self::assertInstanceOf(ExpenseApprovalLevel::class, $level);
+        self::assertInstanceOf(User::class, $level->getApproverUser());
+        self::assertSame($approverUser->getId(), $level->getApproverUser()->getId());
     }
 
     public function testNonMonotonicThresholdIsRejected(): void

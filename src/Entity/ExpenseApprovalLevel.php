@@ -43,6 +43,10 @@ class ExpenseApprovalLevel
     #[Constraints\Role]
     private ?string $requiredRole = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'approver_user_id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $approverUser = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,6 +84,18 @@ class ExpenseApprovalLevel
     public function setRequiredRole(string $requiredRole): ExpenseApprovalLevel
     {
         $this->requiredRole = $requiredRole;
+
+        return $this;
+    }
+
+    public function getApproverUser(): ?User
+    {
+        return $this->approverUser;
+    }
+
+    public function setApproverUser(?User $approverUser): ExpenseApprovalLevel
+    {
+        $this->approverUser = $approverUser;
 
         return $this;
     }

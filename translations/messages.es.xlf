@@ -2402,6 +2402,14 @@
         <source>expense.category.other</source>
         <target state="translated">Otro</target>
       </trans-unit>
+      <trans-unit id="gpExpense50" resname="expense_approval_level.approver_user" xml:space="preserve">
+        <source>expense_approval_level.approver_user</source>
+        <target state="translated">Aprobador designado</target>
+      </trans-unit>
+      <trans-unit id="gpExpense51" resname="expense_approval_level.approver_user.help" xml:space="preserve">
+        <source>expense_approval_level.approver_user.help</source>
+        <target state="translated">Opcional. Esta persona puede aprobar el nivel además de cualquier usuario con el rol requerido. Déjalo vacío para usar solo el rol.</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>

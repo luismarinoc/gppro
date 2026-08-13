@@ -56,11 +56,14 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         return $repository;
     }
 
-    private function addLevel(int $level, int $minAmount, string $requiredRole): void
+    private function addLevel(int $level, int $minAmount, string $requiredRole, ?User $approverUser = null): ExpenseApprovalLevel
     {
         /** @var ExpenseApprovalLevelRepository $repository */
         $repository = $this->getEntityManager()->getRepository(ExpenseApprovalLevel::class);
-        $repository->saveLevel((new ExpenseApprovalLevel())->setLevel($level)->setMinAmount($minAmount)->setRequiredRole($requiredRole));
+        $entity = (new ExpenseApprovalLevel())->setLevel($level)->setMinAmount($minAmount)->setRequiredRole($requiredRole)->setApproverUser($approverUser);
+        $repository->saveLevel($entity);
+
+        return $entity;
     }
 
     private function createProject(): Project
@@ -202,5 +205,42 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         self::assertCount(2, $approvals);
         self::assertSame(ExpenseApproval::DECISION_APPROVED, $approvals[0]->getDecision());
         self::assertSame(ExpenseApproval::DECISION_REJECTED, $approvals[1]->getDecision());
+    }
+
+    /**
+     * Integration coverage for the "SET NULL fallback" scenario (design
+     * D4 / testing-strategy Integration row): deleting a level's named
+     * approverUser must fall back to role-only decisions, not stall the
+     * expense.
+     */
+    public function testDeletedNamedApproverFallsBackToRoleBasedDecision(): void
+    {
+        $em = $this->getEntityManager();
+        \assert($em instanceof EntityManagerInterface);
+
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        $namedApprover = $this->createUser(); // holds no roles
+        $teamlead = $this->createUser('ROLE_TEAMLEAD');
+
+        /** @var ExpenseApprovalLevelRepository $levelRepository */
+        $levelRepository = $em->getRepository(ExpenseApprovalLevel::class);
+        $levelOne = $levelRepository->findAllOrdered()[0];
+        self::assertSame(1, $levelOne->getLevel());
+        $levelOne->setApproverUser($namedApprover);
+        $levelRepository->saveLevel($levelOne);
+
+        $expense = $this->createDraftExpense($project, $creator, 100000);
+        $this->getSut()->submit($expense);
+
+        $em->remove($namedApprover);
+        $em->flush();
+        $em->refresh($levelOne);
+
+        self::assertNull($levelOne->getApproverUser());
+
+        $approved = $this->getSut()->approve($expense, $teamlead);
+
+        self::assertSame(Expense::STATUS_APPROVED, $approved->getStatus());
     }
 }
