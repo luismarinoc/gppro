@@ -67,11 +67,11 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 - [x] 4.5 Template: `expense/pending.html.twig`
 - [x] 4.6 RED→GREEN: `ExpenseApprovalLevelControllerTest.php` then `ExpenseApprovalLevelController.php` (index/create/edit/delete, gated `manage_expense_approval_levels`)
 - [x] 4.7 Templates: `expense_approval_level/index.html.twig`, `edit.html.twig` — minimal; "warn zero active users for role" enhancement deferred, not required by spec
-- [ ] 4.8 `MenuSubscriber.php` — `expenses` parent + children, `isGranted`-guarded; `translations/messages.*.xlf` new keys
+- [x] 4.8 `MenuSubscriber.php` — `expenses` parent + children, `isGranted`-guarded; `translations/messages.*.xlf` new keys
 
 ## Phase 5: Recurrence Command
 
-- [ ] 5.1 RED→GREEN (CommandTester): `ExpensesGenerateRecurringCommandTest.php` then `ExpensesGenerateRecurringCommand.php` — `--period`/`--force`/`--dry-run`, idempotent per `(source_expense_id, period_key)`
+- [x] 5.1 RED→GREEN (CommandTester): `ExpensesGenerateRecurringCommandTest.php` then `ExpensesGenerateRecurringCommand.php` — `--period`/`--force`/`--dry-run`, idempotent per `(source_expense_id, period_key)`
 
 ## Phase 6: Cross-Charge / Quotation Integration Verification
 

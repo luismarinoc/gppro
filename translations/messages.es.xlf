@@ -2206,6 +2206,30 @@
         <source>quotation_quote</source>
         <target state="translated">Cotizar</target>
       </trans-unit>
+      <trans-unit id="gpExpense1" resname="expenses" xml:space="preserve">
+        <source>expenses</source>
+        <target state="translated">Gastos</target>
+      </trans-unit>
+      <trans-unit id="gpExpense2" resname="expense.pending_title" xml:space="preserve">
+        <source>expense.pending_title</source>
+        <target state="translated">Pendientes de mi aprobación</target>
+      </trans-unit>
+      <trans-unit id="gpExpense3" resname="expense.view_title" xml:space="preserve">
+        <source>expense.view_title</source>
+        <target state="translated">Gasto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense4" resname="expense.edit_title" xml:space="preserve">
+        <source>expense.edit_title</source>
+        <target state="translated">Editar gasto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense5" resname="expense.create_title" xml:space="preserve">
+        <source>expense.create_title</source>
+        <target state="translated">Nuevo gasto</target>
+      </trans-unit>
+      <trans-unit id="gpExpense6" resname="expense_approval_level" xml:space="preserve">
+        <source>expense_approval_level</source>
+        <target state="translated">Niveles de aprobación de gastos</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>
