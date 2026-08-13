@@ -17,6 +17,7 @@ use App\Expense\ExpenseRecurrenceStatus;
 use App\Expense\RecurringExpenseGenerator;
 use App\Repository\ExpenseRepository;
 use App\Tests\Repository\AbstractRepositoryTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -34,7 +35,10 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
 
     private function getSut(): RecurringExpenseGenerator
     {
-        return new RecurringExpenseGenerator($this->getEntityManager(), $this->getRepository());
+        $em = $this->getEntityManager();
+        \assert($em instanceof EntityManagerInterface);
+
+        return new RecurringExpenseGenerator($em, $this->getRepository());
     }
 
     private function createProject(): Project

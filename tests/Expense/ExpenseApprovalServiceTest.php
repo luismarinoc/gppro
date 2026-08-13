@@ -23,6 +23,7 @@ use App\Repository\ExpenseApprovalLevelRepository;
 use App\Repository\ExpenseApprovalRepository;
 use App\Repository\ExpenseRepository;
 use App\Tests\Repository\AbstractRepositoryTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -33,6 +34,7 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
     private function getSut(): ExpenseApprovalService
     {
         $em = $this->getEntityManager();
+        \assert($em instanceof EntityManagerInterface);
 
         /** @var ExpenseApprovalLevelRepository $levelRepository */
         $levelRepository = $em->getRepository(ExpenseApprovalLevel::class);

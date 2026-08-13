@@ -49,7 +49,9 @@ class ExpenseApprovalDecisionFormTest extends TypeTestCase
 
         self::assertTrue($form->isSynchronized());
         self::assertTrue($form->isValid());
-        self::assertSame('Looks good', $form->getData()['note']);
+        $data = $form->getData();
+        self::assertIsArray($data);
+        self::assertSame('Looks good', $data['note']);
     }
 
     public function testCsrfTokenIdIsDedicated(): void

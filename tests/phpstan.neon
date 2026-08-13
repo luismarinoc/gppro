@@ -1102,6 +1102,21 @@ parameters:
             path: Entity/TimesheetValidationTest.php
 
         -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\ExpenseApprovalLevelValidationTest\\:\\:assertHasNoViolations\\(\\) has parameter \\$entity with no type specified\\.$#"
+            count: 1
+            path: Entity/ExpenseApprovalLevelValidationTest.php
+
+        -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\ExpenseApprovalLevelValidationTest\\:\\:assertHasNoViolations\\(\\) has parameter \\$groups with no type specified\\.$#"
+            count: 1
+            path: Entity/ExpenseApprovalLevelValidationTest.php
+
+        -
+            message: "#^Method App\\\\Tests\\\\Entity\\\\ExpenseApprovalLevelValidationTest\\:\\:assertHasViolationForField\\(\\) has parameter \\$groups with no type specified\\.$#"
+            count: 1
+            path: Entity/ExpenseApprovalLevelValidationTest.php
+
+        -
             message: "#^Parameter \\#1 \\$string of function mb_strlen expects string, string\\|null given\\.$#"
             count: 5
             path: Entity/UserTest.php

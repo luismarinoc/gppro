@@ -19,6 +19,7 @@ use App\Entity\Quotation;
 use App\Entity\QuotationLine;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpKernel\HttpKernelBrowser;
 
 /**
@@ -284,6 +285,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         // Switch identity on the SAME client instance (a second createClient()
         // call within one test is not supported by WebTestCase).
         $adminUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
+        \assert($teamlead instanceof KernelBrowser);
         $teamlead->loginUser($adminUser, 'secured_area');
         $rejectToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/reject"] input[name=_token]');
         $this->request($teamlead, '/expense/' . $expenseId . '/reject', 'POST', [

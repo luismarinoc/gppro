@@ -16,6 +16,7 @@ use App\Entity\Project;
 use App\Entity\Quotation;
 use App\Expense\ExpenseCrossChargeService;
 use App\Tests\Repository\AbstractRepositoryTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -25,7 +26,10 @@ class ExpenseCrossChargeServiceTest extends AbstractRepositoryTestCase
 {
     private function getSut(): ExpenseCrossChargeService
     {
-        return new ExpenseCrossChargeService($this->getEntityManager());
+        $em = $this->getEntityManager();
+        \assert($em instanceof EntityManagerInterface);
+
+        return new ExpenseCrossChargeService($em);
     }
 
     private function createCustomer(): Customer
