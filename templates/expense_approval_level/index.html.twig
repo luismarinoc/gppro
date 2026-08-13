@@ -22,7 +22,7 @@
                             {% if level.level != 1 %}
                                 <form class="d-inline" method="post" action="{{ path('admin_expense_approval_level_delete', {id: level.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_level') }}">
-                                    <button class="btn btn-link text-danger" type="submit">{{ 'action.delete'|trans }}</button>
+                                    <button class="btn btn-link text-danger" type="submit">{{ 'delete'|trans }}</button>
                                 </form>
                             {% endif %}
                         </td>

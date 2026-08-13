@@ -174,6 +174,18 @@
         <source>The field {{ field }} is required, please select a value</source>
         <target>Bitten wählen Sie einen Wert für {{ field }} aus</target>
       </trans-unit>
+      <trans-unit id="gpExpenseV1" resname="expense.allocations_minimum">
+        <source>expense.allocations_minimum</source>
+        <target>An expense needs at least one project allocation.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseV2" resname="expense.allocations_maximum">
+        <source>expense.allocations_maximum</source>
+        <target>An expense cannot have more than 20 project allocations.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseV3" resname="Level 1 must have a minimum amount of 0.">
+        <source>Level 1 must have a minimum amount of 0.</source>
+        <target>Level 1 must have a minimum amount of 0.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
