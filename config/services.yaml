@@ -277,6 +277,21 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\ActivityBoardState']
 
+    App\Repository\ExpenseRepository:
+        class: App\Repository\ExpenseRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\Expense']
+
+    App\Repository\ExpenseApprovalLevelRepository:
+        class: App\Repository\ExpenseApprovalLevelRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\ExpenseApprovalLevel']
+
+    App\Repository\ExpenseApprovalRepository:
+        class: App\Repository\ExpenseApprovalRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\ExpenseApproval']
+
     monolog.formatter.gppro:
         class: Monolog\Formatter\LineFormatter
         arguments:

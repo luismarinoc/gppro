@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Expense approval levels</h3>
+            <div class="card-actions">
+                <a class="btn btn-primary" href="{{ path('admin_expense_approval_level_create') }}">Add level</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead><tr><th>Level</th><th>Minimum amount</th><th>Required role</th><th></th></tr></thead>
+                <tbody>
+                {% for level in levels %}
+                    <tr>
+                        <td>{{ level.level }}</td>
+                        <td>{{ level.minAmount }}</td>
+                        <td>{{ level.requiredRole }}</td>
+                        <td class="text-end">
+                            <a href="{{ path('admin_expense_approval_level_edit', {id: level.id}) }}">Edit</a>
+                            {% if level.level != 1 %}
+                                <form class="d-inline" method="post" action="{{ path('admin_expense_approval_level_delete', {id: level.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_level') }}">
+                                    <button class="btn btn-link text-danger" type="submit">Delete</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">No approval levels configured.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

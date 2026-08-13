@@ -86,6 +86,18 @@
         <source>quotation.convert.error</source>
         <target state="translated">No se pudo convertir la cotización: %reason%</target>
       </trans-unit>
+      <trans-unit id="gpExpenseF1" resname="expense.allocations_not_100" xml:space="preserve">
+        <source>expense.allocations_not_100</source>
+        <target state="translated">Los porcentajes de asignación deben sumar exactamente 100% antes de enviar a aprobación.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseF2" resname="expense.allocations_over_100" xml:space="preserve">
+        <source>expense.allocations_over_100</source>
+        <target state="translated">Los porcentajes de asignación no pueden sumar más de 100%.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseF3" resname="expense_approval_level.not_monotonic" xml:space="preserve">
+        <source>expense_approval_level.not_monotonic</source>
+        <target state="translated">El monto mínimo debe aumentar estrictamente con el nivel.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

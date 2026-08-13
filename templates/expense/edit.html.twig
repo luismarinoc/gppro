@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">{{ expense.id ? 'Edit expense' : 'New expense' }}</h3></div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary" type="submit">Save</button>
+            {% if expense.id %}
+                <a class="btn btn-link" href="{{ path('expense_view', {id: expense.id}) }}">Cancel</a>
+            {% else %}
+                <a class="btn btn-link" href="{{ path('expense_list') }}">Cancel</a>
+            {% endif %}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

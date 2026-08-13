@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Expenses</h3>
+            <div class="card-actions">
+                <a class="btn btn-primary" href="{{ path('expense_create') }}">New expense</a>
+                <a class="btn btn-link" href="{{ path('expense_pending') }}">Pending my approval</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead><tr><th>Description</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.description }}</td>
+                        <td>{{ expense.amount }}</td>
+                        <td>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</td>
+                        <td>{{ expense.status }}</td>
+                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">View</a></td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5">No expenses found.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

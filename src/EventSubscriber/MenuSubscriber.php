@@ -123,6 +123,26 @@ final class MenuSubscriber implements EventSubscriberInterface
             $menu->addChild($quotations);
         }
 
+        // ------------------- expense menu -------------------
+        $expenses = new MenuItemModel('expenses', 'expenses', null, [], 'receipt');
+        if ($auth->isGranted('view_expense')) {
+            $expenseList = new MenuItemModel('expense_list', 'expenses', 'expense_list', [], 'receipt');
+            $expenseList->setChildRoutes(['expense_create', 'expense_edit', 'expense_view', 'expense_submit', 'expense_approve', 'expense_reject', 'expense_delete', 'expense_allocation_charge']);
+            $expenses->addChild($expenseList);
+
+            $expenses->addChild(
+                new MenuItemModel('expense_pending', 'expense.pending_title', 'expense_pending', [], 'clock')
+            );
+        }
+        if ($auth->isGranted('manage_expense_approval_levels')) {
+            $approvalLevels = new MenuItemModel('expense_approval_level_list', 'expense_approval_level', 'admin_expense_approval_level_list', [], 'settings');
+            $approvalLevels->setChildRoutes(['admin_expense_approval_level_create', 'admin_expense_approval_level_edit', 'admin_expense_approval_level_delete']);
+            $expenses->addChild($approvalLevels);
+        }
+        if ($expenses->hasChildren()) {
+            $menu->addChild($expenses);
+        }
+
         // ------------------- invoice menu -------------------
         $invoice = new MenuItemModel('invoices', 'invoices', null, [], 'invoice');
 
