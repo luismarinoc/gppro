@@ -66,7 +66,18 @@ final class ExpenseApprovalPolicy
 
         $level = $this->findLevel($pendingLevel);
 
-        return null !== $level && $user->hasRole($level->getRequiredRole());
+        if (null === $level) {
+            return false;
+        }
+
+        // OR-semantics (design D1/D2): the named approver is additive to the
+        // required role and sits BELOW the creator / already-approved gates,
+        // so it can never bypass four-eyes.
+        if ($level->getApproverUser() === $user) {
+            return true;
+        }
+
+        return $user->hasRole($level->getRequiredRole());
     }
 
     private function findLevel(int $levelNumber): ?ExpenseApprovalLevel
