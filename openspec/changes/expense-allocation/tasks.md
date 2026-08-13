@@ -60,7 +60,7 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 
 ## Phase 4: Forms + Controllers + Templates
 
-- [ ] 4.1 GREEN: `ExpenseForm.php`, `ExpenseAllocationForm.php`, `ExpenseApprovalLevelForm.php`, `ExpenseChargeForm.php`, `ExpenseApprovalDecisionForm.php`
+- [x] 4.1 GREEN: `ExpenseForm.php`, `ExpenseAllocationForm.php`, `ExpenseApprovalLevelForm.php`, `ExpenseChargeForm.php`, `ExpenseApprovalDecisionForm.php`
 - [ ] 4.2 RED→GREEN: `ExpenseControllerTest.php` (CRUD actions) then `ExpenseController.php` list/create/edit/view — `DomainException` → `flashError`
 - [ ] 4.3 Templates: `expense/index.html.twig`, `expense/edit.html.twig` (allocation prototype, live % total), `expense/view.html.twig`
 - [ ] 4.4 RED→GREEN: extend `ExpenseControllerTest.php` (workflow) then `submit/approve/reject/charge` actions
