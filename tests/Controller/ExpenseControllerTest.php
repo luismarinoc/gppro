@@ -466,4 +466,29 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString((string) $othersExpense->getDescription(), $content);
         self::assertStringNotContainsString((string) $ownExpense->getDescription(), $content);
     }
+
+    public function testViewAndListRenderTranslatedCategoryLabel(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+
+        $categorized = $this->createDraftExpenseWithAllocation($project, 50000);
+        $categorized->setCategory(Expense::CATEGORY_RENT);
+        $uncategorized = $this->createDraftExpenseWithAllocation($project, 30000);
+        $this->getEntityManager()->flush();
+
+        $this->request($client, '/expense/' . $categorized->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringContainsString('Rent', (string) $client->getResponse()->getContent());
+
+        $this->request($client, '/expense/' . $uncategorized->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringContainsString('Uncategorized', (string) $client->getResponse()->getContent());
+
+        $this->request($client, '/expense/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Rent', $content);
+        self::assertStringContainsString('Uncategorized', $content);
+    }
 }
