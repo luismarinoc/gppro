@@ -15,7 +15,7 @@
                 {% if expense.status in ['draft', 'rejected'] %}
                     <form class="d-inline" method="post" action="{{ path('expense_delete', {id: expense.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('expense_delete_' ~ expense.id) }}">
-                        <button class="btn btn-link text-danger" type="submit">{{ 'action.delete'|trans }}</button>
+                        <button class="btn btn-link text-danger" type="submit">{{ 'delete'|trans }}</button>
                     </form>
                 {% endif %}
             </div>

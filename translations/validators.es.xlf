@@ -166,6 +166,18 @@
         <source>Duration cannot be negative.</source>
         <target state="translated">La duración no puede ser negativa.</target>
       </trans-unit>
+      <trans-unit id="gpExpenseV1" resname="expense.allocations_minimum" xml:space="preserve">
+        <source>expense.allocations_minimum</source>
+        <target state="translated">El gasto necesita al menos una asignación a un proyecto.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseV2" resname="expense.allocations_maximum" xml:space="preserve">
+        <source>expense.allocations_maximum</source>
+        <target state="translated">Un gasto no puede tener más de 20 asignaciones a proyectos.</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseV3" resname="Level 1 must have a minimum amount of 0." xml:space="preserve">
+        <source>Level 1 must have a minimum amount of 0.</source>
+        <target state="translated">El nivel 1 debe tener un monto mínimo de 0.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
