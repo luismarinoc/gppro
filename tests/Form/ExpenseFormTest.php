@@ -14,8 +14,10 @@ use App\Entity\Expense;
 use App\Form\ExpenseForm;
 use App\Form\Type\DatePickerType;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\Validator\Validation;
 
 #[CoversClass(ExpenseForm::class)]
 class ExpenseFormTest extends TypeTestCase
@@ -30,6 +32,9 @@ class ExpenseFormTest extends TypeTestCase
 
         return [
             new PreloadedExtension([new DatePickerType($localeService)], []),
+            // Required to resolve the 'constraints' option on the 'category'
+            // field (registered by the Validator form extension).
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -88,6 +93,23 @@ class ExpenseFormTest extends TypeTestCase
         self::assertIsArray($choices);
         self::assertContains(Expense::RECURRENCE_MONTH, $choices);
         self::assertCount(\count(Expense::RECURRENCES), $choices);
+    }
+
+    public function testCategoryFieldIsRequiredWithPlaceholderAndSixChoices(): void
+    {
+        $model = new Expense();
+        $form = $this->factory->createBuilder(ExpenseForm::class, $model);
+
+        self::assertTrue($form->has('category'));
+        $category = $form->get('category');
+
+        self::assertTrue($category->getOption('required'));
+        self::assertSame('expense.category_placeholder', $category->getOption('placeholder'));
+
+        $choices = $category->getOption('choices');
+        self::assertIsArray($choices);
+        self::assertContains(Expense::CATEGORY_RENT, $choices);
+        self::assertCount(\count(Expense::CATEGORIES), $choices);
     }
 
     public function testCsrfTokenIdIsDedicated(): void

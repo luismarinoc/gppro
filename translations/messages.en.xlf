@@ -2386,6 +2386,42 @@
         <source>expense.allocation_remove</source>
         <target>Remove</target>
       </trans-unit>
+      <trans-unit id="gpExpense41" resname="expense.category">
+        <source>expense.category</source>
+        <target>Category</target>
+      </trans-unit>
+      <trans-unit id="gpExpense42" resname="expense.category_placeholder">
+        <source>expense.category_placeholder</source>
+        <target>Select a category</target>
+      </trans-unit>
+      <trans-unit id="gpExpense43" resname="expense.category_none">
+        <source>expense.category_none</source>
+        <target>Uncategorized</target>
+      </trans-unit>
+      <trans-unit id="gpExpense44" resname="expense.category.rent">
+        <source>expense.category.rent</source>
+        <target>Rent</target>
+      </trans-unit>
+      <trans-unit id="gpExpense45" resname="expense.category.equipment">
+        <source>expense.category.equipment</source>
+        <target>Equipment</target>
+      </trans-unit>
+      <trans-unit id="gpExpense46" resname="expense.category.electricity">
+        <source>expense.category.electricity</source>
+        <target>Electricity</target>
+      </trans-unit>
+      <trans-unit id="gpExpense47" resname="expense.category.phone">
+        <source>expense.category.phone</source>
+        <target>Phone</target>
+      </trans-unit>
+      <trans-unit id="gpExpense48" resname="expense.category.services">
+        <source>expense.category.services</source>
+        <target>Other services</target>
+      </trans-unit>
+      <trans-unit id="gpExpense49" resname="expense.category.other">
+        <source>expense.category.other</source>
+        <target>Other</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title">
         <source>activity_board.title</source>
         <target>Activity board</target>

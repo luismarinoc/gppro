@@ -2366,6 +2366,42 @@
         <source>expense.allocation_remove</source>
         <target state="translated">Quitar</target>
       </trans-unit>
+      <trans-unit id="gpExpense41" resname="expense.category" xml:space="preserve">
+        <source>expense.category</source>
+        <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="gpExpense42" resname="expense.category_placeholder" xml:space="preserve">
+        <source>expense.category_placeholder</source>
+        <target state="translated">Seleccione una categoría</target>
+      </trans-unit>
+      <trans-unit id="gpExpense43" resname="expense.category_none" xml:space="preserve">
+        <source>expense.category_none</source>
+        <target state="translated">Sin categoría</target>
+      </trans-unit>
+      <trans-unit id="gpExpense44" resname="expense.category.rent" xml:space="preserve">
+        <source>expense.category.rent</source>
+        <target state="translated">Arriendo</target>
+      </trans-unit>
+      <trans-unit id="gpExpense45" resname="expense.category.equipment" xml:space="preserve">
+        <source>expense.category.equipment</source>
+        <target state="translated">Equipamiento</target>
+      </trans-unit>
+      <trans-unit id="gpExpense46" resname="expense.category.electricity" xml:space="preserve">
+        <source>expense.category.electricity</source>
+        <target state="translated">Electricidad</target>
+      </trans-unit>
+      <trans-unit id="gpExpense47" resname="expense.category.phone" xml:space="preserve">
+        <source>expense.category.phone</source>
+        <target state="translated">Teléfono</target>
+      </trans-unit>
+      <trans-unit id="gpExpense48" resname="expense.category.services" xml:space="preserve">
+        <source>expense.category.services</source>
+        <target state="translated">Otros servicios</target>
+      </trans-unit>
+      <trans-unit id="gpExpense49" resname="expense.category.other" xml:space="preserve">
+        <source>expense.category.other</source>
+        <target state="translated">Otro</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Kamba</target>

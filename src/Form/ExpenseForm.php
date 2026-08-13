@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 final class ExpenseForm extends AbstractType
 {
@@ -29,6 +30,20 @@ final class ExpenseForm extends AbstractType
             ->add('expenseDate', DatePickerType::class, [
                 'label' => 'expense.date',
                 'input' => 'datetime_immutable',
+            ])
+            ->add('category', ChoiceType::class, [
+                'required' => true,
+                'placeholder' => 'expense.category_placeholder',
+                'label' => 'expense.category',
+                'constraints' => [new NotBlank()],
+                'choices' => [
+                    'expense.category.rent' => Expense::CATEGORY_RENT,
+                    'expense.category.equipment' => Expense::CATEGORY_EQUIPMENT,
+                    'expense.category.electricity' => Expense::CATEGORY_ELECTRICITY,
+                    'expense.category.phone' => Expense::CATEGORY_PHONE,
+                    'expense.category.services' => Expense::CATEGORY_SERVICES,
+                    'expense.category.other' => Expense::CATEGORY_OTHER,
+                ],
             ])
             ->add('recurrence', ChoiceType::class, [
                 'required' => false,

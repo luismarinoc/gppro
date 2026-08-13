@@ -44,6 +44,23 @@ class Expense implements CreatedAt, ModifiedAt
     /** @var string[] */
     public const RECURRENCES = [self::RECURRENCE_MONTH];
 
+    public const CATEGORY_RENT = 'rent';
+    public const CATEGORY_EQUIPMENT = 'equipment';
+    public const CATEGORY_ELECTRICITY = 'electricity';
+    public const CATEGORY_PHONE = 'phone';
+    public const CATEGORY_SERVICES = 'services';
+    public const CATEGORY_OTHER = 'other';
+
+    /** @var string[] */
+    public const CATEGORIES = [
+        self::CATEGORY_RENT,
+        self::CATEGORY_EQUIPMENT,
+        self::CATEGORY_ELECTRICITY,
+        self::CATEGORY_PHONE,
+        self::CATEGORY_SERVICES,
+        self::CATEGORY_OTHER,
+    ];
+
     use CreatedTrait;
     use ModifiedTrait;
 
@@ -70,6 +87,10 @@ class Expense implements CreatedAt, ModifiedAt
     #[ORM\Column(name: 'recurrence', type: Types::STRING, length: 10, nullable: true)]
     #[Assert\Choice(choices: self::RECURRENCES)]
     private ?string $recurrence = null;
+
+    #[ORM\Column(name: 'category', type: Types::STRING, length: 20, nullable: true)]
+    #[Assert\Choice(choices: self::CATEGORIES)]
+    private ?string $category = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 20, nullable: false, options: ['default' => self::STATUS_DRAFT])]
     #[Assert\Choice(choices: self::STATUSES)]
@@ -161,6 +182,18 @@ class Expense implements CreatedAt, ModifiedAt
     public function setRecurrence(?string $recurrence): Expense
     {
         $this->recurrence = $recurrence;
+
+        return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?string $category): Expense
+    {
+        $this->category = $category;
 
         return $this;
     }

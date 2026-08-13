@@ -66,6 +66,7 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
         $expense->setAmount(100000);
         $expense->setExpenseDate(new \DateTimeImmutable('2026-07-05'));
         $expense->setRecurrence(Expense::RECURRENCE_MONTH);
+        $expense->setCategory(Expense::CATEGORY_RENT);
         $expense->addAllocation((new ExpenseAllocation())->setProject($projectA)->setPercentage('60.00')->setAmountClp(60000));
         $expense->addAllocation((new ExpenseAllocation())->setProject($projectB)->setPercentage('40.00')->setAmountClp(40000));
 
@@ -88,6 +89,7 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
         self::assertSame(100000, $result->generatedExpense->getAmount());
         self::assertSame('2026-08', $result->generatedExpense->getPeriodKey());
         self::assertSame($source->getId(), $result->generatedExpense->getSourceExpense()?->getId());
+        self::assertSame(Expense::CATEGORY_RENT, $result->generatedExpense->getCategory());
         self::assertCount(2, $result->generatedExpense->getAllocations());
 
         $percentages = array_map(
@@ -96,6 +98,21 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
         );
         self::assertContains('60.00', $percentages);
         self::assertContains('40.00', $percentages);
+    }
+
+    public function testGeneratesCopyWithNullCategoryWhenSourceHasNoCategory(): void
+    {
+        $projectA = $this->createProject();
+        $projectB = $this->createProject();
+        $source = $this->createRecurringSource($projectA, $projectB);
+        $source->setCategory(null);
+        $this->getRepository()->saveExpense($source);
+
+        $result = $this->getSut()->generateOne($source, '2026-08');
+
+        self::assertSame(ExpenseRecurrenceStatus::GENERATED, $result->status);
+        self::assertNotNull($result->generatedExpense);
+        self::assertNull($result->generatedExpense->getCategory());
     }
 
     public function testSkipsWhenACopyAlreadyExistsForThePeriod(): void

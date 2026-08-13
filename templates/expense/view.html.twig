@@ -23,6 +23,7 @@
         <div class="card-body">
             <p>{{ 'expense.amount'|trans }}: {{ expense.amount }}</p>
             <p>{{ 'date'|trans }}: {{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</p>
+            <p>{{ 'expense.category'|trans }}: {{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</p>
             <p>{{ 'status'|trans }}: {{ ('expense.status.' ~ expense.status)|trans }}</p>
             {% if expense.requiredLevels is not null %}
                 <p>{{ 'expense.approval_progress'|trans }}: {{ expense.currentLevel }} / {{ expense.requiredLevels }}</p>
