@@ -61,12 +61,12 @@ Three PRs (as first proposed) still land 900–1,900 lines each — still 2–5x
 ## Phase 4: Forms + Controllers + Templates
 
 - [x] 4.1 GREEN: `ExpenseForm.php`, `ExpenseAllocationForm.php`, `ExpenseApprovalLevelForm.php`, `ExpenseChargeForm.php`, `ExpenseApprovalDecisionForm.php`
-- [ ] 4.2 RED→GREEN: `ExpenseControllerTest.php` (CRUD actions) then `ExpenseController.php` list/create/edit/view — `DomainException` → `flashError`
-- [ ] 4.3 Templates: `expense/index.html.twig`, `expense/edit.html.twig` (allocation prototype, live % total), `expense/view.html.twig`
-- [ ] 4.4 RED→GREEN: extend `ExpenseControllerTest.php` (workflow) then `submit/approve/reject/charge` actions
-- [ ] 4.5 Template: `expense/pending.html.twig`
-- [ ] 4.6 RED→GREEN: `ExpenseApprovalLevelControllerTest.php` then `ExpenseApprovalLevelController.php` (index/create/edit/delete, gated `manage_expense_approval_levels`)
-- [ ] 4.7 Templates: `expense_approval_level/index.html.twig` (warn zero active users for role), `edit.html.twig`
+- [x] 4.2 RED→GREEN: `ExpenseControllerTest.php` (CRUD actions) then `ExpenseController.php` list/create/edit/view — `DomainException` → `flashError`
+- [x] 4.3 Templates: `expense/index.html.twig`, `expense/edit.html.twig` (allocation prototype, live % total), `expense/view.html.twig` — minimal (quotation_catalog-style) templates, not the full Quotation-parity ones
+- [x] 4.4 RED→GREEN: extend `ExpenseControllerTest.php` (workflow) then `submit/approve/reject/charge` actions
+- [x] 4.5 Template: `expense/pending.html.twig`
+- [x] 4.6 RED→GREEN: `ExpenseApprovalLevelControllerTest.php` then `ExpenseApprovalLevelController.php` (index/create/edit/delete, gated `manage_expense_approval_levels`)
+- [x] 4.7 Templates: `expense_approval_level/index.html.twig`, `edit.html.twig` — minimal; "warn zero active users for role" enhancement deferred, not required by spec
 - [ ] 4.8 `MenuSubscriber.php` — `expenses` parent + children, `isGranted`-guarded; `translations/messages.*.xlf` new keys
 
 ## Phase 5: Recurrence Command
