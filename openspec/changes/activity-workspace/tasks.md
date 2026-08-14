@@ -71,9 +71,9 @@ likely exceeds 250 lines on its own.
 
 ## Phase 6: Translations (PR 3)
 
-- [ ] 6.1 `translations/messages.en.xlf` — add `gpActWs1`–`gpActWs4` (`activity_workspace.title`, `.detail`, `.select_activity`, `activities_all`).
-- [ ] 6.2 `translations/messages.es.xlf` — same ids/resnames, `state="translated"`, per design's table.
-- [ ] 6.3 `lint:xliff` on both files.
+- [x] 6.1 `translations/messages.en.xlf` — add `gpActWs1`–`gpActWs4` (`activity_workspace.title`, `.detail`, `.select_activity`, `activities_all`).
+- [x] 6.2 `translations/messages.es.xlf` — same ids/resnames, `state="translated"`, per design's table.
+- [x] 6.3 `lint:xliff` on both files.
 
 ## Phase 7: Full Regression + Verification
 

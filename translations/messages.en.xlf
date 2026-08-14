@@ -2522,6 +2522,22 @@
         <source>activity_board.new_activity</source>
         <target>New activity</target>
       </trans-unit>
+      <trans-unit id="gpActWs1" resname="activity_workspace.title">
+        <source>activity_workspace.title</source>
+        <target>Activity workspace</target>
+      </trans-unit>
+      <trans-unit id="gpActWs2" resname="activity_workspace.detail">
+        <source>activity_workspace.detail</source>
+        <target>Activity detail</target>
+      </trans-unit>
+      <trans-unit id="gpActWs3" resname="activity_workspace.select_activity">
+        <source>activity_workspace.select_activity</source>
+        <target>Select an activity to see its detail and comments</target>
+      </trans-unit>
+      <trans-unit id="gpActWs4" resname="activities_all">
+        <source>activities_all</source>
+        <target>All activities</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type">
         <source>user_type</source>
         <target>User type</target>
