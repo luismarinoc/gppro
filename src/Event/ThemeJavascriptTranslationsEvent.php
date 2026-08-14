@@ -40,6 +40,8 @@ final class ThemeJavascriptTranslationsEvent extends Event
         'action.delete.success' => ['action.delete.success', 'flashmessages'],
         'action.delete.error' => ['action.delete.error', 'flashmessages'],
         'confirm.delete' => ['confirm.delete', 'messages'],
+        'confirm.force_password_reset' => ['confirm.force_password_reset', 'messages'],
+        'confirm.revoke_remember_me' => ['confirm.revoke_remember_me', 'messages'],
         'delete' => ['delete', 'messages'],
         'login.required' => ['login_required', 'messages'],
         'modal.dirty' => ['modal.dirty', 'messages'],

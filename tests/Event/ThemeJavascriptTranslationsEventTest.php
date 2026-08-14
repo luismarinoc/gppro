@@ -18,13 +18,24 @@ use PHPUnit\Framework\TestCase;
 #[Group('legacy')]
 class ThemeJavascriptTranslationsEventTest extends TestCase
 {
-    public const COUNTER = 17;
+    public const COUNTER = 19;
 
     public function testDefaultValues(): void
     {
         $sut = new ThemeJavascriptTranslationsEvent(); // @phpstan-ignore new.deprecatedClass
 
         self::assertCount(self::COUNTER, $sut->getTranslations()); // @phpstan-ignore method.deprecatedClass
+    }
+
+    public function testUserQuickActionConfirmationsAreRegistered(): void
+    {
+        $sut = new ThemeJavascriptTranslationsEvent(); // @phpstan-ignore new.deprecatedClass
+        $result = $sut->getTranslations(); // @phpstan-ignore method.deprecatedClass
+
+        self::assertArrayHasKey('confirm.force_password_reset', $result);
+        self::assertEquals(['confirm.force_password_reset', 'messages'], $result['confirm.force_password_reset']);
+        self::assertArrayHasKey('confirm.revoke_remember_me', $result);
+        self::assertEquals(['confirm.revoke_remember_me', 'messages'], $result['confirm.revoke_remember_me']);
     }
 
     public function testGetterAndSetter(): void
