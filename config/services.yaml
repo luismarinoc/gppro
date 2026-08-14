@@ -307,6 +307,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\InvoicePaymentApproval']
 
+    App\Repository\LoginAttemptRepository:
+        class: App\Repository\LoginAttemptRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\LoginAttempt']
+
     monolog.formatter.gppro:
         class: Monolog\Formatter\LineFormatter
         arguments:
