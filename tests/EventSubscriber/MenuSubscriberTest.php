@@ -104,6 +104,48 @@ class MenuSubscriberTest extends TestCase
         self::assertNull($expenses->findChild('expense_approval_level_list'));
     }
 
+    public function testActivitiesMenuPointsToWorkspacePickerUnderViewProjectPermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'view_project'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $activities = $event->getAdminMenu()->findChild('activities');
+        self::assertNotNull($activities);
+        self::assertSame('admin_project_activity_workspace_picker', $activities->getRoute());
+        self::assertTrue($activities->isChildRoute('admin_project_activity_workspace_picker_paginated'));
+        self::assertTrue($activities->isChildRoute('project_activity_workspace'));
+
+        self::assertNull($event->getAdminMenu()->findChild('activities_all'));
+    }
+
+    public function testActivitiesAllMenuKeepsGlobalListUnderViewActivityPermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'view_activity'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $activitiesAll = $event->getAdminMenu()->findChild('activities_all');
+        self::assertNotNull($activitiesAll);
+        self::assertSame('admin_activity', $activitiesAll->getRoute());
+        self::assertTrue($activitiesAll->isChildRoute('admin_activity_create'));
+        self::assertTrue($activitiesAll->isChildRoute('activity_details'));
+        self::assertTrue($activitiesAll->isChildRoute('admin_activity_edit'));
+        self::assertTrue($activitiesAll->isChildRoute('admin_activity_delete'));
+
+        self::assertNull($event->getAdminMenu()->findChild('activities'));
+    }
+
     public function testExpenseApprovalLevelMenuIsVisibleForLevelManagers(): void
     {
         $security = $this->createMock(Security::class);

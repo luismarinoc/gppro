@@ -335,6 +335,17 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString('<p>A beautiful and long comment <strong>with some</strong> markdown formatting</p>', $node->html());
     }
 
+    public function testActivityWorkspacePickerRendersProjectListWithWorkspaceRowLinks(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $this->assertAccessIsGranted($client, '/admin/project/workspace');
+        $this->assertHasDataTable($client);
+
+        $row = $client->getCrawler()->filter('tr[data-href$="/project/1/workspace"]');
+        self::assertCount(1, $row);
+        self::assertStringContainsString('alternative-link', $row->attr('class') ?? '');
+    }
+
     public function testActivitiesAction(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);

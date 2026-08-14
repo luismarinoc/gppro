@@ -181,7 +181,7 @@ class ActivityWorkspaceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
         $crawler = $client->getCrawler();
         self::assertCount(0, $crawler->filter('div.card#comments_box'));
-        self::assertStringContainsString('activity_workspace.select_activity', (string) $client->getResponse()->getContent());
+        self::assertStringContainsString('Select an activity to see its detail and comments', (string) $client->getResponse()->getContent());
     }
 
     /**
@@ -222,6 +222,50 @@ class ActivityWorkspaceControllerTest extends AbstractControllerBaseTestCase
         // board-only vocabulary must never leak into this screen
         self::assertStringNotContainsString('activity_board_card', $content);
         self::assertStringNotContainsString('data-status="todo"', $content);
+    }
+
+    /**
+     * Traces: "Selected activity renders base fields".
+     *
+     * The base test above never flips visible/billable away from their
+     * Activity defaults (both true) nor sets a budget/timeBudget, so those
+     * four conditional branches in index.html.twig are otherwise never
+     * exercised by any test in this suite. This covers all four.
+     */
+    public function testIndexActionRendersNonVisibleNonBillableBudgetAndTimeBudgetFields(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Hidden non-billable budgeted activity');
+        $activity->setVisible(false);
+        $activity->setBillable(false);
+        $activity->setBudget(1234.56);
+        $activity->setTimeBudget(7200);
+
+        $em = $this->getEntityManager();
+        $em->persist($activity);
+        $em->flush();
+
+        $this->request($client, $this->workspaceUrl($project, $activity));
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($this->nameOf($activity), $content);
+
+        // not activity.visible / not activity.billable — both render their
+        // row label plus a "No" badge (widgets.label_boolean -> label('no', 'default'))
+        self::assertStringContainsString('Visible', $content);
+        self::assertStringContainsString('Billable', $content);
+        $crawler = $client->getCrawler();
+        self::assertCount(
+            2,
+            $crawler->filter('#activity_workspace_detail_box span.badge.bg-default:contains("No")'),
+            'Expected exactly 2 "No" badges: one for visible=false, one for billable=false'
+        );
+
+        // activity.hasBudget() / activity.hasTimeBudget()
+        self::assertStringContainsString('Budget', $content);
+        self::assertStringContainsString('Hourly quota', $content);
     }
 
     /**

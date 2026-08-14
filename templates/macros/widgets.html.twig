@@ -473,12 +473,18 @@
     To be used like this:
     <tr {{ project_row_attr(project, now) }}>
 #}
-{% macro project_row_attr(project, now, board) %}
+{% macro project_row_attr(project, now, board, workspace) %}
     {%- set class = _self.class_project_row(project, now) %}
     {% set dataHref = '' %}
     {% if is_granted('view', project) %}
         {% set class = class ~ ' alternative-link open-edit' %}
-        {% set dataHref = board ? path('project_board', {'id': project.id}) : path('project_details', {'id': project.id}) %}
+        {% if board %}
+            {% set dataHref = path('project_board', {'id': project.id}) %}
+        {% elseif workspace %}
+            {% set dataHref = path('project_activity_workspace', {'id': project.id}) %}
+        {% else %}
+            {% set dataHref = path('project_details', {'id': project.id}) %}
+        {% endif %}
     {% endif -%}
     class="{{ class }}" data-href="{{ dataHref }}"
 {% endmacro %}

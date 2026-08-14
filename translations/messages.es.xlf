@@ -2502,6 +2502,22 @@
         <source>activity_board.new_activity</source>
         <target state="translated">Nueva actividad</target>
       </trans-unit>
+      <trans-unit id="gpActWs1" resname="activity_workspace.title" xml:space="preserve">
+        <source>activity_workspace.title</source>
+        <target state="translated">Espacio de actividades</target>
+      </trans-unit>
+      <trans-unit id="gpActWs2" resname="activity_workspace.detail" xml:space="preserve">
+        <source>activity_workspace.detail</source>
+        <target state="translated">Detalle de la actividad</target>
+      </trans-unit>
+      <trans-unit id="gpActWs3" resname="activity_workspace.select_activity" xml:space="preserve">
+        <source>activity_workspace.select_activity</source>
+        <target state="translated">Selecciona una actividad para ver su detalle y comentarios</target>
+      </trans-unit>
+      <trans-unit id="gpActWs4" resname="activities_all" xml:space="preserve">
+        <source>activities_all</source>
+        <target state="translated">Todas las actividades</target>
+      </trans-unit>
       <trans-unit id="gpUsrType1" resname="user_type" xml:space="preserve">
         <source>user_type</source>
         <target state="translated">Tipo de usuario</target>

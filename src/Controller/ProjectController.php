@@ -68,6 +68,8 @@ final class ProjectController extends AbstractController
     #[Route(path: '/page/{page}', requirements: ['page' => '[1-9]\d*'], name: 'admin_project_paginated', methods: ['GET'])]
     #[Route(path: '/board', defaults: ['page' => 1], name: 'admin_project_board_picker', methods: ['GET'])]
     #[Route(path: '/board/page/{page}', requirements: ['page' => '[1-9]\d*'], name: 'admin_project_board_picker_paginated', methods: ['GET'])]
+    #[Route(path: '/workspace', defaults: ['page' => 1], name: 'admin_project_activity_workspace_picker', methods: ['GET'])]
+    #[Route(path: '/workspace/page/{page}', requirements: ['page' => '[1-9]\d*'], name: 'admin_project_activity_workspace_picker_paginated', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('listing', 'project')"))]
     public function indexAction(int $page, Request $request, EventDispatcherInterface $dispatcher): Response
     {
@@ -77,6 +79,14 @@ final class ProjectController extends AbstractController
         // link directly to a specific board since the board is per-project.
         $boardMode = \in_array($request->attributes->get('_route'), ['admin_project_board_picker', 'admin_project_board_picker_paginated'], true);
 
+        // "workspace picker" mode: same project list, but each row links to
+        // that project's activity workspace (project_activity_workspace)
+        // instead of project_details - reached from the "activities" menu
+        // entry, which cannot link directly to a specific workspace since
+        // the workspace is per-project (proposal A1, design's $boardMode
+        // precedent followed literally).
+        $workspaceMode = \in_array($request->attributes->get('_route'), ['admin_project_activity_workspace_picker', 'admin_project_activity_workspace_picker_paginated'], true);
+
         $query = new ProjectQuery();
         $query->loadTeams();
         $query->setCurrentUser($this->getUser());
@@ -84,7 +94,14 @@ final class ProjectController extends AbstractController
 
         $form = $this->getToolbarForm($query);
         if ($this->handleSearch($form, $request)) {
-            return $this->redirectToRoute($boardMode ? 'admin_project_board_picker' : 'admin_project');
+            if ($boardMode) {
+                return $this->redirectToRoute('admin_project_board_picker');
+            }
+            if ($workspaceMode) {
+                return $this->redirectToRoute('admin_project_activity_workspace_picker');
+            }
+
+            return $this->redirectToRoute('admin_project');
         }
 
         $entries = $this->repository->getPagerfantaForQuery($query);
@@ -95,7 +112,13 @@ final class ProjectController extends AbstractController
         $table = new DataTable('project_admin', $query);
         $table->setPagination($entries);
         $table->setSearchForm($form);
-        $table->setPaginationRoute($boardMode ? 'admin_project_board_picker_paginated' : 'admin_project_paginated');
+        $paginationRoute = 'admin_project_paginated';
+        if ($boardMode) {
+            $paginationRoute = 'admin_project_board_picker_paginated';
+        } elseif ($workspaceMode) {
+            $paginationRoute = 'admin_project_activity_workspace_picker_paginated';
+        }
+        $table->setPaginationRoute($paginationRoute);
         $table->setReloadEvents('gppro.projectUpdate gppro.projectDelete gppro.projectTeamUpdate');
 
         $table->addColumn('name', ['class' => 'alwaysVisible']);
@@ -124,7 +147,7 @@ final class ProjectController extends AbstractController
         $table->addColumn('visible', ['class' => 'd-none text-center w-min']);
         $table->addColumn('actions', ['class' => 'actions']);
 
-        $page = $this->createPageSetup($boardMode);
+        $page = $this->createPageSetup($boardMode, $workspaceMode);
         $page->setDataTable($table);
         $page->setActionName('projects');
 
@@ -134,6 +157,7 @@ final class ProjectController extends AbstractController
             'metaColumns' => $metaColumns,
             'now' => $this->getDateTimeFactory()->createDateTime(),
             'board_mode' => $boardMode,
+            'workspace_mode' => $workspaceMode,
         ]);
     }
 
@@ -642,9 +666,16 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    private function createPageSetup(bool $boardMode = false): PageSetup
+    private function createPageSetup(bool $boardMode = false, bool $workspaceMode = false): PageSetup
     {
-        $page = new PageSetup($boardMode ? 'activity_board.title' : 'projects');
+        $title = 'projects';
+        if ($boardMode) {
+            $title = 'activity_board.title';
+        } elseif ($workspaceMode) {
+            $title = 'activity_workspace.title';
+        }
+
+        $page = new PageSetup($title);
         $page->setHelp('project.html');
 
         return $page;
