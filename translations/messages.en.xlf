@@ -2756,6 +2756,11 @@
       <trans-unit id="gpApprovalsDash6" resname="approvals_dashboard.none_pending_invoice"><source>approvals_dashboard.none_pending_invoice</source><target>No invoices are awaiting your approval.</target></trans-unit>
       <trans-unit id="gpApprovalsDash7" resname="approvals_dashboard.none_pending_timesheet"><source>approvals_dashboard.none_pending_timesheet</source><target>No timesheet entries are awaiting your approval.</target></trans-unit>
       <trans-unit id="gpApprovalsDash8" resname="approvals_dashboard.review"><source>approvals_dashboard.review</source><target>Review</target></trans-unit>
+      <trans-unit id="gpApprovalsMenu1" resname="menu.approvals"><source>menu.approvals</source><target>Approvals</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif1" resname="approvals.notification.title"><source>approvals.notification.title</source><target>Pending approvals</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif2" resname="approvals.notification.expense"><source>approvals.notification.expense</source><target>%count% pending expense(s) awaiting approval</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif3" resname="approvals.notification.invoice"><source>approvals.notification.invoice</source><target>%count% pending invoice payment(s) awaiting approval</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif4" resname="approvals.notification.timesheet"><source>approvals.notification.timesheet</source><target>%count% pending timesheet entry(ies) awaiting approval</target></trans-unit>
     </body>
   </file>
 </xliff>

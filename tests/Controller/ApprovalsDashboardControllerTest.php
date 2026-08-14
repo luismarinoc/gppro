@@ -404,6 +404,28 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
      * paymentApprovalStatus permanently NULL, must never be listed as an
      * "unapproved" pending item on the dashboard.
      */
+    /**
+     * Task 4.5/spec "Approvals Dashboard is fully localized in Spanish": the
+     * `{_locale}` route prefix (config/routes.yaml) drives the Translator's
+     * locale for the whole request - no untranslated `approvals_dashboard.*`
+     * key must ever leak into the rendered HTML.
+     */
+    public function testDashboardRendersFullyInSpanish(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->requestPure($client, '/es/approvals/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        // the 'en' translator fallback (translation.yaml) would silently mask
+        // a missing es.xlf target with correct English text, so asserting
+        // the absence of a raw key alone is not enough - the real Spanish
+        // target text (approvals_dashboard.none_pending) must be present.
+        self::assertStringContainsString('No tenés aprobaciones pendientes', $content);
+        self::assertStringNotContainsString('approvals_dashboard.', $content);
+    }
+
     public function testHistoricalPaidInvoiceNeverAppearsOnDashboard(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

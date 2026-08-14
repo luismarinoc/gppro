@@ -2680,6 +2680,19 @@
       <trans-unit id="gpInvPayLvl8" resname="invoice_payment_approval_level.add" xml:space="preserve"><source>invoice_payment_approval_level.add</source><target state="translated">Agregar nivel de aprobación</target></trans-unit>
       <trans-unit id="gpInvPayLvl9" resname="invoice_payment_approval_level.edit_title" xml:space="preserve"><source>invoice_payment_approval_level.edit_title</source><target state="translated">Editar nivel de aprobación de pago de factura</target></trans-unit>
       <trans-unit id="gpInvPayLvl10" resname="invoice_payment_approval_level.create_title" xml:space="preserve"><source>invoice_payment_approval_level.create_title</source><target state="translated">Nuevo nivel de aprobación de pago de factura</target></trans-unit>
+      <trans-unit id="gpApprovalsDash1" resname="approvals_dashboard.title" xml:space="preserve"><source>approvals_dashboard.title</source><target state="translated">Aprobaciones pendientes</target></trans-unit>
+      <trans-unit id="gpApprovalsDash2" resname="approvals_dashboard.section_expense" xml:space="preserve"><source>approvals_dashboard.section_expense</source><target state="translated">Gastos</target></trans-unit>
+      <trans-unit id="gpApprovalsDash3" resname="approvals_dashboard.section_invoice" xml:space="preserve"><source>approvals_dashboard.section_invoice</source><target state="translated">Pago de facturas</target></trans-unit>
+      <trans-unit id="gpApprovalsDash4" resname="approvals_dashboard.section_timesheet" xml:space="preserve"><source>approvals_dashboard.section_timesheet</source><target state="translated">Registro de horas</target></trans-unit>
+      <trans-unit id="gpApprovalsDash5" resname="approvals_dashboard.none_pending" xml:space="preserve"><source>approvals_dashboard.none_pending</source><target state="translated">No tenés aprobaciones pendientes.</target></trans-unit>
+      <trans-unit id="gpApprovalsDash6" resname="approvals_dashboard.none_pending_invoice" xml:space="preserve"><source>approvals_dashboard.none_pending_invoice</source><target state="translated">No hay facturas esperando tu aprobación.</target></trans-unit>
+      <trans-unit id="gpApprovalsDash7" resname="approvals_dashboard.none_pending_timesheet" xml:space="preserve"><source>approvals_dashboard.none_pending_timesheet</source><target state="translated">No hay registros de horas esperando tu aprobación.</target></trans-unit>
+      <trans-unit id="gpApprovalsDash8" resname="approvals_dashboard.review" xml:space="preserve"><source>approvals_dashboard.review</source><target state="translated">Revisar</target></trans-unit>
+      <trans-unit id="gpApprovalsMenu1" resname="menu.approvals" xml:space="preserve"><source>menu.approvals</source><target state="translated">Aprobaciones</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif1" resname="approvals.notification.title" xml:space="preserve"><source>approvals.notification.title</source><target state="translated">Aprobaciones pendientes</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif2" resname="approvals.notification.expense" xml:space="preserve"><source>approvals.notification.expense</source><target state="translated">%count% gasto(s) pendiente(s) de aprobación</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif3" resname="approvals.notification.invoice" xml:space="preserve"><source>approvals.notification.invoice</source><target state="translated">%count% pago(s) de factura pendiente(s) de aprobación</target></trans-unit>
+      <trans-unit id="gpApprovalsNotif4" resname="approvals.notification.timesheet" xml:space="preserve"><source>approvals.notification.timesheet</source><target state="translated">%count% registro(s) de horas pendiente(s) de aprobación</target></trans-unit>
     </body>
   </file>
 </xliff>
