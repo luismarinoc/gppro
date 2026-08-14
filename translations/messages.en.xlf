@@ -750,6 +750,10 @@
         <source>login_audit.none_found</source>
         <target>No login attempts found.</target>
       </trans-unit>
+      <trans-unit id="pndAprvBdg" resname="pending_approval">
+        <source>pending_approval</source>
+        <target>Pending approval</target>
+      </trans-unit>
       <trans-unit id="iaJj4va" resname="work_times_account">
         <source>Account working times</source>
         <target state="translated">Account working times</target>

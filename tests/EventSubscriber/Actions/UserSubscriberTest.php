@@ -108,4 +108,63 @@ class UserSubscriberTest extends AbstractActionsSubscriberTestCase
         self::assertFalse($event->hasSubmenu('security'));
         self::assertEquals(0, $event->countActions('security'));
     }
+
+    private function createPendingTargetUser(int $id): User
+    {
+        $user = $this->createTargetUser($id);
+        $user->setEnabled(false);
+        $user->setEmailConfirmedAt(new \DateTimeImmutable('-1 hour'));
+
+        self::assertTrue($user->isPendingApproval());
+
+        return $user;
+    }
+
+    public function testOnActionsAddsApprovalSubmenuWithBothActionsWhenGrantedAndUserIsPendingApproval(): void
+    {
+        $targetUser = $this->createPendingTargetUser(3);
+
+        $event = $this->onActionsFor($targetUser, ['approve', 'reject']);
+
+        self::assertTrue($event->hasSubmenu('approval'));
+        self::assertEquals(2, $event->countActions('approval'));
+
+        $children = $event->getActions()['approval']['children'];
+        self::assertIsArray($children);
+
+        self::assertArrayHasKey('approve', $children);
+        self::assertEquals('approve', $children['approve']['title']);
+        self::assertStringContainsString('admin_user_approve', $children['approve']['url']);
+        self::assertStringContainsString('id=3', $children['approve']['url']);
+        self::assertStringContainsString('csrfToken=fake-token-for-admin_user_approve_3', $children['approve']['url']);
+
+        self::assertArrayHasKey('reject', $children);
+        self::assertEquals('reject', $children['reject']['title']);
+        self::assertStringContainsString('admin_user_reject', $children['reject']['url']);
+        self::assertStringContainsString('id=3', $children['reject']['url']);
+        self::assertStringContainsString('csrfToken=fake-token-for-admin_user_reject_3', $children['reject']['url']);
+    }
+
+    public function testOnActionsOmitsApprovalSubmenuWhenUserIsNotPendingApproval(): void
+    {
+        // enabled=true (from createTargetUser) - already approved, not pending
+        $targetUser = $this->createTargetUser(4);
+
+        $event = $this->onActionsFor($targetUser, ['approve', 'reject']);
+
+        self::assertFalse($event->hasSubmenu('approval'));
+        self::assertEquals(0, $event->countActions('approval'));
+    }
+
+    public function testOnActionsOmitsApprovalSubmenuWhenNotGrantedForNonAdminViewer(): void
+    {
+        $targetUser = $this->createPendingTargetUser(5);
+
+        // neither 'approve' nor 'reject' in the granted list - simulates a
+        // non-admin viewer for whom UserVoter denies both attributes
+        $event = $this->onActionsFor($targetUser, ['view']);
+
+        self::assertFalse($event->hasSubmenu('approval'));
+        self::assertEquals(0, $event->countActions('approval'));
+    }
 }

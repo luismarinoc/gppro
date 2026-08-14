@@ -325,6 +325,13 @@ class UserRepository extends EntityRepository implements UserLoaderInterface, Us
             $qb->setParameter('system', $query->getSystemAccount(), Types::BOOLEAN);
         }
 
+        if ($query->getPendingApproval() === true) {
+            $qb->andWhere($qb->expr()->isNotNull('u.emailConfirmedAt'));
+            $qb->andWhere($qb->expr()->eq('u.enabled', ':pendingApprovalEnabled'));
+            $qb->setParameter('pendingApprovalEnabled', false, ParameterType::BOOLEAN);
+            $qb->andWhere($qb->expr()->isNull('u.rejectedAt'));
+        }
+
         $configuration = new SearchConfiguration(
             ['u.alias', 'u.title', 'u.accountNumber', 'u.email', 'u.username'],
             UserPreference::class,

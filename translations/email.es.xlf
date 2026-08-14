@@ -22,6 +22,22 @@
         <source>You signed up at the gppro time-tracker with the e-mail address %email%. Please activate your account in the next few hours, before the link expires.</source>
         <target state="translated">Te has registrado en el cronómetro de gppro con la dirección de correo electrónico %email%. Por favor, activa tu cuenta en las próximas horas, antes de que caduque el enlace.</target>
       </trans-unit>
+      <trans-unit id="usrAprvSub" resname="user_approved.subject" xml:space="preserve">
+        <source>user_approved.subject</source>
+        <target state="translated">Tu cuenta ha sido aprobada</target>
+      </trans-unit>
+      <trans-unit id="usrAprvTit" resname="user_approved.title" xml:space="preserve">
+        <source>user_approved.title</source>
+        <target state="translated">Bienvenido %username%</target>
+      </trans-unit>
+      <trans-unit id="usrAprvBtn" resname="user_approved.button" xml:space="preserve">
+        <source>user_approved.button</source>
+        <target state="translated">Iniciar sesión</target>
+      </trans-unit>
+      <trans-unit id="usrAprvInt" resname="user_approved.intro" xml:space="preserve">
+        <source>user_approved.intro</source>
+        <target state="translated">Un administrador ha aprobado tu cuenta, %username%. Ya puedes iniciar sesión.</target>
+      </trans-unit>
       <trans-unit id="1ZLD_Y0" resname="reset.subject" xml:space="preserve">
         <source>reset.subject</source>
         <target state="translated">Iniciar sesión en gppro</target>

@@ -1,0 +1,13 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block title %}
+    {{ 'user_approved.title'|trans({'%username%': user.displayName}, 'email') }}
+{% endblock %}
+
+{% block body %}
+    <p>{{ 'user_approved.intro'|trans({'%username%': user.displayName}, 'email') }}<p>
+
+    <spacer size="16"></spacer>
+
+    <button class="large primary" href="{{ loginUrl }}">{{ 'user_approved.button'|trans({'%url%': loginUrl}, 'email') }}</button>
+{% endblock %}

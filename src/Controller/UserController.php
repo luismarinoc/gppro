@@ -10,6 +10,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\EmailEvent;
+use App\Event\EmailUserApprovedEvent;
 use App\Event\PrepareUserEvent;
 use App\Event\UserPreferenceDisplayEvent;
 use App\Export\Spreadsheet\UserExporter;
@@ -25,13 +27,18 @@ use App\User\UserService;
 use App\Utils\DataTable;
 use App\Utils\PageSetup;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Controller used to manage users in the admin part of the site.
@@ -215,6 +222,70 @@ final class UserController extends AbstractController
         $this->flashSuccess('action.update.success');
 
         return $this->redirectToRoute('admin_user');
+    }
+
+    #[Route(path: '/{id}/approve/{csrfToken}', name: 'admin_user_approve', methods: ['POST'])]
+    #[IsGranted('approve', 'userToApprove')]
+    public function approveAction(User $userToApprove, string $csrfToken, CsrfTokenManagerInterface $csrfTokenManager, TranslatorInterface $translator): Response
+    {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('admin_user_approve_' . $userToApprove->getId(), $csrfToken))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_user');
+        }
+
+        $userToApprove->setEnabled(true);
+        $this->repository->saveUser($userToApprove);
+
+        $mail = $this->generateApprovalEmail($userToApprove, $translator);
+        $event = new EmailUserApprovedEvent($userToApprove, $mail);
+        $this->dispatcher->dispatch($event);
+
+        // this will finally send the email
+        $this->dispatcher->dispatch(new EmailEvent($event->getEmail()));
+
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute('admin_user');
+    }
+
+    #[Route(path: '/{id}/reject/{csrfToken}', name: 'admin_user_reject', methods: ['POST'])]
+    #[IsGranted('reject', 'userToReject')]
+    public function rejectAction(User $userToReject, string $csrfToken, CsrfTokenManagerInterface $csrfTokenManager): Response
+    {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('admin_user_reject_' . $userToReject->getId(), $csrfToken))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_user');
+        }
+
+        // soft-reject only (Locked Decision 7): row is kept for audit trail, never enabled, no email sent (D8)
+        $userToReject->setRejectedAt(new \DateTimeImmutable());
+        $this->repository->saveUser($userToReject);
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute('admin_user');
+    }
+
+    private function generateApprovalEmail(User $user, TranslatorInterface $translator): Email
+    {
+        $username = $user->getDisplayName();
+        $language = $user->getLanguage();
+
+        $url = $this->generateUrl('login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return (new TemplatedEmail())
+            ->to(new Address($user->getEmail()))
+            ->subject(
+                $translator->trans('user_approved.subject', ['%username%' => $username], 'email', $language)
+            )
+            ->htmlTemplate('emails/user_approved.html.twig')
+            ->context([
+                'user' => $user,
+                'username' => $username,
+                'loginUrl' => $url,
+            ])
+        ;
     }
 
     #[Route(path: '/export', name: 'user_export', methods: ['GET'])]

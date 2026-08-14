@@ -26,6 +26,7 @@ class UserQuery extends BaseQuery implements VisibilityInterface
      */
     private array $searchTeams = [];
     private ?bool $systemAccount = null;
+    private ?bool $pendingApproval = null;
     /**
      * @var array<int>
      */
@@ -38,6 +39,7 @@ class UserQuery extends BaseQuery implements VisibilityInterface
             'searchTeams' => [],
             'visibility' => VisibilityInterface::SHOW_VISIBLE,
             'systemAccount' => null,
+            'pendingApproval' => null,
             'userIds' => [],
         ]);
     }
@@ -78,6 +80,16 @@ class UserQuery extends BaseQuery implements VisibilityInterface
     public function setSystemAccount(?bool $systemAccount): void
     {
         $this->systemAccount = $systemAccount;
+    }
+
+    public function getPendingApproval(): ?bool
+    {
+        return $this->pendingApproval;
+    }
+
+    public function setPendingApproval(?bool $pendingApproval): void
+    {
+        $this->pendingApproval = $pendingApproval;
     }
 
     /**
