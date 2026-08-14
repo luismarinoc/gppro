@@ -538,6 +538,54 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($reloaded->isApproved());
     }
 
+    public function testApproveActionRemovesButtonsFromSubsequentListRequest(): void
+    {
+        // Regression test for a production bug: approving an entry persisted
+        // correctly, but a later, genuinely separate GET request to the list
+        // view still rendered the approve/reject buttons for that same row -
+        // because TimesheetVoter::APPROVE/REJECT never checked the entry's
+        // isApproved() state, only team-lead membership. Reading the entity
+        // back in the same PHP process (as the other approve tests do) does
+        // not exercise this at all; only a fresh request against the
+        // rendered list does.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $team = $this->createTeam();
+        [, $project] = $this->createCustomerAndProjectWithTeam($team);
+        $lead = $this->createTeamleadUser();
+        $member = $this->createTeamleadUser();
+        $this->addUserToTeam($member, $team);
+        $this->addUserToTeamAsLead($lead, $team);
+
+        $entry = $this->createTimesheetEntryFor($member, $project);
+        $id = $entry->getId();
+        self::assertIsInt($id);
+
+        \assert($client instanceof KernelBrowser);
+        $client->loginUser($lead, 'secured_area');
+
+        $memberId = $member->getId();
+        self::assertIsInt($memberId);
+        $token = $this->extractApproveToken($client, $memberId, $id, 'approve');
+        $this->request($client, '/team/timesheet/' . $id . '/approve', 'POST', ['_token' => $token]);
+        $this->assertIsRedirect($client, $this->createUrl('/team/timesheet/'));
+
+        // Separate, follow-up GET request to the list view - simulates the
+        // real two-request scenario a browser reload performs, instead of
+        // reading state off the same in-memory entity/session.
+        $crawler = $this->request($client, '/team/timesheet/');
+
+        self::assertCount(
+            0,
+            $crawler->filter('form[action$="/team/timesheet/' . $id . '/approve"]'),
+            'Approve button must not be rendered for an already-approved entry on a fresh list request.'
+        );
+        self::assertCount(
+            0,
+            $crawler->filter('form[action$="/team/timesheet/' . $id . '/reject"]'),
+            'Reject button must not be rendered for an already-approved entry on a fresh list request.'
+        );
+    }
+
     public function testApproveActionDeniedForNonTeamLead(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
