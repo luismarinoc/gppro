@@ -232,6 +232,11 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
     #[Serializer\SerializedName('metaFields')]
     #[Serializer\Accessor(getter: 'getVisibleMetaFields')]
     private Collection $meta;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'approved_by_id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $approvedBy = null;
+    #[ORM\Column(name: 'approved_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $approvedAt = null;
 
     public function __construct()
     {
@@ -492,6 +497,29 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
     public function isInvoiced(): bool
     {
         return null !== $this->invoice;
+    }
+
+    public function isApproved(): bool
+    {
+        return null !== $this->approvedAt;
+    }
+
+    public function getApprovedBy(): ?User
+    {
+        return $this->approvedBy;
+    }
+
+    public function getApprovedAt(): ?\DateTimeImmutable
+    {
+        return $this->approvedAt;
+    }
+
+    public function approve(User $approver): Timesheet
+    {
+        $this->approvedBy = $approver;
+        $this->approvedAt = new \DateTimeImmutable();
+
+        return $this;
     }
 
     public function getTimezone(): ?string
