@@ -1261,8 +1261,8 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString('Submit for payment approval', $content);
         self::assertStringNotContainsString('Approve payment', $content);
         self::assertStringNotContainsString('Reject payment', $content);
-        self::assertSame(0, $crawler->filter('form[action$="/submit-payment-approval"]')->count());
-        self::assertSame(0, $crawler->filter('form[action$="/approve-payment"]')->count());
-        self::assertSame(0, $crawler->filter('form[action$="/reject-payment"]')->count());
+        self::assertCount(0, $crawler->filter('form[action$="/submit-payment-approval"]'));
+        self::assertCount(0, $crawler->filter('form[action$="/approve-payment"]'));
+        self::assertCount(0, $crawler->filter('form[action$="/reject-payment"]'));
     }
 }
