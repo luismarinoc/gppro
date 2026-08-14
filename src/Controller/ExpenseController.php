@@ -13,6 +13,7 @@ use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Expense\AllocationPercentageValidator;
 use App\Expense\AllocationSplitter;
+use App\Expense\ExpenseApprovalPolicy;
 use App\Expense\ExpenseApprovalService;
 use App\Expense\ExpenseCrossChargeService;
 use App\Form\ExpenseApprovalDecisionForm;
@@ -31,13 +32,42 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ExpenseController extends AbstractController
 {
     #[Route(path: '/', name: 'expense_list', methods: ['GET'])]
-    public function index(Request $request, ExpenseRepository $repository): Response
+    public function index(Request $request, ExpenseRepository $repository, ExpenseApprovalPolicy $approvalPolicy): Response
     {
         $status = $request->query->get('status');
+        $status = \is_string($status) ? $status : null;
+        $user = $this->getUser();
+
+        $expenses = $repository->findForListing($user, $status);
+
+        // Design D4: the approver-eligible branch ((b) of the visibility
+        // rule) is merged here, not in ExpenseRepository, because that
+        // repository is Doctrine-factory-registered (services.yaml) and
+        // cannot have ExpenseApprovalPolicy constructor-injected. Reuses the
+        // existing findPendingForUser() query, filtered through the
+        // unmodified canApprove() policy. Only merged when the current
+        // status filter could actually include a pending-approval expense.
+        if (null === $status || Expense::STATUS_PENDING_APPROVAL === $status) {
+            $seen = [];
+            foreach ($expenses as $expense) {
+                $seen[$expense->getId()] = true;
+            }
+
+            foreach ($repository->findPendingForUser($user) as $pending) {
+                if (isset($seen[$pending->getId()]) || !$approvalPolicy->canApprove($pending, $user)) {
+                    continue;
+                }
+
+                $expenses[] = $pending;
+                $seen[$pending->getId()] = true;
+            }
+
+            usort($expenses, static fn (Expense $a, Expense $b): int => $b->getCreatedAt() <=> $a->getCreatedAt());
+        }
 
         return $this->render('expense/index.html.twig', [
             'page_setup' => $this->createPageSetup(),
-            'expenses' => $repository->findForListing(\is_string($status) ? $status : null),
+            'expenses' => $expenses,
             'status' => $status,
         ]);
     }
