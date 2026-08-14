@@ -2578,6 +2578,10 @@
         <source>activity.edit_denied</source>
         <target state="translated">No tenés permiso para editar esta actividad</target>
       </trans-unit>
+      <trans-unit id="gpActBrd26" resname="activity_board.stage" xml:space="preserve">
+        <source>activity_board.stage</source>
+        <target state="translated">Etapa</target>
+      </trans-unit>
       <trans-unit id="gpActWs1" resname="activity_workspace.title" xml:space="preserve">
         <source>activity_workspace.title</source>
         <target state="translated">Espacio de actividades</target>

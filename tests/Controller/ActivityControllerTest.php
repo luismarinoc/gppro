@@ -11,6 +11,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Activity;
 use App\Entity\ActivityBoardState;
+use App\Entity\ActivityBoardStatus;
 use App\Entity\ActivityMeta;
 use App\Entity\ActivityRate;
 use App\Entity\Customer;
@@ -462,6 +463,101 @@ class ActivityControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/admin/activity/1/edit');
         $editForm = $client->getCrawler()->filter('form[name=activity_edit_form]')->form();
         self::assertEquals('Test 2', $editForm->get('activity_edit_form[name]')->getValue());
+    }
+
+    public function testEditActionShowsStepperWithCurrentStageForProjectActivity(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        // fixture activity #1 (ResetTestCommand) is global (no project), so
+        // a dedicated project-scoped activity is created here instead.
+        $customer = new Customer('Stepper current-stage test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $project = new Project();
+        $project->setName('Stepper current-stage test project ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+
+        $activity = new Activity();
+        $activity->setName('Stepper current-stage test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+
+        $state = (new ActivityBoardState())->setActivity($activity)->setStatus(ActivityBoardStatus::IN_REVIEW);
+        $em->persist($state);
+        $em->flush();
+
+        $activityId = $activity->getId();
+        self::assertNotNull($activityId);
+
+        $this->request($client, '/admin/activity/' . $activityId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        $steps = $crawler->filter('.step-item');
+        self::assertCount(4, $steps);
+
+        $activeSteps = $crawler->filter('.step-item.active');
+        self::assertCount(1, $activeSteps);
+        self::assertSame('In Review', trim($activeSteps->text()));
+    }
+
+    public function testEditActionShowsNoStepperForGlobalActivity(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $fixture = new ActivityFixtures();
+        $fixture->setAmount(1)->setIsGlobal(true)->setIsVisible(true);
+        $activities = $this->importFixture($fixture);
+        $activityId = $activities[0]->getId();
+
+        $this->request($client, '/admin/activity/' . $activityId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $steps = $client->getCrawler()->filter('.steps');
+        self::assertCount(0, $steps, 'a global activity has no board state and must render no stepper');
+    }
+
+    public function testEditActionShowsStepperDefaultingToTodoForStatelessProjectActivity(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Stepper stateless test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $project = new Project();
+        $project->setName('Stepper stateless test project ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+
+        $activity = new Activity();
+        $activity->setName('Stepper stateless test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $activityId = $activity->getId();
+        self::assertNotNull($activityId);
+
+        $stateCountBefore = $em->getRepository(ActivityBoardState::class)->count([]);
+
+        $this->request($client, '/admin/activity/' . $activityId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        $activeSteps = $crawler->filter('.step-item.active');
+        self::assertCount(1, $activeSteps);
+        self::assertSame('To Do', trim($activeSteps->text()));
+
+        $stateCountAfter = $em->getRepository(ActivityBoardState::class)->count([]);
+        self::assertSame($stateCountBefore, $stateCountAfter, 'opening the edit modal must never persist a transient default board state');
     }
 
     public function testEditActionForGlobalActivity(): void

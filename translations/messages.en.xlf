@@ -2610,6 +2610,10 @@
         <source>activity.edit_denied</source>
         <target>You do not have permission to edit this activity</target>
       </trans-unit>
+      <trans-unit id="gpActBrd26" resname="activity_board.stage">
+        <source>activity_board.stage</source>
+        <target>Stage</target>
+      </trans-unit>
       <trans-unit id="gpActWs1" resname="activity_workspace.title">
         <source>activity_workspace.title</source>
         <target>Activity workspace</target>

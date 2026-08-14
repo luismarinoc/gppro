@@ -15,6 +15,7 @@ use App\Activity\ActivityService;
 use App\Activity\ActivityStatisticService;
 use App\Configuration\SystemConfiguration;
 use App\Entity\Activity;
+use App\Entity\ActivityBoardStatus;
 use App\Entity\ActivityRate;
 use App\Entity\Project;
 use App\Entity\User;
@@ -28,6 +29,7 @@ use App\Form\ActivityRateForm;
 use App\Form\ActivityTeamPermissionForm;
 use App\Form\Toolbar\ActivityToolbarForm;
 use App\Form\Type\ActivityType;
+use App\Repository\ActivityBoardStateRepository;
 use App\Repository\ActivityRateRepository;
 use App\Repository\ActivityRepository;
 use App\Repository\Query\ActivityQuery;
@@ -310,7 +312,7 @@ final class ActivityController extends AbstractController
 
     #[Route(path: '/{id}/edit', name: 'admin_activity_edit', methods: ['GET', 'POST'])]
     #[IsGranted('edit', 'activity')]
-    public function editAction(Activity $activity, Request $request, ActivityService $activityService, SystemConfiguration $configuration, ActivityBoardService $boardService): Response
+    public function editAction(Activity $activity, Request $request, ActivityService $activityService, SystemConfiguration $configuration, ActivityBoardService $boardService, ActivityBoardStateRepository $boardStateRepository): Response
     {
         $activityService->loadMetaFields($activity);
 
@@ -336,8 +338,24 @@ final class ActivityController extends AbstractController
         return $this->render('activity/edit.html.twig', [
             'page_setup' => $this->createPageSetup(),
             'activity' => $activity,
-            'form' => $editForm->createView()
+            'form' => $editForm->createView(),
+            'board_status' => $this->resolveBoardStatus($activity, $boardStateRepository),
         ]);
+    }
+
+    /**
+     * Non-null only for an existing, non-global activity - same gate
+     * ActivityEditForm:132 uses for its board-only fields. findOrCreate()
+     * returns a transient default "To Do" state (repository comment, A5),
+     * so opening the modal never writes.
+     */
+    private function resolveBoardStatus(Activity $activity, ActivityBoardStateRepository $boardStateRepository): ?ActivityBoardStatus
+    {
+        if (null === $activity->getId() || $activity->isGlobal()) {
+            return null;
+        }
+
+        return $boardStateRepository->findOrCreate($activity)->getStatus();
     }
 
     /**

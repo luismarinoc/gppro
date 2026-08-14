@@ -49,14 +49,14 @@ Chain strategy: pending
 
 ## Phase 4: Read-only stage stepper (RED then GREEN)
 
-- [ ] 4.1 RED: In `ActivityControllerTest`, persist board state `in_review` for a project activity, GET `/admin/activity/{id}/edit` as a modal request, assert 4 `.step-item` elements and `.step-item.active` text equals "En revisión"/"In review".
-- [ ] 4.2 RED: Assert no stepper (`.steps` count == 0) for an activity where `project === null` (global).
-- [ ] 4.3 RED: For a stateless project activity, assert the stepper's `active` item is `todo` AND `ActivityBoardStateRepository::count([])` is unchanged after the request (transient default, no write).
-- [ ] 4.4 GREEN: In `src/Controller/ActivityController.php::editAction()`, inject `ActivityBoardStateRepository`, resolve `board_status` as `ActivityBoardStatus|null` — non-null only when `null !== $activity->getId() && !$activity->isGlobal()` (same gate as `ActivityEditForm:132`) — via `findOrCreate($activity)->getStatus()`, pass it to the `activity/edit.html.twig` render array.
-- [ ] 4.5 GREEN: Create `templates/activity/_board_status_stepper.html.twig`: horizontal Tabler `.steps`/`.step-item` stepper over a Twig map `{'todo': 0, 'in_progress': 1, 'in_review': 2, 'done': 3}` (map lookup, not `set` inside a `for`, since Twig does not leak loop-scoped variables), marking `.step-item.active` for the current `board_status`, reusing `activity_board.status.*` translation keys, no interactive control (D3).
-- [ ] 4.6 GREEN: In `templates/activity/edit.html.twig`, include the stepper first inside `block form_body`, guarded by `board_status|default(null) is not null`.
-- [ ] 4.7 GREEN: Add translation keys `activity_board.edit_activity` and `activity_board.stage` to `messages.{es,en}.xlf`.
-- [ ] 4.8 Re-run 4.1-4.3, confirm GREEN.
+- [x] 4.1 RED: In `ActivityControllerTest`, persist board state `in_review` for a project activity, GET `/admin/activity/{id}/edit` as a modal request, assert 4 `.step-item` elements and `.step-item.active` text equals "En revisión"/"In review".
+- [x] 4.2 RED: Assert no stepper (`.steps` count == 0) for an activity where `project === null` (global).
+- [x] 4.3 RED: For a stateless project activity, assert the stepper's `active` item is `todo` AND `ActivityBoardStateRepository::count([])` is unchanged after the request (transient default, no write).
+- [x] 4.4 GREEN: In `src/Controller/ActivityController.php::editAction()`, inject `ActivityBoardStateRepository`, resolve `board_status` as `ActivityBoardStatus|null` — non-null only when `null !== $activity->getId() && !$activity->isGlobal()` (same gate as `ActivityEditForm:132`) — via `findOrCreate($activity)->getStatus()`, pass it to the `activity/edit.html.twig` render array.
+- [x] 4.5 GREEN: Create `templates/activity/_board_status_stepper.html.twig`: horizontal Tabler `.steps`/`.step-item` stepper over a Twig map `{'todo': 0, 'in_progress': 1, 'in_review': 2, 'done': 3}` (map lookup, not `set` inside a `for`, since Twig does not leak loop-scoped variables), marking `.step-item.active` for the current `board_status`, reusing `activity_board.status.*` translation keys, no interactive control (D3).
+- [x] 4.6 GREEN: In `templates/activity/edit.html.twig`, include the stepper first inside `block form_body`, guarded by `board_status|default(null) is not null`.
+- [x] 4.7 GREEN: Add translation keys `activity_board.edit_activity` and `activity_board.stage` to `messages.{es,en}.xlf`.
+- [x] 4.8 Re-run 4.1-4.3, confirm GREEN.
 
 ## Phase 5: Regression + docs
 
