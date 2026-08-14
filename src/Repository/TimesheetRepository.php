@@ -1000,6 +1000,30 @@ class TimesheetRepository extends EntityRepository
     }
 
     /**
+     * Approvals dashboard (task 4.1): entries under a project whose team the
+     * given user leads, and that are not yet approved. Unlike Expense's
+     * findPendingForUser() (creator-exclusion only), this method filters by
+     * real team-lead eligibility at the query level, since there is no
+     * established naive precedent to mirror for a brand-new method.
+     *
+     * @return Timesheet[]
+     */
+    public function findPendingApprovalForUser(User $user): array
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.project', 'p')
+            ->join('p.teams', 'team')
+            ->join('team.members', 'tm')
+            ->andWhere('tm.user = :user')
+            ->andWhere('tm.teamlead = true')
+            ->andWhere('t.approvedAt IS NULL')
+            ->setParameter('user', $user)
+            ->orderBy('t.begin', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return Query<Timesheet>
      */
     private function createTimesheetQuery(TimesheetQuery $timesheetQuery): Query

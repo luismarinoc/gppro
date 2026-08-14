@@ -98,4 +98,49 @@ class InvoiceRepositoryTest extends AbstractRepositoryTestCase
 
         self::assertSame(array_merge($expectedZoneA, $expectedZoneZ), $ids, 'Invoices must be grouped by customer name ASC before applying the date ordering');
     }
+
+    /**
+     * Task 4.3: deliberately naive at the repository layer, mirroring
+     * ExpenseRepository::findPendingForUser() (design's explicitly flagged
+     * gap) - only excludes the invoice's own creator, does NOT filter by
+     * approver-level eligibility. That filtering is the dashboard
+     * controller's responsibility (task 4.6/4.7).
+     */
+    public function testFindPendingPaymentApprovalForUserExcludesOnlyOwnInvoicesNotApproverEligibility(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var InvoiceRepository $repository */
+        $repository = $em->getRepository(Invoice::class);
+
+        $customer = $this->createCustomer('Dashboard repo invoice customer');
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $otherUser = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $ownInvoice = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $ownInvoice->setUser($otherUser);
+        $ownInvoice->submitForPaymentApproval(1);
+        $em->persist($ownInvoice);
+        $em->flush();
+
+        $othersInvoice = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $othersInvoice->setUser($creator);
+        $othersInvoice->submitForPaymentApproval(1);
+        $em->persist($othersInvoice);
+        $em->flush();
+
+        $notSubmittedInvoice = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $notSubmittedInvoice->setUser($creator);
+        $em->flush();
+
+        // Raw repository result for $otherUser: excludes their own invoice,
+        // but does NOT check whether $otherUser is actually an eligible
+        // approver for $othersInvoice's pending level (that check happens
+        // one layer up, in the controller).
+        $result = $repository->findPendingPaymentApprovalForUser($otherUser);
+        $ids = array_map(static fn (Invoice $i) => $i->getId(), $result);
+
+        self::assertContains($othersInvoice->getId(), $ids, 'A pending invoice not created by the caller must be included, regardless of approver eligibility');
+        self::assertNotContains($ownInvoice->getId(), $ids, 'The caller\'s own invoice must be excluded');
+        self::assertNotContains($notSubmittedInvoice->getId(), $ids, 'An invoice never submitted for payment approval must be excluded');
+    }
 }

@@ -44,6 +44,29 @@ class InvoiceRepository extends EntityRepository
         $entityManager->flush();
     }
 
+    /**
+     * Approvals dashboard (task 4.3): mirrors ExpenseRepository::
+     * findPendingForUser()'s deliberately naive shape (design's explicitly
+     * flagged gap) - only excludes the invoice's own creator, does NOT
+     * filter by approver-level eligibility. The dashboard controller is
+     * responsible for applying InvoicePaymentApprovalPolicy/is_granted()
+     * per item before rendering (task 4.6/4.7) - this raw result must never
+     * be trusted as the final visibility set.
+     *
+     * @return Invoice[]
+     */
+    public function findPendingPaymentApprovalForUser(User $user): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.paymentApprovalStatus = :status')
+            ->andWhere('i.user != :user OR i.user IS NULL')
+            ->setParameter('status', Invoice::PAYMENT_APPROVAL_PENDING)
+            ->setParameter('user', $user)
+            ->orderBy('i.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function hasInvoice(string $invoiceNumber): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
