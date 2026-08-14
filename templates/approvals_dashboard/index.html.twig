@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {% if expenses is empty and timesheets is empty and invoices is empty %}
+        <div class="card">
+            <div class="card-body">{{ 'approvals_dashboard.none_pending'|trans }}</div>
+        </div>
+    {% else %}
+        <div class="card mb-3">
+            <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_expense'|trans }}</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.description }}</td>
+                            <td>{{ expense.amount }}</td>
+                            <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">{{ 'expense.review'|trans }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3">{{ 'expense.none_pending'|trans }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_invoice'|trans }}</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>{{ 'invoice.number'|trans }}</th><th>{{ 'invoice.total'|trans }}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for invoice in invoices %}
+                        <tr>
+                            <td>{{ invoice.invoiceNumber }}</td>
+                            <td>{{ invoice.total }}</td>
+                            <td class="text-end"><a href="{{ path('admin_invoice_edit', {id: invoice.id}) }}">{{ 'approvals_dashboard.review'|trans }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3">{{ 'approvals_dashboard.none_pending_invoice'|trans }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_timesheet'|trans }}</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>{{ 'timesheet'|trans }}</th><th>{{ 'begin'|trans }}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for timesheet in timesheets %}
+                        <tr>
+                            <td>#{{ timesheet.id }} - {{ timesheet.project }}</td>
+                            <td>{{ timesheet.begin|date('Y-m-d H:i') }}</td>
+                            <td class="text-end"><a href="{{ path('admin_timesheet') }}">{{ 'approvals_dashboard.review'|trans }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3">{{ 'approvals_dashboard.none_pending_timesheet'|trans }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
