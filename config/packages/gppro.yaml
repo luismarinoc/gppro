@@ -129,7 +129,10 @@ gppro:
             # approve_expense/reject_expense are deliberately NOT registered permissions (design D2):
             # RolePermissionVoter grants a registered permission globally when checked without a
             # subject, which would bypass ExpenseVoter's per-level ExpenseApprovalPolicy logic.
-            ROLE_SUPER_ADMIN: ['hourly-rate_own_profile','hourly-rate_other_profile','roles_own_profile','supervisor_own_profile','system_information','system_configuration','plugins','edit_exported_timesheet','teams_own_profile','view_team_member','upload_invoice_template','view_all_data','contract_other_profile','hours_other_profile','create_export_template','manage_expense_approval_levels']
+            # approve_timesheet/reject_timesheet/approve_invoice_payment/reject_invoice_payment
+            # are deliberately NOT registered permissions either (mirrors D2 above): they gate
+            # per-team-lead / per-approval-level checks in TimesheetVoter / InvoicePaymentApprovalPolicy.
+            ROLE_SUPER_ADMIN: ['hourly-rate_own_profile','hourly-rate_other_profile','roles_own_profile','supervisor_own_profile','system_information','system_configuration','plugins','edit_exported_timesheet','teams_own_profile','view_team_member','upload_invoice_template','view_all_data','contract_other_profile','hours_other_profile','create_export_template','manage_expense_approval_levels','manage_invoice_payment_approval_levels']
 # --------------------------------------------------------------------------------
 
 

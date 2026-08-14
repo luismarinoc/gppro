@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'invoice_payment_approval_level'|trans }}</h3>
+            <div class="card-actions">
+                <a class="btn btn-primary" href="{{ path('admin_invoice_payment_approval_level_create') }}">{{ 'invoice_payment_approval_level.add'|trans }}</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead><tr><th>{{ 'invoice_payment_approval_level.level'|trans }}</th><th>{{ 'invoice_payment_approval_level.min_amount'|trans }}</th><th>{{ 'invoice_payment_approval_level.required_role'|trans }}</th><th>{{ 'invoice_payment_approval_level.approver_user'|trans }}</th><th></th></tr></thead>
+                <tbody>
+                {% for level in levels %}
+                    <tr class="alternative-link cursor-pointer" data-href="{{ path('admin_invoice_payment_approval_level_edit', {id: level.id}) }}">
+                        <td>{{ level.level }}</td>
+                        <td>{{ level.minAmount }}</td>
+                        <td>{{ widgets.label_role(level.requiredRole) }}</td>
+                        <td>{% if level.approverUser %}{{ widgets.label_user(level.approverUser) }}{% else %}<span class="text-muted">&mdash;</span>{% endif %}</td>
+                        <td class="text-end">
+                            <a href="{{ path('admin_invoice_payment_approval_level_edit', {id: level.id}) }}">{{ 'action.edit'|trans }}</a>
+                            {% if level.level != 1 %}
+                                <form class="d-inline" method="post" action="{{ path('admin_invoice_payment_approval_level_delete', {id: level.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('invoice_payment_approval_level') }}">
+                                    <button class="btn btn-link text-danger" type="submit">{{ 'delete'|trans }}</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5">{{ 'invoice_payment_approval_level.none_found'|trans }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
