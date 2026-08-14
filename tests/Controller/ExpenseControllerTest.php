@@ -17,6 +17,8 @@ use App\Entity\ExpenseApprovalLevel;
 use App\Entity\Project;
 use App\Entity\Quotation;
 use App\Entity\QuotationLine;
+use App\Entity\Team;
+use App\Entity\TeamMember;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -519,6 +521,180 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
             'data-href="' . $this->createUrl('/expense/' . $expenseId . '/edit') . '"',
             $content
         );
+    }
+
+    /**
+     * Traces: "Unauthorized direct URL access is denied, not silently
+     * filtered" / "Unauthorized user is excluded from the list".
+     */
+    public function testUnauthorizedTeamleadIsDeniedDirectAccessAndExcludedFromList(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $team = $this->createTeam();
+        [, $project] = $this->createCustomerAndProjectWithTeam($team);
+        $creator = $this->createTeamleadUser();
+        // stays draft: the seeded ROLE_TEAMLEAD approval level (level 1)
+        // would otherwise make any teamlead an eligible approver once
+        // submitted, which would defeat this negative case.
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000, '100.00', $creator);
+        $description = $expense->getDescription();
+        self::assertIsString($description);
+
+        $this->request($client, '/expense/' . $expense->getId());
+        $this->assertAccessDenied($client);
+        self::assertStringNotContainsString($description, (string) $client->getResponse()->getContent());
+
+        $this->request($client, '/expense/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringNotContainsString($description, (string) $client->getResponse()->getContent());
+    }
+
+    /**
+     * Traces: "Team-accessible allocation grants visibility" / "Creator
+     * always sees their own expense" / "Admin and super-admin see every
+     * expense unchanged".
+     */
+    public function testTeamMemberCreatorAndAdminSeeTheTeamScopedExpense(): void
+    {
+        // The kernel must be booted via createClient() (through
+        // getClientForAuthenticatedUser()) BEFORE any getEntityManager()
+        // call, or WebTestCase refuses subsequent createClient()/loginUser()
+        // calls ("kernel should only be booted once"). Identity is then
+        // switched on this SAME client instance, matching the established
+        // testRejectDiscardsAccumulatedApprovals precedent.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $team = $this->createTeam();
+        [, $project] = $this->createCustomerAndProjectWithTeam($team);
+        $creator = $this->createTeamleadUser();
+        $teamMember = $this->createTeamleadUser();
+        $this->addUserToTeam($teamMember, $team);
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000, '100.00', $creator);
+        $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
+        $description = $expense->getDescription();
+        self::assertIsString($description);
+
+        // Admin bypass (already logged in as such).
+        $this->assertExpenseVisibleInListAndDetail($client, $expenseId, $description);
+
+        \assert($client instanceof KernelBrowser);
+
+        $client->loginUser($teamMember, 'secured_area');
+        $this->assertExpenseVisibleInListAndDetail($client, $expenseId, $description);
+
+        $client->loginUser($creator, 'secured_area');
+        $this->assertExpenseVisibleInListAndDetail($client, $expenseId, $description);
+    }
+
+    /**
+     * Traces: "Approver carve-out grants visibility without a team-project
+     * match".
+     */
+    public function testEligibleApproverSeesOffTeamExpensePendingApproval(): void
+    {
+        // See testTeamMemberCreatorAndAdminSeeTheTeamScopedExpense - the
+        // kernel must be booted via createClient() first.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $team = $this->createTeam();
+        [, $project] = $this->createCustomerAndProjectWithTeam($team);
+        $creator = $this->createTeamleadUser();
+        // deliberately NOT added to $team: the approver carve-out must
+        // grant visibility with zero team-project overlap.
+        $approver = $this->createTeamleadUser();
+
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000, '100.00', $creator);
+        $expense->submitForApproval(1);
+        $this->getEntityManager()->flush();
+        $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
+        $description = $expense->getDescription();
+        self::assertIsString($description);
+
+        \assert($client instanceof KernelBrowser);
+        $client->loginUser($approver, 'secured_area');
+        $this->assertExpenseVisibleInListAndDetail($client, $expenseId, $description);
+    }
+
+    private function assertExpenseVisibleInListAndDetail(HttpKernelBrowser $client, int $expenseId, string $description): void
+    {
+        $this->request($client, '/expense/' . $expenseId);
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringContainsString($description, (string) $client->getResponse()->getContent());
+
+        $this->request($client, '/expense/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertStringContainsString($description, (string) $client->getResponse()->getContent());
+    }
+
+    /**
+     * Explicitly persists the TeamMember join row instead of going through
+     * Team::addUser() on an already-flushed $team. Unlike a plain unit test,
+     * this functional test crosses a real HTTP boundary: Symfony reloads the
+     * User fresh from the database for the actual request, so an in-memory-
+     * only membership (never written to gppro_users_teams) would silently
+     * NOT be picked up, unlike a same-process repository test where the
+     * User object's in-memory getTeams() is read directly.
+     */
+    private function addUserToTeam(User $user, Team $team): void
+    {
+        $member = new TeamMember();
+        $member->setTeam($team);
+        $member->setUser($user);
+        $this->getEntityManager()->persist($member);
+        $this->getEntityManager()->flush();
+    }
+
+    private function createTeam(): Team
+    {
+        $team = new Team('Expense controller test team ' . uniqid());
+        $this->getEntityManager()->persist($team);
+        $this->getEntityManager()->flush();
+
+        return $team;
+    }
+
+    /** @return array{0: Customer, 1: Project} */
+    private function createCustomerAndProjectWithTeam(Team $team): array
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Expense test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+
+        $project = new Project();
+        $project->setName('Expense test project ' . uniqid());
+        $project->setCustomer($customer);
+        // Doctrine only tracks owning-side ManyToMany changes on a
+        // PersistentCollection - the team must be attached before the
+        // project's first persist/flush, not after.
+        $project->addTeam($team);
+
+        $em->persist($customer);
+        $em->persist($project);
+        $em->flush();
+
+        return [$customer, $project];
+    }
+
+    private function createTeamleadUser(): User
+    {
+        $suffix = uniqid();
+        $user = new User();
+        $user->setUsername('expense-ctrl-test-' . $suffix);
+        $user->setEmail('expense-ctrl-test-' . $suffix . '@example.com');
+        $user->setPassword('irrelevant');
+        $user->setEnabled(true);
+        $user->setRoles([User::ROLE_TEAMLEAD]);
+        // A freshly-created user without any wizard step marked as seen gets
+        // redirected to /wizard/intro by WizardSubscriber before ever
+        // reaching the expense routes under test.
+        $user->setWizardAsSeen('intro');
+        $user->setWizardAsSeen('profile');
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+
+        return $user;
     }
 
     public function testViewAndListRenderTranslatedCategoryLabel(): void

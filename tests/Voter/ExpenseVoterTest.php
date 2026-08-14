@@ -9,8 +9,12 @@
 
 namespace App\Tests\Voter;
 
+use App\Entity\Customer;
 use App\Entity\Expense;
+use App\Entity\ExpenseAllocation;
 use App\Entity\ExpenseApprovalLevel;
+use App\Entity\Project;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Expense\ExpenseApprovalPolicy;
 use App\Repository\ExpenseApprovalLevelRepository;
@@ -31,12 +35,109 @@ class ExpenseVoterTest extends AbstractVoterTestCase
         $this->assertVote($user, $expense, 'view_expense', VoterInterface::ACCESS_DENIED, []);
     }
 
-    public function testUserWithPermissionCanViewADraftExpense(): void
+    public function testUnrelatedTeamleadCannotViewABareExpenseWithoutAllocationsOrApproval(): void
     {
         $expense = new Expense();
         $user = self::getUser(1, User::ROLE_TEAMLEAD);
 
-        $this->assertVote($user, $expense, 'view_expense', VoterInterface::ACCESS_GRANTED, ['view_expense']);
+        $this->assertVote($user, $expense, 'view_expense', VoterInterface::ACCESS_DENIED, ['view_expense']);
+    }
+
+    public function testCreatorCanAlwaysViewOwnExpenseEvenOffTeam(): void
+    {
+        $user = self::getUser(1, User::ROLE_TEAMLEAD);
+
+        $offTeamProject = $this->makeProjectWithTeam(new Team('other-team'));
+        $expense = new Expense();
+        $expense->setCreatedBy($user);
+        $expense->addAllocation((new ExpenseAllocation())->setProject($offTeamProject)->setPercentage('100.00'));
+
+        $this->assertViewVote($user, $expense, VoterInterface::ACCESS_GRANTED);
+    }
+
+    public function testTeamAccessibleAllocationGrantsVisibility(): void
+    {
+        $user = self::getUser(1, User::ROLE_TEAMLEAD);
+        $creator = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $team = new Team('my-team');
+        $team->addUser($user);
+        $teamProject = $this->makeProjectWithTeam($team);
+
+        $expense = new Expense();
+        $expense->setCreatedBy($creator);
+        $expense->addAllocation((new ExpenseAllocation())->setProject($teamProject)->setPercentage('100.00'));
+
+        $this->assertViewVote($user, $expense, VoterInterface::ACCESS_GRANTED);
+    }
+
+    public function testEligibleApproverGrantsVisibilityWithoutATeamProjectMatch(): void
+    {
+        $user = self::getUser(1, User::ROLE_TEAMLEAD);
+        $creator = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $offTeamProject = $this->makeProjectWithTeam(new Team('other-team'));
+        $expense = new Expense();
+        $expense->setCreatedBy($creator);
+        $expense->addAllocation((new ExpenseAllocation())->setProject($offTeamProject)->setPercentage('100.00'));
+        $expense->submitForApproval(1);
+
+        $levelRepository = $this->createMock(ExpenseApprovalLevelRepository::class);
+        $levelRepository->method('findAllOrdered')->willReturn([$this->makeLevel(1, User::ROLE_TEAMLEAD)]);
+        $approvalRepository = $this->createMock(ExpenseApprovalRepository::class);
+        $approvalRepository->method('hasUserApprovedAnyLevel')->willReturn(false);
+
+        $this->assertViewVote($user, $expense, VoterInterface::ACCESS_GRANTED, $levelRepository, $approvalRepository);
+    }
+
+    public function testUnrelatedTeamleadIsDeniedWhenNotCreatorNotTeamNotApprover(): void
+    {
+        $user = self::getUser(1, User::ROLE_TEAMLEAD);
+        $creator = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $offTeamProject = $this->makeProjectWithTeam(new Team('other-team'));
+        $expense = new Expense();
+        $expense->setCreatedBy($creator);
+        $expense->addAllocation((new ExpenseAllocation())->setProject($offTeamProject)->setPercentage('100.00'));
+        $expense->submitForApproval(1);
+
+        $levelRepository = $this->createMock(ExpenseApprovalLevelRepository::class);
+        $levelRepository->method('findAllOrdered')->willReturn([$this->makeLevel(1, User::ROLE_ADMIN)]);
+        $approvalRepository = $this->createMock(ExpenseApprovalRepository::class);
+        $approvalRepository->method('hasUserApprovedAnyLevel')->willReturn(false);
+
+        $this->assertViewVote($user, $expense, VoterInterface::ACCESS_DENIED, $levelRepository, $approvalRepository);
+    }
+
+    public function testAdminAlwaysSeesEveryExpenseViaCanSeeAllData(): void
+    {
+        $user = self::getUser(1, User::ROLE_ADMIN);
+        $user->initCanSeeAllData(true);
+
+        $expense = new Expense();
+
+        $this->assertViewVote($user, $expense, VoterInterface::ACCESS_GRANTED);
+    }
+
+    private function makeProjectWithTeam(Team $team): Project
+    {
+        $customer = new Customer('Expense voter test customer');
+        $project = new Project();
+        $project->setCustomer($customer);
+        $project->addTeam($team);
+
+        return $project;
+    }
+
+    private function assertViewVote(User $user, Expense $expense, int $expected, ?ExpenseApprovalLevelRepository $levelRepository = null, ?ExpenseApprovalRepository $approvalRepository = null): void
+    {
+        $levelRepository ??= $this->createMock(ExpenseApprovalLevelRepository::class);
+        $approvalRepository ??= $this->createMock(ExpenseApprovalRepository::class);
+        $policy = new ExpenseApprovalPolicy($levelRepository, $approvalRepository);
+        $voter = new ExpenseVoter($this->getRolePermissionManager(), $policy);
+        $token = new UsernamePasswordToken($user, 'test', $user->getRoles());
+
+        self::assertSame($expected, $voter->vote($token, $expense, ['view_expense']));
     }
 
     public function testEditIsGrantedForDraftExpenseWithPermission(): void
