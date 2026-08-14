@@ -45,20 +45,20 @@ likely exceeds 250 lines on its own.
 
 ## Phase 3: Controller (PR 2 — security-relevant RED tests first)
 
-- [ ] 3.1 RED (MANDATORY, security): `tests/Controller/ActivityWorkspaceControllerTest.php` — request `project_activity_workspace` with an `{activity}` belonging to a different project → 404, no data from the other project rendered. Traces: "Activity from another project is rejected".
-- [ ] 3.2 RED (MANDATORY, security): same file — a user with `view` but not `comments` on the project sees no comment thread and no form; a user with `comments` sees both. Traces: "Unauthorized user sees neither thread nor form" / "Authorized user sees thread and form".
-- [ ] 3.3 RED: workspace with no `{activity}` renders panels 2 and 3 as empty states without error. Traces: "No activity selected renders an empty state".
-- [ ] 3.4 RED: selecting an activity renders base fields only (name, description, visible, billable, number, budget/timeBudget, project, milestone) and performs no `ActivityBoardState` read. Traces: "Selected activity renders base fields".
-- [ ] 3.5 RED: panel 1 lists exactly the requested project's non-global activities, excluding another project's activities. Traces: "Panel 1 shows only this project's activities".
-- [ ] 3.6 RED: direct URL to a valid `{activity}` renders that activity's detail and comments. Traces: "Direct URL to a selected activity renders its detail".
-- [ ] 3.7 RED: POSTing `comment_add` persists the comment with `createdBy`/timestamp and redirects; the comment appears in panel 3 after reload. Traces: "Comment appears after redirect".
-- [ ] 3.8 GREEN: `src/Controller/ActivityWorkspaceController.php` — `indexAction` (`#[IsGranted('view', 'project')]`) and `addCommentAction` (`#[IsGranted('comments', 'project')]`), both starting with the 404 cross-project guard (`$activity->getProject()?->getId() !== $project->getId()`) copied from `ActivityBoardController::updateCardAction`, per design's exact route/guard block. Run 3.1–3.7 green.
+- [x] 3.1 RED (MANDATORY, security): `tests/Controller/ActivityWorkspaceControllerTest.php` — request `project_activity_workspace` with an `{activity}` belonging to a different project → 404, no data from the other project rendered. Traces: "Activity from another project is rejected".
+- [x] 3.2 RED (MANDATORY, security): same file — a user with `view` but not `comments` on the project sees no comment thread and no form; a user with `comments` sees both. Traces: "Unauthorized user sees neither thread nor form" / "Authorized user sees thread and form".
+- [x] 3.3 RED: workspace with no `{activity}` renders panels 2 and 3 as empty states without error. Traces: "No activity selected renders an empty state".
+- [x] 3.4 RED: selecting an activity renders base fields only (name, description, visible, billable, number, budget/timeBudget, project, milestone) and performs no `ActivityBoardState` read. Traces: "Selected activity renders base fields".
+- [x] 3.5 RED: panel 1 lists exactly the requested project's non-global activities, excluding another project's activities. Traces: "Panel 1 shows only this project's activities".
+- [x] 3.6 RED: direct URL to a valid `{activity}` renders that activity's detail and comments. Traces: "Direct URL to a selected activity renders its detail".
+- [x] 3.7 RED: POSTing `comment_add` persists the comment with `createdBy`/timestamp and redirects; the comment appears in panel 3 after reload. Traces: "Comment appears after redirect".
+- [x] 3.8 GREEN: `src/Controller/ActivityWorkspaceController.php` — `indexAction` (`#[IsGranted('view', 'project')]`) and `addCommentAction` (`#[IsGranted('comments', 'project')]`), both starting with the 404 cross-project guard (`$activity->getProject()?->getId() !== $project->getId()`) copied from `ActivityBoardController::updateCardAction`, per design's exact route/guard block. Run 3.1–3.7 green.
 
 ## Phase 4: Templates (PR 2)
 
-- [ ] 4.1 Create `templates/activity_workspace/embed_activities.html.twig` — adapted copy of `templates/project/embed_activities.html.twig` for panel 1 (D5: copy, not parameterize; keeps the details-tab partial byte-identical).
-- [ ] 4.2 Create `templates/activity_workspace/index.html.twig` — `{% extends 'base.html.twig' %}`, `page_setup`, 3-column layout; panel 3 is `{% if comments is not null %}{{ include('embeds/comments.html.twig', {'form': commentForm, 'comments': comments}) }}{% endif %}` — verbatim reuse, zero new markup in that partial (D6).
-- [ ] 4.3 Verify: `lint:twig` on both new templates.
+- [x] 4.1 Create `templates/activity_workspace/embed_activities.html.twig` — adapted copy of `templates/project/embed_activities.html.twig` for panel 1 (D5: copy, not parameterize; keeps the details-tab partial byte-identical).
+- [x] 4.2 Create `templates/activity_workspace/index.html.twig` — `{% extends 'base.html.twig' %}`, `page_setup`, 3-column layout; panel 3 is `{% if comments is not null %}{{ include('embeds/comments.html.twig', {'form': commentForm, 'comments': comments}) }}{% endif %}` — verbatim reuse, zero new markup in that partial (D6).
+- [x] 4.3 Verify: `lint:twig` on both new templates.
 
 ## Phase 5: Navigation — Picker Routes + Menu (PR 3)
 
