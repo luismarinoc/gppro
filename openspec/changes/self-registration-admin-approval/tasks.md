@@ -82,9 +82,9 @@ Chain strategy: stacked-to-main
 
 ## Phase 8: PR2 Regression + Full Sweep (after both PRs merged)
 
-- [ ] 8.1 Run `phpunit tests/Voter/UserVoterTest.php tests/Controller/UserControllerTest.php tests/EventSubscriber/Actions/UserSubscriberTest.php` plus the Phase 7 query/repository test file — all green.
-- [ ] 8.2 Confirm existing `UserController` delete/edit/roles suites and `UserQuery`'s `systemAccount`/`role`/`searchTeams` filters are unaffected (regression).
-- [ ] 8.3 `phpstan analyse -c tests/phpstan.neon` — expect exactly 1 pre-existing unrelated error (same baseline as Phase 4).
-- [ ] 8.4 `lint:twig` on `templates/user/index.html.twig` and `templates/emails/user_approved.html.twig`; `lint:xliff` on all 4 touched translation files.
-- [ ] 8.5 Full sweep: run `SelfRegistrationControllerTest` + `UserControllerTest` + `UserVoterTest` + `UserSubscriberTest` + `UserTest` together once both PRs are merged; confirm zero cross-PR regression.
-- [ ] 8.6 Open PR2 (base: main, after PR1 merges).
+- [x] 8.1 Ran `phpunit tests/Voter/UserVoterTest.php tests/Controller/UserControllerTest.php tests/EventSubscriber/Actions/UserSubscriberTest.php tests/Repository/UserRepositoryTest.php tests/Repository/Query/UserQueryTest.php` — 145 tests, 494 assertions, OK.
+- [x] 8.2 Confirmed: existing `UserController` delete/create/export/index suites (`testDeleteAction`, `testDeleteActionWithTimesheetEntries`, `testDeleteActionWithUserReplacementAndTimesheetEntries`, `testCreateAction`, `testIndexAction`, `testExportAction`, `testForcePasswordResetAction*`, `testRevokeRememberMeAction*`) and `UserQuery`'s `role`/`searchTeams`/`systemAccount` filter tests (`testQuery`, `testSystemAccount`) all still pass unmodified, within the same 8.1 run.
+- [x] 8.3 `phpstan analyse -c tests/phpstan.neon --no-progress` — exactly 1 pre-existing unrelated error (`Controller/QuotationControllerTest.php::decodeJsonResponse()` return.type baseline) — same as Phase 4's baseline.
+- [x] 8.4 `lint:twig templates/user/index.html.twig templates/emails/user_approved.html.twig` — OK (2 files). `lint:xliff messages.en.xlf messages.es.xlf email.en.xlf email.es.xlf` — OK (4 files).
+- [x] 8.5 Full sweep: `phpunit tests/Entity/UserTest.php tests/Controller/UserControllerTest.php tests/Controller/Security/SelfRegistrationControllerTest.php tests/Voter/UserVoterTest.php tests/User/UserServiceTest.php tests/Repository/Query/UserQueryTest.php tests/Repository/UserRepositoryTest.php tests/EventSubscriber/Actions/UserSubscriberTest.php` — 200 tests, 980 assertions, OK. Confirms zero regression across PR2, PR1, and the already-merged sibling `login-security-management`/`approval-workflows-expansion` work on `main`.
+- [ ] 8.6 Open PR2 (base: main, after PR1 merges). NOT opened per orchestrator instruction (do not push/open PR) — branch `self-registration-admin-approval-pr2` (worktree: `gppro-worktrees/self-registration-admin-approval-pr2`) is ready for the orchestrator/user to push and open PR2 manually.
