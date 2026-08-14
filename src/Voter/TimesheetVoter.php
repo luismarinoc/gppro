@@ -106,6 +106,18 @@ final class TimesheetVoter extends Voter
                 // D2/decision 4: team-lead check only, no hasRolePermission() lookup
                 // at all (deliberately NOT registered in gppro.yaml) and no
                 // creator-exclusion -- self-approval by a lead is allowed.
+                //
+                // An already-approved entry must not keep granting either
+                // attribute: D7 makes it read-only, and approve/reject are
+                // one-shot decisions on a pending entry. Without this check,
+                // the list view keeps rendering both action buttons for a row
+                // that was already approved (the approval itself persists
+                // correctly, but the buttons never disappear on a fresh page
+                // load, making the approval look like a no-op).
+                if ($subject->isApproved()) {
+                    return false;
+                }
+
                 return (!$subject instanceof MultiUserTimesheet) && $this->isTeamLead($user, $subject);
 
             case self::CREATE:
