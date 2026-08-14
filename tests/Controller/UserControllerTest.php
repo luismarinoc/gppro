@@ -339,6 +339,78 @@ class UserControllerTest extends AbstractControllerBaseTestCase
     }
 
     /**
+     * This is the test that would have caught the original 405 bug: it derives the HTTP
+     * method from the rendered link's own `data-method` attribute - exactly what
+     * GpproConfirmationLink.js reads to decide whether to build and submit a real POST
+     * form or fall back to its default plain GET navigation - instead of hardcoding POST
+     * like the tests above do. Before the click-wiring fix, the rendered link carried no
+     * `data-method` attribute, so this test would have derived GET, hit the POST-only
+     * route and reproduced the live 405.
+     */
+    public function testForcePasswordResetLinkIsWiredToPostForARealClick(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        self::assertFalse($user->requiresPasswordReset());
+        self::assertNotNull($user->getId());
+
+        $crawler = $this->request($client, '/admin/user/?visibility=3');
+        $link = $crawler->filter('a[href*="/admin/user/' . $user->getId() . '/force-password-reset/"]');
+        self::assertGreaterThan(0, $link->count(), 'Could not find force-password-reset quick-action link');
+
+        $href = $link->attr('href');
+        self::assertIsString($href);
+
+        // mirrors GpproConfirmationLink.js: a plain link with no data-method attribute
+        // navigates via GET; only an explicit data-method="post" makes it build and
+        // submit a real POST form instead
+        $method = strtoupper($link->attr('data-method') ?? 'GET');
+        self::assertSame('POST', $method, 'the rendered quick-action link is not wired to POST via data-method - a real click would GET-navigate and 405 against the POST-only route');
+        self::assertStringContainsString('confirmation-link', (string) $link->attr('class'));
+
+        $this->requestPure($client, $href, $method);
+
+        self::assertNotEquals(405, $client->getResponse()->getStatusCode(), 'clicking the rendered link produced a 405 - the frontend is not wired to POST');
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertTrue($reloaded->requiresPasswordReset());
+    }
+
+    public function testRevokeRememberMeLinkIsWiredToPostForARealClick(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        $previousSignature = $user->getSignatureDate();
+        self::assertNotNull($user->getId());
+
+        $crawler = $this->request($client, '/admin/user/?visibility=3');
+        $link = $crawler->filter('a[href*="/admin/user/' . $user->getId() . '/revoke-remember-me/"]');
+        self::assertGreaterThan(0, $link->count(), 'Could not find revoke-remember-me quick-action link');
+
+        $href = $link->attr('href');
+        self::assertIsString($href);
+
+        $method = strtoupper($link->attr('data-method') ?? 'GET');
+        self::assertSame('POST', $method, 'the rendered quick-action link is not wired to POST via data-method - a real click would GET-navigate and 405 against the POST-only route');
+        self::assertStringContainsString('confirmation-link', (string) $link->attr('class'));
+
+        $this->requestPure($client, $href, $method);
+
+        self::assertNotEquals(405, $client->getResponse()->getStatusCode(), 'clicking the rendered link produced a 405 - the frontend is not wired to POST');
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertNotEquals($previousSignature, $reloaded->getSignatureDate());
+    }
+
+    /**
      * Builds a pending-approval user directly (not via the HTTP self-registration flow), so the row
      * already exists in the database before the admin quick-action requests are made against it.
      */

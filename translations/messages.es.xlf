@@ -1522,6 +1522,14 @@
         <source>revoke_remember_me</source>
         <target>Revocar recordarme y forzar reautenticación</target>
       </trans-unit>
+      <trans-unit id="fp8ResetQK" resname="confirm.force_password_reset">
+        <source>confirm.force_password_reset</source>
+        <target>¿Realmente desea forzar el restablecimiento de contraseña de este usuario?</target>
+      </trans-unit>
+      <trans-unit id="rvkRmbrMQK" resname="confirm.revoke_remember_me">
+        <source>confirm.revoke_remember_me</source>
+        <target>¿Realmente desea revocar recordarme y forzar la reautenticación de este usuario?</target>
+      </trans-unit>
       <trans-unit id="lgnAudit1K" resname="login_audit">
         <source>login_audit</source>
         <target>Auditoría de inicio de sesión</target>
