@@ -1,0 +1,9 @@
+{% extends 'security/self-registration/layout.html.twig' %}
+
+{% block login_form %}
+
+    <p>
+        {{ 'registration.pending_approval'|trans({'%email%': email}) }}
+    </p>
+
+{% endblock %}
