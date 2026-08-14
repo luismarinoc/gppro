@@ -1181,4 +1181,88 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertSame('grandfathered re-save', $reloaded->getComment());
         self::assertNull($reloaded->getPaymentApprovalStatus());
     }
+
+    /**
+     * Task 3.3/regression guard: the D6 dual-gate targets ONLY the PAID
+     * transition - PENDING and CANCELED must remain fully ungated even for
+     * an invoice that was never submitted for payment approval.
+     */
+    public function testChangeStatusToPendingAndCanceledRemainUngatedForUnsubmittedInvoice(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->setStatus(Invoice::STATUS_NEW);
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+        self::assertNull($invoice->getPaymentApprovalStatus());
+
+        // real, rendered token-bearing links (mirrors
+        // testCreateActionAsAdminWithDownloadAndStatusChange) - a token
+        // minted via getCsrfToken() does not validate against the real
+        // client session used by subsequent $client->request() calls.
+        $this->request($client, '/invoice/show');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $link = $client->getCrawler()->selectLink('Waiting for payment');
+        $href = $link->attr('href');
+        self::assertIsString($href);
+        $this->request($client, $href);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/show'));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertTrue($reloaded->isPending());
+
+        $link = $client->getCrawler()->selectLink('Cancel invoice');
+        $href = $link->attr('href');
+        self::assertIsString($href);
+        $this->request($client, $href);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/show'));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertTrue($reloaded->isCanceled());
+    }
+
+    /**
+     * Task 3.4: a historical PAID invoice (pre-change, paymentApprovalStatus
+     * is null) must not be flagged as "unapproved" in the invoice_edit page -
+     * the only new UI touchpoint that exists before the approvals dashboard
+     * (PR4). No submit/approve/reject payment-approval action is offered.
+     */
+    public function testHistoricalPaidInvoiceShowsNoUnapprovedFlagOrPaymentApprovalActions(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->setIsPaid();
+        $invoice->setPaymentDate(new \DateTime());
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+        self::assertNull($invoice->getPaymentApprovalStatus());
+
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('Submit for payment approval', $content);
+        self::assertStringNotContainsString('Approve payment', $content);
+        self::assertStringNotContainsString('Reject payment', $content);
+        self::assertSame(0, $crawler->filter('form[action$="/submit-payment-approval"]')->count());
+        self::assertSame(0, $crawler->filter('form[action$="/approve-payment"]')->count());
+        self::assertSame(0, $crawler->filter('form[action$="/reject-payment"]')->count());
+    }
 }

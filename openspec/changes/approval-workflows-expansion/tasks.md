@@ -62,11 +62,11 @@ Two independent chains converge before the dashboard: Invoice (PR1->PR2->PR3, D1
 
 ## Phase 3: Invoice — Voter Extension + Functional Closure (PR3, base: PR2 branch)
 
-- [ ] 3.1 RED `tests/Voter/InvoiceVoterTest.php` — `approve_invoice_payment`/`reject_invoice_payment` attributes: eligible approver granted, ineligible denied, wired through `InvoicePaymentApprovalPolicy`.
-- [ ] 3.2 GREEN `src/Voter/InvoiceVoter.php` — extend existing `ALLOWED_ATTRIBUTES` array with `approve_invoice_payment`/`reject_invoice_payment` (confirmed: no new voter class per design's Open Questions resolution); inject `InvoicePaymentApprovalPolicy`.
-- [ ] 3.3 RED `tests/Controller/InvoiceControllerTest.php` — PENDING/CANCELED transitions remain ungated (regression guard scenario).
-- [ ] 3.4 RED same file — historical PAID invoice (pre-change, `paymentApprovalStatus = null`) shows no "unapproved" flag in any new UI touchpoint.
-- [ ] 3.5 Run `phpunit tests/Voter/InvoiceVoterTest.php tests/Controller/InvoiceControllerTest.php`, full Invoice test surface (`*Invoice*`), `phpstan analyse`; open PR3 (base: PR2 branch).
+- [x] 3.1 RED `tests/Voter/InvoiceVoterTest.php` — `approve_invoice_payment`/`reject_invoice_payment` attributes: eligible approver granted, ineligible denied, wired through `InvoicePaymentApprovalPolicy`.
+- [x] 3.2 GREEN `src/Voter/InvoiceVoter.php` — extend existing `ALLOWED_ATTRIBUTES` array with `approve_invoice_payment`/`reject_invoice_payment` (confirmed: no new voter class per design's Open Questions resolution); inject `InvoicePaymentApprovalPolicy`.
+- [x] 3.3 RED `tests/Controller/InvoiceControllerTest.php` — PENDING/CANCELED transitions remain ungated (regression guard scenario).
+- [x] 3.4 RED same file — historical PAID invoice (pre-change, `paymentApprovalStatus = null`) shows no "unapproved" flag in any new UI touchpoint.
+- [x] 3.5 Run `phpunit tests/Voter/InvoiceVoterTest.php tests/Controller/InvoiceControllerTest.php`, full Invoice test surface (`*Invoice*`), `phpstan analyse`; open PR3 (base: PR2 branch).
 
 ## Phase T: Timesheet Approval (PR-T, base: tracker, parallel to PR1)
 
