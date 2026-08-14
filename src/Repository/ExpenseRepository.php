@@ -109,6 +109,23 @@ class ExpenseRepository extends EntityRepository
     }
 
     /**
+     * Approvals bell badge (design A5): COUNT()-only sibling of
+     * findPendingForUser(), same naive creator-exclusion scope, no entity
+     * hydration - must not call/wrap that method (D8).
+     */
+    public function countPendingForUser(User $user): int
+    {
+        return (int) $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->andWhere('e.status = :status')
+            ->andWhere('e.createdBy != :user OR e.createdBy IS NULL')
+            ->setParameter('status', Expense::STATUS_PENDING_APPROVAL)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Original recurring expenses eligible to generate a new period copy.
      * Excludes generated copies themselves (sourceExpense IS NOT NULL) so
      * the recurrence chain never regenerates from a regenerated expense.

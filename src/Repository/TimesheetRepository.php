@@ -1024,6 +1024,28 @@ class TimesheetRepository extends EntityRepository
     }
 
     /**
+     * Approvals bell badge (design A5/Interfaces): COUNT()-only sibling of
+     * findPendingApprovalForUser(). Unlike the sibling's plain COUNT(id),
+     * this one MUST count DISTINCT t.id: project->teams->members multiplies
+     * rows when the user leads several teams on the same project, and the
+     * counter must not inherit that duplication.
+     */
+    public function countPendingApprovalForUser(User $user): int
+    {
+        return (int) $this->createQueryBuilder('t')
+            ->select('COUNT(DISTINCT t.id)')
+            ->join('t.project', 'p')
+            ->join('p.teams', 'team')
+            ->join('team.members', 'tm')
+            ->andWhere('tm.user = :user')
+            ->andWhere('tm.teamlead = true')
+            ->andWhere('t.approvedAt IS NULL')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * @return Query<Timesheet>
      */
     private function createTimesheetQuery(TimesheetQuery $timesheetQuery): Query

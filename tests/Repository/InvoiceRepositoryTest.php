@@ -143,4 +143,40 @@ class InvoiceRepositoryTest extends AbstractRepositoryTestCase
         self::assertNotContains($ownInvoice->getId(), $ids, 'The caller\'s own invoice must be excluded');
         self::assertNotContains($notSubmittedInvoice->getId(), $ids, 'An invoice never submitted for payment approval must be excluded');
     }
+
+    /**
+     * Approvals bell badge (design A5/Interfaces): the COUNT-only sibling
+     * must mirror findPendingPaymentApprovalForUser()'s naive scope exactly
+     * (creator exclusion only) and return a scalar int.
+     */
+    public function testCountPendingPaymentApprovalForUserMatchesNaiveScope(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var InvoiceRepository $repository */
+        $repository = $em->getRepository(Invoice::class);
+
+        $customer = $this->createCustomer('Dashboard repo invoice count customer');
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $otherUser = $this->getUserByRole(User::ROLE_TEAMLEAD);
+
+        $ownInvoice = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $ownInvoice->setUser($creator);
+        $ownInvoice->submitForPaymentApproval(1);
+        $em->persist($ownInvoice);
+        $em->flush();
+
+        $othersInvoiceOne = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $othersInvoiceOne->setUser($otherUser);
+        $othersInvoiceOne->submitForPaymentApproval(1);
+        $em->persist($othersInvoiceOne);
+        $em->flush();
+
+        $othersInvoiceTwo = $this->createInvoice($customer, new \DateTime('-1 day'));
+        $othersInvoiceTwo->setUser($otherUser);
+        $othersInvoiceTwo->submitForPaymentApproval(1);
+        $em->persist($othersInvoiceTwo);
+        $em->flush();
+
+        self::assertSame(2, $repository->countPendingPaymentApprovalForUser($creator));
+    }
 }
