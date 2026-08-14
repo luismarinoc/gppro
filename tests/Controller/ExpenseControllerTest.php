@@ -467,6 +467,60 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString((string) $ownExpense->getDescription(), $content);
     }
 
+    /**
+     * Row-click-to-edit consistency (see quotation/index.html.twig for the
+     * established pattern): a draft expense is still editable, so the row
+     * must carry data-href pointing at the edit route (mirrors
+     * `is_granted('edit_expense', expense)` - see ExpenseVoter, which grants
+     * edit only while the expense is still isEditable()/STATUS_DRAFT).
+     */
+    public function testIndexRowForDraftExpenseExposesDataHrefToEditRoute(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $expenseId = $expense->getId();
+
+        $this->request($client, '/expense/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString(
+            'data-href="' . $this->createUrl('/expense/' . $expenseId . '/edit') . '"',
+            $content
+        );
+        self::assertMatchesRegularExpression('/<tr[^>]*class="[^"]*alternative-link[^"]*"/', $content);
+    }
+
+    /**
+     * An approved expense is no longer editable (ExpenseVoter::edit_expense
+     * requires isEditable()/STATUS_DRAFT), so row-click must fall back to the
+     * existing view route instead - matching quotation's conditional pattern.
+     */
+    public function testIndexRowForApprovedExpenseExposesDataHrefToViewRoute(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $expense->submitForApproval(1);
+        $expense->clearLevel(1);
+        $this->getEntityManager()->flush();
+        $expenseId = $expense->getId();
+
+        $this->request($client, '/expense/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString(
+            'data-href="' . $this->createUrl('/expense/' . $expenseId) . '"',
+            $content
+        );
+        self::assertStringNotContainsString(
+            'data-href="' . $this->createUrl('/expense/' . $expenseId . '/edit') . '"',
+            $content
+        );
+    }
+
     public function testViewAndListRenderTranslatedCategoryLabel(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

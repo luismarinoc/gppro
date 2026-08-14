@@ -14,7 +14,8 @@
                 <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'date'|trans }}</th><th>{{ 'expense.category'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for expense in expenses %}
-                    <tr>
+                    {% set expense_row_url = is_granted('edit_expense', expense) ? path('expense_edit', {id: expense.id}) : path('expense_view', {id: expense.id}) %}
+                    <tr class="alternative-link cursor-pointer" data-href="{{ expense_row_url }}">
                         <td>{{ expense.description }}</td>
                         <td>{{ expense.amount }}</td>
                         <td>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</td>
