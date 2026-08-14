@@ -62,10 +62,10 @@ likely exceeds 250 lines on its own.
 
 ## Phase 5: Navigation — Picker Routes + Menu (PR 3)
 
-- [ ] 5.1 RED: extend `tests/Controller/ProjectControllerTest.php` — `admin_project_activity_workspace_picker` renders the project list; a row link targets `project_activity_workspace` when `workspaceMode` is active. Traces: "Selecting a project from the picker opens its workspace".
-- [ ] 5.2 GREEN: `src/Controller/ProjectController.php` — add `#[Route]` attributes for `admin_project_activity_workspace_picker` / `_paginated` on `indexAction`, `$workspaceMode` flag driving pagination route/title/row-link target, `createPageSetup()` 2nd arg, per the `$boardMode` precedent. Run 5.1 green.
-- [ ] 5.3 `templates/macros/widgets.html.twig` — `project_row_attr` gains 4th param `workspace` (lines 476–484).
-- [ ] 5.4 `templates/project/index.html.twig` — call `project_row_attr(entry, now, board_mode ?? false, workspace_mode ?? false)`.
+- [x] 5.1 RED: extend `tests/Controller/ProjectControllerTest.php` — `admin_project_activity_workspace_picker` renders the project list; a row link targets `project_activity_workspace` when `workspaceMode` is active. Traces: "Selecting a project from the picker opens its workspace".
+- [x] 5.2 GREEN: `src/Controller/ProjectController.php` — add `#[Route]` attributes for `admin_project_activity_workspace_picker` / `_paginated` on `indexAction`, `$workspaceMode` flag driving pagination route/title/row-link target, `createPageSetup()` 2nd arg, per the `$boardMode` precedent. Run 5.1 green.
+- [x] 5.3 `templates/macros/widgets.html.twig` — `project_row_attr` gains 4th param `workspace` (lines 476–484).
+- [x] 5.4 `templates/project/index.html.twig` — call `project_row_attr(entry, now, board_mode ?? false, workspace_mode ?? false)`.
 - [ ] 5.5 RED: extend `tests/EventSubscriber/MenuSubscriberTest.php` — `activities` entry points at `admin_project_activity_workspace_picker` under the `view_project` block; new `activities_all` sibling points at unchanged `admin_activity` under the `view_activity` block with its original child routes. Traces: "Global list still renders and is still reachable".
 - [ ] 5.6 GREEN: `src/EventSubscriber/MenuSubscriber.php` — repoint `activities` (view_project block, after `activity_board`), add `activities_all` (view_activity block, replacing the old entry, same child routes: `admin_activity_create`, `activity_details`, `admin_activity_edit`, `admin_activity_delete`). Run 5.5 green.
 

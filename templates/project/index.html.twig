@@ -2,7 +2,7 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% import "project/actions.html.twig" as actions %}
 
-{% block datatable_row_attr %} {{ widgets.project_row_attr(entry, now, board_mode ?? false) }}{% endblock %}
+{% block datatable_row_attr %} {{ widgets.project_row_attr(entry, now, board_mode ?? false, workspace_mode ?? false) }}{% endblock %}
 
 {% block datatable_column_value %}
     {% if column == 'name' %}
