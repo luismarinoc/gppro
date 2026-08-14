@@ -14,6 +14,8 @@ use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\Project;
 use App\Entity\Tag;
+use App\Entity\Team;
+use App\Entity\TeamMember;
 use App\Entity\Timesheet;
 use App\Entity\User;
 use App\Repository\ActivityRepository;
@@ -308,5 +310,136 @@ class TimesheetRepositoryTest extends AbstractRepositoryTestCase
         self::assertSame(25.0, $byProject[$projectTwoId]['amount']);
         self::assertSame(900, $byProject[$projectTwoId]['duration']);
         self::assertSame($projectTwo->getName(), $byProject[$projectTwoId]['projectName']);
+    }
+
+    private function createTeam(): Team
+    {
+        $em = $this->getEntityManager();
+        $team = new Team('Dashboard repo test team ' . uniqid());
+        $em->persist($team);
+        $em->flush();
+
+        return $team;
+    }
+
+    private function createProjectWithTeam(Team $team): Project
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Dashboard repo test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+
+        $project = new Project();
+        $project->setName('Dashboard repo test project ' . uniqid());
+        $project->setCustomer($customer);
+        $project->addTeam($team);
+
+        $em->persist($customer);
+        $em->persist($project);
+        $em->flush();
+
+        return $project;
+    }
+
+    private function addUserToTeamAsLead(User $user, Team $team): void
+    {
+        $member = new TeamMember();
+        $member->setTeam($team);
+        $member->setUser($user);
+        $member->setTeamlead(true);
+        $this->getEntityManager()->persist($member);
+        $this->getEntityManager()->flush();
+    }
+
+    private function addUserToTeam(User $user, Team $team): void
+    {
+        $member = new TeamMember();
+        $member->setTeam($team);
+        $member->setUser($user);
+        $this->getEntityManager()->persist($member);
+        $this->getEntityManager()->flush();
+    }
+
+    private function createTimesheetEntry(User $owner, Project $project): Timesheet
+    {
+        $em = $this->getEntityManager();
+
+        $activity = new Activity();
+        $activity->setName('Dashboard repo test activity ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+        $em->flush();
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($owner);
+        $timesheet->setProject($project);
+        $timesheet->setActivity($activity);
+        $timesheet->setBegin(new \DateTime('-2 hours'));
+        $timesheet->setEnd(new \DateTime('-1 hours'));
+        $em->persist($timesheet);
+        $em->flush();
+
+        return $timesheet;
+    }
+
+    /**
+     * Task 4.1: only entries belonging to a project whose team the given
+     * user leads are returned; entries under a team the user is a member of
+     * (but not lead) or unrelated entries must not appear.
+     */
+    public function testFindPendingApprovalForUserReturnsOnlyEntriesLedByUser(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        $lead = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $member = $this->getUserByRole(User::ROLE_USER);
+
+        $ledTeam = $this->createTeam();
+        $this->addUserToTeamAsLead($lead, $ledTeam);
+        $ledProject = $this->createProjectWithTeam($ledTeam);
+        $ledEntry = $this->createTimesheetEntry($member, $ledProject);
+
+        $otherTeam = $this->createTeam();
+        $this->addUserToTeam($lead, $otherTeam);
+        $otherProject = $this->createProjectWithTeam($otherTeam);
+        $this->createTimesheetEntry($member, $otherProject);
+
+        $result = $repository->findPendingApprovalForUser($lead);
+        $ids = array_map(static fn (Timesheet $t) => $t->getId(), $result);
+
+        self::assertCount(1, $result);
+        self::assertSame([$ledEntry->getId()], $ids);
+    }
+
+    /**
+     * Task 4.1: an entry that already carries an approval must not be
+     * returned again, even for the lead who could approve it.
+     */
+    public function testFindPendingApprovalForUserExcludesAlreadyApprovedEntries(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        $lead = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $member = $this->getUserByRole(User::ROLE_USER);
+
+        $team = $this->createTeam();
+        $this->addUserToTeamAsLead($lead, $team);
+        $project = $this->createProjectWithTeam($team);
+
+        $pendingEntry = $this->createTimesheetEntry($member, $project);
+        $approvedEntry = $this->createTimesheetEntry($member, $project);
+        $approvedEntry->approve($lead);
+        $em->persist($approvedEntry);
+        $em->flush();
+
+        $result = $repository->findPendingApprovalForUser($lead);
+        $ids = array_map(static fn (Timesheet $t) => $t->getId(), $result);
+
+        self::assertSame([$pendingEntry->getId()], $ids);
     }
 }
