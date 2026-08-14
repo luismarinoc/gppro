@@ -698,6 +698,14 @@
         <source>Working times</source>
         <target state="translated">Working times</target>
       </trans-unit>
+      <trans-unit id="fp8ResetK" resname="force_password_reset">
+        <source>force_password_reset</source>
+        <target>Force password reset</target>
+      </trans-unit>
+      <trans-unit id="rvkRmbrMK" resname="revoke_remember_me">
+        <source>revoke_remember_me</source>
+        <target>Revoke remember-me &amp; force re-auth</target>
+      </trans-unit>
       <trans-unit id="iaJj4va" resname="work_times_account">
         <source>Account working times</source>
         <target state="translated">Account working times</target>

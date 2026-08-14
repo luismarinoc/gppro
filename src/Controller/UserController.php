@@ -29,6 +29,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -179,6 +181,40 @@ final class UserController extends AbstractController
             'stats' => $stats,
             'form' => $deleteForm->createView(),
         ]);
+    }
+
+    #[Route(path: '/{id}/force-password-reset/{csrfToken}', name: 'admin_user_force_password_reset', methods: ['POST'])]
+    #[IsGranted('password', 'userToUpdate')]
+    public function forcePasswordResetAction(User $userToUpdate, string $csrfToken, CsrfTokenManagerInterface $csrfTokenManager): Response
+    {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('admin_user_force_password_reset_' . $userToUpdate->getId(), $csrfToken))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_user');
+        }
+
+        $userToUpdate->setRequiresPasswordReset(true);
+        $this->repository->saveUser($userToUpdate);
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute('admin_user');
+    }
+
+    #[Route(path: '/{id}/revoke-remember-me/{csrfToken}', name: 'admin_user_revoke_remember_me', methods: ['POST'])]
+    #[IsGranted('password', 'userToUpdate')]
+    public function revokeRememberMeAction(User $userToUpdate, string $csrfToken, CsrfTokenManagerInterface $csrfTokenManager): Response
+    {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('admin_user_revoke_remember_me_' . $userToUpdate->getId(), $csrfToken))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_user');
+        }
+
+        $userToUpdate->resetSecuritySignature();
+        $this->repository->saveUser($userToUpdate);
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute('admin_user');
     }
 
     #[Route(path: '/export', name: 'user_export', methods: ['GET'])]

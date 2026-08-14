@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpKernel\HttpKernelBrowser;
 
 #[Group('integration')]
 class UserControllerTest extends AbstractControllerBaseTestCase
@@ -217,6 +218,122 @@ class UserControllerTest extends AbstractControllerBaseTestCase
 
         $this->request($client, '/admin/user/' . $user->getId() . '/edit');
         self::assertFalse($client->getResponse()->isSuccessful());
+    }
+
+    /**
+     * The quick-action links carry a real, session-bound CSRF token generated
+     * by UserSubscriber::onActions() when the index page renders. A token
+     * minted via a detached test session (AbstractControllerBaseTestCase::
+     * getCsrfToken()) does not validate against that real session - see
+     * ExpenseControllerTest's class docblock for the same caveat - so the
+     * only reliable way to get a real, valid token is to read it back from
+     * the actually rendered dropdown link.
+     */
+    private function extractQuickActionUrl(HttpKernelBrowser $client, int $userId, string $routeNamePart): string
+    {
+        $crawler = $this->request($client, '/admin/user/');
+        $link = $crawler->filter('a[href*="/admin/user/' . $userId . '/' . $routeNamePart . '/"]');
+        self::assertGreaterThan(0, $link->count(), 'Could not find quick-action link for user ' . $userId . ' and route "' . $routeNamePart . '"');
+
+        $href = $link->attr('href');
+        self::assertIsString($href);
+
+        return $href;
+    }
+
+    public function testForcePasswordResetActionSetsRequiresPasswordResetFlag(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        self::assertFalse($user->requiresPasswordReset());
+        self::assertNotNull($user->getId());
+
+        $url = $this->extractQuickActionUrl($client, $user->getId(), 'force-password-reset');
+        $this->requestPure($client, $url, 'POST');
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertTrue($reloaded->requiresPasswordReset());
+    }
+
+    public function testForcePasswordResetActionIsDeniedForNonSuperAdmin(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+
+        // ROLE_ADMIN cannot even see the quick-action link (isGranted('password', $user)
+        // is false for another user - only ROLE_SUPER_ADMIN has PROFILE_OTHER), so the
+        // denial is exercised directly against the route with a syntactically valid but
+        // non-matching token segment.
+        $this->request($client, '/admin/user/' . $user->getId() . '/force-password-reset/irrelevant-because-denied-before-csrf', 'POST');
+
+        self::assertEquals(403, $client->getResponse()->getStatusCode());
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertFalse($reloaded->requiresPasswordReset());
+    }
+
+    public function testForcePasswordResetActionRejectsInvalidCsrfToken(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+
+        $this->request($client, '/admin/user/' . $user->getId() . '/force-password-reset/not-a-real-token', 'POST');
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+        $client->followRedirect();
+        $this->assertHasFlashError($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertFalse($reloaded->requiresPasswordReset());
+    }
+
+    public function testRevokeRememberMeActionChangesSecuritySignatureWithoutTouchingSession(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        $previousSignature = $user->getSignatureDate();
+        self::assertNotNull($user->getId());
+
+        $url = $this->extractQuickActionUrl($client, $user->getId(), 'revoke-remember-me');
+        $this->requestPure($client, $url, 'POST');
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        // no session store service is involved: the action only rotates the
+        // signature date, it never touches session storage/handlers
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertNotEquals($previousSignature, $reloaded->getSignatureDate());
+    }
+
+    public function testRevokeRememberMeActionIsDeniedForNonSuperAdmin(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_USER);
+        $previousSignature = $user->getSignatureDate();
+
+        $this->request($client, '/admin/user/' . $user->getId() . '/revoke-remember-me/irrelevant-because-denied-before-csrf', 'POST');
+
+        self::assertEquals(403, $client->getResponse()->getStatusCode());
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertEquals($previousSignature, $reloaded->getSignatureDate());
     }
 
     #[DataProvider('getValidationTestData')]

@@ -43,16 +43,16 @@ Chain strategy: stacked-to-main
 - [x] 2.5 RED: same file — login with `_remember_me` checked issues a persistent cookie with unchanged lifetime/security properties (secure, httpOnly).
 - [x] 2.6 Run `phpunit tests/Controller/Security/SecurityControllerTest.php`, `lint:twig` on `login.html.twig`; open PR2 (base: main, after PR1 merges).
 
-## Phase 3: Admin User Quick Actions (PR3, base: main, after PR2 merges)
+## Phase 3: Admin User Quick Actions (PR3, base: main, after PR2 merges) — COMPLETE
 
-- [ ] 3.1 RED: extend `tests/Controller/UserControllerTest.php` — admin POST to `admin_user_force_password_reset` sets the target's `requiresPasswordReset()` to true.
-- [ ] 3.2 GREEN: `src/Controller/UserController.php` — add `forcePasswordResetAction`, route `admin_user_force_password_reset` (POST-only, CSRF-protected), `#[IsGranted('password', 'userToUpdate')]` (mirrors `deleteAction`'s single-subject pattern at line ~138-140), wraps `setRequiresPasswordReset(true)`.
-- [ ] 3.3 RED: same file — admin POST to `admin_user_revoke_remember_me` rotates the target's security signature and does NOT invalidate an already-active session (no session-store call made).
-- [ ] 3.4 GREEN: `src/Controller/UserController.php` — add `revokeRememberMeAction`, route `admin_user_revoke_remember_me`, `#[IsGranted('password', 'userToUpdate')]`, wraps `resetSecuritySignature()`.
-- [ ] 3.5 RED: extend `tests/EventSubscriber/Actions/UserSubscriberTest.php` — `onActions()` adds a `security` submenu with both actions when `isGranted('password', $user)` is true.
-- [ ] 3.6 GREEN: `src/EventSubscriber/Actions/UserSubscriber.php::onActions()` — add `$event->addActionToSubmenu('security', ...)` entries for both routes, gated by `$this->isGranted('password', $user)` (reuses existing `UserVoter` `password` attribute — no new voter), placed alongside the other submenu wiring (~lines 60-76). Do NOT touch `templates/user/actions.html.twig` directly.
-- [ ] 3.7 RED: same test files — non-admin (no `password` grant) POSTing either route gets 403; submenu entries absent from `onActions()` payload for a non-admin viewer.
-- [ ] 3.8 Run `phpunit tests/Controller/UserControllerTest.php tests/EventSubscriber/Actions/UserSubscriberTest.php tests/Voter/UserVoterTest.php`, `phpstan analyse`; open PR3 (base: main, after PR2 merges).
+- [x] 3.1 RED: extend `tests/Controller/UserControllerTest.php` — admin POST to `admin_user_force_password_reset` sets the target's `requiresPasswordReset()` to true.
+- [x] 3.2 GREEN: `src/Controller/UserController.php` — add `forcePasswordResetAction`, route `admin_user_force_password_reset` (POST-only, CSRF-protected), `#[IsGranted('password', 'userToUpdate')]` (mirrors `deleteAction`'s single-subject pattern at line ~138-140), wraps `setRequiresPasswordReset(true)`.
+- [x] 3.3 RED: same file — admin POST to `admin_user_revoke_remember_me` rotates the target's security signature and does NOT invalidate an already-active session (no session-store call made).
+- [x] 3.4 GREEN: `src/Controller/UserController.php` — add `revokeRememberMeAction`, route `admin_user_revoke_remember_me`, `#[IsGranted('password', 'userToUpdate')]`, wraps `resetSecuritySignature()`.
+- [x] 3.5 RED: extend `tests/EventSubscriber/Actions/UserSubscriberTest.php` — `onActions()` adds a `security` submenu with both actions when `isGranted('password', $user)` is true.
+- [x] 3.6 GREEN: `src/EventSubscriber/Actions/UserSubscriber.php::onActions()` — add `$event->addActionToSubmenu('security', ...)` entries for both routes, gated by `$this->isGranted('password', $user)` (reuses existing `UserVoter` `password` attribute — no new voter), placed alongside the other submenu wiring (~lines 60-76). Do NOT touch `templates/user/actions.html.twig` directly.
+- [x] 3.7 RED: same test files — non-admin (no `password` grant) POSTing either route gets 403; submenu entries absent from `onActions()` payload for a non-admin viewer.
+- [x] 3.8 Run `phpunit tests/Controller/UserControllerTest.php tests/EventSubscriber/Actions/UserSubscriberTest.php tests/Voter/UserVoterTest.php`, `phpstan analyse`; open PR3 (base: main, after PR2 merges).
 
 ## Phase 4: Login Audit Trail (PR4, base: main, after PR3 merges)
 
