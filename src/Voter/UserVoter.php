@@ -37,6 +37,8 @@ final class UserVoter extends Voter
         'contract',
         'hours',
         'supervisor',
+        'approve',
+        'reject',
     ];
 
     public function __construct(private readonly RolePermissionManager $permissionManager)
@@ -103,6 +105,13 @@ final class UserVoter extends Voter
 
         if ($attribute === 'supervisor' && $subject->getId() === $user->getId()) {
             return $user->isSuperAdmin();
+        }
+
+        if ($attribute === 'approve' || $attribute === 'reject') {
+            // a flat trust decision equivalent to creating a new live account: reuses the
+            // existing create_user permission (ROLE_SUPER_ADMIN-only) instead of registering
+            // new approve_user/reject_user permissions (see design decision table)
+            return $this->permissionManager->hasRolePermission($user, 'create_user');
         }
 
         $permission = $attribute;

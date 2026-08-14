@@ -57,8 +57,8 @@ Chain strategy: stacked-to-main
 
 ## Phase 5: Admin Approve/Reject Actions + Voter (PR2, base: main, after PR1 merges)
 
-- [ ] 5.1 RED: `tests/Voter/UserVoterTest.php` — `ROLE_SUPER_ADMIN` (holds `create_user`) granted `approve`/`reject` on any `User` subject; `ROLE_ADMIN` without `create_user` denied both.
-- [ ] 5.2 GREEN: `src/Voter/UserVoter.php` — add `approve`, `reject` to `ALLOWED_ATTRIBUTES`; branch in `voteOnAttribute()` returning `hasRolePermission($user, 'create_user')` for both, placed alongside the existing `delete`/`2fa` special-case branches (default `_own_profile`/`_other_profile` suffix path does not apply here). Run 5.1 green.
+- [x] 5.1 RED: `tests/Voter/UserVoterTest.php` — `ROLE_SUPER_ADMIN` (holds `create_user`) granted `approve`/`reject` on any `User` subject; `ROLE_ADMIN` without `create_user` denied both.
+- [x] 5.2 GREEN: `src/Voter/UserVoter.php` — add `approve`, `reject` to `ALLOWED_ATTRIBUTES`; branch in `voteOnAttribute()` returning `hasRolePermission($user, 'create_user')` for both, placed alongside the existing `delete`/`2fa` special-case branches (default `_own_profile`/`_other_profile` suffix path does not apply here). Run 5.1 green.
 - [ ] 5.3 RED: extend `tests/Controller/UserControllerTest.php` — `ROLE_SUPER_ADMIN` POST to `admin_user_approve` on a pending user sets `enabled = true`; same role's POST to `admin_user_reject` sets `rejectedAt`, leaves `enabled = false`, does NOT delete the row; `ROLE_ADMIN` (non-super) POST to either action gets 403 (spec: non-admin denied).
 - [ ] 5.4 GREEN: `src/Controller/UserController.php` — `approveAction(User $userToApprove, Request)`, `rejectAction(...)`: POST-only, CSRF-protected form mirroring `deleteAction`'s `createFormBuilder` pattern, `#[IsGranted('approve'/'reject', 'userToApprove')]`, routes `admin_user_approve`/`admin_user_reject`. Run 5.3 green.
 - [ ] 5.5 RED: extend `tests/EventSubscriber/Actions/UserSubscriberTest.php` — `onActions()` adds approve/reject quick-action entries only when `$user->isPendingApproval()` AND `isGranted('approve'/'reject', $user)`; absent for approved/rejected/never-confirmed users and for non-admin viewers.

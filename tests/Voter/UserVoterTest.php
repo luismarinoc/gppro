@@ -52,6 +52,14 @@ class UserVoterTest extends AbstractVoterTestCase
             yield [$user4, $user, 'delete', $result];
         }
 
+        // ROLE_SUPER_ADMIN holds create_user (via the USER permission set) and is granted
+        // approve/reject on any User subject, including non-pending ones - the voter itself
+        // does not check isPendingApproval(), that gating lives in UserSubscriber::onActions()
+        foreach ([$user1, $user2, $user3] as $user) {
+            yield [$user4, $user, 'approve', $result];
+            yield [$user4, $user, 'reject', $result];
+        }
+
         foreach ([$user1, $user2, $user3, $user4] as $user) {
             yield [$user, $user, 'view', $result];
             yield [$user, $user, 'edit', $result];
@@ -72,6 +80,13 @@ class UserVoterTest extends AbstractVoterTestCase
             yield [$user, $user4, 'delete', $result];
             yield [$user, $user4, 'hourly-rate', $result];
             yield [$user, $user4, 'hourly-rate', $result];
+        }
+
+        // ROLE_ADMIN does not hold create_user (only ROLE_SUPER_ADMIN maps to the USER
+        // permission set), so it is denied approve/reject same as lower roles
+        foreach ([$user1, $user2, $user3] as $actingUser) {
+            yield [$actingUser, $user1, 'approve', $result];
+            yield [$actingUser, $user1, 'reject', $result];
         }
 
         $result = VoterInterface::ACCESS_ABSTAIN;
