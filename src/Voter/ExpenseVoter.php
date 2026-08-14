@@ -57,7 +57,7 @@ final class ExpenseVoter extends Voter
         }
 
         return match ($attribute) {
-            'view_expense' => $this->permissions->hasRolePermission($user, 'view_expense'),
+            'view_expense' => $this->canView($subject, $user),
             'edit_expense' => $this->permissions->hasRolePermission($user, 'edit_expense') && $subject->isEditable(),
             'delete_expense' => $this->permissions->hasRolePermission($user, 'delete_expense') && \in_array($subject->getStatus(), [Expense::STATUS_DRAFT, Expense::STATUS_REJECTED], true),
             'charge_expense' => $this->permissions->hasRolePermission($user, 'charge_expense') && $subject->isApproved(),
@@ -65,5 +65,31 @@ final class ExpenseVoter extends Voter
             'reject_expense' => $this->approvalPolicy->canReject($subject, $user),
             default => false,
         };
+    }
+
+    /**
+     * Design D1/D2: cheapest-first order — admin bypass, then creator
+     * (O(1)), then a team-accessible allocation (in-memory loop over
+     * checkTeamAccessProject(), the ProjectVoter precedent), then the
+     * DB-backed approver carve-out last.
+     */
+    private function canView(Expense $expense, User $user): bool
+    {
+        if ($user->canSeeAllData()) {
+            return true;
+        }
+
+        if ($expense->getCreatedBy() === $user) {
+            return true;
+        }
+
+        foreach ($expense->getAllocations() as $allocation) {
+            $project = $allocation->getProject();
+            if (null !== $project && $this->permissions->checkTeamAccessProject($project, $user)) {
+                return true;
+            }
+        }
+
+        return $this->approvalPolicy->canApprove($expense, $user);
     }
 }

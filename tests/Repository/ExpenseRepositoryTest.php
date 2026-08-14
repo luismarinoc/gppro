@@ -13,6 +13,7 @@ use App\Entity\Customer;
 use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Entity\Project;
+use App\Entity\Team;
 use App\Entity\User;
 use App\Repository\ExpenseRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -105,17 +106,162 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
     {
         $repository = $this->getRepository();
         $project = $this->createProject();
+        $viewer = $this->createUser();
 
-        $draft = $this->createExpense($project);
-        $submitted = $this->createExpense($project);
+        $draft = $this->createExpense($project, $viewer);
+        $submitted = $this->createExpense($project, $viewer);
         $submitted->submitForApproval(1);
         $repository->saveExpense($submitted);
 
-        $draftResults = $repository->findForListing(Expense::STATUS_DRAFT);
+        $draftResults = $repository->findForListing($viewer, Expense::STATUS_DRAFT);
         $draftIds = array_map(static fn (Expense $e): ?int => $e->getId(), $draftResults);
 
         self::assertContains($draft->getId(), $draftIds);
         self::assertNotContains($submitted->getId(), $draftIds);
+    }
+
+    public function testFindForListingIncludesExpenseOnTeamAccessibleProject(): void
+    {
+        $repository = $this->getRepository();
+        $team = $this->createTeam();
+        $viewer = $this->createUserInTeam($team);
+        $creator = $this->createUser();
+        $project = $this->createProjectWithTeam($team);
+
+        $expense = $this->createExpense($project, $creator);
+
+        $results = $repository->findForListing($viewer);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertContains($expense->getId(), $ids);
+    }
+
+    public function testFindForListingExcludesExpenseOnNonTeamProjectForStranger(): void
+    {
+        $repository = $this->getRepository();
+        $team = $this->createTeam();
+        $otherTeam = $this->createTeam();
+        $viewer = $this->createUserInTeam($otherTeam);
+        $creator = $this->createUser();
+        $project = $this->createProjectWithTeam($team);
+
+        $expense = $this->createExpense($project, $creator);
+
+        $results = $repository->findForListing($viewer);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertNotContains($expense->getId(), $ids);
+    }
+
+    public function testFindForListingIncludesOwnExpenseOnNonTeamProject(): void
+    {
+        $repository = $this->getRepository();
+        $team = $this->createTeam();
+        $otherTeam = $this->createTeam();
+        $creator = $this->createUserInTeam($otherTeam);
+        $project = $this->createProjectWithTeam($team);
+
+        $expense = $this->createExpense($project, $creator);
+
+        $results = $repository->findForListing($creator);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertContains($expense->getId(), $ids);
+    }
+
+    public function testFindForListingReturnsExpenseOnceDespiteMultipleAllocationsWithPartialTeamMatch(): void
+    {
+        $repository = $this->getRepository();
+        $team = $this->createTeam();
+        $otherTeam = $this->createTeam();
+        $viewer = $this->createUserInTeam($team);
+        $creator = $this->createUser();
+        $teamProject = $this->createProjectWithTeam($team);
+        $otherProject = $this->createProjectWithTeam($otherTeam);
+
+        $expense = new Expense();
+        $expense->setDescription('Multi-allocation expense ' . uniqid());
+        $expense->setAmount(100000);
+        $expense->setExpenseDate(new \DateTimeImmutable('today'));
+        $expense->setCreatedBy($creator);
+        $expense->addAllocation((new ExpenseAllocation())->setProject($teamProject)->setPercentage('50.00')->setAmountClp(50000));
+        $expense->addAllocation((new ExpenseAllocation())->setProject($otherProject)->setPercentage('50.00')->setAmountClp(50000));
+        $repository->saveExpense($expense);
+
+        $results = $repository->findForListing($viewer);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertCount(1, array_filter($ids, static fn (?int $id): bool => $id === $expense->getId()));
+    }
+
+    public function testFindForListingReturnsEveryExpenseForAdminRegardlessOfTeamOrCreator(): void
+    {
+        $repository = $this->getRepository();
+        $team = $this->createTeam();
+        $otherTeam = $this->createTeam();
+        $admin = $this->createAdminUser();
+        $creator = $this->createUserInTeam($otherTeam);
+        $project = $this->createProjectWithTeam($team);
+
+        $expense = $this->createExpense($project, $creator);
+
+        $results = $repository->findForListing($admin);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertContains($expense->getId(), $ids);
+    }
+
+    private function createTeam(): Team
+    {
+        $em = $this->getEntityManager();
+
+        $team = new Team('Expense repository test team ' . uniqid());
+        $em->persist($team);
+        $em->flush();
+
+        return $team;
+    }
+
+    private function createUserInTeam(Team $team): User
+    {
+        $user = $this->createUser();
+        $team->addUser($user);
+        $this->getEntityManager()->flush();
+
+        return $user;
+    }
+
+    private function createAdminUser(): User
+    {
+        $user = $this->createUser();
+        $user->addRole(User::ROLE_SUPER_ADMIN);
+        $this->getEntityManager()->flush();
+
+        return $user;
+    }
+
+    private function createProjectWithTeam(Team $team): Project
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Expense repository test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+
+        $project = new Project();
+        $project->setName('Expense repository test project ' . uniqid());
+        $project->setCustomer($customer);
+        // Doctrine only tracks owning-side ManyToMany changes on a
+        // PersistentCollection - a freshly-created entity's collection stays
+        // a plain ArrayCollection after its first flush, so the team must be
+        // attached before the initial persist/flush, not after.
+        $project->addTeam($team);
+
+        $em->persist($customer);
+        $em->persist($project);
+        $em->flush();
+
+        return $project;
     }
 
     public function testFindPendingForUserExcludesOwnExpenses(): void
