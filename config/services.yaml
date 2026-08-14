@@ -277,6 +277,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\ActivityBoardState']
 
+    App\Repository\ActivityCommentRepository:
+        class: App\Repository\ActivityCommentRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\ActivityComment']
+
     App\Repository\ExpenseRepository:
         class: App\Repository\ExpenseRepository
         factory: ['@doctrine.orm.entity_manager', getRepository]
