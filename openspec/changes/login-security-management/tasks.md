@@ -36,12 +36,12 @@ Chain strategy: stacked-to-main
 
 ## Phase 2: Remember-Me Policy (PR2, base: main, after PR1 merges)
 
-- [ ] 2.1 RED: extend `tests/Controller/Security/SecurityControllerTest.php` — login with `_remember_me` unchecked/absent establishes a session without a persistent remember-me cookie.
-- [ ] 2.2 GREEN: `config/packages/security.yaml:49` — `always_remember_me: true` -> `false`.
-- [ ] 2.3 GREEN: `templates/security/login.html.twig:101` — `{% block remember_me %}{{ parent() }}{% endblock %}`, restoring the theme's already-working `_remember_me` checkbox (was blanked by the override).
-- [ ] 2.4 RED: same file — login form renders with the checkbox unchecked by default.
-- [ ] 2.5 RED: same file — login with `_remember_me` checked issues a persistent cookie with unchanged lifetime/security properties (secure, httpOnly).
-- [ ] 2.6 Run `phpunit tests/Controller/Security/SecurityControllerTest.php`, `lint:twig` on `login.html.twig`; open PR2 (base: main, after PR1 merges).
+- [x] 2.1 RED: extend `tests/Controller/Security/SecurityControllerTest.php` — login with `_remember_me` unchecked/absent establishes a session without a persistent remember-me cookie.
+- [x] 2.2 GREEN: `config/packages/security.yaml:49` — `always_remember_me: true` -> `false`.
+- [x] 2.3 GREEN: `templates/security/login.html.twig:101` — `{% block remember_me %}{{ parent() }}{% endblock %}`, restoring the theme's already-working `_remember_me` checkbox (was blanked by the override).
+- [x] 2.4 RED: same file — login form renders with the checkbox unchecked by default.
+- [x] 2.5 RED: same file — login with `_remember_me` checked issues a persistent cookie with unchanged lifetime/security properties (secure, httpOnly).
+- [x] 2.6 Run `phpunit tests/Controller/Security/SecurityControllerTest.php`, `lint:twig` on `login.html.twig`; open PR2 (base: main, after PR1 merges).
 
 ## Phase 3: Admin User Quick Actions (PR3, base: main, after PR2 merges)
 

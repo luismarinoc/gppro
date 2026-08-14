@@ -98,4 +98,4 @@
     {% endif %}
 {% endblock %}
 
-{% block remember_me %}{% endblock %}
+{% block remember_me %}{{ parent() }}{% endblock %}
