@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'login_audit'|trans }}</h3>
+        </div>
+        <div class="card-body">
+            <form method="get" action="{{ path('admin_login_audit') }}" class="row g-2 mb-3">
+                <div class="col-auto">
+                    <select name="outcome" class="form-select">
+                        <option value="">{{ 'all'|trans }}</option>
+                        {% for outcome in outcomes %}
+                            <option value="{{ outcome }}"{% if selectedOutcome == outcome %} selected{% endif %}>{{ ('login_audit.outcome.' ~ outcome)|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="user" class="form-control" placeholder="{{ 'login_audit.user'|trans }}" value="{{ selectedUser ? selectedUser.id : '' }}">
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="dateFrom" class="form-control" value="{{ selectedDateFrom ? selectedDateFrom|date('Y-m-d') : '' }}">
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="dateTo" class="form-control" value="{{ selectedDateTo ? selectedDateTo|date('Y-m-d') : '' }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">{{ 'filter'|trans }}</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                <tr>
+                    <th>{{ 'login_audit.attempted_username'|trans }}</th>
+                    <th>{{ 'login_audit.user'|trans }}</th>
+                    <th>{{ 'login_audit.outcome'|trans }}</th>
+                    <th>{{ 'login_audit.failure_reason'|trans }}</th>
+                    <th>{{ 'login_audit.ip_address'|trans }}</th>
+                    <th>{{ 'login_audit.user_agent'|trans }}</th>
+                    <th>{{ 'login_audit.created_at'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for entry in pagination.currentPageResults %}
+                    <tr>
+                        <td>{{ entry.attemptedUsername }}</td>
+                        <td>{% if entry.user %}{{ widgets.label_user(entry.user) }}{% else %}<span class="text-muted">&mdash;</span>{% endif %}</td>
+                        <td>{{ ('login_audit.outcome.' ~ entry.outcome)|trans }}</td>
+                        <td>{{ entry.failureReason }}</td>
+                        <td>{{ entry.ipAddress }}</td>
+                        <td>{{ entry.userAgent }}</td>
+                        <td>{{ entry.createdAt|date_time }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7">{{ 'login_audit.none_found'|trans }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if pagination.haveToPaginate %}
+            <div class="card-footer">
+                {{ pagination(pagination, {routeName: 'admin_login_audit', routeParams: app.request.query.all}) }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
