@@ -2606,6 +2606,10 @@
         <source>activity_board.edit_activity</source>
         <target>Edit activity</target>
       </trans-unit>
+      <trans-unit id="gpActBrd25" resname="activity.edit_denied">
+        <source>activity.edit_denied</source>
+        <target>You do not have permission to edit this activity</target>
+      </trans-unit>
       <trans-unit id="gpActWs1" resname="activity_workspace.title">
         <source>activity_workspace.title</source>
         <target>Activity workspace</target>

@@ -8,6 +8,10 @@
         {% set currency = activity.project.customer.currency %}
     {% endif %}
 
+    {% if not can_edit %}
+        <div id="activity_edit_denied" class="alert alert-warning">{{ 'activity.edit_denied'|trans }}</div>
+    {% endif %}
+
     {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
         {% import "macros/widgets.html.twig" as widgets %}
         {% import "customer/actions.html.twig" as customerActions %}

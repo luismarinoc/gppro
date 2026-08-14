@@ -42,10 +42,10 @@ Chain strategy: pending
 
 ## Phase 3: Denial message on read-only detail (RED then GREEN)
 
-- [ ] 3.1 RED: In `tests/Controller/ActivityControllerTest.php`, assert `#activity_edit_denied` is present with the exact es string "No tenés permiso para editar esta actividad" for a non-editor viewer, and absent for `ROLE_ADMIN`.
-- [ ] 3.2 GREEN: In `translations/messages.es.xlf` and `messages.en.xlf`, add `activity.edit_denied` (id continues at `gpActBrd24`): es "No tenés permiso para editar esta actividad", en "You do not have permission to edit this activity".
-- [ ] 3.3 GREEN: In `templates/activity/details.html.twig`, add `{% if not can_edit %}<div id="activity_edit_denied" class="alert alert-warning">{{ 'activity.edit_denied'|trans }}</div>{% endif %}` guarded by the existing `can_edit` variable (line 5).
-- [ ] 3.4 Re-run 3.1, confirm GREEN.
+- [x] 3.1 RED: In `tests/Controller/ActivityControllerTest.php`, assert `#activity_edit_denied` is present with the exact es string "No tenés permiso para editar esta actividad" for a non-editor viewer, and absent for `ROLE_ADMIN`.
+- [x] 3.2 GREEN: In `translations/messages.es.xlf` and `messages.en.xlf`, add `activity.edit_denied` (id `gpActBrd25`, continuing the `gpActBrd24` sequence added in Phase 1): es "No tenés permiso para editar esta actividad", en "You do not have permission to edit this activity".
+- [x] 3.3 GREEN: In `templates/activity/details.html.twig`, add `{% if not can_edit %}<div id="activity_edit_denied" class="alert alert-warning">{{ 'activity.edit_denied'|trans }}</div>{% endif %}` guarded by the existing `can_edit` variable (line 5).
+- [x] 3.4 Re-run 3.1, confirm GREEN.
 
 ## Phase 4: Read-only stage stepper (RED then GREEN)
 

@@ -29,6 +29,7 @@ use App\Tests\DataFixtures\ProjectFixtures;
 use App\Tests\DataFixtures\TeamFixtures;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use App\Tests\Mocks\ActivityTestMetaFieldSubscriberMock;
+use App\User\PermissionService;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -167,6 +168,85 @@ class ActivityControllerTest extends AbstractControllerBaseTestCase
         $this->assertAccessIsGranted($client, '/admin/activity/1/details');
 
         $this->assertDetailsPage($client);
+    }
+
+    public function testDetailsActionShowsEditDenialMessageForNonEditorViewer(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
+        $viewer = $this->getUserByRole(User::ROLE_USER);
+        $viewer->setLocale('es');
+
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Activity denial test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $project = new Project();
+        $project->setName('Activity denial test project ' . uniqid());
+        $project->setCustomer($customer);
+        $em->persist($project);
+
+        $activity = new Activity();
+        $activity->setName('Activity denied to viewer ' . uniqid());
+        $activity->setProject($project);
+        $em->persist($activity);
+
+        // view_team_activity without edit_team_activity - the viewer can
+        // reach activity_details but must see the denial message (D4/D5).
+        // Role name must be all-uppercase - RolePermissionManager::hasPermission()
+        // uppercases the role before matching against the permission map key.
+        $role = (new Role())->setName('TEST_VIEW_ACTIVITY_DETAILS_ONLY_' . strtoupper(uniqid()));
+        $viewActivityPermission = (new RolePermission())->setRole($role)->setPermission('view_team_activity')->setAllowed(true);
+
+        $roleName = $role->getName();
+        self::assertNotNull($roleName);
+        $viewer->addRole($roleName);
+
+        $team = new Team('Activity denial test team ' . uniqid());
+        $team->addUser($viewer);
+        $em->persist($team);
+        $project->addTeam($team);
+
+        $em->persist($role);
+        $em->persist($viewActivityPermission);
+        $em->persist($viewer);
+        $em->flush();
+
+        // PermissionService caches the full permission table for a day; only
+        // its own saveRolePermission() invalidates that cache entry, so a
+        // raw EntityManager flush above is invisible to RolePermissionManager
+        // until it is invalidated the same way here (mirrors
+        // ActivityWorkspaceControllerTest::createUserWithPermissions()).
+        /** @var PermissionService $permissionService */
+        $permissionService = self::getContainer()->get(PermissionService::class);
+        $permissionService->saveRolePermission($viewActivityPermission);
+
+        $activityId = $activity->getId();
+        self::assertNotNull($activityId);
+
+        // requestPure() (not request(), which always forces the /en prefix
+        // via createUrl()) with the explicit /es/ locale prefix
+        // (config/routes.yaml wraps every controller route in /{_locale}) so
+        // the denial message is rendered in the exact localized string the
+        // spec/design require, independent of the environment's default_locale.
+        $this->requestPure($client, '/es/admin/activity/' . $activityId . '/details');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $denialMessage = $client->getCrawler()->filter('#activity_edit_denied');
+        self::assertCount(1, $denialMessage);
+        self::assertSame('No tenés permiso para editar esta actividad', trim($denialMessage->text()));
+    }
+
+    public function testDetailsActionHidesEditDenialMessageForEditor(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $this->assertAccessIsGranted($client, '/admin/activity/1/details');
+
+        $denialMessage = $client->getCrawler()->filter('#activity_edit_denied');
+        self::assertCount(0, $denialMessage);
     }
 
     public function testDetailsActionRevenueOnlyCountsInvoicedTimesheets(): void
