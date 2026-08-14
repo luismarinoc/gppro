@@ -14,6 +14,7 @@ use App\Tests\Controller\AbstractControllerBaseTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Group('integration')]
 class SelfRegistrationControllerTest extends AbstractControllerBaseTestCase
@@ -139,16 +140,129 @@ class SelfRegistrationControllerTest extends AbstractControllerBaseTestCase
         $token = $user->getConfirmationToken();
         self::assertNotEmpty($token);
         self::assertFalse($user->isEnabled());
+        self::assertNull($user->getEmailConfirmedAt());
 
         $this->request($client, '/register/confirm/' . $token);
-        $this->assertIsRedirect($client, $this->createUrl('/register/confirmed'));
+        $this->assertIsRedirect($client, $this->createUrl('/register/pending-approval'));
         $client->followRedirect();
         self::assertTrue($client->getResponse()->isSuccessful());
         $content = $client->getResponse()->getContent();
-        self::assertStringContainsString('Congratulations example, your account is now activated.', $content);
+        self::assertStringContainsString('register@example.com', $content);
 
         $user = $this->loadUserFromDatabase('example');
-        self::assertTrue($user->isEnabled());
+        self::assertFalse($user->isEnabled());
+        self::assertNotNull($user->getEmailConfirmedAt());
+        self::assertNull($user->getConfirmationToken());
+        self::assertTrue($user->isPendingApproval());
+
+        // the user must NOT be auto-logged-in: any protected page still redirects to login
+        $this->assertRequestIsSecured($client, '/homepage');
+    }
+
+    public function testConfirmAccountRendersPendingApprovalPageFromSessionForFreshClient(): void
+    {
+        $client = self::createClient();
+        $user = $this->createUser($client, 'example', 'register@example.com', 'test1234');
+        $token = $user->getConfirmationToken();
+
+        $this->request($client, '/register/confirm/' . $token);
+        $this->assertIsRedirect($client, $this->createUrl('/register/pending-approval'));
+
+        $sessionCookie = $client->getCookieJar()->get('MOCKSESSID');
+        self::assertNotNull($sessionCookie, 'No session cookie was set after confirming the email.');
+
+        // simulate a brand-new, never-authenticated client that only carries the session cookie
+        // (mirror-trap: catches a getUser()-based implementation, since this client never logged in)
+        self::ensureKernelShutdown();
+        $freshClient = self::createClient();
+        $freshClient->getCookieJar()->set($sessionCookie);
+
+        $this->request($freshClient, '/register/pending-approval');
+        self::assertTrue($freshClient->getResponse()->isSuccessful());
+        self::assertStringContainsString('register@example.com', $freshClient->getResponse()->getContent());
+    }
+
+    /**
+     * Builds a previously-rejected user directly (not via the HTTP registration flow), so the row already
+     * exists in the database before the test client makes its first request.
+     */
+    private function createRejectedUser(string $username, string $email, string $password): User
+    {
+        $em = $this->getEntityManager();
+
+        /** @var UserPasswordHasherInterface $hasher */
+        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $user = new User();
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setLanguage('en');
+        $user->setEnabled(false);
+        $user->setPassword($hasher->hashPassword($user, $password));
+        $user->setEmailConfirmedAt(new \DateTimeImmutable('-1 day'));
+        $user->setRejectedAt(new \DateTimeImmutable('-1 hour'));
+
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+    }
+
+    private function submitRegistrationForm(KernelBrowser $client, string $username, string $email, string $password): void
+    {
+        $this->setSystemConfiguration('user.registration', true);
+        $this->request($client, '/register/');
+
+        $form = $client->getCrawler()->filter('form[name=user_registration_form]')->form();
+        $client->submit($form, [
+            'user_registration_form' => [
+                'email' => $email,
+                'username' => $username,
+                'plainPassword' => [
+                    'first' => $password,
+                    'second' => $password,
+                ],
+            ]
+        ]);
+    }
+
+    public function testRejectThenReregisterReusesSameRowAndClearsRejection(): void
+    {
+        $client = self::createClient();
+        $rejected = $this->createRejectedUser('example', 'register@example.com', 'test1234');
+        $originalId = $rejected->getId();
+        self::assertNotNull($originalId);
+
+        $this->submitRegistrationForm($client, 'example', 'register@example.com', 'newpassword1');
+
+        $this->assertIsRedirect($client, $this->createUrl('/register/check-email'));
+
+        $reloaded = $this->loadUserFromDatabase('example');
+        self::assertSame($originalId, $reloaded->getId());
+        self::assertNull($reloaded->getRejectedAt());
+        self::assertNull($reloaded->getEmailConfirmedAt());
+        self::assertNotEmpty($reloaded->getConfirmationToken());
+        self::assertFalse($reloaded->isEnabled());
+    }
+
+    public function testRejectThenReregisterFullReviewCycleRepeats(): void
+    {
+        $client = self::createClient();
+        $this->createRejectedUser('example', 'register@example.com', 'test1234');
+
+        $this->submitRegistrationForm($client, 'example', 'register@example.com', 'newpassword1');
+        $this->assertIsRedirect($client, $this->createUrl('/register/check-email'));
+
+        $reloaded = $this->loadUserFromDatabase('example');
+        $newToken = $reloaded->getConfirmationToken();
+        self::assertNotEmpty($newToken);
+
+        $this->request($client, '/register/confirm/' . $newToken);
+        $this->assertIsRedirect($client, $this->createUrl('/register/pending-approval'));
+
+        $confirmed = $this->loadUserFromDatabase('example');
+        self::assertTrue($confirmed->isPendingApproval());
+        self::assertFalse($confirmed->isEnabled());
     }
 
     public function testConfirmedAnonymousRedirectsToLogin(): void

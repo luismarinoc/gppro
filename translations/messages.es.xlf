@@ -1090,6 +1090,10 @@
         <source>An e-mail has been sent to %email%. It contains a link you must click to activate your account.</source>
         <target state="translated">Se ha enviado un correo electrónico a %email%. Contiene un enlace en el que debe pulsar para activar su cuenta.</target>
       </trans-unit>
+      <trans-unit id="reg.pending.appr" resname="registration.pending_approval" xml:space="preserve">
+        <source>Your email address %email% has been confirmed. An administrator will review your account and activate it shortly.</source>
+        <target state="translated">Su dirección de correo electrónico %email% ha sido confirmada. Un administrador revisará su cuenta y la activará en breve.</target>
+      </trans-unit>
       <trans-unit id="EwPAaws" resname="type">
         <source>type</source>
         <target>Tipo</target>

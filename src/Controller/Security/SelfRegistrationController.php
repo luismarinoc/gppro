@@ -15,7 +15,6 @@ use App\Entity\User;
 use App\Event\EmailEvent;
 use App\Event\EmailSelfRegistrationEvent;
 use App\Form\SelfRegistrationForm;
-use App\User\LoginManager;
 use App\User\UserService;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -48,7 +47,10 @@ final class SelfRegistrationController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $this->userService->createNewUser();
+        // A previously-rejected applicant re-registering with the same email reuses their existing row
+        // (instead of colliding with the unique email/username constraints on a brand-new row), and must
+        // go through the full email-confirmation + admin-approval cycle again, not be silently reinstated.
+        $user = $this->findRejectedUserForReregistration($request) ?? $this->userService->createNewUser();
         $user->setLanguage($request->getLocale());
 
         $form = $this->createSelfRegistrationForm();
@@ -59,6 +61,8 @@ final class SelfRegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setEnabled(false);
             $user->setConfirmationToken($this->userService->generateSecurityToken());
+            $user->setEmailConfirmedAt(null);
+            $user->setRejectedAt(null);
 
             $mail = $this->generateConfirmationEmail($user, $translator);
             $event = new EmailSelfRegistrationEvent($user, $mail);
@@ -108,10 +112,11 @@ final class SelfRegistrationController extends AbstractController
     }
 
     /**
-     * Receive the confirmation token from user email provider, login the user.
+     * Receive the confirmation token from user email provider. This marks the email as confirmed but does
+     * NOT enable the account and does NOT log the user in: an admin must approve the account first.
      */
     #[Route(path: '/confirm/{token}', name: 'registration_confirm', methods: ['GET'])]
-    public function confirmAction(LoginManager $loginManager, ?string $token): Response
+    public function confirmAction(Request $request, ?string $token): Response
     {
         if (!$this->configuration->isSelfRegistrationActive()) {
             throw $this->createNotFoundException();
@@ -124,18 +129,41 @@ final class SelfRegistrationController extends AbstractController
         }
 
         $user->setConfirmationToken(null);
-        $user->setEnabled(true);
+        $user->setEmailConfirmedAt(new \DateTimeImmutable());
 
         $this->userService->saveUser($user);
 
-        $response = $this->redirectToRoute('registration_confirmed');
-        $loginManager->logInUser($user, $response);
+        $request->getSession()->set('pending_approval_email_address', $user->getEmail());
 
-        return $response;
+        return $this->redirectToRoute('registration_pending_approval');
+    }
+
+    /**
+     * Tell the user their email is confirmed and their account is now awaiting admin approval.
+     * Deliberately reads the email from the session (not `getUser()`): the user is never auto-logged-in.
+     */
+    #[Route(path: '/pending-approval', name: 'registration_pending_approval', methods: ['GET'])]
+    public function pendingApprovalAction(Request $request): Response
+    {
+        if (!$this->configuration->isSelfRegistrationActive()) {
+            throw $this->createNotFoundException();
+        }
+
+        $email = $request->getSession()->get('pending_approval_email_address');
+
+        if (empty($email)) {
+            return $this->redirectToRoute('registration_register');
+        }
+
+        return $this->render('security/self-registration/pending_approval.html.twig', [
+            'email' => $email,
+        ]);
     }
 
     /**
      * Tell the user his account is now confirmed.
+     *
+     * @deprecated kept unused-but-untouched; superseded by pendingApprovalAction() (only reachable if manually linked)
      */
     #[Route(path: '/confirmed', name: 'registration_confirmed', methods: ['GET'])]
     public function confirmedAction(Request $request): Response
@@ -148,6 +176,29 @@ final class SelfRegistrationController extends AbstractController
             'user' => $this->getUser(),
             'targetUrl' => $this->getTargetUrlFromSession($request->getSession()),
         ]);
+    }
+
+    /**
+     * Looks up an existing rejected user by the submitted email, so the form binds to that same row
+     * instead of a brand-new one (avoiding a UniqueEntity(email/username) violation) and re-registration
+     * reuses/clears its rejection state rather than silently bypassing it or creating a duplicate row.
+     */
+    private function findRejectedUserForReregistration(Request $request): ?User
+    {
+        if (!$request->isMethod('POST')) {
+            return null;
+        }
+
+        $data = $request->request->all('user_registration_form');
+        $email = \is_array($data) && \is_string($data['email'] ?? null) ? $data['email'] : null;
+
+        if ($email === null || $email === '') {
+            return null;
+        }
+
+        $existing = $this->userService->findUserByEmail($email);
+
+        return ($existing !== null && $existing->getRejectedAt() !== null) ? $existing : null;
     }
 
     private function createSelfRegistrationForm(): FormInterface
