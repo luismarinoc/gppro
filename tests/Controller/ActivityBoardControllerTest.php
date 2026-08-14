@@ -17,10 +17,13 @@ use App\Entity\ActivityBoardStatus;
 use App\Entity\ActivityRate;
 use App\Entity\Customer;
 use App\Entity\Project;
+use App\Entity\Role;
+use App\Entity\RolePermission;
 use App\Entity\Team;
 use App\Entity\Timesheet;
 use App\Entity\User;
 use App\Repository\ActivityBoardStateRepository;
+use App\User\PermissionService;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -237,6 +240,98 @@ class ActivityBoardControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString('<Alex & Co>', $card->text());
         self::assertStringContainsString('<alex & co>', (string) $card->attr('data-search'));
         self::assertStringContainsString('&lt;Alex &amp; Co&gt;', (string) $card->html());
+    }
+
+    public function testBoardActionCardsAlwaysShowEditIconLinkingToDetails(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+        $activityOne = $this->createActivity($project, 'Card with edit icon one');
+        $activityTwo = $this->createActivity($project, 'Card with edit icon two');
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        $cards = $crawler->filter('.activity_board_card');
+        self::assertCount(2, $cards);
+
+        $editIcons = $crawler->filter('.activity_board_card a.activity_board_card_edit');
+        self::assertCount(2, $editIcons, 'the edit icon must always be present, never hover-gated');
+
+        $hrefs = $editIcons->each(static fn (Crawler $node): string => (string) $node->attr('href'));
+        foreach ([$activityOne, $activityTwo] as $activity) {
+            $expected = '/admin/activity/' . $activity->getId() . '/details';
+            $matches = array_filter($hrefs, static fn (string $href): bool => str_ends_with($href, $expected));
+            self::assertNotEmpty($matches, 'expected an href ending with "' . $expected . '" among: ' . implode(', ', $hrefs));
+        }
+    }
+
+    public function testBoardActionExposesCanEditFlagTrueForFullyPermittedUser(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card for admin can-edit flag');
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $card = $client->getCrawler()->filter('.activity_board_card[data-activity-id="' . $activity->getId() . '"]');
+        self::assertCount(1, $card);
+        self::assertSame('1', $card->attr('data-can-edit'));
+    }
+
+    public function testBoardActionExposesCanEditFlagFalseForViewOnlyTeamScopedUser(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
+        $viewer = $this->getUserByRole(User::ROLE_USER);
+
+        $project = $this->createProject();
+        $activity = $this->createActivity($project, 'Card for view-only can-edit flag');
+
+        $em = $this->getEntityManager();
+
+        // view_team_project/view_team_activity without edit_team_activity -
+        // the viewer can see the board and the card, but must never be
+        // marked as able to edit it (data-can-edit="0"). Role name must be
+        // all-uppercase - RolePermissionManager::hasPermission() uppercases
+        // the role before matching against the permission map key.
+        $role = (new Role())->setName('TEST_VIEW_TEAM_ONLY_' . strtoupper(uniqid()));
+        $viewProjectPermission = (new RolePermission())->setRole($role)->setPermission('view_team_project')->setAllowed(true);
+        $viewActivityPermission = (new RolePermission())->setRole($role)->setPermission('view_team_activity')->setAllowed(true);
+
+        $roleName = $role->getName();
+        self::assertNotNull($roleName);
+        $viewer->addRole($roleName);
+
+        $team = new Team('Board controller view-only team ' . uniqid());
+        $team->addUser($viewer);
+        $em->persist($team);
+        $project->addTeam($team);
+
+        $em->persist($role);
+        $em->persist($viewProjectPermission);
+        $em->persist($viewActivityPermission);
+        $em->persist($viewer);
+        $em->flush();
+
+        // PermissionService caches the full permission table for a day; only
+        // its own saveRolePermission() invalidates that cache entry, so a
+        // raw EntityManager flush above is invisible to RolePermissionManager
+        // until it is invalidated the same way here (mirrors
+        // ActivityWorkspaceControllerTest::createUserWithPermissions()).
+        /** @var PermissionService $permissionService */
+        $permissionService = self::getContainer()->get(PermissionService::class);
+        foreach ([$viewProjectPermission, $viewActivityPermission] as $rolePermission) {
+            $permissionService->saveRolePermission($rolePermission);
+        }
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $card = $client->getCrawler()->filter('.activity_board_card[data-activity-id="' . $activity->getId() . '"]');
+        self::assertCount(1, $card);
+        self::assertSame('0', $card->attr('data-can-edit'));
     }
 
     private function updateCardUrl(Project $project, Activity $activity): string

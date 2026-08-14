@@ -2602,6 +2602,10 @@
         <source>activity_board.new_activity</source>
         <target>New activity</target>
       </trans-unit>
+      <trans-unit id="gpActBrd24" resname="activity_board.edit_activity">
+        <source>activity_board.edit_activity</source>
+        <target>Edit activity</target>
+      </trans-unit>
       <trans-unit id="gpActWs1" resname="activity_workspace.title">
         <source>activity_workspace.title</source>
         <target>Activity workspace</target>
