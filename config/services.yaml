@@ -302,6 +302,11 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['App\Entity\InvoicePaymentApprovalLevel']
 
+    App\Repository\InvoicePaymentApprovalRepository:
+        class: App\Repository\InvoicePaymentApprovalRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['App\Entity\InvoicePaymentApproval']
+
     monolog.formatter.gppro:
         class: Monolog\Formatter\LineFormatter
         arguments:
