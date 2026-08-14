@@ -11,6 +11,7 @@ namespace App\Voter;
 
 use App\Entity\Invoice;
 use App\Entity\User;
+use App\Invoice\InvoicePaymentApprovalPolicy;
 use App\Security\RolePermissionManager;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -29,10 +30,14 @@ final class InvoiceVoter extends Voter
         'view_invoice',
         'edit_invoice',
         'delete_invoice',
+        'approve_invoice_payment',
+        'reject_invoice_payment',
     ];
 
-    public function __construct(private readonly RolePermissionManager $rolePermissionManager)
-    {
+    public function __construct(
+        private readonly RolePermissionManager $rolePermissionManager,
+        private readonly InvoicePaymentApprovalPolicy $approvalPolicy,
+    ) {
     }
 
     public function supportsAttribute(string $attribute): bool
@@ -60,6 +65,18 @@ final class InvoiceVoter extends Voter
 
         if (!$subject instanceof Invoice) {
             return false;
+        }
+
+        // approve/reject bypass the customer-team-access gate below entirely
+        // (mirrors ExpenseVoter's approve_expense/reject_expense): eligibility
+        // is fully determined by InvoicePaymentApprovalPolicy's own role/
+        // named-approver/four-eyes checks, independent of customer team scope.
+        if ($attribute === 'approve_invoice_payment') {
+            return $this->approvalPolicy->canApprove($subject, $user);
+        }
+
+        if ($attribute === 'reject_invoice_payment') {
+            return $this->approvalPolicy->canReject($subject, $user);
         }
 
         // every user needs to be able to view-invoices in order to perform any action
