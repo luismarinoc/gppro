@@ -334,6 +334,24 @@ class ActivityBoardControllerTest extends AbstractControllerBaseTestCase
         self::assertSame('0', $card->attr('data-can-edit'));
     }
 
+    public function testBoardActionExposesDetailsUrlTemplateAlongsideEditUrlTemplate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $project = $this->createProject();
+
+        $this->request($client, '/admin/project/' . $project->getId() . '/board');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $box = $client->getCrawler()->filter('#activity_board_box');
+        self::assertCount(1, $box);
+
+        $detailsUrl = (string) $box->attr('data-details-url');
+        self::assertStringContainsString('/details', $detailsUrl);
+
+        $editUrl = (string) $box->attr('data-edit-url');
+        self::assertNotSame('', $editUrl, 'data-edit-url must remain present alongside the new data-details-url');
+    }
+
     private function updateCardUrl(Project $project, Activity $activity): string
     {
         return '/admin/project/' . $project->getId() . '/board/' . $activity->getId();

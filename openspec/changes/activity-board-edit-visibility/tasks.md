@@ -32,13 +32,13 @@ Chain strategy: pending
 
 ## Phase 2: Board URL contract + drag safety (RED then GREEN)
 
-- [ ] 2.1 RED: Assert `#activity_board_box[data-details-url]` contains `/details` and `data-edit-url` is still present, in `ActivityBoardControllerTest`.
-- [ ] 2.2 RED: Re-run existing filter/column/`data-search` assertions after the markup edit to lock the no-regression requirement.
-- [ ] 2.3 GREEN: In `templates/project/board.html.twig` `block box_attributes`, add `data-details-url="{{ path('activity_details', {id: '000'}) }}"` alongside `data-edit-url` (A2).
-- [ ] 2.4 GREEN: In `assets/js/widgets/GpproActivityBoard.js` constructor, add `this.detailsUrlTemplate = element.dataset.detailsUrl;` and add `filter: '.activity_board_card_edit', preventOnFilter: false` to the `Sortable.create()` options (A3).
-- [ ] 2.5 GREEN: Add a delegated `click` listener on `this.element` for `.activity_board_card_edit`, calling `event.preventDefault(); event.stopPropagation();` then a shared `openCard(card)` branch: `data-can-edit === '1'` opens the edit modal via `editUrlTemplate`, else sets `window.location.href` from `detailsUrlTemplate`.
-- [ ] 2.6 GREEN: Update `onCardDoubleClicked()` to call the same `openCard(card)` branch instead of unconditionally opening the modal.
-- [ ] 2.7 Re-run 2.1-2.2, confirm GREEN.
+- [x] 2.1 RED: Assert `#activity_board_box[data-details-url]` contains `/details` and `data-edit-url` is still present, in `ActivityBoardControllerTest`.
+- [x] 2.2 RED: Re-run existing filter/column/`data-search` assertions after the markup edit to lock the no-regression requirement.
+- [x] 2.3 GREEN: In `templates/project/board.html.twig` `block box_attributes`, add `data-details-url="{{ path('activity_details', {id: '000'}) }}"` alongside `data-edit-url` (A2).
+- [x] 2.4 GREEN: In `assets/js/widgets/GpproActivityBoard.js` constructor, add `this.detailsUrlTemplate = element.dataset.detailsUrl;` and add `filter: '.activity_board_card_edit', preventOnFilter: false` to the `Sortable.create()` options (A3).
+- [x] 2.5 GREEN: Add a delegated `click` listener on `this.element` for `.activity_board_card_edit`, calling `event.preventDefault(); event.stopPropagation();` then a shared `openCard(card)` branch: `data-can-edit === '1'` opens the edit modal via `editUrlTemplate`, else sets `window.location.href` from `detailsUrlTemplate`.
+- [x] 2.6 GREEN: Update `onCardDoubleClicked()` to call the same `openCard(card)` branch instead of unconditionally opening the modal.
+- [x] 2.7 Re-run 2.1-2.2, confirm GREEN.
 
 ## Phase 3: Denial message on read-only detail (RED then GREEN)
 
