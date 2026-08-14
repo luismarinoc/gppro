@@ -422,6 +422,22 @@ class UserControllerTest extends AbstractControllerBaseTestCase
         self::assertFalse($reloaded->isPendingApproval());
     }
 
+    public function testIndexActionShowsPendingApprovalBadgeOnlyForPendingUsers(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $this->createPendingUser('pendingbadge', 'pendingbadge@example.com');
+
+        // visibility=3 (SHOW_BOTH) so the disabled pending user's row also renders
+        $this->request($client, '/admin/user/?visibility=3');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+        self::assertIsString($content);
+        // exactly one pending user was created against the default (all-enabled) fixtures,
+        // so the badge must appear exactly once - proving it is not shown for every row
+        self::assertSame(1, substr_count($content, 'Pending approval'));
+    }
+
     public function testRejectActionIsDeniedForNonSuperAdmin(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);

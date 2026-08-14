@@ -33,6 +33,9 @@
         {{ widgets.badge_team_access(entry.teams) }}
     {% elseif column == 'active' %}
         {{ widgets.label_visible(entry.enabled) }}
+        {% if entry.isPendingApproval() %}
+            {{ widgets.label('pending_approval'|trans, 'warning') }}
+        {% endif %}
     {% elseif column == 'system_account' %}
         {{ widgets.label_boolean(entry.systemAccount) }}
     {% elseif column == 'actions' %}

@@ -54,4 +54,16 @@ class UserQueryTest extends BaseQueryTest
         $sut->setSystemAccount(null);
         self::assertNull($sut->getSystemAccount());
     }
+
+    public function testPendingApproval(): void
+    {
+        $sut = new UserQuery();
+        self::assertNull($sut->getPendingApproval());
+        $sut->setPendingApproval(true);
+        self::assertTrue($sut->getPendingApproval());
+        $sut->setPendingApproval(false);
+        self::assertFalse($sut->getPendingApproval());
+        $sut->setPendingApproval(null);
+        self::assertNull($sut->getPendingApproval());
+    }
 }

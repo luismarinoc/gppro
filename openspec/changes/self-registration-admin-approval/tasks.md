@@ -74,11 +74,11 @@ Chain strategy: stacked-to-main
 
 ## Phase 7: `UserQuery` Pending-Approval Filter + Badge (PR2)
 
-- [ ] 7.1 RED: repository/query test — `pendingApproval=true` returns only `emailConfirmedAt` set + `enabled=false` + `rejectedAt` null; explicitly EXCLUDES a never-confirmed user (`emailConfirmedAt` null, `enabled=false` — spec: distinct from pending), a rejected user, and an approved user (4 separate assertions).
-- [ ] 7.2 GREEN: `src/Repository/Query/UserQuery.php` — add `?bool $pendingApproval` property, getter/setter, default `null` in `setDefaults()`.
-- [ ] 7.3 GREEN: `src/Repository/UserRepository.php::getQueryBuilderForQuery()` — WHERE `emailConfirmedAt IS NOT NULL AND enabled = false AND rejectedAt IS NULL` when `$query->getPendingApproval() === true`. Run 7.1 green.
-- [ ] 7.4 GREEN: `templates/user/index.html.twig` — `active` column: add a pending-approval badge via `entry.isPendingApproval()`, alongside the existing `label_visible`/`system_account` pattern.
-- [ ] 7.5 `translations/messages.en.xlf` + `messages.es.xlf` — badge label + approve/reject action-button labels.
+- [x] 7.1 RED: `tests/Repository/UserRepositoryTest.php` (new) — `pendingApproval=true` returns only `emailConfirmedAt` set + `enabled=false` + `rejectedAt` null; explicitly EXCLUDES a never-confirmed user (`emailConfirmedAt` null, `enabled=false` — spec: distinct from pending), a rejected user, and an approved user (4 separate assertions). Also `tests/Repository/Query/UserQueryTest.php::testPendingApproval` for the getter/setter.
+- [x] 7.2 GREEN: `src/Repository/Query/UserQuery.php` — added `?bool $pendingApproval` property, getter/setter, default `null` in `setDefaults()`.
+- [x] 7.3 GREEN: `src/Repository/UserRepository.php::getQueryBuilderForQuery()` — WHERE `emailConfirmedAt IS NOT NULL AND enabled = false AND rejectedAt IS NULL` when `$query->getPendingApproval() === true`. Note: caller must set `visibility=SHOW_BOTH` (or `SHOW_HIDDEN`) since the pending filter requires `enabled=false`, which the default `SHOW_VISIBLE` filter (`enabled=true`) would otherwise conflict with — same as how `systemAccount` is an orthogonal filter layered on top of visibility. Run 7.1 green.
+- [x] 7.4 GREEN: `templates/user/index.html.twig` — `active` column: added a "Pending approval" badge via `entry.isPendingApproval()`, alongside the existing `label_visible`/`system_account` pattern. Runtime-verified via `UserControllerTest::testIndexActionShowsPendingApprovalBadgeOnlyForPendingUsers`.
+- [x] 7.5 `translations/messages.en.xlf` + `messages.es.xlf` — added `pending_approval` badge-label key (EN+ES). `approve`/`reject` action-button labels already existed globally in every locale (reused, not duplicated).
 
 ## Phase 8: PR2 Regression + Full Sweep (after both PRs merged)
 
