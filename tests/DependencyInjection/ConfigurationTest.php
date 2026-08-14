@@ -590,7 +590,7 @@ class ConfigurationTest extends TestCase
                 'choice_pattern' => '{name}',
             ],
             'features' => [
-                'user_registration' => false,
+                'user_registration' => true,
             ],
         ];
 

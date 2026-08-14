@@ -74,9 +74,11 @@ final class Configuration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
                 ->children()
-                    // this feature was deactivated in order to deprecate/remove it in the future, very likely not necessary for anyone
+                    // upstream Kimai defaults this off (deprecated there); gppro enables
+                    // it by default, since it's used here with the admin-approval gate
+                    // added on top (see self-registration-admin-approval)
                     ->integerNode('user_registration')
-                ->defaultFalse()
+                ->defaultTrue()
                 ->end()
             ->end()
         ;
