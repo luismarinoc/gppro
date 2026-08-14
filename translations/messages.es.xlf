@@ -2602,6 +2602,16 @@
       <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you" xml:space="preserve"><source>quotation.response.thank_you</source><target state="translated">Gracias</target></trans-unit>
       <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message" xml:space="preserve"><source>quotation.response.recorded_message</source><target state="translated">Tu cotización quedó marcada como %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum" xml:space="preserve"><source>quotation.lines_minimum</source><target state="translated">Agregá al menos una línea a la cotización.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level" xml:space="preserve"><source>invoice_payment_approval_level</source><target state="translated">Niveles de aprobación de pago de facturas</target></trans-unit>
+      <trans-unit id="gpInvPayLvl2" resname="invoice_payment_approval_level.level" xml:space="preserve"><source>invoice_payment_approval_level.level</source><target state="translated">Nivel</target></trans-unit>
+      <trans-unit id="gpInvPayLvl3" resname="invoice_payment_approval_level.min_amount" xml:space="preserve"><source>invoice_payment_approval_level.min_amount</source><target state="translated">Monto mínimo</target></trans-unit>
+      <trans-unit id="gpInvPayLvl4" resname="invoice_payment_approval_level.required_role" xml:space="preserve"><source>invoice_payment_approval_level.required_role</source><target state="translated">Rol requerido</target></trans-unit>
+      <trans-unit id="gpInvPayLvl5" resname="invoice_payment_approval_level.approver_user" xml:space="preserve"><source>invoice_payment_approval_level.approver_user</source><target state="translated">Aprobador designado</target></trans-unit>
+      <trans-unit id="gpInvPayLvl6" resname="invoice_payment_approval_level.approver_user.help" xml:space="preserve"><source>invoice_payment_approval_level.approver_user.help</source><target state="translated">Opcional. Si se define, este usuario también puede aprobar este nivel sin importar su rol.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl7" resname="invoice_payment_approval_level.none_found" xml:space="preserve"><source>invoice_payment_approval_level.none_found</source><target state="translated">No se encontraron niveles de aprobación.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl8" resname="invoice_payment_approval_level.add" xml:space="preserve"><source>invoice_payment_approval_level.add</source><target state="translated">Agregar nivel de aprobación</target></trans-unit>
+      <trans-unit id="gpInvPayLvl9" resname="invoice_payment_approval_level.edit_title" xml:space="preserve"><source>invoice_payment_approval_level.edit_title</source><target state="translated">Editar nivel de aprobación de pago de factura</target></trans-unit>
+      <trans-unit id="gpInvPayLvl10" resname="invoice_payment_approval_level.create_title" xml:space="preserve"><source>invoice_payment_approval_level.create_title</source><target state="translated">Nuevo nivel de aprobación de pago de factura</target></trans-unit>
     </body>
   </file>
 </xliff>

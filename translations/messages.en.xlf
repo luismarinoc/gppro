@@ -2658,6 +2658,16 @@
       <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you"><source>quotation.response.thank_you</source><target>Thank you</target></trans-unit>
       <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message"><source>quotation.response.recorded_message</source><target>Your quotation has been marked as %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum"><source>quotation.lines_minimum</source><target>Add at least one quotation line.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level"><source>invoice_payment_approval_level</source><target>Invoice payment approval levels</target></trans-unit>
+      <trans-unit id="gpInvPayLvl2" resname="invoice_payment_approval_level.level"><source>invoice_payment_approval_level.level</source><target>Level</target></trans-unit>
+      <trans-unit id="gpInvPayLvl3" resname="invoice_payment_approval_level.min_amount"><source>invoice_payment_approval_level.min_amount</source><target>Minimum amount</target></trans-unit>
+      <trans-unit id="gpInvPayLvl4" resname="invoice_payment_approval_level.required_role"><source>invoice_payment_approval_level.required_role</source><target>Required role</target></trans-unit>
+      <trans-unit id="gpInvPayLvl5" resname="invoice_payment_approval_level.approver_user"><source>invoice_payment_approval_level.approver_user</source><target>Named approver</target></trans-unit>
+      <trans-unit id="gpInvPayLvl6" resname="invoice_payment_approval_level.approver_user.help"><source>invoice_payment_approval_level.approver_user.help</source><target>Optional. If set, this user can also clear this level regardless of role.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl7" resname="invoice_payment_approval_level.none_found"><source>invoice_payment_approval_level.none_found</source><target>No approval levels found.</target></trans-unit>
+      <trans-unit id="gpInvPayLvl8" resname="invoice_payment_approval_level.add"><source>invoice_payment_approval_level.add</source><target>Add approval level</target></trans-unit>
+      <trans-unit id="gpInvPayLvl9" resname="invoice_payment_approval_level.edit_title"><source>invoice_payment_approval_level.edit_title</source><target>Edit invoice payment approval level</target></trans-unit>
+      <trans-unit id="gpInvPayLvl10" resname="invoice_payment_approval_level.create_title"><source>invoice_payment_approval_level.create_title</source><target>New invoice payment approval level</target></trans-unit>
     </body>
   </file>
 </xliff>
