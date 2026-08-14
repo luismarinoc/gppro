@@ -231,7 +231,9 @@ class UserControllerTest extends AbstractControllerBaseTestCase
      */
     private function extractQuickActionUrl(HttpKernelBrowser $client, int $userId, string $routeNamePart): string
     {
-        $crawler = $this->request($client, '/admin/user/');
+        // visibility=3 (SHOW_BOTH) so disabled/pending-approval users (which the default
+        // SHOW_VISIBLE filter would hide) also render their row and quick-action links
+        $crawler = $this->request($client, '/admin/user/?visibility=3');
         $link = $crawler->filter('a[href*="/admin/user/' . $userId . '/' . $routeNamePart . '/"]');
         self::assertGreaterThan(0, $link->count(), 'Could not find quick-action link for user ' . $userId . ' and route "' . $routeNamePart . '"');
 
@@ -334,6 +336,108 @@ class UserControllerTest extends AbstractControllerBaseTestCase
         $reloaded = $em->getRepository(User::class)->find($user->getId());
         self::assertNotNull($reloaded);
         self::assertEquals($previousSignature, $reloaded->getSignatureDate());
+    }
+
+    /**
+     * Builds a pending-approval user directly (not via the HTTP self-registration flow), so the row
+     * already exists in the database before the admin quick-action requests are made against it.
+     */
+    private function createPendingUser(string $username, string $email): User
+    {
+        $em = $this->getEntityManager();
+
+        $user = new User();
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setLanguage('en');
+        $user->setEnabled(false);
+        $user->setPassword('irrelevant-hash-not-used-in-this-test');
+        $user->setEmailConfirmedAt(new \DateTimeImmutable('-1 hour'));
+
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+    }
+
+    public function testApproveActionEnablesUserAndSendsApprovalEmail(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->createPendingUser('pendingapprove', 'pendingapprove@example.com');
+        self::assertNotNull($user->getId());
+        self::assertTrue($user->isPendingApproval());
+
+        $url = $this->extractQuickActionUrl($client, $user->getId(), 'approve');
+        $this->requestPure($client, $url, 'POST');
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        self::assertEmailCount(1);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertTrue($reloaded->isEnabled());
+        self::assertFalse($reloaded->isPendingApproval());
+    }
+
+    public function testApproveActionIsDeniedForNonSuperAdmin(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $user = $this->createPendingUser('pendingapprovedenied', 'pendingapprovedenied@example.com');
+
+        $this->request($client, '/admin/user/' . $user->getId() . '/approve/irrelevant-because-denied-before-csrf', 'POST');
+
+        self::assertEquals(403, $client->getResponse()->getStatusCode());
+        self::assertEmailCount(0);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertFalse($reloaded->isEnabled());
+    }
+
+    public function testRejectActionSetsRejectedAtWithoutEnablingOrEmailingAndKeepsTheRow(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $user = $this->createPendingUser('pendingreject', 'pendingreject@example.com');
+        self::assertNotNull($user->getId());
+        self::assertTrue($user->isPendingApproval());
+
+        $url = $this->extractQuickActionUrl($client, $user->getId(), 'reject');
+        $this->requestPure($client, $url, 'POST');
+
+        $this->assertIsRedirect($client, $this->createUrl('/admin/user/'));
+
+        self::assertEmailCount(0);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertFalse($reloaded->isEnabled());
+        self::assertNotNull($reloaded->getRejectedAt());
+        self::assertFalse($reloaded->isPendingApproval());
+    }
+
+    public function testRejectActionIsDeniedForNonSuperAdmin(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $user = $this->createPendingUser('pendingrejectdenied', 'pendingrejectdenied@example.com');
+
+        $this->request($client, '/admin/user/' . $user->getId() . '/reject/irrelevant-because-denied-before-csrf', 'POST');
+
+        self::assertEquals(403, $client->getResponse()->getStatusCode());
+        self::assertEmailCount(0);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloaded);
+        self::assertFalse($reloaded->isEnabled());
+        self::assertNull($reloaded->getRejectedAt());
     }
 
     #[DataProvider('getValidationTestData')]

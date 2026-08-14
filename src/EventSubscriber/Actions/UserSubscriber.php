@@ -85,6 +85,18 @@ final class UserSubscriber extends AbstractActionsSubscriber
             $event->addActionToSubmenu('security', 'revoke_remember_me', ['url' => $this->path('admin_user_revoke_remember_me', ['id' => $user->getId(), 'csrfToken' => $revokeRememberMeToken]), 'title' => 'revoke_remember_me']);
         }
 
+        if ($user->isPendingApproval()) {
+            if ($this->isGranted('approve', $user)) {
+                $approveToken = $this->csrfTokenManager->getToken('admin_user_approve_' . $user->getId())->getValue();
+                $event->addActionToSubmenu('approval', 'approve', ['url' => $this->path('admin_user_approve', ['id' => $user->getId(), 'csrfToken' => $approveToken]), 'title' => 'approve']);
+            }
+
+            if ($this->isGranted('reject', $user)) {
+                $rejectToken = $this->csrfTokenManager->getToken('admin_user_reject_' . $user->getId())->getValue();
+                $event->addActionToSubmenu('approval', 'reject', ['url' => $this->path('admin_user_reject', ['id' => $user->getId(), 'csrfToken' => $rejectToken]), 'title' => 'reject']);
+            }
+        }
+
         if ($event->isIndexView() && $this->isGranted('delete', $user)) {
             $event->addDelete($this->path('admin_user_delete', ['id' => $user->getId()]));
         }

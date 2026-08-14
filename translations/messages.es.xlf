@@ -1566,6 +1566,10 @@
         <source>login_audit.none_found</source>
         <target>No se encontraron intentos de inicio de sesión.</target>
       </trans-unit>
+      <trans-unit id="pndAprvBdg" resname="pending_approval">
+        <source>pending_approval</source>
+        <target>Aprobación pendiente</target>
+      </trans-unit>
       <trans-unit id="zlmddHB" resname="public_holidays">
         <source>public_holidays</source>
         <target state="translated">Días festivos</target>
