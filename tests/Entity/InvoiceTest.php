@@ -268,4 +268,118 @@ class InvoiceTest extends AbstractEntityTestCase
         self::assertEquals(3, $sut->getMetaFields()->count());
         self::assertCount(2, $sut->getVisibleMetaFields());
     }
+
+    public function testPaymentApprovalDefaultValues(): void
+    {
+        $sut = new Invoice();
+
+        self::assertNull($sut->getPaymentApprovalStatus());
+        self::assertNull($sut->getPaymentRequiredLevels());
+        self::assertSame(0, $sut->getPaymentCurrentLevel());
+        self::assertFalse($sut->isPaymentApproved());
+        self::assertNull($sut->nextPendingPaymentLevel());
+    }
+
+    public function testSubmitForPaymentApprovalFreezesRequiredLevels(): void
+    {
+        $sut = new Invoice();
+
+        $sut->submitForPaymentApproval(2);
+
+        self::assertSame(Invoice::PAYMENT_APPROVAL_PENDING, $sut->getPaymentApprovalStatus());
+        self::assertSame(2, $sut->getPaymentRequiredLevels());
+        self::assertSame(0, $sut->getPaymentCurrentLevel());
+        self::assertSame(1, $sut->nextPendingPaymentLevel());
+        self::assertFalse($sut->isPaymentApproved());
+    }
+
+    public function testSubmitForPaymentApprovalWhenAlreadySubmittedThrows(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(1);
+
+        $this->expectException(\DomainException::class);
+        $sut->submitForPaymentApproval(1);
+    }
+
+    public function testClearPaymentLevelInOrderAdvancesCurrentLevel(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(2);
+
+        $sut->clearPaymentLevel(1);
+
+        self::assertSame(1, $sut->getPaymentCurrentLevel());
+        self::assertSame(Invoice::PAYMENT_APPROVAL_PENDING, $sut->getPaymentApprovalStatus());
+        self::assertSame(2, $sut->nextPendingPaymentLevel());
+    }
+
+    public function testClearingFinalPaymentLevelCompletesApproval(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(2);
+
+        $sut->clearPaymentLevel(1);
+        $sut->clearPaymentLevel(2);
+
+        self::assertSame(Invoice::PAYMENT_APPROVAL_APPROVED, $sut->getPaymentApprovalStatus());
+        self::assertTrue($sut->isPaymentApproved());
+        self::assertNull($sut->nextPendingPaymentLevel());
+    }
+
+    public function testClearPaymentLevelOutOfOrderThrows(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(2);
+
+        $this->expectException(\DomainException::class);
+        $sut->clearPaymentLevel(2);
+    }
+
+    public function testClearPaymentLevelWhenNotPendingThrows(): void
+    {
+        $sut = new Invoice();
+
+        $this->expectException(\DomainException::class);
+        $sut->clearPaymentLevel(1);
+    }
+
+    public function testRejectPaymentApprovalDiscardsClearedLevels(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(2);
+        $sut->clearPaymentLevel(1);
+
+        $sut->rejectPaymentApproval();
+
+        self::assertSame(Invoice::PAYMENT_APPROVAL_REJECTED, $sut->getPaymentApprovalStatus());
+        self::assertSame(0, $sut->getPaymentCurrentLevel());
+        self::assertNull($sut->nextPendingPaymentLevel());
+    }
+
+    public function testRejectPaymentApprovalWhenNotPendingThrows(): void
+    {
+        $sut = new Invoice();
+
+        $this->expectException(\DomainException::class);
+        $sut->rejectPaymentApproval();
+    }
+
+    /**
+     * Decision 5 (proposal): a later amount change on the invoice does NOT
+     * reopen or re-evaluate already-cleared levels, nor alter the frozen
+     * required-level count.
+     */
+    public function testAmountChangeAfterPartialClearanceDoesNotReopenClearedLevels(): void
+    {
+        $sut = new Invoice();
+        $sut->submitForPaymentApproval(2);
+        $sut->clearPaymentLevel(1);
+
+        $sut->setTotal(999999999.0);
+
+        self::assertSame(2, $sut->getPaymentRequiredLevels());
+        self::assertSame(1, $sut->getPaymentCurrentLevel());
+        self::assertSame(2, $sut->nextPendingPaymentLevel());
+    }
 }

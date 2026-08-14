@@ -42,6 +42,10 @@ class Invoice implements EntityWithMetaFields
     public const STATUS_CANCELED = 'canceled';
     public const STATUS_NEW = 'new';
 
+    public const PAYMENT_APPROVAL_PENDING = 'pending';
+    public const PAYMENT_APPROVAL_APPROVED = 'approved';
+    public const PAYMENT_APPROVAL_REJECTED = 'rejected';
+
     /**
      * Unique invoice ID
      */
@@ -133,6 +137,18 @@ class Invoice implements EntityWithMetaFields
     #[Serializer\Expose]
     #[Serializer\Groups(['Default'])]
     private ?\DateTime $paymentDate = null;
+    /**
+     * Payment-approval state (D4, orthogonal to the business `status` above,
+     * hence the distinct `paymentApproval*` prefix). Null = not yet
+     * submitted for payment approval (including all grandfathered
+     * historical PAID invoices, decision 8).
+     */
+    #[ORM\Column(name: 'payment_approval_status', type: Types::STRING, length: 20, nullable: true)]
+    private ?string $paymentApprovalStatus = null;
+    #[ORM\Column(name: 'payment_required_levels', type: Types::INTEGER, nullable: true)]
+    private ?int $paymentRequiredLevels = null;
+    #[ORM\Column(name: 'payment_current_level', type: Types::INTEGER, nullable: false, options: ['default' => 0])]
+    private int $paymentCurrentLevel = 0;
     /**
      * Meta fields registered with the invoice
      *
@@ -353,6 +369,95 @@ class Invoice implements EntityWithMetaFields
     public function setPaymentDate(?\DateTime $paymentDate): Invoice
     {
         $this->paymentDate = $paymentDate;
+
+        return $this;
+    }
+
+    public function getPaymentApprovalStatus(): ?string
+    {
+        return $this->paymentApprovalStatus;
+    }
+
+    public function getPaymentRequiredLevels(): ?int
+    {
+        return $this->paymentRequiredLevels;
+    }
+
+    public function getPaymentCurrentLevel(): int
+    {
+        return $this->paymentCurrentLevel;
+    }
+
+    public function isPaymentApproved(): bool
+    {
+        return self::PAYMENT_APPROVAL_APPROVED === $this->paymentApprovalStatus;
+    }
+
+    /**
+     * The next level awaiting clearance, or null when not pending payment approval.
+     */
+    public function nextPendingPaymentLevel(): ?int
+    {
+        if (self::PAYMENT_APPROVAL_PENDING !== $this->paymentApprovalStatus) {
+            return null;
+        }
+
+        return $this->paymentCurrentLevel + 1;
+    }
+
+    /**
+     * Computes and freezes paymentRequiredLevels for this submission (decision
+     * 5 of the proposal) - later changes to the invoice's amount or to the
+     * level configuration must not affect this already-submitted invoice.
+     */
+    public function submitForPaymentApproval(int $requiredLevels): Invoice
+    {
+        if (null !== $this->paymentApprovalStatus) {
+            throw new \DomainException('This invoice was already submitted for payment approval.');
+        }
+
+        $this->paymentRequiredLevels = $requiredLevels;
+        $this->paymentCurrentLevel = 0;
+        $this->paymentApprovalStatus = self::PAYMENT_APPROVAL_PENDING;
+
+        return $this;
+    }
+
+    /**
+     * Clears the given level. Levels must be cleared strictly in order.
+     * Clearing the last required level makes the invoice eligible for PAID.
+     */
+    public function clearPaymentLevel(int $level): Invoice
+    {
+        if (self::PAYMENT_APPROVAL_PENDING !== $this->paymentApprovalStatus) {
+            throw new \DomainException('Only invoices pending payment approval can have a level cleared.');
+        }
+
+        if ($level !== $this->paymentCurrentLevel + 1) {
+            throw new \DomainException('Payment approval levels must be cleared in order.');
+        }
+
+        $this->paymentCurrentLevel = $level;
+
+        if ($this->paymentCurrentLevel === $this->paymentRequiredLevels) {
+            $this->paymentApprovalStatus = self::PAYMENT_APPROVAL_APPROVED;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Rejects the payment approval at any pending level, discarding
+     * previously cleared levels.
+     */
+    public function rejectPaymentApproval(): Invoice
+    {
+        if (self::PAYMENT_APPROVAL_PENDING !== $this->paymentApprovalStatus) {
+            throw new \DomainException('Only invoices pending payment approval can be rejected.');
+        }
+
+        $this->paymentApprovalStatus = self::PAYMENT_APPROVAL_REJECTED;
+        $this->paymentCurrentLevel = 0;
 
         return $this;
     }

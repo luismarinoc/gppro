@@ -8,4 +8,22 @@
         'back': path('admin_invoice_list')
     } %}
     {% embed formEditTemplate with formOptions %}{% endembed %}
+
+    {% if invoice.id is not null and is_granted('edit_invoice', invoice) %}
+        {% if invoice.paymentApprovalStatus is null and not invoice.paid %}
+            <form method="post" action="{{ path('invoice_submit_payment_approval', {id: invoice.id}) }}" class="mb-2">
+                <input type="hidden" name="_token" value="{{ csrf_token('invoice_submit_payment_approval_' ~ invoice.id) }}">
+                <button type="submit" class="btn btn-outline-primary btn-sm">{{ 'invoice.submit_payment_approval'|trans }}</button>
+            </form>
+        {% elseif invoice.paymentApprovalStatus == constant('App\\Entity\\Invoice::PAYMENT_APPROVAL_PENDING') %}
+            <form method="post" action="{{ path('invoice_approve_payment', {id: invoice.id}) }}" class="mb-2 d-inline-block me-1">
+                <input type="hidden" name="_token" value="{{ csrf_token('invoice_approve_payment_' ~ invoice.id) }}">
+                <button type="submit" class="btn btn-outline-success btn-sm">{{ 'invoice.approve_payment'|trans }}</button>
+            </form>
+            <form method="post" action="{{ path('invoice_reject_payment', {id: invoice.id}) }}" class="mb-2 d-inline-block">
+                <input type="hidden" name="_token" value="{{ csrf_token('invoice_reject_payment_' ~ invoice.id) }}">
+                <button type="submit" class="btn btn-outline-danger btn-sm">{{ 'invoice.reject_payment'|trans }}</button>
+            </form>
+        {% endif %}
+    {% endif %}
 {% endblock %}
