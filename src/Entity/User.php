@@ -226,6 +226,18 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     #[ORM\Column(name: 'password_requested_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $passwordRequestedAt = null;
     /**
+     * Timestamp of when the user confirmed their email address via the self-registration confirmation token.
+     * Null means the email was never confirmed. Distinct from $enabled, which also requires admin approval.
+     */
+    #[ORM\Column(name: 'email_confirmed_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $emailConfirmedAt = null;
+    /**
+     * Timestamp of when an admin soft-rejected this (self-registered) account.
+     * Null means the account was never rejected. The row is kept for audit purposes, not deleted.
+     */
+    #[ORM\Column(name: 'rejected_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $rejectedAt = null;
+    /**
      * List of all role names
      */
     #[ORM\Column(name: 'roles', type: Types::ARRAY, nullable: false)] // @phpstan-ignore classConstant.deprecated
@@ -969,6 +981,38 @@ class User implements UserInterface, EquatableInterface, ThemeUserInterface, Pas
     public function getConfirmationToken(): ?string
     {
         return $this->confirmationToken;
+    }
+
+    public function getEmailConfirmedAt(): ?\DateTimeImmutable
+    {
+        return $this->emailConfirmedAt;
+    }
+
+    public function setEmailConfirmedAt(?\DateTimeImmutable $emailConfirmedAt): User
+    {
+        $this->emailConfirmedAt = $emailConfirmedAt;
+
+        return $this;
+    }
+
+    public function getRejectedAt(): ?\DateTimeImmutable
+    {
+        return $this->rejectedAt;
+    }
+
+    public function setRejectedAt(?\DateTimeImmutable $rejectedAt): User
+    {
+        $this->rejectedAt = $rejectedAt;
+
+        return $this;
+    }
+
+    /**
+     * A pending-approval account has confirmed its email but is neither enabled (approved) nor rejected yet.
+     */
+    public function isPendingApproval(): bool
+    {
+        return $this->emailConfirmedAt !== null && !$this->enabled && $this->rejectedAt === null;
     }
 
     public function getRoles(): array

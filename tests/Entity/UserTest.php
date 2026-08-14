@@ -20,6 +20,7 @@ use App\Tests\Security\TestUserEntity;
 use App\WorkingTime\Mode\WorkingTimeModeDay;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -834,6 +835,31 @@ class UserTest extends TestCase
 
         self::assertTrue($user->isPasswordRequestNonExpired(3600));
         self::assertTrue($user->isPasswordRequestNonExpired(7200));
+    }
+
+    #[DataProvider('getIsPendingApprovalTestData')]
+    public function testIsPendingApproval(?\DateTimeImmutable $emailConfirmedAt, bool $enabled, ?\DateTimeImmutable $rejectedAt, bool $expected): void
+    {
+        $user = new User();
+        $user->setEmailConfirmedAt($emailConfirmedAt);
+        $user->setEnabled($enabled);
+        $user->setRejectedAt($rejectedAt);
+
+        self::assertSame($expected, $user->isPendingApproval());
+        self::assertSame($emailConfirmedAt, $user->getEmailConfirmedAt());
+        self::assertSame($rejectedAt, $user->getRejectedAt());
+    }
+
+    public static function getIsPendingApprovalTestData(): array // @phpstan-ignore missingType.iterableValue
+    {
+        $now = new \DateTimeImmutable('now');
+
+        return [
+            'never-confirmed' => [null, false, null, false],
+            'pending' => [$now, false, null, true],
+            'rejected' => [$now, false, $now, false],
+            'approved' => [$now, true, null, false],
+        ];
     }
 
     public function testSignatureDate(): void
