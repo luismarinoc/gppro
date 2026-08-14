@@ -516,6 +516,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $this->addUserToTeam($teamMember, $team);
         $expense = $this->createDraftExpenseWithAllocation($project, 100000, '100.00', $creator);
         $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
         $description = $expense->getDescription();
         self::assertIsString($description);
 
@@ -551,6 +552,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $expense->submitForApproval(1);
         $this->getEntityManager()->flush();
         $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
         $description = $expense->getDescription();
         self::assertIsString($description);
 
