@@ -181,7 +181,7 @@ class ActivityWorkspaceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
         $crawler = $client->getCrawler();
         self::assertCount(0, $crawler->filter('div.card#comments_box'));
-        self::assertStringContainsString('activity_workspace.select_activity', (string) $client->getResponse()->getContent());
+        self::assertStringContainsString('Select an activity to see its detail and comments', (string) $client->getResponse()->getContent());
     }
 
     /**

@@ -77,8 +77,8 @@ likely exceeds 250 lines on its own.
 
 ## Phase 7: Full Regression + Verification
 
-- [ ] 7.1 Run `phpunit tests/Entity/ActivityCommentTest.php tests/Repository/ActivityCommentRepositoryTest.php tests/Controller/ActivityWorkspaceControllerTest.php tests/Controller/ProjectControllerTest.php tests/EventSubscriber/MenuSubscriberTest.php` — all green.
-- [ ] 7.2 Regression: run `tests/Controller/ActivityBoardControllerTest.php` and confirm `templates/project/board.html.twig` byte-identical (git diff empty) — Kanban board unaffected (Rule 9).
-- [ ] 7.3 Regression: run `tests/Controller/ActivityControllerTest.php` and confirm `src/Controller/ActivityController.php` byte-identical (git diff empty) — global list/CRUD unaffected.
-- [ ] 7.4 `lint:twig` all new/modified templates, `lint:xliff` both translation files (consolidated final check).
-- [ ] 7.5 `vendor/bin/phpstan analyse -c tests/phpstan.neon --no-progress` — no new errors introduced.
+- [x] 7.1 Run `phpunit tests/Entity/ActivityCommentTest.php tests/Repository/ActivityCommentRepositoryTest.php tests/Controller/ActivityWorkspaceControllerTest.php tests/Controller/ProjectControllerTest.php tests/EventSubscriber/MenuSubscriberTest.php` — all green.
+- [x] 7.2 Regression: run `tests/Controller/ActivityBoardControllerTest.php` and confirm `templates/project/board.html.twig` byte-identical (git diff empty) — Kanban board unaffected (Rule 9).
+- [x] 7.3 Regression: run `tests/Controller/ActivityControllerTest.php` and confirm `src/Controller/ActivityController.php` byte-identical (git diff empty) — global list/CRUD unaffected.
+- [x] 7.4 `lint:twig` all new/modified templates, `lint:xliff` both translation files (consolidated final check).
+- [x] 7.5 `vendor/bin/phpstan analyse -c tests/phpstan.neon --no-progress` — no new errors introduced.
