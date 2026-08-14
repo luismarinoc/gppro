@@ -10,8 +10,10 @@
 namespace App\Repository;
 
 use App\Entity\Expense;
+use App\Entity\Team;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /** @extends EntityRepository<Expense> */
 class ExpenseRepository extends EntityRepository
@@ -28,17 +30,63 @@ class ExpenseRepository extends EntityRepository
         $this->getEntityManager()->flush();
     }
 
-    /** @return Expense[] */
-    public function findForListing(?string $status = null): array
+    /**
+     * Design D3: visible iff a team-accessible allocation.project exists
+     * (mirrors TimesheetRepository's private SIZE()=0/isMemberOf() block,
+     * duplicated here rather than shared since QB criteria are alias-bound)
+     * OR the user created the expense; admins bypass via canSeeAllData().
+     * distinct() guards against duplicate rows when several allocations of
+     * the same expense match the team join.
+     *
+     * @return Expense[]
+     */
+    public function findForListing(User $user, ?string $status = null): array
     {
         $query = $this->createQueryBuilder('e')
+            ->leftJoin('e.allocations', 'ea')
+            ->leftJoin('ea.project', 'p')
+            ->leftJoin('p.customer', 'c')
+            ->distinct()
             ->orderBy('e.createdAt', 'DESC');
 
         if (null !== $status && \in_array($status, Expense::STATUSES, true)) {
             $query->andWhere('e.status = :status')->setParameter('status', $status);
         }
 
+        if (!$user->canSeeAllData()) {
+            $this->addVisibilityCriteria($query, $user);
+        }
+
         return $query->getQuery()->getResult();
+    }
+
+    private function addVisibilityCriteria(QueryBuilder $qb, User $user): void
+    {
+        $teamIds = array_values(array_unique(array_map(
+            static fn (Team $team): ?int => $team->getId(),
+            $user->getTeams()
+        )));
+
+        $creatorMatch = 'e.createdBy = :user';
+
+        if (empty($teamIds)) {
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->andX('SIZE(p.teams) = 0', 'SIZE(c.teams) = 0'),
+                $creatorMatch
+            ));
+            $qb->setParameter('user', $user);
+
+            return;
+        }
+
+        $teamMatch = $qb->expr()->andX(
+            $qb->expr()->orX('SIZE(p.teams) = 0', $qb->expr()->isMemberOf(':teams', 'p.teams')),
+            $qb->expr()->orX('SIZE(c.teams) = 0', $qb->expr()->isMemberOf(':teams', 'c.teams'))
+        );
+
+        $qb->andWhere($qb->expr()->orX($teamMatch, $creatorMatch));
+        $qb->setParameter('teams', $teamIds);
+        $qb->setParameter('user', $user);
     }
 
     /**
