@@ -106,7 +106,7 @@ class UserControllerTest extends AbstractControllerBaseTestCase
             'user_create' => [
                 'username' => $username,
                 'alias' => $username,
-                'plainPassword' => ['first' => '12345678', 'second' => '12345678'],
+                'plainPassword' => ['first' => 'Passw0rd', 'second' => 'Passw0rd'],
                 'email' => 'foobar@example.com',
                 'enabled' => 1,
             ]
