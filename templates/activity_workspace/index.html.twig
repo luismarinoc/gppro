@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-lg-4">
+            {% include 'activity_workspace/embed_activities.html.twig' with {'project': project, 'activities': activities, 'activity': activity, 'now': now} %}
+        </div>
+        <div class="col-lg-4">
+            {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+                {% block box_attributes %}id="activity_workspace_detail_box"{% endblock %}
+                {% block box_title %}{{ 'activity_workspace.detail'|trans }}{% endblock %}
+                {% block box_body %}
+                    {% if activity is null %}
+                        <div class="comment p-3">{{ 'activity_workspace.select_activity'|trans }}</div>
+                    {% else %}
+                        {% if activity.comment is not empty %}
+                            <div class="comment p-3">
+                                {{ activity.comment|comment2html(true) }}
+                            </div>
+                        {% endif %}
+                        <table class="table table-hover dataTable">
+                            <tr>
+                                <th>{{ 'name'|trans }}</th>
+                                <td colspan="3">{{ widgets.label_dot(activity.name, activity.color) }}</td>
+                            </tr>
+                            {% if not activity.visible %}
+                                <tr>
+                                    <th>{{ 'visible'|trans }}</th>
+                                    <td colspan="3">{{ widgets.label_boolean(activity.visible) }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if not activity.billable %}
+                                <tr>
+                                    <th>{{ 'billable'|trans }}</th>
+                                    <td colspan="3">{{ widgets.label_boolean(activity.billable) }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if activity.number is not empty %}
+                                <tr>
+                                    <th>{{ 'activity_number'|trans }}</th>
+                                    <td colspan="3">{{ activity.number }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if project is not null %}
+                                <tr>
+                                    <th>{{ 'project'|trans }}</th>
+                                    <td colspan="3">{{ widgets.label_project(project) }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if activity.milestone is not null %}
+                                <tr>
+                                    <th>{{ 'milestone'|trans }}</th>
+                                    <td colspan="3">{{ activity.milestone.name }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if activity.hasBudget() %}
+                                <tr>
+                                    <th>{{ 'budget'|trans }}</th>
+                                    <td colspan="3">{{ activity.getBudget()|money(project.customer.currency) }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if activity.hasTimeBudget() %}
+                                <tr>
+                                    <th>{{ 'timeBudget'|trans }}</th>
+                                    <td colspan="3">{{ activity.getTimeBudget()|duration }}</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    {% endif %}
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-lg-4">
+            {% if comments is not null %}
+                {{ include('embeds/comments.html.twig', {'form': commentForm, 'comments': comments}) }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

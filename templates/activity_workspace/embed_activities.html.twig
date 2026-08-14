@@ -1,0 +1,50 @@
+{#
+    Panel 1 of the activity workspace (design D5): an adapted COPY of
+    templates/project/embed_activities.html.twig, not a parameterization of
+    it - that partial stays byte-identical on project_details. Differences
+    from the original:
+      - each row links to project_activity_workspace (this screen) with the
+        row's activity selected, instead of activity_details
+      - the currently selected activity's row is highlighted
+      - pagination targets project_activity_workspace with page as a query
+        string parameter (design D3), not the project_activities route
+#}
+{% embed '@theme/embeds/card.html.twig' with {'project': project, 'activities': activities, 'activity': activity, 'id': 'activity_workspace_list_box'} %}
+    {% import "macros/widgets.html.twig" as widgets %}
+    {% block box_title %}{{ 'activities'|trans }}{% endblock %}
+    {% block box_footer %}
+        {%- if activities|length > 0 -%}
+            <div class="d-flex">
+                {{ pagination(activities, { css_container_class: 'pagination ms-auto m-0', routeName: 'project_activity_workspace', routeParams: {'id': project.id, 'activity': activity ? activity.id : null} }) }}
+            </div>
+        {%- endif -%}
+    {% endblock %}
+    {% block box_body_class %}{%- if activities|length > 0 -%}p-0{%- endif -%}{% endblock %}
+    {% block box_body %}
+        {% if activities|length == 0 %}
+            <div class="comment">{{ 'error.no_entries_found'|trans }}</div>
+        {% else %}
+            <table class="table table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th>{{ 'name'|trans }}</th>
+                        <th class="d-none d-md-table-cell">{{ 'comment'|trans }}</th>
+                        <th class="d-none d-sm-table-cell w-min text-center">{{ 'visible'|trans }}</th>
+                        <th class="d-none d-sm-table-cell w-min text-center">{{ 'team'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in activities %}
+                    {% set isSelected = activity is not null and activity.id == row.id %}
+                    <tr class="{{ not row.visible ? 'bg-orange-lt' }} {{ isSelected ? 'table-active' }} alternative-link" data-href="{{ path('project_activity_workspace', {'id': project.id, 'activity': row.id}) }}">
+                        <td>{{ widgets.label_activity(row) }}</td>
+                        <td class="d-none d-md-table-cell">{{ row.comment|comment1line(false) }}</td>
+                        <td class="d-none d-sm-table-cell w-min text-center">{{ widgets.label_visible(row.visible) }}</td>
+                        <td class="d-none d-sm-table-cell w-min text-center">{{ widgets.badge_team_access(row.teams) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endblock %}
+{% endembed %}
