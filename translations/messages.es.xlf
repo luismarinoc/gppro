@@ -1514,6 +1514,14 @@
         <source>work_times</source>
         <target state="translated">Horario laboral</target>
       </trans-unit>
+      <trans-unit id="fp8ResetK" resname="force_password_reset">
+        <source>force_password_reset</source>
+        <target>Forzar restablecimiento de contraseña</target>
+      </trans-unit>
+      <trans-unit id="rvkRmbrMK" resname="revoke_remember_me">
+        <source>revoke_remember_me</source>
+        <target>Revocar recordarme y forzar reautenticación</target>
+      </trans-unit>
       <trans-unit id="zlmddHB" resname="public_holidays">
         <source>public_holidays</source>
         <target state="translated">Días festivos</target>

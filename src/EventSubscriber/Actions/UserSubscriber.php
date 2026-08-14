@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Event\PageActionsEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class UserSubscriber extends AbstractActionsSubscriber
@@ -20,7 +21,8 @@ final class UserSubscriber extends AbstractActionsSubscriber
     public function __construct(
         AuthorizationCheckerInterface $auth,
         UrlGeneratorInterface $urlGenerator,
-        private readonly EventDispatcherInterface $eventDispatcher
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager
     )
     {
         parent::__construct($auth, $urlGenerator);
@@ -73,6 +75,14 @@ final class UserSubscriber extends AbstractActionsSubscriber
 
         if ($this->isGranted('view_team')) {
             $event->addActionToSubmenu('filter', 'teams', ['url' => $this->path('admin_team', ['users[]' => $user->getId()]), 'title' => 'teams']);
+        }
+
+        if ($this->isGranted('password', $user)) {
+            $forceResetToken = $this->csrfTokenManager->getToken('admin_user_force_password_reset_' . $user->getId())->getValue();
+            $event->addActionToSubmenu('security', 'force_password_reset', ['url' => $this->path('admin_user_force_password_reset', ['id' => $user->getId(), 'csrfToken' => $forceResetToken]), 'title' => 'force_password_reset']);
+
+            $revokeRememberMeToken = $this->csrfTokenManager->getToken('admin_user_revoke_remember_me_' . $user->getId())->getValue();
+            $event->addActionToSubmenu('security', 'revoke_remember_me', ['url' => $this->path('admin_user_revoke_remember_me', ['id' => $user->getId(), 'csrfToken' => $revokeRememberMeToken]), 'title' => 'revoke_remember_me']);
         }
 
         if ($event->isIndexView() && $this->isGranted('delete', $user)) {
