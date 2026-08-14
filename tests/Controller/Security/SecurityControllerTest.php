@@ -55,6 +55,104 @@ class SecurityControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString('Register a new account', $content);
     }
 
+    /**
+     * Regression guard for the `always_remember_me` opt-in flip: the login
+     * form must render a "Remember me" checkbox and it must be unchecked
+     * by default (no `checked` attribute).
+     */
+    public function testLoginPageRendersRememberMeCheckboxUncheckedByDefault(): void
+    {
+        $client = self::createClient();
+        $this->request($client, '/login');
+
+        $response = $client->getResponse();
+        self::assertTrue($response->isSuccessful());
+
+        $content = $response->getContent();
+        self::assertIsString($content);
+        self::assertStringContainsString('name="_remember_me"', $content);
+        self::assertStringContainsString('type="checkbox"', $content);
+
+        $checkboxPosition = strpos($content, 'name="_remember_me"');
+        self::assertIsInt($checkboxPosition);
+        $checkboxTagStart = strrpos(substr($content, 0, $checkboxPosition), '<input');
+        self::assertIsInt($checkboxTagStart);
+        $checkboxTagEnd = strpos($content, '>', $checkboxPosition);
+        self::assertIsInt($checkboxTagEnd);
+        $checkboxTag = substr($content, $checkboxTagStart, $checkboxTagEnd - $checkboxTagStart + 1);
+        self::assertStringNotContainsString('checked', $checkboxTag);
+    }
+
+    /**
+     * `always_remember_me` must be `false`: logging in without checking
+     * "Remember me" must NOT issue a persistent GPPRO_REMEMBER cookie.
+     */
+    public function testLoginWithoutRememberMeDoesNotIssuePersistentCookie(): void
+    {
+        $client = self::createClient();
+        $this->request($client, '/login');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $client->getCrawler()->filter('body form')->form();
+        $client->submit($form, [
+            '_username' => UserFixtures::USERNAME_SUPER_ADMIN,
+            '_password' => UserFixtures::DEFAULT_PASSWORD,
+        ]);
+
+        $this->assertIsRedirect($client);
+
+        // Symfony's remember-me listener always emits a Set-Cookie header for
+        // GPPRO_REMEMBER; when the checkbox was NOT ticked it sends a clearing
+        // cookie (empty value, expiry in the past) rather than omitting the
+        // header. "No persistent cookie" therefore means: absent, OR present
+        // but already expired (i.e. not a persistent/future-dated cookie).
+        $rememberMeCookie = $this->findCookie($client->getResponse()->headers->getCookies(), 'GPPRO_REMEMBER');
+        if ($rememberMeCookie !== null) {
+            self::assertLessThanOrEqual(time(), $rememberMeCookie->getExpiresTime(), 'The remember-me cookie must not be persistent (future-dated) when the checkbox is left unchecked.');
+        }
+    }
+
+    /**
+     * Opt-in: checking "Remember me" must still issue the persistent
+     * GPPRO_REMEMBER cookie, with unchanged lifetime/security properties.
+     */
+    public function testLoginWithRememberMeCheckedIssuesPersistentCookie(): void
+    {
+        $client = self::createClient();
+        $this->request($client, '/login');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $client->getCrawler()->filter('body form')->form();
+        $client->submit($form, [
+            '_username' => UserFixtures::USERNAME_SUPER_ADMIN,
+            '_password' => UserFixtures::DEFAULT_PASSWORD,
+            '_remember_me' => 'on',
+        ]);
+
+        $this->assertIsRedirect($client);
+
+        $rememberMeCookie = $this->findCookie($client->getResponse()->headers->getCookies(), 'GPPRO_REMEMBER');
+        self::assertNotNull($rememberMeCookie, 'A persistent remember-me cookie must be issued when the checkbox is checked.');
+        self::assertTrue($rememberMeCookie->isHttpOnly());
+        self::assertGreaterThan(time(), $rememberMeCookie->getExpiresTime());
+    }
+
+    /**
+     * @param array<\Symfony\Component\HttpFoundation\Cookie> $cookies
+     */
+    private function findCookie(array $cookies, string $name): ?\Symfony\Component\HttpFoundation\Cookie
+    {
+        foreach ($cookies as $cookie) {
+            if ($cookie->getName() === $name) {
+                return $cookie;
+            }
+        }
+
+        return null;
+    }
+
     public function testLoginPositive(): void
     {
         $client = self::createClient();
