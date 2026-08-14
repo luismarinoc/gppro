@@ -169,4 +169,58 @@ class MenuSubscriberTest extends TestCase
 
         self::assertNull($expenses->findChild('expense_list'));
     }
+
+    public function testInvoicePaymentApprovalLevelMenuIsVisibleForLevelManagers(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'manage_invoice_payment_approval_levels'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $invoice = $event->getMenu()->findChild('invoices');
+        self::assertNotNull($invoice);
+
+        $levels = $invoice->findChild('invoice_payment_approval_level_list');
+        self::assertNotNull($levels);
+        self::assertSame('admin_invoice_payment_approval_level_list', $levels->getRoute());
+        self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_create'));
+        self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_edit'));
+        self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_delete'));
+
+        self::assertNull($invoice->findChild('invoice_listing'));
+    }
+
+    public function testLoginAuditMenuIsVisibleForSuperAdmins(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'ROLE_SUPER_ADMIN'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $loginAudit = $event->getSystemMenu()->findChild('login_audit');
+        self::assertNotNull($loginAudit);
+        self::assertSame('admin_login_audit', $loginAudit->getRoute());
+    }
+
+    public function testLoginAuditMenuIsHiddenForNonSuperAdmins(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'view_user'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        self::assertNull($event->getSystemMenu()->findChild('login_audit'));
+    }
 }
