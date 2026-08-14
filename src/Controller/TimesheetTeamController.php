@@ -72,6 +72,39 @@ final class TimesheetTeamController extends TimesheetAbstractController
         return $this->duplicate($entry, $request);
     }
 
+    #[Route(path: '/{id}/approve', name: 'admin_timesheet_approve', methods: ['POST'])]
+    #[IsGranted('approve_timesheet', 'entry')]
+    public function approveAction(Timesheet $entry, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_timesheet_approve_' . $entry->getId(), $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $entry->approve($user);
+        $this->repository->save($entry);
+
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute($this->getTimesheetRoute());
+    }
+
+    #[Route(path: '/{id}/reject', name: 'admin_timesheet_reject', methods: ['POST'])]
+    #[IsGranted('reject_timesheet', 'entry')]
+    public function rejectAction(Timesheet $entry, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_timesheet_reject_' . $entry->getId(), $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        // D3: reject is not a persisted state - the entry simply stays/returns
+        // to its normal unapproved, editable state. No entity mutation needed.
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute($this->getTimesheetRoute());
+    }
+
     #[Route(path: '/create', name: 'admin_timesheet_create', methods: ['GET', 'POST'])]
     #[IsGranted('create_other_timesheet')]
     public function createAction(Request $request): Response
