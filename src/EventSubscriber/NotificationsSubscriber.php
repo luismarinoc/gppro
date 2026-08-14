@@ -62,6 +62,10 @@ final class NotificationsSubscriber implements EventSubscriberInterface
 
         $counts = $this->getCounts($user);
 
+        if ($counts['expense'] + $counts['invoice'] + $counts['timesheet'] > 0) {
+            $event->setTitle($this->translator->trans('approvals.notification.title'));
+        }
+
         if ($counts['expense'] > 0) {
             $this->addDomainNotification($event, 'expense', $counts['expense']);
         }

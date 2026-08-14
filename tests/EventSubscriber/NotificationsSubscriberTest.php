@@ -140,6 +140,7 @@ class NotificationsSubscriberTest extends TestCase
         $translator->method('trans')->willReturnMap([
             ['approvals.notification.expense', ['%count%' => 3], null, null, 'You have 3 pending expenses'],
             ['approvals.notification.invoice', ['%count%' => 2], null, null, 'You have 2 pending invoice payments'],
+            ['approvals.notification.title', [], null, null, 'Pending approvals'],
         ]);
 
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
@@ -171,6 +172,7 @@ class NotificationsSubscriberTest extends TestCase
         self::assertSame('/approvals/', $notifications[1]->getUrl());
 
         self::assertTrue($event->isShowBadgeTotal());
+        self::assertSame('Pending approvals', $event->getTitle(), 'The dropdown title (design A9) must be set from approvals.notification.title');
     }
 
     public function testNonTeamleadUserNeverCallsTimesheetCountMethod(): void
@@ -220,6 +222,7 @@ class NotificationsSubscriberTest extends TestCase
         $translator->method('trans')->willReturnMap([
             ['approvals.notification.invoice', ['%count%' => 1], null, null, 'invoice msg'],
             ['approvals.notification.timesheet', ['%count%' => 1], null, null, 'timesheet msg'],
+            ['approvals.notification.title', [], null, null, 'Pending approvals'],
         ]);
 
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
