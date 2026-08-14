@@ -89,18 +89,18 @@ Two independent chains converge before the dashboard: Invoice (PR1->PR2->PR3, D1
 
 > Hard dependency: requires PR3 (Invoice payment-approval query surface) and PR-T (Timesheet query surface) both merged. Do not start before both land.
 
-- [ ] 4.1 RED `tests/Repository/TimesheetRepositoryTest.php` — `findPendingApprovalForUser(User)` returns only entries where user `isTeamleadOf()` the project's team(s), excludes already-approved entries.
-- [ ] 4.2 GREEN `src/Repository/TimesheetRepository.php` — add `findPendingApprovalForUser(User)`.
-- [ ] 4.3 RED `tests/Repository/InvoiceRepositoryTest.php` — `findPendingPaymentApprovalForUser(User)` returns submitted, non-fully-cleared invoices (creator-exclusion only at repo layer per design's flagged gap — NOT approver-eligibility filtering).
-- [ ] 4.4 GREEN `src/Repository/InvoiceRepository.php` — add `findPendingPaymentApprovalForUser(User)`.
-- [ ] 4.5 RED `tests/Controller/ApprovalsDashboardControllerTest.php` — user with pending items in all 3 domains sees all 3; user with only-Timesheet sees only Timesheet rows; empty state when nothing pending.
-- [ ] 4.6 RED same file — permission-leakage guard: raw repository results are NOT trusted as-is (design's explicit flag: `findPendingForUser()`-style queries only exclude the creator, they do not filter by approver eligibility) — controller MUST additionally filter each result set in PHP via `is_granted()` per item (`approve_expense`/`approve_timesheet`/`approve_invoice_payment`) before merge.
-- [ ] 4.7 RED same file — user with `approve_expense` but not `approve_invoice_payment` sees Expense rows only, no Invoice/Timesheet leakage.
-- [ ] 4.8 RED same file — dashboard row navigates to the domain's own approve/reject screen; no inline approve/reject controls rendered (navigation-only, decision 7).
-- [ ] 4.9 RED same file — historical PAID invoice never appears as "unapproved" (decision 8, grandfathering carried into dashboard).
-- [ ] 4.10 GREEN `src/Controller/ApprovalsDashboardController.php` — `indexAction`: query Expense (`findPendingForUser`, existing) + Timesheet + Invoice, filter each with `is_granted()` per item, merge, sort by date; route `approvals_dashboard` -> `/approvals`.
-- [ ] 4.11 `templates/approvals_dashboard/index.html.twig` — single new template, 3 sections, each row links to its own domain screen (not composed partials, per design's file-changes note).
-- [ ] 4.12 Run `phpunit tests/Controller/ApprovalsDashboardControllerTest.php tests/Repository/TimesheetRepositoryTest.php tests/Repository/InvoiceRepositoryTest.php`, `phpstan analyse`, `lint:twig`; open PR4 (base: later of PR3/PR-T tip).
+- [x] 4.1 RED `tests/Repository/TimesheetRepositoryTest.php` — `findPendingApprovalForUser(User)` returns only entries where user `isTeamleadOf()` the project's team(s), excludes already-approved entries.
+- [x] 4.2 GREEN `src/Repository/TimesheetRepository.php` — add `findPendingApprovalForUser(User)`.
+- [x] 4.3 RED `tests/Repository/InvoiceRepositoryTest.php` — `findPendingPaymentApprovalForUser(User)` returns submitted, non-fully-cleared invoices (creator-exclusion only at repo layer per design's flagged gap — NOT approver-eligibility filtering).
+- [x] 4.4 GREEN `src/Repository/InvoiceRepository.php` — add `findPendingPaymentApprovalForUser(User)`.
+- [x] 4.5 RED `tests/Controller/ApprovalsDashboardControllerTest.php` — user with pending items in all 3 domains sees all 3; user with only-Timesheet sees only Timesheet rows; empty state when nothing pending.
+- [x] 4.6 RED same file — permission-leakage guard: raw repository results are NOT trusted as-is (design's explicit flag: `findPendingForUser()`-style queries only exclude the creator, they do not filter by approver eligibility) — controller MUST additionally filter each result set in PHP via `is_granted()` per item (`approve_expense`/`approve_timesheet`/`approve_invoice_payment`) before merge.
+- [x] 4.7 RED same file — user with `approve_expense` but not `approve_invoice_payment` sees Expense rows only, no Invoice/Timesheet leakage.
+- [x] 4.8 RED same file — dashboard row navigates to the domain's own approve/reject screen; no inline approve/reject controls rendered (navigation-only, decision 7).
+- [x] 4.9 RED same file — historical PAID invoice never appears as "unapproved" (decision 8, grandfathering carried into dashboard).
+- [x] 4.10 GREEN `src/Controller/ApprovalsDashboardController.php` — `indexAction`: query Expense (`findPendingForUser`, existing) + Timesheet + Invoice, filter each with `is_granted()` per item; route `approvals_dashboard` -> `/approvals`. Deviation: kept as 3 separately-rendered, per-domain-sorted sections (no single merged/sorted-by-date array) — matches design's own File Changes note ("single new template, 3 sections, not composed partials") more directly than the Data Flow diagram's "merge, sort by date" phrasing; each repository query already orders its own rows.
+- [x] 4.11 `templates/approvals_dashboard/index.html.twig` — single new template, 3 sections, each row links to its own domain screen (not composed partials, per design's file-changes note).
+- [x] 4.12 Run `phpunit tests/Controller/ApprovalsDashboardControllerTest.php tests/Repository/TimesheetRepositoryTest.php tests/Repository/InvoiceRepositoryTest.php` (18/18 pass), `phpstan analyse -c tests/phpstan.neon --no-progress` (1 pre-existing unrelated error in `QuotationControllerTest.php`, 0 new), `lint:twig` (OK), `lint:xliff` (OK, 602 files). Cross-domain regression sweep `tests/Repository/ExpenseRepositoryTest.php tests/Voter/InvoiceVoterTest.php tests/Voter/TimesheetVoterTest.php` + broader `tests/Entity/{Timesheet,Invoice,Expense}Test.php tests/Voter/ExpenseVoterTest.php tests/Controller/{Expense,Invoice,TimesheetTeam,ExpenseApprovalLevel,InvoicePaymentApprovalLevel}ControllerTest.php` all green (129/129 then 137/137, zero regressions). Implemented on branch `approval-workflows-expansion-pr4-dashboard` (base: `main`, rebased after concurrent PRs merged) — ready for PR to be opened by orchestrator.
 
 ## Phase 5: Final End-to-End Sweep (after PR4 merges, all 3 capabilities together)
 
