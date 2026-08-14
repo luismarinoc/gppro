@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validation;
 
 #[CoversClass(User::class)]
 class UserTest extends TestCase
@@ -462,6 +463,53 @@ class UserTest extends TestCase
         self::assertEquals(50, mb_strlen($sut->getTitle()));
         $sut->setTitle('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxAAAAAA');
         self::assertEquals(50, mb_strlen($sut->getTitle()));
+    }
+
+    public function testPasswordAcceptsLetterAndDigit(): void
+    {
+        $sut = new User();
+        $sut->setPlainPassword('Passw0rd');
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+        $violations = $validator->validate($sut, null, ['ChangePassword']);
+
+        self::assertCount(0, $violations);
+    }
+
+    public function testPasswordRejectsLettersOnly(): void
+    {
+        $sut = new User();
+        $sut->setPlainPassword('Password');
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+        $violations = $validator->validate($sut, null, ['ChangePassword']);
+
+        self::assertCount(1, $violations);
+        self::assertEquals('plainPassword', $violations->get(0)->getPropertyPath());
+    }
+
+    public function testPasswordRejectsDigitsOnly(): void
+    {
+        $sut = new User();
+        $sut->setPlainPassword('12345678');
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+        $violations = $validator->validate($sut, null, ['ChangePassword']);
+
+        self::assertCount(1, $violations);
+        self::assertEquals('plainPassword', $violations->get(0)->getPropertyPath());
+    }
+
+    public function testPasswordBelowMinimumLengthIsStillRejected(): void
+    {
+        $sut = new User();
+        $sut->setPlainPassword('Pa1');
+
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+        $violations = $validator->validate($sut, null, ['ChangePassword']);
+
+        self::assertCount(1, $violations);
+        self::assertEquals('plainPassword', $violations->get(0)->getPropertyPath());
     }
 
     public function testPreferencesCollectionIsCreatedOnBrokenUser(): void
