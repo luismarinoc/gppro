@@ -189,12 +189,22 @@ final class MenuSubscriber implements EventSubscriberInterface
             $activityBoard = new MenuItemModel('activity_board', 'activity_board.title', 'admin_project_board_picker', [], 'columns');
             $activityBoard->setChildRoutes(['admin_project_board_picker_paginated', 'project_board']);
             $menu->addChild($activityBoard);
+
+            // "Actividades" opens a project picker, then the 3-panel
+            // workspace scoped to the selected project (proposal A1) - the
+            // picker renders the project list, so it must live under the
+            // project view guard, not the activity guard.
+            $activities = new MenuItemModel('activities', 'activities', 'admin_project_activity_workspace_picker', [], 'activity');
+            $activities->setChildRoutes(['admin_project_activity_workspace_picker_paginated', 'project_activity_workspace']);
+            $menu->addChild($activities);
         }
 
         if ($auth->isGranted('view_activity') || $auth->isGranted('view_teamlead_activity') || $auth->isGranted('view_team_activity')) {
-            $activities = new MenuItemModel('activities', 'activities', 'admin_activity', [], 'activity');
-            $activities->setChildRoutes(['admin_activity_create', 'activity_details', 'admin_activity_edit', 'admin_activity_delete']);
-            $menu->addChild($activities);
+            // "Todas las actividades" - the pre-existing cross-project list,
+            // unchanged route, permission, and CRUD child routes (Rule 10).
+            $activitiesAll = new MenuItemModel('activities_all', 'activities_all', 'admin_activity', [], 'activity');
+            $activitiesAll->setChildRoutes(['admin_activity_create', 'activity_details', 'admin_activity_edit', 'admin_activity_delete']);
+            $menu->addChild($activitiesAll);
         }
 
         if ($auth->isGranted('view_tag')) {
