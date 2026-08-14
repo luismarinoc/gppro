@@ -8,6 +8,7 @@
         </div>
         <div class="col-lg-4">
             {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+                {% import "macros/widgets.html.twig" as widgets %}
                 {% block box_attributes %}id="activity_workspace_detail_box"{% endblock %}
                 {% block box_title %}{{ 'activity_workspace.detail'|trans }}{% endblock %}
                 {% block box_body %}
