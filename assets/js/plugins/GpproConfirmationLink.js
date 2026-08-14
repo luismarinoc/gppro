@@ -46,7 +46,20 @@ export default class GpproConfirmationLink extends GpproPlugin {
                         this.getContainer().getPlugin('alert').question(attributes.question, function(value) {
                             if (value) {
                                 if (form === null) {
-                                    document.location = url;
+                                    // a plain link with an explicit data-method="post" cannot
+                                    // reach a POST-only, CSRF-protected route via a GET
+                                    // navigation, so build and submit a real hidden POST form
+                                    // instead (the CSRF token is already embedded in the URL)
+                                    if (attributes.method !== undefined && attributes.method.toLowerCase() === 'post') {
+                                        const postForm = document.createElement('form');
+                                        postForm.method = 'post';
+                                        postForm.action = url;
+                                        postForm.style.display = 'none';
+                                        document.body.appendChild(postForm);
+                                        postForm.submit();
+                                    } else {
+                                        document.location = url;
+                                    }
                                 } else {
                                     if (url !== null) {
                                         form.action = url;

@@ -706,6 +706,14 @@
         <source>revoke_remember_me</source>
         <target>Revoke remember-me &amp; force re-auth</target>
       </trans-unit>
+      <trans-unit id="fp8ResetQK" resname="confirm.force_password_reset">
+        <source>confirm.force_password_reset</source>
+        <target>Do you really want to force a password reset for this user?</target>
+      </trans-unit>
+      <trans-unit id="rvkRmbrMQK" resname="confirm.revoke_remember_me">
+        <source>confirm.revoke_remember_me</source>
+        <target>Do you really want to revoke remember-me and force re-authentication for this user?</target>
+      </trans-unit>
       <trans-unit id="lgnAudit1K" resname="login_audit">
         <source>login_audit</source>
         <target>Login audit</target>

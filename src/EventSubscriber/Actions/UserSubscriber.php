@@ -78,11 +78,24 @@ final class UserSubscriber extends AbstractActionsSubscriber
         }
 
         if ($this->isGranted('password', $user)) {
+            // both quick-actions below are POST-only, CSRF-protected routes: a plain <a>
+            // click would GET-navigate and 405. 'confirmation-link' + 'data-method' => 'post'
+            // makes GpproConfirmationLink.js build and submit a real POST form instead.
             $forceResetToken = $this->csrfTokenManager->getToken('admin_user_force_password_reset_' . $user->getId())->getValue();
-            $event->addActionToSubmenu('security', 'force_password_reset', ['url' => $this->path('admin_user_force_password_reset', ['id' => $user->getId(), 'csrfToken' => $forceResetToken]), 'title' => 'force_password_reset']);
+            $event->addActionToSubmenu('security', 'force_password_reset', [
+                'url' => $this->path('admin_user_force_password_reset', ['id' => $user->getId(), 'csrfToken' => $forceResetToken]),
+                'title' => 'force_password_reset',
+                'class' => 'confirmation-link',
+                'attr' => ['data-method' => 'post', 'data-question' => 'confirm.force_password_reset'],
+            ]);
 
             $revokeRememberMeToken = $this->csrfTokenManager->getToken('admin_user_revoke_remember_me_' . $user->getId())->getValue();
-            $event->addActionToSubmenu('security', 'revoke_remember_me', ['url' => $this->path('admin_user_revoke_remember_me', ['id' => $user->getId(), 'csrfToken' => $revokeRememberMeToken]), 'title' => 'revoke_remember_me']);
+            $event->addActionToSubmenu('security', 'revoke_remember_me', [
+                'url' => $this->path('admin_user_revoke_remember_me', ['id' => $user->getId(), 'csrfToken' => $revokeRememberMeToken]),
+                'title' => 'revoke_remember_me',
+                'class' => 'confirmation-link',
+                'attr' => ['data-method' => 'post', 'data-question' => 'confirm.revoke_remember_me'],
+            ]);
         }
 
         if ($user->isPendingApproval()) {
