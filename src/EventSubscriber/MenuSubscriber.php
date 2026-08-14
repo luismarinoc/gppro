@@ -164,6 +164,12 @@ final class MenuSubscriber implements EventSubscriberInterface
             $invoice->addChild($tmpMenu);
         }
 
+        if ($auth->isGranted('manage_invoice_payment_approval_levels')) {
+            $approvalLevels = new MenuItemModel('invoice_payment_approval_level_list', 'invoice_payment_approval_level', 'admin_invoice_payment_approval_level_list', [], 'settings');
+            $approvalLevels->setChildRoutes(['admin_invoice_payment_approval_level_create', 'admin_invoice_payment_approval_level_edit', 'admin_invoice_payment_approval_level_delete']);
+            $invoice->addChild($approvalLevels);
+        }
+
         if ($invoice->hasChildren()) {
             $this->addDivider($invoice);
         }
@@ -239,6 +245,12 @@ final class MenuSubscriber implements EventSubscriberInterface
             $teams = new MenuItemModel('teams', 'teams', 'admin_team', [], 'team');
             $teams->setChildRoutes(['admin_team_create', 'admin_team_edit']);
             $menu->addChild($teams);
+        }
+
+        if ($auth->isGranted('ROLE_SUPER_ADMIN')) {
+            $menu->addChild(
+                new MenuItemModel('login_audit', 'login_audit', 'admin_login_audit', [], 'shield-lock')
+            );
         }
 
         if ($menu->hasChildren()) {
