@@ -733,6 +733,137 @@ class TimesheetVoterTest extends AbstractVoterTestCase
         $this->assertVote($owner, $timesheet, 'duplicate', VoterInterface::ACCESS_GRANTED);
     }
 
+    public function testApproveTimesheetGrantedForTeamLeadOfProject(): void
+    {
+        $member = self::getUser(1, User::ROLE_USER);
+        $lead = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $team = new Team('project team');
+        $team->addUser($member);
+        $team->addTeamlead($lead);
+
+        $project = new Project();
+        $project->setCustomer(new Customer('Acme'));
+        $project->addTeam($team);
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($member);
+        $timesheet->setProject($project);
+        $timesheet->setActivity((new Activity())->setProject($project));
+
+        $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_GRANTED);
+        $this->assertVote($lead, $timesheet, 'reject_timesheet', VoterInterface::ACCESS_GRANTED);
+    }
+
+    public function testApproveTimesheetDeniedForNonTeamLead(): void
+    {
+        $member = self::getUser(1, User::ROLE_USER);
+        $plainMember = self::getUser(2, User::ROLE_USER);
+
+        $team = new Team('project team');
+        $team->addUser($member);
+        $team->addUser($plainMember);
+
+        $project = new Project();
+        $project->setCustomer(new Customer('Acme'));
+        $project->addTeam($team);
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($member);
+        $timesheet->setProject($project);
+        $timesheet->setActivity((new Activity())->setProject($project));
+
+        $this->assertVote($plainMember, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
+        $this->assertVote($plainMember, $timesheet, 'reject_timesheet', VoterInterface::ACCESS_DENIED);
+    }
+
+    public function testApproveTimesheetDeniedForUserNotOnProjectTeamAtAll(): void
+    {
+        $owner = self::getUser(1, User::ROLE_USER);
+        $stranger = self::getUser(2, User::ROLE_SUPER_ADMIN);
+
+        $project = new Project();
+        $project->setCustomer(new Customer('Acme'));
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($owner);
+        $timesheet->setProject($project);
+        $timesheet->setActivity((new Activity())->setProject($project));
+
+        // even a super-admin is not automatically a "team lead" -- approve_timesheet
+        // bypasses hasRolePermission entirely and only checks isTeamleadOf().
+        $this->assertVote($stranger, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
+    }
+
+    public function testApproveTimesheetGrantedForSelfApprovalByLead(): void
+    {
+        // decision 4: self-approval is allowed, no creator-exclusion rule.
+        $lead = self::getUser(1, User::ROLE_TEAMLEAD);
+
+        $team = new Team('project team');
+        $team->addTeamlead($lead);
+
+        $project = new Project();
+        $project->setCustomer(new Customer('Acme'));
+        $project->addTeam($team);
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($lead);
+        $timesheet->setProject($project);
+        $timesheet->setActivity((new Activity())->setProject($project));
+
+        $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_GRANTED);
+    }
+
+    public function testApproveTimesheetDeniedWhenNoProject(): void
+    {
+        $lead = self::getUser(1, User::ROLE_TEAMLEAD);
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($lead);
+
+        $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
+    }
+
+    public function testApprovedEntryDeniesEditAndDeleteForOwner(): void
+    {
+        $owner = self::getUser(1, User::ROLE_USER);
+
+        $timesheet = self::getTimesheetFor($owner);
+        $timesheet->approve(self::getUser(2, User::ROLE_TEAMLEAD));
+
+        $this->assertVote($owner, $timesheet, 'edit', VoterInterface::ACCESS_DENIED);
+        $this->assertVote($owner, $timesheet, 'delete', VoterInterface::ACCESS_DENIED);
+    }
+
+    public function testApprovedEntryDeniesEditAndDeleteForTeamLead(): void
+    {
+        // D7: isAllowedApproved() gates canEdit()/canDelete() unconditionally --
+        // even the team lead who approved it cannot edit/delete an approved entry.
+        $owner = self::getUser(1, User::ROLE_USER);
+        $lead = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $team = new Team('project team');
+        $team->addUser($owner);
+        $team->addTeamlead($lead);
+
+        $timesheet = self::getTimesheetFor($owner, null, $team);
+        $timesheet->approve($lead);
+
+        $this->assertVote($lead, $timesheet, 'edit', VoterInterface::ACCESS_DENIED);
+        $this->assertVote($lead, $timesheet, 'delete', VoterInterface::ACCESS_DENIED);
+    }
+
+    public function testUnapprovedEntryStillEditableByOwner(): void
+    {
+        $owner = self::getUser(1, User::ROLE_USER);
+
+        $timesheet = self::getTimesheetFor($owner);
+
+        $this->assertVote($owner, $timesheet, 'edit', VoterInterface::ACCESS_GRANTED);
+        $this->assertVote($owner, $timesheet, 'delete', VoterInterface::ACCESS_GRANTED);
+    }
+
     private static function getTimesheetFor(User $owner, ?Team $customerTeam = null, ?Team $projectTeam = null, ?Team $activityTeam = null): Timesheet
     {
         $customer = new Customer('Acme');

@@ -36,6 +36,8 @@ final class TimesheetVoter extends Voter
     public const VIEW_RATE = 'view_rate';
     public const EDIT_RATE = 'edit_rate';
     public const EDIT_EXPORT = 'edit_export';
+    public const APPROVE = 'approve_timesheet';
+    public const REJECT = 'reject_timesheet';
 
     /**
      * support rules based on the given $subject (here: Timesheet)
@@ -53,7 +55,9 @@ final class TimesheetVoter extends Voter
         'edit_billable',
         'duplicate',
         'is_owner',
-        self::CREATE
+        self::CREATE,
+        self::APPROVE,
+        self::REJECT,
     ];
 
     private ?bool $lockdownGrace = null;
@@ -96,6 +100,13 @@ final class TimesheetVoter extends Voter
         switch ($attribute) {
             case 'is_owner':
                 return (!$subject instanceof MultiUserTimesheet) && $user->getId() === $subject->getUser()?->getId();
+
+            case self::APPROVE:
+            case self::REJECT:
+                // D2/decision 4: team-lead check only, no hasRolePermission() lookup
+                // at all (deliberately NOT registered in gppro.yaml) and no
+                // creator-exclusion -- self-approval by a lead is allowed.
+                return (!$subject instanceof MultiUserTimesheet) && $this->isTeamLead($user, $subject);
 
             case self::CREATE:
                 if (!$this->canCreate($user, $subject)) {
@@ -223,6 +234,10 @@ final class TimesheetVoter extends Voter
 
     private function canEdit(User $user, Timesheet $timesheet): bool
     {
+        if (!$this->isAllowedApproved($timesheet)) {
+            return false;
+        }
+
         if (!$this->isAllowedExported($user, $timesheet)) {
             return false;
         }
@@ -236,6 +251,10 @@ final class TimesheetVoter extends Voter
 
     private function canDelete(User $user, Timesheet $timesheet): bool
     {
+        if (!$this->isAllowedApproved($timesheet)) {
+            return false;
+        }
+
         if (!$this->isAllowedExported($user, $timesheet)) {
             return false;
         }
@@ -245,6 +264,40 @@ final class TimesheetVoter extends Voter
         }
 
         return true;
+    }
+
+    /**
+     * D7: once approved, an entry becomes read-only -- no override exists
+     * (unlike isAllowedExported()/isAllowedInLockdown(), which have
+     * permission-based bypasses). This applies to the owner AND the
+     * approving team lead alike.
+     */
+    private function isAllowedApproved(Timesheet $timesheet): bool
+    {
+        return !$timesheet->isApproved();
+    }
+
+    /**
+     * D2: the public primitive User::isTeamleadOf(Team $team) is used
+     * directly -- NOT the private RolePermissionManager::checkTeamLeadAccess()
+     * (cannot be called from here) and NOT checkTeamAccessTimesheet()
+     * (short-circuits true for the timesheet's own owner before any
+     * team-lead check, which would let any team member self-approve).
+     */
+    private function isTeamLead(User $user, Timesheet $timesheet): bool
+    {
+        $project = $timesheet->getProject();
+        if (null === $project) {
+            return false;
+        }
+
+        foreach ($project->getTeams() as $team) {
+            if ($user->isTeamleadOf($team)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isAllowedExported(User $user, Timesheet $timesheet): bool

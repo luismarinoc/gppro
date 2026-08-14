@@ -48,6 +48,9 @@ class TimesheetTest extends TestCase
         self::assertNull($sut->getHourlyRate());
         self::assertEquals(new ArrayCollection(), $sut->getTags());
         self::assertEquals([], $sut->getTagsAsArray());
+        self::assertFalse($sut->isApproved());
+        self::assertNull($sut->getApprovedBy());
+        self::assertNull($sut->getApprovedAt());
         self::assertInstanceOf(Timesheet::class, $sut->setFixedRate(13.47));
         self::assertEquals(13.47, $sut->getFixedRate());
         self::assertInstanceOf(Timesheet::class, $sut->setInternalRate(999.99));
@@ -259,5 +262,36 @@ class TimesheetTest extends TestCase
         self::assertSame(7200, $sut->getDuration(true));
         self::assertSame(7200, $sut->getDuration(false));
         self::assertEquals(3600, $sut->getCalculatedDuration());
+    }
+
+    public function testApprove(): void
+    {
+        // default null/unapproved state is already covered by testDefaultValues()
+        $sut = new Timesheet();
+        $approver = new User();
+
+        self::assertInstanceOf(Timesheet::class, $sut->approve($approver));
+
+        self::assertTrue($sut->isApproved());
+        self::assertSame($approver, $sut->getApprovedBy());
+        self::assertInstanceOf(\DateTimeImmutable::class, $sut->getApprovedAt());
+    }
+
+    public function testApproveCanBeCalledAgainByAnotherApprover(): void
+    {
+        // no distinct "already approved" guard is locked for this slice —
+        // re-approving simply overwrites approver/timestamp
+        $sut = new Timesheet();
+        $firstApprover = new User();
+        $secondApprover = new User();
+
+        $sut->approve($firstApprover);
+        $firstApprovedAt = $sut->getApprovedAt();
+
+        $sut->approve($secondApprover);
+
+        self::assertTrue($sut->isApproved());
+        self::assertSame($secondApprover, $sut->getApprovedBy());
+        self::assertNotSame($firstApprovedAt, $sut->getApprovedAt());
     }
 }

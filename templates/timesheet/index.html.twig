@@ -155,6 +155,18 @@
     {% elseif column == 'actions' %}
         {% set event = actions(app.user, action_single, 'index', {'timesheet': entry}) %}
         {{ widgets.table_actions(event.actions) }}
+        {% if is_granted('approve_timesheet', entry) %}
+            <form class="d-inline" method="post" action="{{ path('admin_timesheet_approve', {id: entry.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_timesheet_approve_' ~ entry.id) }}">
+                <button class="btn btn-sm btn-link dd-ts-approve" type="submit">{{ 'approve'|trans }}</button>
+            </form>
+        {% endif %}
+        {% if is_granted('reject_timesheet', entry) %}
+            <form class="d-inline" method="post" action="{{ path('admin_timesheet_reject', {id: entry.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_timesheet_reject_' ~ entry.id) }}">
+                <button class="btn btn-sm btn-link text-danger dd-ts-reject" type="submit">{{ 'reject'|trans }}</button>
+            </form>
+        {% endif %}
     {% elseif column starts with 'mf_' %}
             {{ widgets.meta_field_value(entry, data) }}
     {% endif %}
