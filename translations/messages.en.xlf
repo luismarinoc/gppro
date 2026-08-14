@@ -1210,6 +1210,18 @@
         <source>invoice.payment_date</source>
         <target>Payment date</target>
       </trans-unit>
+      <trans-unit id="8pQmR1a" resname="invoice.submit_payment_approval">
+        <source>invoice.submit_payment_approval</source>
+        <target>Submit for payment approval</target>
+      </trans-unit>
+      <trans-unit id="8pQmR1b" resname="invoice.approve_payment">
+        <source>invoice.approve_payment</source>
+        <target>Approve payment</target>
+      </trans-unit>
+      <trans-unit id="8pQmR1c" resname="invoice.reject_payment">
+        <source>invoice.reject_payment</source>
+        <target>Reject payment</target>
+      </trans-unit>
       <trans-unit id="4XKFnWh" resname="invoice.from">
         <source>invoice.from</source>
         <target>From</target>

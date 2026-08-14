@@ -28,6 +28,7 @@ use App\Form\Toolbar\InvoiceToolbarForm;
 use App\Form\Type\DatePickerType;
 use App\Form\Type\InvoiceTemplateType;
 use App\Invoice\InvoiceHistorySummarizer;
+use App\Invoice\InvoicePaymentApprovalService;
 use App\Invoice\InvoiceService;
 use App\Milestone\InvoiceableMilestoneFinder;
 use App\Milestone\MilestoneInvoiceSelectionFormFactory;
@@ -251,6 +252,18 @@ final class InvoiceController extends AbstractController
         }
 
         if ($status === Invoice::STATUS_PAID) {
+            // D6 gate point 1: this branch mutates the entity in-memory and
+            // renders the edit form (real persistence happens later, when
+            // that rendered form is submitted via editAction) - so the
+            // transition-guard must fire here, before any setter, or an
+            // already-in-flight in-memory mutation would leak into the
+            // rendered form even though nothing is persisted yet.
+            if (!$invoice->isPaid() && !$invoice->isPaymentApproved()) {
+                $this->flashError('action.update.error', 'invoice.payment_approval_required');
+
+                return $this->redirectToRoute('admin_invoice_list');
+            }
+
             if (null === $invoice->getPaymentDate()) {
                 $invoice->setPaymentDate($this->getDateTimeFactory()->createDateTime());
                 $invoice->setIsPaid();
@@ -280,10 +293,27 @@ final class InvoiceController extends AbstractController
     #[IsGranted('edit_invoice', 'invoice')]
     public function editAction(Invoice $invoice, Request $request, InvoiceService $InvoiceService): Response
     {
+        // D6 gate point 2: the edit form's status dropdown is a second,
+        // independent path that can persist STATUS_PAID (InvoiceEditForm ->
+        // saveInvoice()) - captured BEFORE handleRequest() so the gate only
+        // fires on a genuine "was not paid -> now paid" transition, never on
+        // an already-PAID invoice being re-saved (grandfathered, decision 8).
+        $wasPaid = $invoice->isPaid();
+
         $form = $this->createInvoiceEditForm($invoice, $InvoiceService);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($invoice->isPaid() && !$wasPaid && !$invoice->isPaymentApproved()) {
+                $this->flashError('action.update.error', 'invoice.payment_approval_required');
+
+                return $this->render('invoice/invoice_edit.html.twig', [
+                    'page_setup' => $this->createPageSetup(),
+                    'invoice' => $invoice,
+                    'form' => $form->createView()
+                ]);
+            }
+
             try {
                 $InvoiceService->saveInvoice($invoice);
                 $this->flashSuccess('action.update.success');
@@ -299,6 +329,74 @@ final class InvoiceController extends AbstractController
             'invoice' => $invoice,
             'form' => $form->createView()
         ]);
+    }
+
+    #[Route(path: '/{id}/submit-payment-approval', name: 'invoice_submit_payment_approval', methods: ['POST'])]
+    #[IsGranted('edit_invoice', 'invoice')]
+    public function submitPaymentApprovalAction(Invoice $invoice, Request $request, InvoicePaymentApprovalService $service): Response
+    {
+        if (!$this->isCsrfTokenValid('invoice_submit_payment_approval_' . $invoice->getId(), $request->request->getString('_token'))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
+        }
+
+        try {
+            $service->submit($invoice);
+            $this->flashSuccess('action.update.success');
+        } catch (\DomainException $exception) {
+            $this->flashError('action.update.error', $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
+    }
+
+    /**
+     * Coarse-grained gate reuses `edit_invoice` (same reuse pattern as
+     * submit-for-approval above): the fine-grained `approve_invoice_payment`/
+     * `reject_invoice_payment` voter attributes are wired in a later PR
+     * (InvoiceVoter extension). Eligibility for THIS pending level is still
+     * fully enforced here via InvoicePaymentApprovalPolicy, inside the
+     * service call (four-eyes, mirrors ExpenseApprovalService).
+     */
+    #[Route(path: '/{id}/approve-payment', name: 'invoice_approve_payment', methods: ['POST'])]
+    #[IsGranted('edit_invoice', 'invoice')]
+    public function approvePaymentAction(Invoice $invoice, Request $request, InvoicePaymentApprovalService $service): Response
+    {
+        if (!$this->isCsrfTokenValid('invoice_approve_payment_' . $invoice->getId(), $request->request->getString('_token'))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
+        }
+
+        try {
+            $service->approve($invoice, $this->getUser());
+            $this->flashSuccess('action.update.success');
+        } catch (\DomainException $exception) {
+            $this->flashError('action.update.error', $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
+    }
+
+    #[Route(path: '/{id}/reject-payment', name: 'invoice_reject_payment', methods: ['POST'])]
+    #[IsGranted('edit_invoice', 'invoice')]
+    public function rejectPaymentAction(Invoice $invoice, Request $request, InvoicePaymentApprovalService $service): Response
+    {
+        if (!$this->isCsrfTokenValid('invoice_reject_payment_' . $invoice->getId(), $request->request->getString('_token'))) {
+            $this->flashError('action.csrf.error');
+
+            return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
+        }
+
+        try {
+            $service->reject($invoice, $this->getUser());
+            $this->flashSuccess('action.update.success');
+        } catch (\DomainException $exception) {
+            $this->flashError('action.update.error', $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('admin_invoice_edit', ['id' => $invoice->getId()]);
     }
 
     #[Route(path: '/delete/{id}/{token}', name: 'admin_invoice_delete', methods: ['GET'])]

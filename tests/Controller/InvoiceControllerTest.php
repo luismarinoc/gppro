@@ -9,6 +9,7 @@
 
 namespace App\Tests\Controller;
 
+use App\DataFixtures\UserFixtures;
 use App\Entity\Activity;
 use App\Entity\Customer;
 use App\Entity\Invoice;
@@ -21,6 +22,7 @@ use App\Entity\User;
 use App\Tests\DataFixtures\InvoiceTemplateFixtures;
 use App\Tests\DataFixtures\TimesheetFixtures;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -675,6 +677,7 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $invoices = $this->getEntityManager()->getRepository(Invoice::class)->findAll();
         self::assertCount(1, $invoices);
         $id = $invoices[0]->getId();
+        self::assertIsInt($id);
 
         $this->assertHasFlashSuccess($client);
 
@@ -695,6 +698,28 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, $link->attr('href'));
         $this->assertIsRedirect($client, '/invoice/show');
         $client->followRedirect();
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        // D6 (this SDD change): the PAID transition is now gated by payment
+        // approval - submit for approval, then have a distinct eligible
+        // teamlead clear the (default, level-1, ROLE_TEAMLEAD) level before
+        // the pre-existing PAID flow below can proceed. The invoice's own
+        // "user" is the ADMIN identity that generated it, so a DIFFERENT
+        // user is required per InvoicePaymentApprovalPolicy's four-eyes rule.
+        $submitToken = $this->extractInvoiceToken($client, $id, '/submit-payment-approval');
+        $this->request($client, '/invoice/' . $id . '/submit-payment-approval', 'POST', ['_token' => $submitToken]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $id));
+
+        \assert($client instanceof KernelBrowser);
+        $teamlead = $this->loadUserFromDatabase(UserFixtures::USERNAME_TEAMLEAD);
+        $client->loginUser($teamlead, 'secured_area');
+        $approveToken = $this->extractInvoiceToken($client, $id, '/approve-payment');
+        $this->request($client, '/invoice/' . $id . '/approve-payment', 'POST', ['_token' => $approveToken]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $id));
+
+        $adminUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
+        $client->loginUser($adminUser, 'secured_area');
+        $this->request($client, '/invoice/show');
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $link = $client->getCrawler()->selectLink('Invoice paid');
@@ -872,5 +897,288 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
         $this->assertAccessIsGranted($client, '/invoice/export');
         $this->assertExcelExportResponse($client, 'gppro-invoices_');
+    }
+
+    private function createInvoiceCustomer(): Customer
+    {
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Invoice controller test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+        $em->flush();
+
+        return $customer;
+    }
+
+    /**
+     * Extracts a CSRF token from an actually rendered `invoice_edit`
+     * page (mirrors ExpenseControllerTest::extractToken()) - a token
+     * minted outside the real request/session (e.g. via getCsrfToken())
+     * does not validate against the CSRF token stored in the real one.
+     */
+    private function extractInvoiceToken(\Symfony\Component\HttpKernel\HttpKernelBrowser $client, int $invoiceId, string $formAction): string
+    {
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        $value = $crawler->filter('form[action$="' . $formAction . '"] input[name=_token]')->attr('value');
+        self::assertIsString($value, 'Could not find token via selector for action "' . $formAction . '"');
+
+        return $value;
+    }
+
+    private function createNewInvoice(Customer $customer, User $createdBy, float $total = 100000.0): Invoice
+    {
+        $em = $this->getEntityManager();
+
+        $invoice = new Invoice();
+        $invoice->setStatus(Invoice::STATUS_PENDING);
+        $invoice->setTotal($total);
+        $invoice->setVat(0.0);
+        $invoice->setTax(0.0);
+        $invoice->setCustomer($customer);
+        $invoice->setInvoiceNumber('inv-controller-' . uniqid());
+        $invoice->setFilename('inv-controller-' . uniqid());
+        $invoice->setCreatedAt(new \DateTime());
+        $invoice->setUser($createdBy);
+        $invoice->setDueDays(30);
+        $invoice->setCurrency('CLP');
+        $em->persist($invoice);
+        $em->flush();
+
+        return $invoice;
+    }
+
+    /**
+     * Task 2.9: new routes reachable and correctly gated - submit freezes
+     * the required levels for an eligible caller.
+     */
+    public function testSubmitPaymentApprovalActionFreezesRequiredLevels(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $token = $this->extractInvoiceToken($client, $invoiceId, '/submit-payment-approval');
+        $this->request($client, '/invoice/' . $invoiceId . '/submit-payment-approval', 'POST', ['_token' => $token]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $invoiceId));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertSame(Invoice::PAYMENT_APPROVAL_PENDING, $reloaded->getPaymentApprovalStatus());
+        self::assertSame(1, $reloaded->getPaymentRequiredLevels());
+    }
+
+    /**
+     * Task 2.9: eligible approver (matching level 1's seeded ROLE_TEAMLEAD,
+     * distinct from the invoice's own user) clears the level and the
+     * invoice becomes payment-approved.
+     */
+    public function testApprovePaymentActionByEligibleApproverClearsLevelAndApproves(): void
+    {
+        // The client must be created before any other call that boots the
+        // kernel (e.g. getEntityManager()), otherwise WebTestCase::
+        // createClient() throws "kernel should only be booted once".
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->submitForPaymentApproval(1);
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $token = $this->extractInvoiceToken($client, $invoiceId, '/approve-payment');
+        $this->request($client, '/invoice/' . $invoiceId . '/approve-payment', 'POST', ['_token' => $token]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $invoiceId));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertTrue($reloaded->isPaymentApproved());
+    }
+
+    /**
+     * Task 2.9: an ineligible caller (no matching role, not the named
+     * approver) is denied a business-rule decision - a flash error, not an
+     * access-control 403, and the invoice stays unapproved.
+     */
+    public function testApprovePaymentActionByIneligibleApproverIsDenied(): void
+    {
+        // Client role must hold `edit_invoice` (else the coarse controller
+        // gate 403s before the policy is ever reached) but must NOT hold
+        // level 1's seeded ROLE_TEAMLEAD, and must be a DIFFERENT user than
+        // the invoice's own creator (else creator-exclusion fires instead).
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->submitForPaymentApproval(1);
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $token = $this->extractInvoiceToken($client, $invoiceId, '/approve-payment');
+        $this->request($client, '/invoice/' . $invoiceId . '/approve-payment', 'POST', ['_token' => $token]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $invoiceId));
+        $client->followRedirect();
+        $this->assertHasFlashError($client, 'This user cannot approve this invoice payment.');
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertFalse($reloaded->isPaymentApproved());
+    }
+
+    /**
+     * Task 2.9: reject discards the invoice's payment approval progress.
+     */
+    public function testRejectPaymentActionDiscardsProgress(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->submitForPaymentApproval(1);
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $token = $this->extractInvoiceToken($client, $invoiceId, '/reject-payment');
+        $this->request($client, '/invoice/' . $invoiceId . '/reject-payment', 'POST', ['_token' => $token]);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/edit/' . $invoiceId));
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertSame(Invoice::PAYMENT_APPROVAL_REJECTED, $reloaded->getPaymentApprovalStatus());
+        self::assertSame(0, $reloaded->getPaymentCurrentLevel());
+    }
+
+    /**
+     * Task 2.11/D6 gate point 1: changeStatusAction's PAID branch must
+     * refuse an unsubmitted invoice, never mutating or persisting.
+     */
+    public function testChangeStatusToPaidIsDeniedForUnsubmittedInvoice(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        // real, rendered token-bearing link (mirrors testCreateActionAsAdminWithDownloadAndStatusChange) -
+        // a token minted via getCsrfToken() does not validate against the real request/session.
+        $this->request($client, '/invoice/show');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $link = $client->getCrawler()->selectLink('Invoice paid');
+        $href = $link->attr('href');
+        self::assertIsString($href);
+        $this->request($client, $href);
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/show'));
+        $client->followRedirect();
+        $this->assertHasFlashError($client, 'invoice.payment_approval_required');
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertFalse($reloaded->isPaid());
+        self::assertNull($reloaded->getPaymentDate());
+    }
+
+    /**
+     * Task 2.11/D6 gate point 2: the InvoiceEditForm status dropdown is a
+     * second, independent PAID-persistence path (editAction ->
+     * saveInvoice()) and must be gated too, closing the bypass identified
+     * in design D6.
+     */
+    public function testEditFormStatusDropdownIsDeniedForUnsubmittedInvoice(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $crawler->filter('form[name=invoice_edit_form]')->form();
+        $client->submit($form, [
+            'invoice_edit_form' => [
+                'status' => Invoice::STATUS_PAID,
+                'paymentDate' => (new \DateTime())->format(self::DEFAULT_DATE_FORMAT),
+            ],
+        ]);
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $this->assertHasFlashError($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertFalse($reloaded->isPaid());
+    }
+
+    /**
+     * Task 2.14/decision 8: an already-PAID historical invoice is
+     * grandfathered - re-saving it (comment-only edit) is NOT blocked by
+     * either gate, since paymentApprovalStatus stays null and unread.
+     */
+    public function testAlreadyPaidInvoiceCommentOnlyResaveIsNotBlocked(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $creator = $this->getUserByRole(User::ROLE_ADMIN);
+        $invoice = $this->createNewInvoice($customer, $creator);
+        $invoice->setIsPaid();
+        $invoice->setPaymentDate(new \DateTime());
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $form = $crawler->filter('form[name=invoice_edit_form]')->form();
+        $client->submit($form, [
+            'invoice_edit_form' => [
+                'comment' => 'grandfathered re-save',
+                'status' => Invoice::STATUS_PAID,
+                'paymentDate' => (new \DateTime())->format(self::DEFAULT_DATE_FORMAT),
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/invoice/show'));
+        $client->followRedirect();
+        $this->assertHasFlashSuccess($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
+        self::assertInstanceOf(Invoice::class, $reloaded);
+        self::assertTrue($reloaded->isPaid());
+        self::assertSame('grandfathered re-save', $reloaded->getComment());
+        self::assertNull($reloaded->getPaymentApprovalStatus());
     }
 }
