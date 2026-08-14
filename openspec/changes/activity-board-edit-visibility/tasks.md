@@ -60,11 +60,20 @@ Chain strategy: pending
 
 ## Phase 5: Regression + docs
 
-- [ ] 5.1 Run the full `ActivityBoardControllerTest` and `ActivityControllerTest` suites; confirm no unrelated regression.
-- [ ] 5.2 Add `.activity_board_card_edit { cursor: pointer; }` plus a hover colour rule to `assets/sass/board.scss`.
-- [ ] 5.3 Confirm `ActivityVoter` and `assets/js` drag/onEnd logic were not modified (grep diff for these paths).
+- [x] 5.1 Run the full `ActivityBoardControllerTest` and `ActivityControllerTest` suites; confirm no unrelated regression. (46/46 tests, 307 assertions, GREEN)
+- [x] 5.2 Add `.activity_board_card_edit { cursor: pointer; }` plus a hover colour rule to `assets/sass/board.scss`.
+- [x] 5.3 Confirm `ActivityVoter` and `assets/js` drag/onEnd logic were not modified (grep diff for these paths). `src/Voter/ActivityVoter.php` diff against base is empty; `GpproActivityBoard.js`'s `onCardMoved()`, and the `group`/`animation`/`ghostClass`/`onEnd` Sortable.create options are unchanged — only `filter`/`preventOnFilter` were added alongside them.
 
 ## Phase 6: Manual QA (D8 — no new JS test runner)
+
+**PENDING — requires manual human verification before merge.** D8 explicitly
+decided against introducing a JS test runner (vitest/jsdom) for this change,
+so the click-vs-drag risk (SortableJS `filter`/`preventOnFilter` suppressing
+drag initiation on the edit icon) has zero automated coverage. All PHP
+integration tests (46/46, Phases 1-4) are GREEN and cover every server-side
+contract, but the client-side drag-suppression behavior itself was NOT
+executed in a browser during this apply pass. Do not mark 6.1 complete
+without an actual human running the checklist below against a live browser.
 
 - [ ] 6.1 Manual QA checklist on the board (`project_board` route), NOT automated, before merge:
   - [ ] Clicking the edit icon opens the modal for an editor and never starts a drag (`onEnd` does not fire, card stays in its column).
