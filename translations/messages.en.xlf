@@ -706,6 +706,50 @@
         <source>revoke_remember_me</source>
         <target>Revoke remember-me &amp; force re-auth</target>
       </trans-unit>
+      <trans-unit id="lgnAudit1K" resname="login_audit">
+        <source>login_audit</source>
+        <target>Login audit</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit2K" resname="login_audit.user">
+        <source>login_audit.user</source>
+        <target>User</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit3K" resname="login_audit.outcome">
+        <source>login_audit.outcome</source>
+        <target>Outcome</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit4K" resname="login_audit.outcome.success">
+        <source>login_audit.outcome.success</source>
+        <target>Success</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit5K" resname="login_audit.outcome.failure">
+        <source>login_audit.outcome.failure</source>
+        <target>Failure</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit6K" resname="login_audit.attempted_username">
+        <source>login_audit.attempted_username</source>
+        <target>Attempted username</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit7K" resname="login_audit.failure_reason">
+        <source>login_audit.failure_reason</source>
+        <target>Failure reason</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit8K" resname="login_audit.ip_address">
+        <source>login_audit.ip_address</source>
+        <target>IP address</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit9K" resname="login_audit.user_agent">
+        <source>login_audit.user_agent</source>
+        <target>User agent</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit10K" resname="login_audit.created_at">
+        <source>login_audit.created_at</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="lgnAudit11K" resname="login_audit.none_found">
+        <source>login_audit.none_found</source>
+        <target>No login attempts found.</target>
+      </trans-unit>
       <trans-unit id="iaJj4va" resname="work_times_account">
         <source>Account working times</source>
         <target state="translated">Account working times</target>

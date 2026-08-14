@@ -71,9 +71,10 @@ class LoginAttemptTest extends TestCase
         self::assertSame('UserNotFoundException', $sut->getFailureReason());
     }
 
-    public function testOutcomeConstants(): void
+    public function testOutcomesConstantListsBothValues(): void
     {
-        self::assertSame('success', LoginAttempt::OUTCOME_SUCCESS);
-        self::assertSame('failure', LoginAttempt::OUTCOME_FAILURE);
+        self::assertContains(LoginAttempt::OUTCOME_SUCCESS, LoginAttempt::OUTCOMES);
+        self::assertContains(LoginAttempt::OUTCOME_FAILURE, LoginAttempt::OUTCOMES);
+        self::assertCount(2, LoginAttempt::OUTCOMES);
     }
 }
