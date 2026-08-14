@@ -13,7 +13,7 @@
                 <thead><tr><th>Nombre</th><th>Precio predeterminado</th><th>Estado</th><th></th></tr></thead>
                 <tbody>
                 {% for item in items %}
-                    <tr>
+                    <tr class="alternative-link cursor-pointer" data-href="{{ path('admin_quotation_catalog_edit', {id: item.id}) }}">
                         <td>{{ item.name }}</td>
                         <td>{{ item.defaultPrice }}</td>
                         <td>{{ item.active ? 'Activo' : 'Inactivo' }}</td>

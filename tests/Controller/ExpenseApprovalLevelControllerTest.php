@@ -160,6 +160,31 @@ class ExpenseApprovalLevelControllerTest extends AbstractControllerBaseTestCase
         self::assertInstanceOf(ExpenseApprovalLevel::class, $em->getRepository(ExpenseApprovalLevel::class)->find($level1Id));
     }
 
+    /**
+     * Row-click-to-edit consistency (see quotation/index.html.twig for the
+     * established pattern): the list row itself must carry the alternative-
+     * link data-href pointing at the same edit route the "action.edit" text
+     * link already uses, so clicking anywhere on the row opens the edit form.
+     */
+    public function testIndexRowExposesDataHrefForRowClickToEdit(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+
+        $em = $this->getEntityManager();
+        $level1 = $em->getRepository(ExpenseApprovalLevel::class)->findOneBy(['level' => 1]);
+        self::assertInstanceOf(ExpenseApprovalLevel::class, $level1);
+
+        $this->request($client, '/admin/expense/approval-levels/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString(
+            'data-href="' . $this->createUrl('/admin/expense/approval-levels/' . $level1->getId() . '/edit') . '"',
+            $content
+        );
+        self::assertMatchesRegularExpression('/<tr[^>]*class="[^"]*alternative-link[^"]*"/', $content);
+    }
+
     public function testSuperAdminCanDeleteANonBaseLevel(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
