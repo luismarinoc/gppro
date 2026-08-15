@@ -57,3 +57,15 @@ fieldset.form-fieldset > legend {
         background-color: var(--#{$prefix}primary);
     }
 }
+
+/* .navbar .navbar-nav .nav-link .badge is meant for a small notification-count
+   dot pinned to the corner of a nav-link icon (e.g. the bell). The team-lead
+   text badge is a normal inline label sitting in its own line under the
+   username, not a corner dot - without this it inherits that absolute
+   corner positioning and floats above the navbar instead. */
+.navbar .navbar-nav .nav-link .badge[data-teamlead-indicator="text"] {
+    position: static;
+    top: auto;
+    right: auto;
+    transform: none;
+}
