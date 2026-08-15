@@ -2280,7 +2280,11 @@
       </trans-unit>
       <trans-unit id="quotationQuoteMenu" resname="quotation_quote" xml:space="preserve">
         <source>quotation_quote</source>
-        <target state="translated">Cotizar</target>
+        <target state="translated">Crear cotización</target>
+      </trans-unit>
+      <trans-unit id="quotationHistoryMenu" resname="quotation_history" xml:space="preserve">
+        <source>quotation_history</source>
+        <target state="translated">Historial de cotizaciones</target>
       </trans-unit>
       <trans-unit id="gpExpense1" resname="expenses" xml:space="preserve">
         <source>expenses</source>

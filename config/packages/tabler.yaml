@@ -73,6 +73,8 @@ tabler:
         export: fas fa-download
         failure: fas fa-times
         fax: fas fa-fax
+        file_invoice: fas fa-file-invoice
+        file_invoice_dollar: fas fa-file-invoice-dollar
         filter: fas fa-filter
         help: far fa-question-circle
         holiday: fas fa-umbrella-beach
@@ -111,6 +113,7 @@ tabler:
         profile-stats: far fa-chart-bar
         project: fas fa-briefcase
         public-holiday: fas fa-calendar-day
+        receipt: fas fa-receipt
         repeat: fas fa-repeat
         reporting: far fa-chart-bar
         report: far fa-chart-bar

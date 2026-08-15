@@ -43,14 +43,39 @@ class MenuSubscriberTest extends TestCase
         $quotation = $event->getMenu()->findChild('quotations');
         self::assertNotNull($quotation);
         self::assertNull($quotation->getRoute());
+
+        // view_quotation alone does not grant the "create" link
+        self::assertNull($quotation->findChild('quotation_create'));
+
         $quotationList = $quotation->findChild('quotation_list');
         self::assertNotNull($quotationList);
         self::assertSame('quotation_list', $quotationList->getRoute());
-        self::assertTrue($quotationList->isChildRoute('quotation_create'));
         self::assertTrue($quotationList->isChildRoute('quotation_edit'));
         self::assertTrue($quotationList->isChildRoute('quotation_view'));
         self::assertTrue($quotationList->isChildRoute('quotation_send'));
         self::assertTrue($quotationList->isChildRoute('quotation_convert'));
+    }
+
+    public function testQuotationCreateMenuIsVisibleForUsersWithCreatePermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'view_quotation', 'create_quotation'], true)
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $quotation = $event->getMenu()->findChild('quotations');
+        self::assertNotNull($quotation);
+
+        $quotationCreate = $quotation->findChild('quotation_create');
+        self::assertNotNull($quotationCreate);
+        self::assertSame('quotation_create', $quotationCreate->getRoute());
+
+        // the two entries are distinct siblings, not one hiding the other
+        self::assertNotNull($quotation->findChild('quotation_list'));
     }
 
     public function testQuotationCatalogMenuIsVisibleForCatalogManagers(): void

@@ -2312,7 +2312,11 @@
       </trans-unit>
       <trans-unit id="quotationQuoteMenu" resname="quotation_quote">
         <source>quotation_quote</source>
-        <target>Quote</target>
+        <target>Create quote</target>
+      </trans-unit>
+      <trans-unit id="quotationHistoryMenu" resname="quotation_history">
+        <source>quotation_history</source>
+        <target>Quotation history</target>
       </trans-unit>
       <trans-unit id="gpExpense1" resname="expenses">
         <source>expenses</source>
