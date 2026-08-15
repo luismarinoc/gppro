@@ -128,15 +128,17 @@ final class MenuSubscriber implements EventSubscriberInterface
         }
 
         // ------------------- expense menu -------------------
+        // "Pending my approval" is deliberately NOT duplicated here: it is
+        // the same query as approvals_dashboard (see that controller's own
+        // docblock), which already aggregates it alongside timesheet and
+        // invoice approvals in one place. The expense_pending route/page
+        // still exists and stays reachable from the expense list itself
+        // (templates/expense/index.html.twig), just not from this menu.
         $expenses = new MenuItemModel('expenses', 'expenses', null, [], 'receipt');
         if ($auth->isGranted('view_expense')) {
-            $expenseList = new MenuItemModel('expense_list', 'expenses', 'expense_list', [], 'receipt');
-            $expenseList->setChildRoutes(['expense_create', 'expense_edit', 'expense_view', 'expense_submit', 'expense_approve', 'expense_reject', 'expense_delete', 'expense_allocation_charge']);
+            $expenseList = new MenuItemModel('expense_list', 'expense_list', 'expense_list', [], 'receipt');
+            $expenseList->setChildRoutes(['expense_create', 'expense_edit', 'expense_view', 'expense_submit', 'expense_approve', 'expense_reject', 'expense_delete', 'expense_allocation_charge', 'expense_pending']);
             $expenses->addChild($expenseList);
-
-            $expenses->addChild(
-                new MenuItemModel('expense_pending', 'expense.pending_title', 'expense_pending', [], 'clock')
-            );
         }
         if ($expenses->hasChildren()) {
             $menu->addChild($expenses);

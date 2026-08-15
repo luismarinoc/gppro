@@ -2304,7 +2304,7 @@
       </trans-unit>
       <trans-unit id="quotationCatalogMenu" resname="quotation_catalog">
         <source>quotation_catalog</source>
-        <target>Quotation catalog</target>
+        <target>Catalog</target>
       </trans-unit>
       <trans-unit id="quotationsMenu" resname="quotations">
         <source>quotations</source>
@@ -2316,11 +2316,15 @@
       </trans-unit>
       <trans-unit id="quotationHistoryMenu" resname="quotation_history">
         <source>quotation_history</source>
-        <target>Quotation history</target>
+        <target>History</target>
       </trans-unit>
       <trans-unit id="gpExpense1" resname="expenses">
         <source>expenses</source>
         <target>Expenses</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseListMenu" resname="expense_list">
+        <source>expense_list</source>
+        <target>List</target>
       </trans-unit>
       <trans-unit id="gpExpense2" resname="expense.pending_title">
         <source>expense.pending_title</source>

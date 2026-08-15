@@ -121,10 +121,11 @@ class MenuSubscriberTest extends TestCase
         self::assertTrue($expenseList->isChildRoute('expense_reject'));
         self::assertTrue($expenseList->isChildRoute('expense_delete'));
         self::assertTrue($expenseList->isChildRoute('expense_allocation_charge'));
+        self::assertTrue($expenseList->isChildRoute('expense_pending'));
 
-        $expensePending = $expenses->findChild('expense_pending');
-        self::assertNotNull($expensePending);
-        self::assertSame('expense_pending', $expensePending->getRoute());
+        // not a separate menu entry - it's the same data already surfaced
+        // by the cross-domain approvals_dashboard (see MenuSubscriber)
+        self::assertNull($expenses->findChild('expense_pending'));
 
         self::assertNull($expenses->findChild('expense_approval_level_list'));
     }

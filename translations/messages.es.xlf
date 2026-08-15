@@ -2272,7 +2272,7 @@
       </trans-unit>
       <trans-unit id="quotationCatalogMenu" resname="quotation_catalog" xml:space="preserve">
         <source>quotation_catalog</source>
-        <target state="translated">Catálogo de presupuestos</target>
+        <target state="translated">Catálogo</target>
       </trans-unit>
       <trans-unit id="quotationsMenu" resname="quotations" xml:space="preserve">
         <source>quotations</source>
@@ -2284,11 +2284,15 @@
       </trans-unit>
       <trans-unit id="quotationHistoryMenu" resname="quotation_history" xml:space="preserve">
         <source>quotation_history</source>
-        <target state="translated">Historial de cotizaciones</target>
+        <target state="translated">Historial</target>
       </trans-unit>
       <trans-unit id="gpExpense1" resname="expenses" xml:space="preserve">
         <source>expenses</source>
         <target state="translated">Gastos</target>
+      </trans-unit>
+      <trans-unit id="gpExpenseListMenu" resname="expense_list" xml:space="preserve">
+        <source>expense_list</source>
+        <target state="translated">Listado</target>
       </trans-unit>
       <trans-unit id="gpExpense2" resname="expense.pending_title" xml:space="preserve">
         <source>expense.pending_title</source>
