@@ -58,6 +58,36 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString('data-teamlead-indicator', $content);
     }
 
+    public function testAdministrationIndicatorPresentForAdmin(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringContainsString('data-teamlead-indicator="text">Administration</span>', $content);
+        self::assertStringContainsString('data-teamlead-indicator="avatar"', $content);
+    }
+
+    public function testAdministrationIndicatorTakesPriorityOverTeamlead(): void
+    {
+        // one role badge, not two stacked ones, when a user is both
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $user = $this->getUserByRole(User::ROLE_ADMIN);
+
+        $this->makeTeamlead($user);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringContainsString('data-teamlead-indicator="text">Administration</span>', $content);
+        self::assertStringNotContainsString('data-teamlead-indicator="text">Teamlead</span>', $content);
+    }
+
     public function testUserTitleStillRendersForTeamlead(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

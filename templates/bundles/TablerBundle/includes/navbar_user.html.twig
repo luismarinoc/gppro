@@ -11,17 +11,22 @@
        Keep byte-identical to the vendor file except the three hunks marked
        "gppro:" so a future tabler-bundle upgrade diff stays trivial.
        See openspec/changes/team-lead-navbar-indicator/ #}
-    {# gppro: team-lead indicator guard (D1/D3) #}
-    {% set isTeamlead = user.isTeamlead is defined and user.isTeamlead %}
+    {# gppro: team-lead indicator guard (D1/D3).
+       Administration takes priority over teamlead when a user is both -
+       one role badge, not two stacked ones. #}
+    {% set isAdministration = (user.isAdmin is defined and user.isAdmin) or (user.isSuperAdmin is defined and user.isSuperAdmin) %}
+    {% set isTeamlead = not isAdministration and user.isTeamlead is defined and user.isTeamlead %}
+    {% set showRoleBadge = isAdministration or isTeamlead %}
+    {% set roleLabel = isAdministration ? 'menu.admin'|trans : 'teamlead'|trans %}
     {% set teamleadBadge = {} %}
-    {% if isTeamlead %}
+    {% if showRoleBadge %}
         {% set teamleadBadge = {badge: {
             color: 'blue',
             extraClass: tabler_bundle.isCondensedUserMenu() ? '' : 'd-xl-none',
             attr: {
                 'data-teamlead-indicator': 'avatar',
-                'title': 'teamlead'|trans,
-                'aria-label': 'teamlead'|trans
+                'title': roleLabel,
+                'aria-label': roleLabel
             }
         }} %}
     {% endif %}
@@ -42,9 +47,9 @@
                        Own line below the name so the long translated label never
                        competes with the username for the same cramped width and
                        overflows the fixed-height navbar. #}
-                    {% if isTeamlead %}
+                    {% if showRoleBadge %}
                         <div class="mt-1">
-                            <span class="badge bg-blue text-blue-fg" data-teamlead-indicator="text">{{ 'teamlead'|trans }}</span>
+                            <span class="badge bg-blue text-blue-fg" data-teamlead-indicator="text">{{ roleLabel }}</span>
                         </div>
                     {% endif %}
                     {% if user.title is not empty %}
