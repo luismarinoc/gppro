@@ -150,48 +150,116 @@ class MenuSubscriberTest extends TestCase
     {
         $security = $this->createMock(Security::class);
         $security->method('isGranted')->willReturnCallback(
-            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'manage_expense_approval_levels'
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'manage_expense_approval_levels', 'view_expense'], true)
         );
         $security->method('getUser')->willReturn(new User());
 
         $event = new ConfigureMainMenuEvent();
         (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
 
+        // relocated out of the expenses menu (D2)
         $expenses = $event->getMenu()->findChild('expenses');
         self::assertNotNull($expenses);
+        self::assertNull($expenses->findChild('expense_approval_level_list'));
+        // the expenses menu keeps rendering its remaining children
+        self::assertNotNull($expenses->findChild('expense_list'));
 
-        $levels = $expenses->findChild('expense_approval_level_list');
+        // now lives under the new top-level approvals menu
+        $approvals = $event->getMenu()->findChild('approvals');
+        self::assertNotNull($approvals);
+
+        $levels = $approvals->findChild('expense_approval_level_list');
         self::assertNotNull($levels);
         self::assertSame('admin_expense_approval_level_list', $levels->getRoute());
         self::assertTrue($levels->isChildRoute('admin_expense_approval_level_create'));
         self::assertTrue($levels->isChildRoute('admin_expense_approval_level_edit'));
         self::assertTrue($levels->isChildRoute('admin_expense_approval_level_delete'));
-
-        self::assertNull($expenses->findChild('expense_list'));
     }
 
     public function testInvoicePaymentApprovalLevelMenuIsVisibleForLevelManagers(): void
     {
         $security = $this->createMock(Security::class);
         $security->method('isGranted')->willReturnCallback(
-            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED' || $attribute === 'manage_invoice_payment_approval_levels'
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'manage_invoice_payment_approval_levels', 'view_invoice'], true)
         );
         $security->method('getUser')->willReturn(new User());
 
         $event = new ConfigureMainMenuEvent();
         (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
 
+        // relocated out of the invoices menu (D2)
         $invoice = $event->getMenu()->findChild('invoices');
         self::assertNotNull($invoice);
+        self::assertNull($invoice->findChild('invoice_payment_approval_level_list'));
+        // the invoices menu keeps rendering its remaining children
+        self::assertNotNull($invoice->findChild('invoice_listing'));
 
-        $levels = $invoice->findChild('invoice_payment_approval_level_list');
+        // now lives under the new top-level approvals menu
+        $approvals = $event->getMenu()->findChild('approvals');
+        self::assertNotNull($approvals);
+
+        $levels = $approvals->findChild('invoice_payment_approval_level_list');
         self::assertNotNull($levels);
         self::assertSame('admin_invoice_payment_approval_level_list', $levels->getRoute());
         self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_create'));
         self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_edit'));
         self::assertTrue($levels->isChildRoute('admin_invoice_payment_approval_level_delete'));
+    }
 
-        self::assertNull($invoice->findChild('invoice_listing'));
+    public function testApprovalsMenuShowsDashboardFirstForAnyAuthenticatedUser(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'IS_AUTHENTICATED_FULLY'], true)
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $approvals = $event->getMenu()->findChild('approvals');
+        self::assertNotNull($approvals);
+
+        $children = $approvals->getChildren();
+        self::assertNotEmpty($children);
+        $first = $children[array_key_first($children)];
+        self::assertSame('approvals_dashboard', $first->getIdentifier());
+        self::assertSame('approvals_dashboard', $first->getRoute());
+
+        // neither config screen is granted, only the dashboard child exists
+        self::assertNull($approvals->findChild('expense_approval_level_list'));
+        self::assertNull($approvals->findChild('invoice_payment_approval_level_list'));
+    }
+
+    public function testApprovalsMenuGatesEachLevelChildIndependently(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'IS_AUTHENTICATED_FULLY', 'manage_expense_approval_levels'], true)
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $approvals = $event->getMenu()->findChild('approvals');
+        self::assertNotNull($approvals);
+        self::assertNotNull($approvals->findChild('expense_approval_level_list'));
+        self::assertNull($approvals->findChild('invoice_payment_approval_level_list'));
+    }
+
+    public function testApprovalsMenuAbsentForRememberMeOnlySession(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => $attribute === 'IS_AUTHENTICATED_REMEMBERED'
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        self::assertNull($event->getMenu()->findChild('approvals'));
     }
 
     public function testLoginAuditMenuIsVisibleForSuperAdmins(): void

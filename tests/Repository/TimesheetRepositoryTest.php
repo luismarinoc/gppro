@@ -442,4 +442,62 @@ class TimesheetRepositoryTest extends AbstractRepositoryTestCase
 
         self::assertSame([$pendingEntry->getId()], $ids);
     }
+
+    /**
+     * Approvals bell badge (design A5/Interfaces): countPendingApprovalForUser()
+     * mirrors findPendingApprovalForUser()'s query exactly, but the DISTINCT is
+     * required on the COUNT itself - project->teams->members multiplies rows
+     * when the user leads several teams on the same project, and the counter
+     * must not inherit that duplication (see design Interfaces/Contracts).
+     */
+    public function testCountPendingApprovalForUserDeduplicatesMultiTeamLead(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        $lead = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $member = $this->getUserByRole(User::ROLE_USER);
+
+        $teamOne = $this->createTeam();
+        $this->addUserToTeamAsLead($lead, $teamOne);
+        $project = $this->createProjectWithTeam($teamOne);
+
+        $teamTwo = $this->createTeam();
+        $this->addUserToTeamAsLead($lead, $teamTwo);
+        $project->addTeam($teamTwo);
+        $em->persist($project);
+        $em->flush();
+
+        $this->createTimesheetEntry($member, $project);
+
+        self::assertSame(1, $repository->countPendingApprovalForUser($lead));
+    }
+
+    /**
+     * Triangulation: mirrors testFindPendingApprovalForUserExcludesAlreadyApprovedEntries
+     * - the COUNT must exclude an already-approved entry exactly like the
+     * sibling find*() method, not just deduplicate multi-team leads.
+     */
+    public function testCountPendingApprovalForUserExcludesAlreadyApprovedEntries(): void
+    {
+        $em = $this->getEntityManager();
+        /** @var TimesheetRepository $repository */
+        $repository = $em->getRepository(Timesheet::class);
+
+        $lead = $this->getUserByRole(User::ROLE_TEAMLEAD);
+        $member = $this->getUserByRole(User::ROLE_USER);
+
+        $team = $this->createTeam();
+        $this->addUserToTeamAsLead($lead, $team);
+        $project = $this->createProjectWithTeam($team);
+
+        $this->createTimesheetEntry($member, $project);
+        $approvedEntry = $this->createTimesheetEntry($member, $project);
+        $approvedEntry->approve($lead);
+        $em->persist($approvedEntry);
+        $em->flush();
+
+        self::assertSame(1, $repository->countPendingApprovalForUser($lead));
+    }
 }

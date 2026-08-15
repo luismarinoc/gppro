@@ -286,6 +286,33 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
         self::assertContains($othersExpense->getId(), $pendingIds);
     }
 
+    /**
+     * Approvals bell badge (design A5/Interfaces): the COUNT-only sibling
+     * must mirror findPendingForUser()'s naive scope exactly (creator
+     * exclusion only) and return a scalar int, no entity hydration.
+     */
+    public function testCountPendingForUserMatchesNaiveScope(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        $otherUser = $this->createUser();
+
+        $ownExpense = $this->createExpense($project, $creator);
+        $ownExpense->submitForApproval(1);
+        $repository->saveExpense($ownExpense);
+
+        $othersExpenseOne = $this->createExpense($project, $otherUser);
+        $othersExpenseOne->submitForApproval(1);
+        $repository->saveExpense($othersExpenseOne);
+
+        $othersExpenseTwo = $this->createExpense($project, $otherUser);
+        $othersExpenseTwo->submitForApproval(1);
+        $repository->saveExpense($othersExpenseTwo);
+
+        self::assertSame(2, $repository->countPendingForUser($creator));
+    }
+
     public function testFindRecurringSourcesExcludesGeneratedCopies(): void
     {
         $repository = $this->getRepository();

@@ -67,6 +67,23 @@ class InvoiceRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * Approvals bell badge (design A5): COUNT()-only sibling of
+     * findPendingPaymentApprovalForUser(), same naive creator-exclusion
+     * scope, no entity hydration - must not call/wrap that method (D8).
+     */
+    public function countPendingPaymentApprovalForUser(User $user): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->andWhere('i.paymentApprovalStatus = :status')
+            ->andWhere('i.user != :user OR i.user IS NULL')
+            ->setParameter('status', Invoice::PAYMENT_APPROVAL_PENDING)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function hasInvoice(string $invoiceNumber): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

@@ -134,11 +134,6 @@ final class MenuSubscriber implements EventSubscriberInterface
                 new MenuItemModel('expense_pending', 'expense.pending_title', 'expense_pending', [], 'clock')
             );
         }
-        if ($auth->isGranted('manage_expense_approval_levels')) {
-            $approvalLevels = new MenuItemModel('expense_approval_level_list', 'expense_approval_level', 'admin_expense_approval_level_list', [], 'settings');
-            $approvalLevels->setChildRoutes(['admin_expense_approval_level_create', 'admin_expense_approval_level_edit', 'admin_expense_approval_level_delete']);
-            $expenses->addChild($approvalLevels);
-        }
         if ($expenses->hasChildren()) {
             $menu->addChild($expenses);
         }
@@ -164,17 +159,42 @@ final class MenuSubscriber implements EventSubscriberInterface
             $invoice->addChild($tmpMenu);
         }
 
-        if ($auth->isGranted('manage_invoice_payment_approval_levels')) {
-            $approvalLevels = new MenuItemModel('invoice_payment_approval_level_list', 'invoice_payment_approval_level', 'admin_invoice_payment_approval_level_list', [], 'settings');
-            $approvalLevels->setChildRoutes(['admin_invoice_payment_approval_level_create', 'admin_invoice_payment_approval_level_edit', 'admin_invoice_payment_approval_level_delete']);
-            $invoice->addChild($approvalLevels);
-        }
-
         if ($invoice->hasChildren()) {
             $this->addDivider($invoice);
         }
 
         $menu->addChild($invoice);
+
+        // ------------------- approvals menu -------------------
+        // Single top-level home for approval work (dashboard) and approval
+        // configuration (expense/invoice levels), relocated out of their
+        // former domain menus (proposal D1/D2). The dashboard child is
+        // gated only by IS_AUTHENTICATED_FULLY - matching the controller's
+        // own guard exactly - so it is visible to any authenticated user,
+        // not only to those holding a manage_* permission (D6).
+        $approvals = new MenuItemModel('approvals', 'menu.approvals', null, [], 'review');
+
+        if ($auth->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $approvals->addChild(
+                new MenuItemModel('approvals_dashboard', 'approvals_dashboard.title', 'approvals_dashboard', [], 'clock')
+            );
+        }
+
+        if ($auth->isGranted('manage_expense_approval_levels')) {
+            $approvalLevels = new MenuItemModel('expense_approval_level_list', 'expense_approval_level', 'admin_expense_approval_level_list', [], 'settings');
+            $approvalLevels->setChildRoutes(['admin_expense_approval_level_create', 'admin_expense_approval_level_edit', 'admin_expense_approval_level_delete']);
+            $approvals->addChild($approvalLevels);
+        }
+
+        if ($auth->isGranted('manage_invoice_payment_approval_levels')) {
+            $approvalLevels = new MenuItemModel('invoice_payment_approval_level_list', 'invoice_payment_approval_level', 'admin_invoice_payment_approval_level_list', [], 'settings');
+            $approvalLevels->setChildRoutes(['admin_invoice_payment_approval_level_create', 'admin_invoice_payment_approval_level_edit', 'admin_invoice_payment_approval_level_delete']);
+            $approvals->addChild($approvalLevels);
+        }
+
+        if ($approvals->hasChildren()) {
+            $menu->addChild($approvals);
+        }
 
         // ------------------- admin menu -------------------
         $menu = $event->getAdminMenu();
