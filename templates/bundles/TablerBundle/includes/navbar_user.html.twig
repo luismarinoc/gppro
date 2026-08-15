@@ -37,11 +37,16 @@
             {% endif %}
             {% if not tabler_bundle.isCondensedUserMenu() %}
                 <div class="d-none d-xl-block ps-2">
-                    <div>
-                        {{ user.name }}
-                        {# gppro: text badge, xl+ only (this container is d-none d-xl-block) #}
-                        {% if isTeamlead %}<span class="badge bg-blue text-blue-fg ms-1" data-teamlead-indicator="text">{{ 'teamlead'|trans }}</span>{% endif %}
-                    </div>
+                    <div class="text-truncate">{{ user.name }}</div>
+                    {# gppro: text badge, xl+ only (this container is d-none d-xl-block).
+                       Own line below the name so the long translated label never
+                       competes with the username for the same cramped width and
+                       overflows the fixed-height navbar. #}
+                    {% if isTeamlead %}
+                        <div class="mt-1">
+                            <span class="badge bg-blue text-blue-fg" data-teamlead-indicator="text">{{ 'teamlead'|trans }}</span>
+                        </div>
+                    {% endif %}
                     {% if user.title is not empty %}
                         <div class="mt-1 small text-body-secondary">{{ user.title }}</div>
                     {% endif %}
