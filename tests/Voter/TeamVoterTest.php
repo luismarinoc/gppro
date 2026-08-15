@@ -36,8 +36,10 @@ class TeamVoterTest extends AbstractVoterTestCase
         $user2 = self::getUser(2, User::ROLE_TEAMLEAD);
         $user3 = self::getUser(3, User::ROLE_ADMIN);
         $user4 = self::getUser(4, User::ROLE_SUPER_ADMIN);
+        $user5 = self::getUser(5, User::ROLE_TEAMLEAD);
 
         $team = new Team('foo');
+        $team->addTeamlead($user5);
 
         $abstain = VoterInterface::ACCESS_ABSTAIN;
 
@@ -76,5 +78,13 @@ class TeamVoterTest extends AbstractVoterTestCase
         yield [$user4, $team, 'view', $abstain];
         yield [$user4, $team, 'edit', $granted];
         yield [$user4, $team, 'delete', $granted];
+
+        // a plain ROLE_TEAMLEAD who actually leads $team can now manage its
+        // membership (edit_team was missing entirely, leaving no UI path to
+        // add a person to a team they lead) - but still not delete it,
+        // that stays admin-only.
+        yield [$user5, $team, 'view', $abstain];
+        yield [$user5, $team, 'edit', $granted];
+        yield [$user5, $team, 'delete', $denied];
     }
 }

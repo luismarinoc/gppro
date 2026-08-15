@@ -25,7 +25,15 @@ class TeamControllerTest extends AbstractControllerBaseTestCase
 
     public function testIsSecureForRole(): void
     {
-        $this->assertUrlIsSecuredForRole(User::ROLE_TEAMLEAD, '/admin/teams/');
+        $this->assertUrlIsSecuredForRole(User::ROLE_USER, '/admin/teams/');
+    }
+
+    public function testTeamleadCanAccessListing(): void
+    {
+        // view_team was missing for ROLE_TEAMLEAD, leaving a lead with no
+        // way to reach their own team's membership screen at all.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $this->assertAccessIsGranted($client, '/admin/teams/');
     }
 
     public function testIndexAction(): void

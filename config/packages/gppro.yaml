@@ -124,7 +124,16 @@ gppro:
         # mapping a "role name" to an array of "permission names"
         roles:
             ROLE_USER: ['view_team_member','time_team_project','create_tag','view_reporting']
-            ROLE_TEAMLEAD: ['view_rate_own_timesheet','view_rate_other_timesheet','hourly-rate_own_profile','view_team_member','hours_other_profile']
+            # view_team/edit_team (not create_team/delete_team - those stay
+            # admin-only): TeamVoter's edit already gates per-team on
+            # isTeamleadOf($team), so this only lets a lead see/manage the
+            # membership of teams they actually lead, not create or delete
+            # teams, or touch teams led by someone else. Without these two,
+            # a teamlead has no UI path at all to add a person to their own
+            # team - not via Administration > Teams (view_team gates that
+            # route) and not via the team row on a project's Teams box
+            # (edit gates whether the row opens the add-member modal).
+            ROLE_TEAMLEAD: ['view_rate_own_timesheet','view_rate_other_timesheet','hourly-rate_own_profile','view_team_member','hours_other_profile','view_team','edit_team']
             ROLE_ADMIN: ['hourly-rate_own_profile','edit_exported_timesheet','teams_own_profile','view_team_member','view_all_data','contract_other_profile','hours_other_profile','create_export_template']
             # approve_expense/reject_expense are deliberately NOT registered permissions (design D2):
             # RolePermissionVoter grants a registered permission globally when checked without a

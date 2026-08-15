@@ -50,7 +50,6 @@ class TeamControllerTest extends APIControllerBaseTestCase
     {
         return [
             [User::ROLE_USER],
-            [User::ROLE_TEAMLEAD],
         ];
     }
 
@@ -58,6 +57,14 @@ class TeamControllerTest extends APIControllerBaseTestCase
     public function testIsSecureForRole(string $role): void
     {
         $this->assertUrlIsSecuredForRole($role, '/api/teams');
+    }
+
+    public function testTeamleadCanAccessCollection(): void
+    {
+        // view_team was missing for ROLE_TEAMLEAD, leaving a lead with no
+        // way to reach their own team's membership screen at all.
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $this->assertAccessIsGranted($client, '/api/teams');
     }
 
     public function testGetCollection(): void
