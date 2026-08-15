@@ -9,6 +9,8 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Team;
+use App\Entity\TeamMember;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\HttpKernelBrowser;
@@ -16,6 +18,75 @@ use Symfony\Component\HttpKernel\HttpKernelBrowser;
 #[Group('integration')]
 class LayoutControllerTest extends AbstractControllerBaseTestCase
 {
+    public function testTeamleadIndicatorPresentForMembershipTeamlead(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
+        $user = $this->getUserByRole(User::ROLE_USER);
+
+        $this->makeTeamlead($user);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringContainsString('data-teamlead-indicator="text">Teamlead</span>', $content);
+        self::assertStringContainsString('data-teamlead-indicator="avatar"', $content);
+    }
+
+    public function testTeamleadIndicatorAbsentForPlainUser(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringNotContainsString('data-teamlead-indicator', $content);
+    }
+
+    public function testTeamleadIndicatorAbsentForGlobalRoleWithoutMembership(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringNotContainsString('data-teamlead-indicator', $content);
+    }
+
+    public function testUserTitleStillRendersForTeamlead(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/dashboard/');
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $content = $client->getResponse()->getContent();
+
+        self::assertStringContainsString('<div class="mt-1 small text-body-secondary">Head of Development</div>', $content);
+    }
+
+    private function makeTeamlead(User $user): void
+    {
+        $em = $this->getEntityManager();
+
+        $team = new Team('Layout controller test team ' . uniqid());
+        $em->persist($team);
+        $em->flush();
+
+        $member = new TeamMember();
+        $member->setTeam($team);
+        $member->setUser($user);
+        $member->setTeamlead(true);
+        $em->persist($member);
+        $em->flush();
+        $em->refresh($user);
+    }
+
     public function testNavigationMenus(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_USER);
