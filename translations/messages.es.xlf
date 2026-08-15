@@ -834,6 +834,14 @@
         <source>rates.title</source>
         <target state="translated">Precios</target>
       </trans-unit>
+      <trans-unit id="gpRateAccessWarn" resname="rates.access_warning">
+        <source>rates.access_warning</source>
+        <target state="translated">Este usuario tiene un precio asignado pero no pertenece a ningún equipo con acceso a este proyecto, así que todavía no puede cargar horas.</target>
+      </trans-unit>
+      <trans-unit id="gpRateAccessWarnFix" resname="rates.access_warning_fix">
+        <source>rates.access_warning_fix</source>
+        <target state="translated">Dar acceso</target>
+      </trans-unit>
       <trans-unit id="gpMilestoneEmpty" resname="milestone.empty">
         <source>milestone.empty</source>
         <target state="translated">No hay hitos configurados.</target>

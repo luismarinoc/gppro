@@ -36,6 +36,14 @@
                         <td>
                             {% if rate.user is not null %}
                                 {{ widgets.user_avatar(rate.user) }}
+                                {% if access_warnings is defined and access_warnings[rate.id] is defined %}
+                                    <span class="text-warning ms-1" data-bs-toggle="tooltip" title="{{ 'rates.access_warning'|trans }}">
+                                        {{ icon('warning', true) }}
+                                    </span>
+                                    {% if access_warnings[rate.id] is not null %}
+                                        <a href="{{ access_warnings[rate.id] }}" class="modal-ajax-form btn btn-sm btn-link text-warning p-0 ms-1">{{ 'rates.access_warning_fix'|trans }}</a>
+                                    {% endif %}
+                                {% endif %}
                             {% else %}
                                 &ndash;
                             {% endif %}

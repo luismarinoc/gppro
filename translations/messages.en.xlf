@@ -110,6 +110,14 @@
         <source>rates.title</source>
         <target>Prices</target>
       </trans-unit>
+      <trans-unit id="gpRateAccessWarn" resname="rates.access_warning">
+        <source>rates.access_warning</source>
+        <target>This user has a price but is not on a team with access to this project, so they cannot log time yet.</target>
+      </trans-unit>
+      <trans-unit id="gpRateAccessWarnFix" resname="rates.access_warning_fix">
+        <source>rates.access_warning_fix</source>
+        <target>Grant access</target>
+      </trans-unit>
       <trans-unit id="gpMilestoneEmpty" resname="milestone.empty">
         <source>milestone.empty</source>
         <target>No milestones have been configured.</target>

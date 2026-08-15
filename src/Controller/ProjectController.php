@@ -15,6 +15,8 @@ use App\Entity\Milestone;
 use App\Entity\Project;
 use App\Entity\ProjectComment;
 use App\Entity\ProjectRate;
+use App\Entity\Team;
+use App\Entity\User;
 use App\Event\ProjectDetailControllerEvent;
 use App\Event\ProjectMetaDisplayEvent;
 use App\Export\Spreadsheet\EntityWithMetaFieldsExporter;
@@ -41,9 +43,11 @@ use App\Repository\Query\TeamQuery;
 use App\Repository\Query\TimesheetQuery;
 use App\Repository\Query\VisibilityInterface;
 use App\Repository\TeamRepository;
+use App\Security\RolePermissionManager;
 use App\Utils\Context;
 use App\Utils\DataTable;
 use App\Utils\PageSetup;
+use Doctrine\Common\Collections\Collection;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\FormInterface;
@@ -280,7 +284,7 @@ final class ProjectController extends AbstractController
 
     #[Route(path: '/{id}/details', name: 'project_details', methods: ['GET', 'POST'])]
     #[IsGranted('view', 'project')]
-    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, MilestoneRepository $milestoneRepository, ProjectStatisticService $statisticService, ProjectService $projectService, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher, MilestoneTotalCalculator $milestoneTotalCalculator): Response
+    public function detailsAction(Project $project, TeamRepository $teamRepository, ProjectRateRepository $rateRepository, MilestoneRepository $milestoneRepository, ProjectStatisticService $statisticService, ProjectService $projectService, RolePermissionManager $permissionManager, CsrfTokenManagerInterface $csrfTokenManager, EventDispatcherInterface $dispatcher, MilestoneTotalCalculator $milestoneTotalCalculator): Response
     {
         $projectService->loadMetaFields($project);
 
@@ -292,6 +296,7 @@ final class ProjectController extends AbstractController
         $comments = null;
         $teams = null;
         $rates = [];
+        $rateAccessWarnings = [];
         $milestones = $milestoneRepository->findByProject($project);
         $now = $this->getDateTimeFactory()->createDateTime();
 
@@ -309,6 +314,7 @@ final class ProjectController extends AbstractController
                 $defaultTeam = $teamRepository->findOneBy(['name' => $project->getName()]);
             }
             $rates = $rateRepository->getRatesForProject($project);
+            $rateAccessWarnings = $this->getRateAccessWarnings($project, $rates, $permissionManager);
         }
 
         if ($this->isGranted('budget', $project) || $this->isGranted('time', $project)) {
@@ -353,12 +359,85 @@ final class ProjectController extends AbstractController
             'team' => $defaultTeam,
             'teams' => $teams,
             'rates' => $rates,
+            'rate_access_warnings' => $rateAccessWarnings,
             'milestones' => $milestones,
             'now' => $now,
             'boxes' => $boxes,
             'export_url' => $exportUrl,
             'invoice_url' => $invoiceUrl,
         ]);
+    }
+
+    /**
+     * A ProjectRate only defines pay - it grants no access at all. This
+     * builds, per rate, a link that lets the admin fix the *separate* team
+     * access grant in the same click instead of having to know that
+     * "Precios" and "Equipos" are unrelated (recurring source of confusion:
+     * assigning a rate does not authorize the user to log time).
+     *
+     * @param ProjectRate[] $rates
+     * @return array<int, string|null> rate id => fix-it URL, or null when the
+     *                                  warning applies but no direct link is
+     *                                  authorized for the current user
+     */
+    private function getRateAccessWarnings(Project $project, array $rates, RolePermissionManager $permissionManager): array
+    {
+        $warnings = [];
+
+        foreach ($rates as $rate) {
+            $rateId = $rate->getId();
+            $rateUser = $rate->getUser();
+            if ($rateId === null || $rateUser === null || $permissionManager->checkTeamAccessProject($project, $rateUser)) {
+                continue;
+            }
+
+            $missingTeams = $this->resolveMissingTeamsForRateUser($project, $rateUser);
+
+            $url = null;
+            if (\count($missingTeams) === 1) {
+                $team = $missingTeams->first();
+                if ($team !== false && $this->isGranted('edit', $team)) {
+                    $url = $this->generateUrl('admin_team_member', ['id' => $team->getId()]);
+                }
+            }
+
+            if ($url === null && $this->isGranted('permissions', $project)) {
+                $url = $this->generateUrl('admin_project_permissions', ['id' => $project->getId()]);
+            }
+
+            $warnings[$rateId] = $url;
+        }
+
+        return $warnings;
+    }
+
+    /**
+     * Mirrors the two-gate chain in RolePermissionManager::checkTeamAccessProject()
+     * (customer teams, then project teams) to find which specific team list
+     * is the one actually blocking this user, so the fix-it link points at
+     * the right place instead of the generic permissions page.
+     *
+     * @return Collection<int, Team>
+     */
+    private function resolveMissingTeamsForRateUser(Project $project, User $user): Collection
+    {
+        $customer = $project->getCustomer();
+        if ($customer !== null && \count($customer->getTeams()) > 0) {
+            $inCustomerTeam = false;
+            foreach ($customer->getTeams() as $team) {
+                if ($user->isInTeam($team)) {
+                    $inCustomerTeam = true;
+
+                    break;
+                }
+            }
+
+            if (!$inCustomerTeam) {
+                return $customer->getTeams();
+            }
+        }
+
+        return $project->getTeams();
     }
 
     #[Route(path: '/{id}/rate/{rate}', name: 'admin_project_rate_edit', methods: ['GET', 'POST'])]

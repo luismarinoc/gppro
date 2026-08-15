@@ -237,6 +237,62 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $this->assertAccessDenied($client);
     }
 
+    public function testDetailsActionShowsAccessWarningForRateUserWithoutTeamAccess(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $project = $em->find(Project::class, 1);
+
+        // a team is linked to the project, but the rate's user is not a
+        // member of it, so team access is blocked while the price is set
+        $team = new Team('blocking team');
+        $team->addProject($project);
+        $team->addTeamlead($this->getUserByRole(User::ROLE_ADMIN));
+        $em->persist($team);
+
+        $rateUser = $this->getUserByRole(User::ROLE_USER);
+        $rate = new ProjectRate();
+        $rate->setProject($project);
+        $rate->setUser($rateUser);
+        $rate->setRate(50.0);
+        $em->persist($rate);
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $node = $client->getCrawler()->filter('div#project_rates_box a.text-warning');
+        self::assertEquals(1, $node->count());
+        self::assertStringContainsString('/admin/teams/' . $team->getId() . '/edit_member', (string) $node->attr('href'));
+    }
+
+    public function testDetailsActionOmitsAccessWarningForRateUserWithTeamAccess(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $project = $em->find(Project::class, 1);
+
+        $rateUser = $this->getUserByRole(User::ROLE_USER);
+        $team = new Team('granting team');
+        $team->addProject($project);
+        $team->addTeamlead($this->getUserByRole(User::ROLE_ADMIN));
+        $team->addUser($rateUser);
+        $em->persist($team);
+
+        $rate = new ProjectRate();
+        $rate->setProject($project);
+        $rate->setUser($rateUser);
+        $rate->setRate(50.0);
+        $em->persist($rate);
+        $em->flush();
+
+        $this->assertAccessIsGranted($client, '/admin/project/1/details');
+
+        $node = $client->getCrawler()->filter('div#project_rates_box .text-warning');
+        self::assertEquals(0, $node->count());
+    }
+
     public function assertAddRate(HttpKernelBrowser $client, $rate, $projectId): void
     {
         $this->assertAccessIsGranted($client, '/admin/project/' . $projectId . '/rate');
