@@ -1,0 +1,66 @@
+{% set user = null %}
+{% set links = null %}
+{% set userdetails = tabler_user() %}
+{% if userdetails is not null %}
+    {% set user = userdetails.user %}
+    {% set links = userdetails.links %}
+    {% set showLogoutLink = userdetails.showLogoutLink %}
+{% endif %}
+{% if user is not null %}
+    {# gppro override of @Tabler/includes/navbar_user.html.twig.
+       Keep byte-identical to the vendor file except the three hunks marked
+       "gppro:" so a future tabler-bundle upgrade diff stays trivial.
+       See openspec/changes/team-lead-navbar-indicator/ #}
+    {# gppro: team-lead indicator guard (D1/D3) #}
+    {% set isTeamlead = user.isTeamlead is defined and user.isTeamlead %}
+    {% set teamleadBadge = {} %}
+    {% if isTeamlead %}
+        {% set teamleadBadge = {badge: {
+            color: 'blue',
+            extraClass: tabler_bundle.isCondensedUserMenu() ? '' : 'd-xl-none',
+            attr: {
+                'data-teamlead-indicator': 'avatar',
+                'title': 'teamlead'|trans,
+                'aria-label': 'teamlead'|trans
+            }
+        }} %}
+    {% endif %}
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-bs-toggle="dropdown" aria-label="{{ 'Open personal menu'|trans({}, 'TablerBundle') }}">
+            {% import "@Tabler/components/avatar.html.twig" as macro %}
+            {% if user.avatar is defined and user.avatar is not empty %}
+                {# gppro: |merge(teamleadBadge) adds the corner dot, no-op when not teamlead #}
+                {{ macro.avatar({imageUrl : asset(user.avatar), size : 'sm'}|merge(teamleadBadge)) }}
+            {% else %}
+                {% import "@Tabler/components/avatar_image.html.twig" as macro_image %}
+                {{ macro.avatar({content: macro_image.avatar_image(user), size : 'sm'}|merge(teamleadBadge)) }}
+            {% endif %}
+            {% if not tabler_bundle.isCondensedUserMenu() %}
+                <div class="d-none d-xl-block ps-2">
+                    <div>
+                        {{ user.name }}
+                        {# gppro: text badge, xl+ only (this container is d-none d-xl-block) #}
+                        {% if isTeamlead %}<span class="badge bg-blue text-blue-fg ms-1" data-teamlead-indicator="text">{{ 'teamlead'|trans }}</span>{% endif %}
+                    </div>
+                    {% if user.title is not empty %}
+                        <div class="mt-1 small text-body-secondary">{{ user.title }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            {% for link in links %}
+                {% if link.route is not null %}
+                    <a href="{{ path(link.route|tabler_route, link.routeArgs) }}" class="dropdown-item">{{ link.label|trans }}</a>
+                {% else %}
+                    <a href="#" class="dropdown-item">{{ link.label|trans }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if showLogoutLink %}
+                <div class="dropdown-divider"></div>
+                <a href="{{ logout_path() }}" class="dropdown-item">{{ 'Sign out'|trans({}, 'TablerBundle') }}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
