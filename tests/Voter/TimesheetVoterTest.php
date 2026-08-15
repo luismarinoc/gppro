@@ -825,6 +825,31 @@ class TimesheetVoterTest extends AbstractVoterTestCase
         $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
     }
 
+    public function testApproveTimesheetDeniedForOwnerViewingOwnEntryWhenNotTeamLead(): void
+    {
+        // Reproduces the "Mis horas" screen: the entry's own owner, who is a
+        // plain member (not teamlead) of the project's team, must NOT see
+        // approve/reject granted on their own row.
+        $owner = self::getUser(1, User::ROLE_USER);
+        $otherLead = self::getUser(2, User::ROLE_TEAMLEAD);
+
+        $team = new Team('project team');
+        $team->addUser($owner);
+        $team->addTeamlead($otherLead);
+
+        $project = new Project();
+        $project->setCustomer(new Customer('Acme'));
+        $project->addTeam($team);
+
+        $timesheet = new Timesheet();
+        $timesheet->setUser($owner);
+        $timesheet->setProject($project);
+        $timesheet->setActivity((new Activity())->setProject($project));
+
+        $this->assertVote($owner, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
+        $this->assertVote($owner, $timesheet, 'reject_timesheet', VoterInterface::ACCESS_DENIED);
+    }
+
     public function testApprovedEntryDeniesEditAndDeleteForOwner(): void
     {
         $owner = self::getUser(1, User::ROLE_USER);
