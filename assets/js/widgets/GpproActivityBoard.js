@@ -22,6 +22,7 @@ export default class GpproActivityBoard {
         this.element = element;
         this.updateUrlTemplate = element.dataset.updateUrl;
         this.editUrlTemplate = element.dataset.editUrl;
+        this.detailsUrlTemplate = element.dataset.detailsUrl;
         this.sortables = [];
 
         const columns = element.querySelectorAll('.activity_board_column_body');
@@ -30,11 +31,21 @@ export default class GpproActivityBoard {
                 group: 'activity_board',
                 animation: 150,
                 ghostClass: 'activity_board_card_ghost',
+                // drag initiation begins on pointerdown/touchstart, before any
+                // "click" event fires, so a click-level stopPropagation() alone
+                // cannot stop the edit icon from starting a drag - "filter" is
+                // SortableJS's own contract for excluding an element from drag
+                // initiation. preventOnFilter must stay false so touchstart is
+                // not preventDefault()ed, which would swallow the tap-derived
+                // click on touch devices.
+                filter: '.activity_board_card_edit',
+                preventOnFilter: false,
                 onEnd: (event) => this.onCardMoved(event),
             }));
         }
 
         this.element.addEventListener('dblclick', (event) => this.onCardDoubleClicked(event));
+        this.element.addEventListener('click', (event) => this.onEditIconClicked(event));
 
         this.searchInput = document.getElementById('activity_board_search');
         this.filters = {
@@ -55,22 +66,75 @@ export default class GpproActivityBoard {
     }
 
     /**
-     * Opens the activity edit modal for the double-clicked card.
+     * Opens the double-clicked card through the same permission-aware branch
+     * as the edit icon (modal for editors, read-only details otherwise).
      *
      * @param {MouseEvent} event
      * @private
      */
     onCardDoubleClicked(event) {
         const card = event.target.closest('.activity_board_card');
-        if (card === null || this.editUrlTemplate === undefined) {
+        if (card === null) {
             return;
         }
 
-        const url = this.editUrlTemplate.replace('000', card.dataset.activityId);
+        this.openCard(card);
+    }
 
-        /** @type {GpproAjaxModalForm} */
-        const modal = this.gppro.getPlugin('modal');
-        modal.openUrlInModal(url);
+    /**
+     * Delegated click handler for the always-visible edit icon. Stops the
+     * click from reaching the board's other click handlers - the drag
+     * itself is already excluded by SortableJS's "filter" option, since
+     * drag initiation happens on pointerdown/touchstart, before "click".
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    onEditIconClicked(event) {
+        const icon = event.target.closest('.activity_board_card_edit');
+        if (icon === null) {
+            return;
+        }
+
+        const card = icon.closest('.activity_board_card');
+        if (card === null) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.openCard(card);
+    }
+
+    /**
+     * Server-resolved permission routing (design's central invariant): the
+     * client never decides edit access itself, it only reads the
+     * server-rendered "data-can-edit" flag already attached to the card.
+     *
+     * @param {HTMLElement} card
+     * @private
+     */
+    openCard(card) {
+        if (card.dataset.canEdit === '1') {
+            if (this.editUrlTemplate === undefined) {
+                return;
+            }
+
+            const url = this.editUrlTemplate.replace('000', card.dataset.activityId);
+
+            /** @type {GpproAjaxModalForm} */
+            const modal = this.gppro.getPlugin('modal');
+            modal.openUrlInModal(url);
+
+            return;
+        }
+
+        if (this.detailsUrlTemplate === undefined) {
+            return;
+        }
+
+        window.location.href = this.detailsUrlTemplate.replace('000', card.dataset.activityId);
     }
 
     /**

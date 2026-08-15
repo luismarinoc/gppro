@@ -6,7 +6,7 @@
 {% if card.assignedTo is not null %}{% set assigneeNames = assigneeNames|merge([card.assignedTo.displayName]) %}{% endif %}
 {% if card.technicalUser is not null %}{% set searchNames = searchNames|merge([card.technicalUser.displayName]) %}{% endif %}
 {% if card.functionalUser is not null %}{% set searchNames = searchNames|merge([card.functionalUser.displayName]) %}{% endif %}
-<div class="activity_board_card" data-activity-id="{{ card.activity.id }}" data-status="{{ card.status.value }}" data-priority="{{ card.priority is not null ? card.priority.value : '' }}" data-search="{{ searchNames|join(' ')|lower }}" data-assignees="{{ assigneeNames|join('|')|lower }}" data-assignee-labels="{{ assigneeNames|join('|') }}">
+<div class="activity_board_card" data-activity-id="{{ card.activity.id }}" data-status="{{ card.status.value }}" data-priority="{{ card.priority is not null ? card.priority.value : '' }}" data-search="{{ searchNames|join(' ')|lower }}" data-assignees="{{ assigneeNames|join('|')|lower }}" data-assignee-labels="{{ assigneeNames|join('|') }}" data-can-edit="{{ is_granted('edit', card.activity) ? '1' : '0' }}">
     <div class="activity_board_card_name">{{ card.activity.name }}</div>
     <div class="activity_board_card_meta d-flex align-items-center justify-content-between">
         <span class="activity_board_card_badges d-flex align-items-center gap-1">
@@ -14,6 +14,7 @@
             {%- if card.priority is not null -%}
                 {{ widgets.badge_type(('activity_board.priority.' ~ card.priority.value)|trans, priorityColors[card.priority.value]) }}
             {%- endif -%}
+            <a class="activity_board_card_edit" href="{{ path('activity_details', {id: card.activity.id}) }}" title="{{ 'activity_board.edit_activity'|trans }}">{{ icon('edit') }}</a>
         </span>
         <span class="activity_board_card_due_date">
             {%- if card.dueDate is not null -%}

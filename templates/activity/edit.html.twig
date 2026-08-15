@@ -10,6 +10,9 @@
     {% embed formEditTemplate with formOptions %}
         {% import "macros/form_helper.html.twig" as form_helper %}
         {% block form_body %}
+            {% if board_status|default(null) is not null %}
+                {% include 'activity/_board_status_stepper.html.twig' with {'board_status': board_status} %}
+            {% endif %}
             <div class="row">
                 <div class="col-md-9">
                     {{ form_row(form.name) }}

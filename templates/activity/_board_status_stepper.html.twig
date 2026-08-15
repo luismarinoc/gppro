@@ -1,0 +1,14 @@
+{#
+    Read-only horizontal stage stepper (D2/D3): renders the four
+    ActivityBoardStatus states using Tabler's bundled .steps/.step-item
+    classes (design A7, no new CSS), marking the current board_status as
+    active. Exposes no control to change stage - stage still changes only
+    by dragging cards on the board.
+#}
+{% set stepOrder = {'todo': 0, 'in_progress': 1, 'in_review': 2, 'done': 3} %}
+{% set currentIndex = stepOrder[board_status.value] %}
+<div class="steps mb-3">
+    {% for status, index in stepOrder %}
+        <span class="step-item{{ index == currentIndex ? ' active' : '' }}">{{ ('activity_board.status.' ~ status)|trans }}</span>
+    {% endfor %}
+</div>

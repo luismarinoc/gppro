@@ -117,6 +117,15 @@
     text-transform: uppercase;
 }
 
+.activity_board_card_edit {
+    cursor: pointer;
+    color: var(--tblr-secondary, #6c757d);
+}
+
+.activity_board_card_edit:hover {
+    color: var(--tblr-primary, #206bc4);
+}
+
 .activity_board_card_assignee {
     display: flex;
     align-items: center;

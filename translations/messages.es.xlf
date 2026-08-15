@@ -2570,6 +2570,18 @@
         <source>activity_board.new_activity</source>
         <target state="translated">Nueva actividad</target>
       </trans-unit>
+      <trans-unit id="gpActBrd24" resname="activity_board.edit_activity" xml:space="preserve">
+        <source>activity_board.edit_activity</source>
+        <target state="translated">Editar actividad</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd25" resname="activity.edit_denied" xml:space="preserve">
+        <source>activity.edit_denied</source>
+        <target state="translated">No tenés permiso para editar esta actividad</target>
+      </trans-unit>
+      <trans-unit id="gpActBrd26" resname="activity_board.stage" xml:space="preserve">
+        <source>activity_board.stage</source>
+        <target state="translated">Etapa</target>
+      </trans-unit>
       <trans-unit id="gpActWs1" resname="activity_workspace.title" xml:space="preserve">
         <source>activity_workspace.title</source>
         <target state="translated">Espacio de actividades</target>
