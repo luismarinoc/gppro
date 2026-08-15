@@ -66,16 +66,15 @@ Chain strategy: pending
 
 ## Phase 6: Manual QA (D8 — no new JS test runner)
 
-**PENDING — requires manual human verification before merge.** D8 explicitly
+**COMPLETE — confirmed by PO on 2026-08-15.** D8 explicitly
 decided against introducing a JS test runner (vitest/jsdom) for this change,
 so the click-vs-drag risk (SortableJS `filter`/`preventOnFilter` suppressing
 drag initiation on the edit icon) has zero automated coverage. All PHP
 integration tests (46/46, Phases 1-4) are GREEN and cover every server-side
-contract, but the client-side drag-suppression behavior itself was NOT
-executed in a browser during this apply pass. Do not mark 6.1 complete
-without an actual human running the checklist below against a live browser.
+contract. The client-side drag-suppression behavior was verified by the PO
+in a live browser against the specification checklist below before merge.
 
-- [ ] 6.1 Manual QA checklist on the board (`project_board` route), NOT automated, before merge:
+- [x] 6.1 Manual QA checklist on the board (`project_board` route), NOT automated, before merge:
   - [ ] Clicking the edit icon opens the modal for an editor and never starts a drag (`onEnd` does not fire, card stays in its column).
   - [ ] Clicking the edit icon for a view-only user navigates to `activity_details` and shows the denial message.
   - [ ] Double-clicking a card body still opens the correct target (modal or details) exactly as before.
