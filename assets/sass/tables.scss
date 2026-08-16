@@ -79,9 +79,11 @@ table.table-bordered {
 }
 
 table.dataTable {
-    /* action column */
+    /* action column - min-width, not width: some rows add extra inline actions
+       (e.g. timesheet approve/reject) that need more than the dropdown-only 40px */
     .actions {
-        width: 40px;
+        min-width: 40px;
+        white-space: nowrap;
     }
     tr {
         /* summary row - used in many tables to show rows with summarized values like durations or money */

@@ -6,7 +6,7 @@
         "/build/app.5699718d.js"
       ],
       "css": [
-        "/build/app.924c6f1a.css"
+        "/build/app.8a2a4cb6.css"
       ]
     },
     "app-rtl": {
@@ -15,7 +15,7 @@
         "/build/app-rtl.1b2b6449.js"
       ],
       "css": [
-        "/build/app-rtl.9f6db5a8.css"
+        "/build/app-rtl.2ad93648.css"
       ]
     },
     "export-pdf": {
@@ -88,9 +88,9 @@
   "integrity": {
     "/build/runtime.0fbf07bc.js": "sha384-Sjkp3Z+p/K7VDVFVuFIJYYkbnKF0U9md/+jrLbIlO2MJvCCXuZ0MlNFZXp3rCaJv",
     "/build/app.5699718d.js": "sha384-WXYPQdUNOwzyOOuTwvFjkhiH9hDj6leoyxNvvkQZr9pMNlzkJ1ScGx37X97mlgn7",
-    "/build/app.924c6f1a.css": "sha384-uu7b8POeLde98WFFNu84I6fpuSGV6IE/c2L2GmUBc1w0rXP8boZHbUxShNuOFbDD",
+    "/build/app.8a2a4cb6.css": "sha384-EgxPGC9duCU4vebUZ7WuZbeiOKx77LTqgQPMjeYgAvx7MAdhfjVYgv/EFgFLxed5",
     "/build/app-rtl.1b2b6449.js": "sha384-U11gXFPkCKIzOL99GjURzJn5TR9P/YPhzfa0BnDiPOQRA7fTmzD1irXgHiA1STRb",
-    "/build/app-rtl.9f6db5a8.css": "sha384-HU98c4RcDX/o02HKCkGmm4wkVo59xey2MTeBs7y3MiNPOFjWx/QlUQlyzqxFCjrE",
+    "/build/app-rtl.2ad93648.css": "sha384-n6NnFf/8omwhW52m281913T+Zt1u5yO1aiIybz4qesx/d6Tq42co2gvqOF1fMXAi",
     "/build/export-pdf.d416f055.js": "sha384-KqQ4IAvl7OT15fugvCdINwS/K/lKWpVFQlkAQK4kSW/OXlNdFuBfTWm+zyNg+Ynh",
     "/build/export-pdf.d8a6c23b.css": "sha384-ztepocHE4rnGE9eKZ4kL6jTKaePUyiwiB9TjJjstjpf/ckcKg1HedrEOOk/8ElJg",
     "/build/invoice.74e734a1.js": "sha384-WGqPJYwr388WISMbVnt2/isVaweV2vU8RQG2+apd0k2e5aYCZWP035e3obFOn0mb",
