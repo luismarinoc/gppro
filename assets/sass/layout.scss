@@ -35,6 +35,13 @@ h1.navbar-brand a {
     z-index: 1021;
 }
 
+/* .table-responsive sets overflow-y: auto as a side effect of overflow-x: auto, which
+   turns the container itself into the scrolling ancestor for thead.sticky-top - keeping
+   overflow-y visible preserves the page-level sticky header while still scrolling X */
+.data_table .table-responsive {
+    overflow-y: visible;
+}
+
 /* reduce the default font size for the brand header */
 .navbar {
     --tblr-navbar-brand-font-size: 1rem;

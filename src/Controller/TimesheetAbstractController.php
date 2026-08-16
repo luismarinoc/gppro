@@ -70,6 +70,7 @@ abstract class TimesheetAbstractController extends AbstractController
         $metaColumns = $this->findMetaColumns($query, $location);
 
         $table = new DataTable($this->getTableName(), $query);
+        $table->setResponsive(true);
         $table->setPagination($result->getPagerfanta());
         $table->setSearchForm($form);
         $table->setBatchForm($this->getMultiUpdateActionForm());

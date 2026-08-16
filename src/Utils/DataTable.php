@@ -27,6 +27,7 @@ final class DataTable implements \Countable, \IteratorAggregate
     private array $reloadEvents = [];
     private bool $configuration = true;
     private bool $sticky = true;
+    private bool $responsive = false;
     private ?string $paginationRoute = null;
 
     public function __construct(
@@ -168,6 +169,7 @@ final class DataTable implements \Countable, \IteratorAggregate
         $options = [
             'columnConfig' => false,
             'sticky' => $this->sticky,
+            'responsive' => $this->responsive,
         ];
 
         if (\count($this->reloadEvents) > 0) {
@@ -198,6 +200,11 @@ final class DataTable implements \Countable, \IteratorAggregate
     public function setSticky(bool $sticky = true): void
     {
         $this->sticky = $sticky;
+    }
+
+    public function setResponsive(bool $responsive = true): void
+    {
+        $this->responsive = $responsive;
     }
 
     public function getIterator(): Traversable
