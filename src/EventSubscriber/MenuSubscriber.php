@@ -135,9 +135,13 @@ final class MenuSubscriber implements EventSubscriberInterface
         // still exists and stays reachable from the expense list itself
         // (templates/expense/index.html.twig), just not from this menu.
         $expenses = new MenuItemModel('expenses', 'expenses', null, [], 'receipt');
+        if ($auth->isGranted('create_expense')) {
+            $expenseCreate = new MenuItemModel('expense_create', 'expense_create', 'expense_create', [], 'receipt');
+            $expenses->addChild($expenseCreate);
+        }
         if ($auth->isGranted('view_expense')) {
             $expenseList = new MenuItemModel('expense_list', 'expense_list', 'expense_list', [], 'receipt');
-            $expenseList->setChildRoutes(['expense_create', 'expense_edit', 'expense_view', 'expense_submit', 'expense_approve', 'expense_reject', 'expense_delete', 'expense_allocation_charge', 'expense_pending']);
+            $expenseList->setChildRoutes(['expense_edit', 'expense_view', 'expense_submit', 'expense_approve', 'expense_reject', 'expense_delete', 'expense_allocation_charge', 'expense_pending']);
             $expenses->addChild($expenseList);
         }
         if ($expenses->hasChildren()) {

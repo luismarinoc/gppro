@@ -2322,6 +2322,10 @@
         <source>expenses</source>
         <target>Expenses</target>
       </trans-unit>
+      <trans-unit id="gpExpenseCreateMenu" resname="expense_create">
+        <source>expense_create</source>
+        <target>Create expense</target>
+      </trans-unit>
       <trans-unit id="gpExpenseListMenu" resname="expense_list">
         <source>expense_list</source>
         <target>List</target>
@@ -2344,7 +2348,7 @@
       </trans-unit>
       <trans-unit id="gpExpense6" resname="expense_approval_level">
         <source>expense_approval_level</source>
-        <target>Expense approval levels</target>
+        <target>Levels: Expenses</target>
       </trans-unit>
       <trans-unit id="gpExpense7" resname="expense.description">
         <source>expense.description</source>
@@ -2766,7 +2770,7 @@
       <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you"><source>quotation.response.thank_you</source><target>Thank you</target></trans-unit>
       <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message"><source>quotation.response.recorded_message</source><target>Your quotation has been marked as %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum"><source>quotation.lines_minimum</source><target>Add at least one quotation line.</target></trans-unit>
-      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level"><source>invoice_payment_approval_level</source><target>Invoice payment approval levels</target></trans-unit>
+      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level"><source>invoice_payment_approval_level</source><target>Levels: Invoice payments</target></trans-unit>
       <trans-unit id="gpInvPayLvl2" resname="invoice_payment_approval_level.level"><source>invoice_payment_approval_level.level</source><target>Level</target></trans-unit>
       <trans-unit id="gpInvPayLvl3" resname="invoice_payment_approval_level.min_amount"><source>invoice_payment_approval_level.min_amount</source><target>Minimum amount</target></trans-unit>
       <trans-unit id="gpInvPayLvl4" resname="invoice_payment_approval_level.required_role"><source>invoice_payment_approval_level.required_role</source><target>Required role</target></trans-unit>

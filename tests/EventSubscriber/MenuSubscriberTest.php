@@ -110,10 +110,13 @@ class MenuSubscriberTest extends TestCase
         self::assertNotNull($expenses);
         self::assertNull($expenses->getRoute());
 
+        // view_expense alone does not grant the "create" link
+        self::assertNull($expenses->findChild('expense_create'));
+
         $expenseList = $expenses->findChild('expense_list');
         self::assertNotNull($expenseList);
         self::assertSame('expense_list', $expenseList->getRoute());
-        self::assertTrue($expenseList->isChildRoute('expense_create'));
+        self::assertFalse($expenseList->isChildRoute('expense_create'));
         self::assertTrue($expenseList->isChildRoute('expense_edit'));
         self::assertTrue($expenseList->isChildRoute('expense_view'));
         self::assertTrue($expenseList->isChildRoute('expense_submit'));
@@ -128,6 +131,28 @@ class MenuSubscriberTest extends TestCase
         self::assertNull($expenses->findChild('expense_pending'));
 
         self::assertNull($expenses->findChild('expense_approval_level_list'));
+    }
+
+    public function testExpenseCreateMenuIsVisibleForUsersWithCreatePermission(): void
+    {
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturnCallback(
+            static fn (string $attribute): bool => \in_array($attribute, ['IS_AUTHENTICATED_REMEMBERED', 'view_expense', 'create_expense'], true)
+        );
+        $security->method('getUser')->willReturn(new User());
+
+        $event = new ConfigureMainMenuEvent();
+        (new MenuSubscriber($security, new ContextHelper()))->onMainMenuConfigure($event);
+
+        $expenses = $event->getMenu()->findChild('expenses');
+        self::assertNotNull($expenses);
+
+        $expenseCreate = $expenses->findChild('expense_create');
+        self::assertNotNull($expenseCreate);
+        self::assertSame('expense_create', $expenseCreate->getRoute());
+
+        // the two entries are distinct siblings, not one hiding the other
+        self::assertNotNull($expenses->findChild('expense_list'));
     }
 
     public function testActivitiesMenuPointsToWorkspacePickerUnderViewProjectPermission(): void

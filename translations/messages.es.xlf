@@ -2290,6 +2290,10 @@
         <source>expenses</source>
         <target state="translated">Gastos</target>
       </trans-unit>
+      <trans-unit id="gpExpenseCreateMenu" resname="expense_create" xml:space="preserve">
+        <source>expense_create</source>
+        <target state="translated">Crear gasto</target>
+      </trans-unit>
       <trans-unit id="gpExpenseListMenu" resname="expense_list" xml:space="preserve">
         <source>expense_list</source>
         <target state="translated">Listado</target>
@@ -2312,7 +2316,7 @@
       </trans-unit>
       <trans-unit id="gpExpense6" resname="expense_approval_level" xml:space="preserve">
         <source>expense_approval_level</source>
-        <target state="translated">Niveles de aprobación de gastos</target>
+        <target state="translated">Niveles: Gastos</target>
       </trans-unit>
       <trans-unit id="gpExpense7" resname="expense.description" xml:space="preserve">
         <source>expense.description</source>
@@ -2698,7 +2702,7 @@
       <trans-unit id="quotationResponseThankYou" resname="quotation.response.thank_you" xml:space="preserve"><source>quotation.response.thank_you</source><target state="translated">Gracias</target></trans-unit>
       <trans-unit id="quotationResponseRecordedMessage" resname="quotation.response.recorded_message" xml:space="preserve"><source>quotation.response.recorded_message</source><target state="translated">Tu cotización quedó marcada como %status%.</target></trans-unit>
       <trans-unit id="quotationLinesMinimum" resname="quotation.lines_minimum" xml:space="preserve"><source>quotation.lines_minimum</source><target state="translated">Agregá al menos una línea a la cotización.</target></trans-unit>
-      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level" xml:space="preserve"><source>invoice_payment_approval_level</source><target state="translated">Niveles de aprobación de pago de facturas</target></trans-unit>
+      <trans-unit id="gpInvPayLvl1" resname="invoice_payment_approval_level" xml:space="preserve"><source>invoice_payment_approval_level</source><target state="translated">Niveles: Pago de facturas</target></trans-unit>
       <trans-unit id="gpInvPayLvl2" resname="invoice_payment_approval_level.level" xml:space="preserve"><source>invoice_payment_approval_level.level</source><target state="translated">Nivel</target></trans-unit>
       <trans-unit id="gpInvPayLvl3" resname="invoice_payment_approval_level.min_amount" xml:space="preserve"><source>invoice_payment_approval_level.min_amount</source><target state="translated">Monto mínimo</target></trans-unit>
       <trans-unit id="gpInvPayLvl4" resname="invoice_payment_approval_level.required_role" xml:space="preserve"><source>invoice_payment_approval_level.required_role</source><target state="translated">Rol requerido</target></trans-unit>
