@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
 
 {% block main %}
     {% if expenses is empty and timesheets is empty and invoices is empty %}
@@ -50,11 +51,23 @@
             <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_timesheet'|trans }}</h3></div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
-                    <thead><tr><th>{{ 'timesheet'|trans }}</th><th>{{ 'begin'|trans }}</th><th></th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>{{ 'user'|trans }}</th>
+                            <th>{{ 'customer'|trans }}</th>
+                            <th>{{ 'project'|trans }}</th>
+                            <th>{{ 'activity'|trans }}</th>
+                            <th>{{ 'begin'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>
                     {% for timesheet in timesheets %}
                         <tr>
-                            <td>#{{ timesheet.id }} - {{ timesheet.project }}</td>
+                            <td>{{ widgets.user_avatar(timesheet.user) }}</td>
+                            <td>{{ widgets.label_customer(timesheet.project.customer) }}</td>
+                            <td>{{ widgets.label_project(timesheet.project) }}</td>
+                            <td>{{ widgets.label_activity(timesheet.activity) }}</td>
                             <td>{{ timesheet.begin|date('Y-m-d H:i') }}</td>
                             <td class="text-end">
                                 {% if is_granted('approve_timesheet', timesheet) %}
@@ -72,7 +85,7 @@
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3">{{ 'approvals_dashboard.none_pending_timesheet'|trans }}</td></tr>
+                        <tr><td colspan="6">{{ 'approvals_dashboard.none_pending_timesheet'|trans }}</td></tr>
                     {% endfor %}
                     </tbody>
                 </table>
