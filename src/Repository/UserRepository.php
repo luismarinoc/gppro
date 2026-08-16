@@ -231,6 +231,14 @@ class UserRepository extends EntityRepository implements UserLoaderInterface, Us
             $userIds = array_unique($userIds);
             $qb->setParameter('teamMember', $userIds);
             $or->add($qb->expr()->in('u.id', ':teamMember'));
+
+            // without this, a teamlead could only ever pick from people
+            // already on one of their teams - the same "in no team yet"
+            // visibility RolePermissionManager::checkUserAccess() already
+            // grants teamleads elsewhere, so a brand new person can
+            // actually be added to a first team by someone other than an
+            // admin.
+            $or->add($qb->expr()->eq('SIZE(u.memberships)', 0));
         }
 
         // if teams where requested, then select all team members
