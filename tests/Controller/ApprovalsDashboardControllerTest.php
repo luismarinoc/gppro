@@ -24,13 +24,20 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Covers ApprovalsDashboardController: cross-domain aggregation (Expense +
- * Invoice + Timesheet), the navigation-only contract (decision 7 - no
- * inline approve/reject controls), and - most importantly - that raw
- * repository results are never trusted as the final visibility set. Both
- * ExpenseRepository::findPendingForUser() and the new
- * InvoiceRepository::findPendingPaymentApprovalForUser() are deliberately
- * naive (creator-exclusion only, see design's flagged gap); the controller
- * MUST additionally apply each domain's real is_granted() check per item.
+ * Invoice + Timesheet), the navigation-only contract for Invoice/Expense
+ * (decision 7 - no inline approve/reject controls for those two domains),
+ * and - most importantly - that raw repository results are never trusted
+ * as the final visibility set. Both ExpenseRepository::findPendingForUser()
+ * and InvoiceRepository::findPendingPaymentApprovalForUser() are
+ * deliberately naive (creator-exclusion only, see design's flagged gap);
+ * the controller MUST additionally apply each domain's real is_granted()
+ * check per item.
+ *
+ * Timesheet is the one exception to decision 7: it now renders inline
+ * approve/reject forms directly on this dashboard, posting to the exact
+ * same admin_timesheet_approve/admin_timesheet_reject write endpoints (and
+ * CSRF token ids) as the timesheet list screen - no new write logic, just
+ * the existing controls surfaced where the pending item was found.
  */
 #[Group('integration')]
 class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
@@ -358,11 +365,14 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
     }
 
     /**
-     * Task 4.8: dashboard rows are navigation-only - each row links into
-     * its own domain's approve/reject screen, and no inline approve/reject
-     * `<form>` submitting to a write endpoint is ever rendered on this page.
+     * Task 4.8 (Invoice/Expense half of decision 7): those two domains'
+     * dashboard rows stay navigation-only - each links into its own
+     * domain's approve/reject screen, no inline approve/reject `<form>`
+     * submitting to either domain's write endpoint is ever rendered here.
+     * Timesheet is covered separately below - it's the one domain that now
+     * does render inline controls (see class docblock).
      */
-    public function testDashboardRowsNavigateToDomainScreensWithNoInlineApproveRejectControls(): void
+    public function testInvoiceAndExpenseRowsNavigateToDomainScreensWithNoInlineApproveRejectControls(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
         $em = $this->getEntityManager();
@@ -394,9 +404,46 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString('reject-payment', $content, 'The dashboard must not render a form posting to the Invoice reject-payment write endpoint.');
         self::assertStringNotContainsString('expense_approve', $content, 'The dashboard must not render a form posting to the Expense approve write endpoint.');
         self::assertStringNotContainsString('expense_reject', $content, 'The dashboard must not render a form posting to the Expense reject write endpoint.');
-        self::assertStringNotContainsString('admin_timesheet_approve', $content, 'The dashboard must not render a form posting to the Timesheet approve write endpoint.');
-        self::assertStringNotContainsString('admin_timesheet_reject', $content, 'The dashboard must not render a form posting to the Timesheet reject write endpoint.');
-        self::assertCount(0, $crawler->filter('section.content form'), 'The dashboard\'s own content area must contain no <form> at all - navigation-only, decision 7.');
+        // no timesheet is pending in this test, so this also happens to
+        // assert 0 forms - the dedicated timesheet test below is the one
+        // that proves inline controls actually render when they should.
+        self::assertCount(0, $crawler->filter('section.content form'), 'With no pending timesheet in this test, the dashboard\'s content area must contain no <form> at all.');
+    }
+
+    /**
+     * The exception to decision 7: a pending timesheet the caller is
+     * eligible to approve renders working Approve/Reject buttons right on
+     * the dashboard, posting to the exact same write endpoints (and CSRF
+     * token ids) as templates/timesheet/index.html.twig - so submitting
+     * from here is exactly as safe as submitting from "My times".
+     */
+    public function testTimesheetRowRendersInlineApproveRejectControls(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $em = $this->getEntityManager();
+
+        $teamlead = $this->loadUserFromDatabase(UserFixtures::USERNAME_TEAMLEAD);
+        $admin = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
+
+        $team = $this->createTeam();
+        $this->addUserToTeamAsLead($teamlead, $team);
+        [, $timesheetProject] = $this->createCustomerAndProjectWithTeam($team);
+        $timesheet = $this->createPendingTimesheetEntry($admin, $timesheetProject);
+        $timesheetId = $timesheet->getId();
+        self::assertIsInt($timesheetId);
+
+        $em->clear();
+
+        $crawler = $this->request($client, '/approvals/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $approveForm = $crawler->filter('form[action="' . $this->createUrl('/team/timesheet/' . $timesheetId . '/approve') . '"]');
+        self::assertGreaterThan(0, $approveForm->count(), 'Dashboard must render a form posting to this timesheet\'s own approve endpoint.');
+        self::assertGreaterThan(0, $approveForm->filter('input[name="_token"]')->count(), 'The approve form must carry a CSRF token.');
+
+        $rejectForm = $crawler->filter('form[action="' . $this->createUrl('/team/timesheet/' . $timesheetId . '/reject') . '"]');
+        self::assertGreaterThan(0, $rejectForm->count(), 'Dashboard must render a form posting to this timesheet\'s own reject endpoint.');
     }
 
     /**
