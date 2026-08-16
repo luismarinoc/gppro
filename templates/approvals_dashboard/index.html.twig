@@ -58,6 +58,7 @@
                             <th>{{ 'project'|trans }}</th>
                             <th>{{ 'activity'|trans }}</th>
                             <th>{{ 'begin'|trans }}</th>
+                            <th>{{ 'duration'|trans }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -69,6 +70,7 @@
                             <td>{{ widgets.label_project(timesheet.project) }}</td>
                             <td>{{ widgets.label_activity(timesheet.activity) }}</td>
                             <td>{{ timesheet.begin|date('Y-m-d H:i') }}</td>
+                            <td>{{ widgets.duration(timesheet) }}</td>
                             <td class="text-end">
                                 {% if is_granted('approve_timesheet', timesheet) %}
                                     <form class="d-inline" method="post" action="{{ path('admin_timesheet_approve', {id: timesheet.id}) }}">
@@ -85,7 +87,7 @@
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="6">{{ 'approvals_dashboard.none_pending_timesheet'|trans }}</td></tr>
+                        <tr><td colspan="7">{{ 'approvals_dashboard.none_pending_timesheet'|trans }}</td></tr>
                     {% endfor %}
                     </tbody>
                 </table>
