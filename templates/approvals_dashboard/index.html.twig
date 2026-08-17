@@ -11,7 +11,7 @@
             <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_expense'|trans }}</h3></div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
-                    <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th></th></tr></thead>
+                    <thead><tr><th>{{ 'description'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'actions'|trans }}</th></tr></thead>
                     <tbody>
                     {% for expense in expenses %}
                         <tr>
@@ -31,7 +31,7 @@
             <div class="card-header"><h3 class="card-title">{{ 'approvals_dashboard.section_invoice'|trans }}</h3></div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
-                    <thead><tr><th>{{ 'invoice.number'|trans }}</th><th>{{ 'invoice.total'|trans }}</th><th></th></tr></thead>
+                    <thead><tr><th>{{ 'invoice.number'|trans }}</th><th>{{ 'invoice.total'|trans }}</th><th>{{ 'actions'|trans }}</th></tr></thead>
                     <tbody>
                     {% for invoice in invoices %}
                         <tr>
@@ -59,7 +59,7 @@
                             <th>{{ 'activity'|trans }}</th>
                             <th>{{ 'begin'|trans }}</th>
                             <th>{{ 'duration'|trans }}</th>
-                            <th></th>
+                            <th>{{ 'actions'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
