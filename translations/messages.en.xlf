@@ -2358,6 +2358,10 @@
         <source>expense.amount</source>
         <target>Amount</target>
       </trans-unit>
+      <trans-unit id="gpExpense52" resname="expense.currency">
+        <source>expense.currency</source>
+        <target>Currency</target>
+      </trans-unit>
       <trans-unit id="gpExpense9" resname="expense.date">
         <source>expense.date</source>
         <target>Date</target>

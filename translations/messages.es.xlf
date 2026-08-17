@@ -2326,6 +2326,10 @@
         <source>expense.amount</source>
         <target state="translated">Monto</target>
       </trans-unit>
+      <trans-unit id="gpExpense52" resname="expense.currency" xml:space="preserve">
+        <source>expense.currency</source>
+        <target state="translated">Moneda</target>
+      </trans-unit>
       <trans-unit id="gpExpense9" resname="expense.date" xml:space="preserve">
         <source>expense.date</source>
         <target state="translated">Fecha</target>

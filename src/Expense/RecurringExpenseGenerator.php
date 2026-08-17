@@ -72,6 +72,7 @@ final class RecurringExpenseGenerator
         $copy = new Expense();
         $copy->setDescription($source->getDescription() ?? '');
         $copy->setAmount($source->getAmount() ?? 0);
+        $copy->setCurrency($source->getCurrency());
         $copy->setExpenseDate(new \DateTimeImmutable($periodKey . '-01'));
         $copy->setRecurrence(Expense::RECURRENCE_MONTH);
         $copy->setCategory($source->getCategory());

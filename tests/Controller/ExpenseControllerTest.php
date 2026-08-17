@@ -106,6 +106,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
             'expense_form' => [
                 'description' => 'Client dinner',
                 'amount' => '100000',
+                'currency' => Expense::CURRENCY_CLP,
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
                 'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [
@@ -138,6 +139,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
             'expense_form' => [
                 'description' => 'Overspent expense',
                 'amount' => '100000',
+                'currency' => Expense::CURRENCY_CLP,
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
                 'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [
@@ -169,6 +171,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
             'expense_form' => [
                 'description' => $description,
                 'amount' => '200000',
+                'currency' => Expense::CURRENCY_CLP,
                 'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
                 'category' => Expense::CATEGORY_OTHER,
                 'allocations' => [

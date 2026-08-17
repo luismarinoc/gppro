@@ -64,6 +64,7 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
         $expense = new Expense();
         $expense->setDescription('Monthly rent');
         $expense->setAmount(100000);
+        $expense->setCurrency(Expense::CURRENCY_USD);
         $expense->setExpenseDate(new \DateTimeImmutable('2026-07-05'));
         $expense->setRecurrence(Expense::RECURRENCE_MONTH);
         $expense->setCategory(Expense::CATEGORY_RENT);
@@ -87,6 +88,7 @@ class RecurringExpenseGeneratorTest extends AbstractRepositoryTestCase
         self::assertNotNull($result->generatedExpense);
         self::assertSame(Expense::STATUS_DRAFT, $result->generatedExpense->getStatus());
         self::assertSame(100000, $result->generatedExpense->getAmount());
+        self::assertSame(Expense::CURRENCY_USD, $result->generatedExpense->getCurrency());
         self::assertSame('2026-08', $result->generatedExpense->getPeriodKey());
         self::assertSame($source->getId(), $result->generatedExpense->getSourceExpense()?->getId());
         self::assertSame(Expense::CATEGORY_RENT, $result->generatedExpense->getCategory());

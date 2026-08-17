@@ -25,6 +25,7 @@ class ExpenseTest extends TestCase
         self::assertNull($sut->getId());
         self::assertNull($sut->getDescription());
         self::assertNull($sut->getAmount());
+        self::assertSame(Expense::CURRENCY_CLP, $sut->getCurrency());
         self::assertNull($sut->getExpenseDate());
         self::assertNull($sut->getRecurrence());
         self::assertSame(Expense::STATUS_DRAFT, $sut->getStatus());
@@ -150,5 +151,24 @@ class ExpenseTest extends TestCase
         $sut->clearLevel(1);
 
         self::assertFalse($sut->isEditable());
+    }
+
+    public function testCurrencyCanBeSetToAnAllowedValue(): void
+    {
+        $sut = new Expense();
+
+        $sut->setCurrency(Expense::CURRENCY_USD);
+        self::assertSame(Expense::CURRENCY_USD, $sut->getCurrency());
+
+        $sut->setCurrency(Expense::CURRENCY_UF);
+        self::assertSame('CLF', $sut->getCurrency());
+    }
+
+    public function testSettingAnUnknownCurrencyIsRejected(): void
+    {
+        $sut = new Expense();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $sut->setCurrency('BTC');
     }
 }

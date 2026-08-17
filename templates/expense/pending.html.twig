@@ -10,7 +10,7 @@
                 {% for expense in expenses %}
                     <tr>
                         <td>{{ expense.description }}</td>
-                        <td>{{ expense.amount }}</td>
+                        <td>{{ expense.amount|money(expense.currency) }}</td>
                         <td>{{ expense.currentLevel + 1 }} / {{ expense.requiredLevels }}</td>
                         <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">{{ 'expense.review'|trans }}</a></td>
                     </tr>

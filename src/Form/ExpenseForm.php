@@ -27,6 +27,15 @@ final class ExpenseForm extends AbstractType
         $builder
             ->add('description', TextareaType::class, ['label' => 'expense.description'])
             ->add('amount', IntegerType::class, ['label' => 'expense.amount'])
+            ->add('currency', ChoiceType::class, [
+                'required' => true,
+                'label' => 'expense.currency',
+                'choices' => [
+                    'CLP' => Expense::CURRENCY_CLP,
+                    'USD' => Expense::CURRENCY_USD,
+                    'UF' => Expense::CURRENCY_UF,
+                ],
+            ])
             ->add('expenseDate', DatePickerType::class, [
                 'label' => 'expense.date',
                 'input' => 'datetime_immutable',

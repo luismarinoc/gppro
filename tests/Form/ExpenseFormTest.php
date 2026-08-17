@@ -45,6 +45,7 @@ class ExpenseFormTest extends TypeTestCase
 
         self::assertTrue($form->has('description'));
         self::assertTrue($form->has('amount'));
+        self::assertTrue($form->has('currency'));
         self::assertTrue($form->has('expenseDate'));
         self::assertTrue($form->has('recurrence'));
         // 'allocations' resolves a CollectionType prototype through
@@ -110,6 +111,23 @@ class ExpenseFormTest extends TypeTestCase
         self::assertIsArray($choices);
         self::assertContains(Expense::CATEGORY_RENT, $choices);
         self::assertCount(\count(Expense::CATEGORIES), $choices);
+    }
+
+    public function testCurrencyFieldIsRequiredWithThreeChoices(): void
+    {
+        $model = new Expense();
+        $form = $this->factory->createBuilder(ExpenseForm::class, $model);
+
+        $currency = $form->get('currency');
+
+        self::assertTrue($currency->getOption('required'));
+
+        $choices = $currency->getOption('choices');
+        self::assertIsArray($choices);
+        self::assertContains(Expense::CURRENCY_CLP, $choices);
+        self::assertContains(Expense::CURRENCY_USD, $choices);
+        self::assertContains(Expense::CURRENCY_UF, $choices);
+        self::assertCount(\count(Expense::CURRENCIES), $choices);
     }
 
     public function testCsrfTokenIdIsDedicated(): void

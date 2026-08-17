@@ -61,6 +61,18 @@ class Expense implements CreatedAt, ModifiedAt
         self::CATEGORY_OTHER,
     ];
 
+    public const CURRENCY_CLP = 'CLP';
+    public const CURRENCY_USD = 'USD';
+    // ISO 4217 code for Chile's "Unidad de Fomento" (displayed to users as "UF", see LocaleFormatter::money())
+    public const CURRENCY_UF = 'CLF';
+
+    /** @var string[] */
+    public const CURRENCIES = [
+        self::CURRENCY_CLP,
+        self::CURRENCY_USD,
+        self::CURRENCY_UF,
+    ];
+
     use CreatedTrait;
     use ModifiedTrait;
 
@@ -79,6 +91,10 @@ class Expense implements CreatedAt, ModifiedAt
     #[ORM\Column(name: 'amount', type: Types::INTEGER, nullable: false)]
     #[Assert\Range(min: 1, max: 2147483647)]
     private ?int $amount = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false, options: ['default' => self::CURRENCY_CLP])]
+    #[Assert\Choice(choices: self::CURRENCIES)]
+    private string $currency = self::CURRENCY_CLP;
 
     #[ORM\Column(name: 'expense_date', type: Types::DATE_IMMUTABLE, nullable: false)]
     #[Assert\NotNull]
@@ -158,6 +174,21 @@ class Expense implements CreatedAt, ModifiedAt
     public function setAmount(int $amount): Expense
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(string $currency): Expense
+    {
+        if (!\in_array($currency, self::CURRENCIES, true)) {
+            throw new \InvalidArgumentException('Unknown expense currency');
+        }
+        $this->currency = $currency;
 
         return $this;
     }

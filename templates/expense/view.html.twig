@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="card-body">
-            <p>{{ 'expense.amount'|trans }}: {{ expense.amount }}</p>
+            <p>{{ 'expense.amount'|trans }}: {{ expense.amount|money(expense.currency) }}</p>
             <p>{{ 'date'|trans }}: {{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</p>
             <p>{{ 'expense.category'|trans }}: {{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</p>
             <p>{{ 'status'|trans }}: {{ ('expense.status.' ~ expense.status)|trans }}</p>
