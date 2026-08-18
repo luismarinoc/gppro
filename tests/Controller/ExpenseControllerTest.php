@@ -14,6 +14,7 @@ use App\Entity\Customer;
 use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Entity\ExpenseApprovalLevel;
+use App\Entity\FxRate;
 use App\Entity\Project;
 use App\Entity\Quotation;
 use App\Entity\QuotationLine;
@@ -793,5 +794,128 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('Rent', $content);
         self::assertStringContainsString('Uncategorized', $content);
+    }
+
+    /**
+     * Live preview endpoint backing the create/edit form: as the user types
+     * an amount/currency/date, the frontend polls this route to show the CLP
+     * equivalent without submitting the form. CLP is a passthrough via
+     * ClpConversion::identity() - same behaviour as ClpConverter::convert().
+     */
+    public function testCurrencyPreviewReturnsIdentityForClp(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/expense/currency-preview?amount=1000&currency=CLP&date=2026-08-01');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertTrue($data['convertible']);
+        self::assertSame('1000', $data['clpAmount']);
+    }
+
+    public function testCurrencyPreviewReturnsClpEquivalentWhenRateIsAvailable(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $em = $this->getEntityManager();
+
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable('2026-08-01'));
+        $fxRate->setIndicator(FxRate::INDICATOR_USD);
+        $fxRate->setRateValue('950.000000');
+        $em->persist($fxRate);
+        $em->flush();
+
+        $this->request($client, '/expense/currency-preview?amount=100&currency=USD&date=2026-08-05');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertTrue($data['convertible']);
+        self::assertSame('95000.0000', $data['clpAmount']);
+        self::assertSame('950.000000', $data['rate']);
+        self::assertSame('2026-08-01', $data['rateDate']);
+    }
+
+    public function testCurrencyPreviewReturnsClpEquivalentForUfWhenRateIsAvailable(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $em = $this->getEntityManager();
+
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable('2026-08-01'));
+        $fxRate->setIndicator(FxRate::INDICATOR_UF);
+        $fxRate->setRateValue('37500.000000');
+        $em->persist($fxRate);
+        $em->flush();
+
+        $this->request($client, '/expense/currency-preview?amount=2&currency=CLF&date=2026-08-01');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertTrue($data['convertible']);
+        self::assertSame('75000.0000', $data['clpAmount']);
+    }
+
+    public function testCurrencyPreviewReturnsNotConvertibleWhenNoRateIsAvailable(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/expense/currency-preview?amount=100&currency=USD&date=2026-08-05');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertFalse($data['convertible']);
+    }
+
+    public function testCurrencyPreviewAcceptsAMissingOptionalDate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $em = $this->getEntityManager();
+
+        $fxRate = new FxRate();
+        $fxRate->setDate(new \DateTimeImmutable('2026-08-01'));
+        $fxRate->setIndicator(FxRate::INDICATOR_USD);
+        $fxRate->setRateValue('950.000000');
+        $em->persist($fxRate);
+        $em->flush();
+
+        $this->request($client, '/expense/currency-preview?amount=1&currency=USD');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $data = $this->decodeJsonResponse($client);
+        self::assertTrue($data['convertible']);
+    }
+
+    public function testCurrencyPreviewRejectsANonNumericAmount(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/expense/currency-preview?amount=not-a-number&currency=USD&date=2026-08-05');
+        self::assertSame(400, $client->getResponse()->getStatusCode());
+    }
+
+    public function testCurrencyPreviewRejectsAnUnknownCurrency(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/expense/currency-preview?amount=100&currency=BOGUS&date=2026-08-05');
+        self::assertSame(400, $client->getResponse()->getStatusCode());
+    }
+
+    public function testCurrencyPreviewRejectsAnUnparseableDate(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $this->request($client, '/expense/currency-preview?amount=100&currency=USD&date=not-a-date');
+        self::assertSame(400, $client->getResponse()->getStatusCode());
+    }
+
+    public function testCurrencyPreviewRouteIsSecured(): void
+    {
+        $this->assertUrlIsSecured('/expense/currency-preview?amount=1&currency=USD');
+    }
+
+    /** @return array<string, mixed> */
+    private function decodeJsonResponse(HttpKernelBrowser $client): array
+    {
+        $data = json_decode((string) $client->getResponse()->getContent(), true);
+        self::assertIsArray($data);
+
+        return $data;
     }
 }

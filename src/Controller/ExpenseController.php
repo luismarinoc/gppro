@@ -19,6 +19,7 @@ use App\Expense\ExpenseCrossChargeService;
 use App\Form\ExpenseApprovalDecisionForm;
 use App\Form\ExpenseChargeForm;
 use App\Form\ExpenseForm;
+use App\FxRate\ClpConverter;
 use App\Repository\ExpenseRepository;
 use App\Utils\PageSetup;
 use Symfony\Component\HttpFoundation\Request;
@@ -229,6 +230,51 @@ final class ExpenseController extends AbstractController
         }
 
         return $this->redirectToRoute('expense_view', ['id' => $expense->getId()]);
+    }
+
+    /**
+     * Read-only live preview backing the create/edit form: as the user types
+     * an amount/currency/date, the frontend polls this route (debounced) to
+     * show the CLP equivalent without submitting the form or leaving the
+     * page. `convertible: false` is a valid business outcome (no FX rate for
+     * that date yet) and returns 200, not an error - the user should be able
+     * to keep filling out the form regardless.
+     */
+    #[Route(path: '/currency-preview', name: 'expense_currency_preview', methods: ['GET'])]
+    public function currencyPreview(Request $request, ClpConverter $clpConverter): Response
+    {
+        $amount = $request->query->getString('amount');
+        $currency = $request->query->getString('currency');
+        $dateString = $request->query->getString('date');
+
+        if ('' === $amount || !is_numeric($amount)) {
+            return $this->json(['error' => 'invalid_amount'], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!\in_array($currency, Expense::CURRENCIES, true)) {
+            return $this->json(['error' => 'invalid_currency'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $date = null;
+        if ('' !== $dateString) {
+            $date = \DateTimeImmutable::createFromFormat('Y-m-d', $dateString) ?: null;
+            if (null === $date) {
+                return $this->json(['error' => 'invalid_date'], Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        $conversion = $clpConverter->convert($amount, $currency, $date);
+
+        if (null === $conversion) {
+            return $this->json(['convertible' => false]);
+        }
+
+        return $this->json([
+            'convertible' => true,
+            'clpAmount' => $conversion->clpAmount,
+            'rate' => $conversion->rate,
+            'rateDate' => $conversion->rateDate?->format('Y-m-d'),
+        ]);
     }
 
     /** @param array<string, int|null> $parameters */
