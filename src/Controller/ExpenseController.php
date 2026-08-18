@@ -12,7 +12,7 @@ namespace App\Controller;
 use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Expense\AllocationPercentageValidator;
-use App\Expense\AllocationSplitter;
+use App\Expense\ExpenseAllocationAmountUpdater;
 use App\Expense\ExpenseApprovalPolicy;
 use App\Expense\ExpenseApprovalService;
 use App\Expense\ExpenseCrossChargeService;
@@ -83,19 +83,19 @@ final class ExpenseController extends AbstractController
 
     #[Route(path: '/create', name: 'expense_create', methods: ['GET', 'POST'])]
     #[IsGranted('create_expense')]
-    public function create(Request $request, ExpenseRepository $repository, AllocationSplitter $splitter, AllocationPercentageValidator $percentageValidator): Response
+    public function create(Request $request, ExpenseRepository $repository, ExpenseAllocationAmountUpdater $amountUpdater, AllocationPercentageValidator $percentageValidator): Response
     {
         $expense = new Expense();
         $expense->setCreatedBy($this->getUser());
 
-        return $this->form($expense, $request, $repository, $splitter, $percentageValidator, 'expense_create');
+        return $this->form($expense, $request, $repository, $amountUpdater, $percentageValidator, 'expense_create');
     }
 
     #[Route(path: '/{id}/edit', name: 'expense_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     #[IsGranted('edit_expense', 'expense')]
-    public function edit(Expense $expense, Request $request, ExpenseRepository $repository, AllocationSplitter $splitter, AllocationPercentageValidator $percentageValidator): Response
+    public function edit(Expense $expense, Request $request, ExpenseRepository $repository, ExpenseAllocationAmountUpdater $amountUpdater, AllocationPercentageValidator $percentageValidator): Response
     {
-        return $this->form($expense, $request, $repository, $splitter, $percentageValidator, 'expense_edit', ['id' => $expense->getId()]);
+        return $this->form($expense, $request, $repository, $amountUpdater, $percentageValidator, 'expense_edit', ['id' => $expense->getId()]);
     }
 
     #[Route(path: '/{id}', name: 'expense_view', methods: ['GET'], requirements: ['id' => '\d+'])]
@@ -232,7 +232,7 @@ final class ExpenseController extends AbstractController
     }
 
     /** @param array<string, int|null> $parameters */
-    private function form(Expense $expense, Request $request, ExpenseRepository $repository, AllocationSplitter $splitter, AllocationPercentageValidator $percentageValidator, string $route, array $parameters = []): Response
+    private function form(Expense $expense, Request $request, ExpenseRepository $repository, ExpenseAllocationAmountUpdater $amountUpdater, AllocationPercentageValidator $percentageValidator, string $route, array $parameters = []): Response
     {
         $form = $this->createForm(ExpenseForm::class, $expense, [
             'action' => $this->generateUrl($route, $parameters),
@@ -246,7 +246,9 @@ final class ExpenseController extends AbstractController
             if (!$percentageValidator->isValidForDraft($percentages)) {
                 $this->flashError('action.update.error', 'expense.allocations_over_100');
             } else {
-                $this->recalculateAllocationAmounts($expense, $splitter);
+                if (!$amountUpdater->apply($expense)) {
+                    $this->flashWarning('expense.fx_rate_unavailable');
+                }
                 $repository->saveExpense($expense);
                 $this->flashSuccess('action.update.success');
 
@@ -301,19 +303,6 @@ final class ExpenseController extends AbstractController
             static fn (ExpenseAllocation $allocation): string => $allocation->getPercentage() ?? '0',
             $expense->getAllocations()->toArray()
         );
-    }
-
-    private function recalculateAllocationAmounts(Expense $expense, AllocationSplitter $splitter): void
-    {
-        $allocations = $expense->getAllocations()->toArray();
-        $basisPoints = array_map(
-            static fn (ExpenseAllocation $allocation): int => (int) round(((float) ($allocation->getPercentage() ?? '0')) * 100),
-            $allocations
-        );
-        $shares = $splitter->split($expense->getAmount() ?? 0, $basisPoints);
-        foreach ($allocations as $index => $allocation) {
-            $allocation->setAmountClp($shares[$index]);
-        }
     }
 
     private function createPageSetup(string $title = 'expenses'): PageSetup

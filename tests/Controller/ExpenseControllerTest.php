@@ -193,6 +193,51 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertSame(200000, $reloadedAllocation->getAmountClp());
     }
 
+    /**
+     * Design D2: saving a draft in a currency with no FX rate does not
+     * reject the save - the draft is kept, every allocation's amountClp is
+     * cleared to null, and a warning flash is shown instead of a raw
+     * foreign amount masquerading as CLP.
+     */
+    public function testEditSavesDraftAndFlashesWarningWhenNoFxRateAvailable(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $expenseId = $expense->getId();
+        $description = $expense->getDescription();
+        self::assertIsString($description);
+
+        $token = $this->extractToken($client, '/expense/' . $expenseId . '/edit', 'input[name="expense_form[_token]"]');
+        $this->request($client, '/expense/' . $expenseId . '/edit', 'POST', [
+            'expense_form' => [
+                'description' => $description,
+                'amount' => '500',
+                'currency' => Expense::CURRENCY_USD,
+                'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
+                'category' => Expense::CATEGORY_OTHER,
+                'allocations' => [
+                    0 => ['project' => $project->getId(), 'percentage' => '100.00'],
+                ],
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertIsRedirect($client, $this->createUrl('/expense/' . $expenseId));
+        $client->followRedirect();
+        $this->assertHasFlashWarning($client);
+
+        $em = $this->getEntityManager();
+        $em->clear();
+        $reloaded = $em->getRepository(Expense::class)->find($expenseId);
+        self::assertInstanceOf(Expense::class, $reloaded);
+        self::assertSame(Expense::STATUS_DRAFT, $reloaded->getStatus());
+        self::assertSame(Expense::CURRENCY_USD, $reloaded->getCurrency());
+        $reloadedAllocation = $reloaded->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $reloadedAllocation);
+        self::assertNull($reloadedAllocation->getAmountClp());
+    }
+
     public function testSubmitIsRejectedWhenAllocationsDoNotSumToExactly100Percent(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

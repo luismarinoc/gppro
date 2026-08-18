@@ -377,6 +377,11 @@ abstract class AbstractControllerBaseTestCase extends WebTestCase
         $this->assertHasFlashMessage($client, 'error', $message);
     }
 
+    protected function assertHasFlashWarning(HttpKernelBrowser $client, ?string $message = null): void
+    {
+        $this->assertHasFlashMessage($client, 'warning', $message);
+    }
+
     private function assertHasFlashMessage(HttpKernelBrowser $client, string $type, ?string $message = null): void
     {
         $content = $client->getResponse()->getContent();
