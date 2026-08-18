@@ -14,14 +14,20 @@ use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Entity\ExpenseApproval;
 use App\Entity\ExpenseApprovalLevel;
+use App\Entity\FxRate;
 use App\Entity\Project;
 use App\Entity\User;
+use App\Expense\AllocationSplitter;
 use App\Expense\ApprovalLevelResolver;
+use App\Expense\ExpenseAllocationAmountUpdater;
 use App\Expense\ExpenseApprovalPolicy;
 use App\Expense\ExpenseApprovalService;
+use App\Expense\ExpenseClpAmountResolver;
+use App\FxRate\ClpConverter;
 use App\Repository\ExpenseApprovalLevelRepository;
 use App\Repository\ExpenseApprovalRepository;
 use App\Repository\ExpenseRepository;
+use App\Repository\FxRateRepository;
 use App\Tests\Repository\AbstractRepositoryTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -40,12 +46,27 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         $levelRepository = $em->getRepository(ExpenseApprovalLevel::class);
         /** @var ExpenseApprovalRepository $approvalRepository */
         $approvalRepository = $em->getRepository(ExpenseApproval::class);
+        /** @var FxRateRepository $fxRateRepository */
+        $fxRateRepository = $em->getRepository(FxRate::class);
+        $clpAmountResolver = new ExpenseClpAmountResolver(new ClpConverter($fxRateRepository));
 
         return new ExpenseApprovalService(
             $em,
             new ApprovalLevelResolver($levelRepository),
             new ExpenseApprovalPolicy($levelRepository, $approvalRepository),
+            $clpAmountResolver,
+            new ExpenseAllocationAmountUpdater($clpAmountResolver, new AllocationSplitter()),
         );
+    }
+
+    private function addFxRate(string $indicator, string $rateValue, \DateTimeImmutable $date): FxRate
+    {
+        $em = $this->getEntityManager();
+        $fxRate = (new FxRate())->setIndicator($indicator)->setRateValue($rateValue)->setDate($date);
+        $em->persist($fxRate);
+        $em->flush();
+
+        return $fxRate;
     }
 
     private function getExpenseRepository(): ExpenseRepository
@@ -103,11 +124,12 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         return $user;
     }
 
-    private function createDraftExpense(Project $project, User $creator, int $amount): Expense
+    private function createDraftExpense(Project $project, User $creator, int $amount, string $currency = Expense::CURRENCY_CLP): Expense
     {
         $expense = new Expense();
         $expense->setDescription('Expense ' . uniqid());
         $expense->setAmount($amount);
+        $expense->setCurrency($currency);
         $expense->setExpenseDate(new \DateTimeImmutable('today'));
         $expense->setCreatedBy($creator);
         $expense->addAllocation((new ExpenseAllocation())->setProject($project)->setPercentage('100.00')->setAmountClp($amount));
@@ -129,6 +151,76 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         self::assertSame(Expense::STATUS_PENDING_APPROVAL, $submitted->getStatus());
         self::assertSame(2, $submitted->getRequiredLevels());
         self::assertSame(0, $submitted->getCurrentLevel());
+    }
+
+    /**
+     * Design D3: submit must never guess a foreign amount as CLP - no FX
+     * rate on or before the expense's expenseDate blocks the submission
+     * before any write.
+     */
+    public function testSubmitNonClpExpenseWithoutFxRateThrowsAndWritesNothing(): void
+    {
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        $expense = $this->createDraftExpense($project, $creator, 500, Expense::CURRENCY_USD);
+
+        $this->expectException(\DomainException::class);
+
+        try {
+            $this->getSut()->submit($expense);
+        } finally {
+            self::assertSame(Expense::STATUS_DRAFT, $expense->getStatus());
+            self::assertNull($expense->getRequiredLevels());
+            $allocation = $expense->getAllocations()->first();
+            self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+            self::assertSame(500, $allocation->getAmountClp());
+        }
+    }
+
+    /**
+     * Design D3/D4: submit converts the non-CLP amount once and freezes
+     * BOTH requiredLevels (from the converted amount, not the raw one) and
+     * the allocation split from that same conversion.
+     */
+    public function testSubmitNonClpExpenseFreezesLevelsAndSplitFromConvertedAmount(): void
+    {
+        $this->addLevel(2, 3000000, 'ROLE_ADMIN');
+        $today = new \DateTimeImmutable('today');
+        $this->addFxRate(FxRate::INDICATOR_USD, '950.000000', $today);
+
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        // 3.000 USD * 950 = 2.850.000 CLP - stays below the 3.000.000 ROLE_ADMIN
+        // threshold if (and only if) the raw 3.000 amount is never used directly.
+        $expense = $this->createDraftExpense($project, $creator, 3000, Expense::CURRENCY_USD);
+
+        $submitted = $this->getSut()->submit($expense);
+
+        self::assertSame(Expense::STATUS_PENDING_APPROVAL, $submitted->getStatus());
+        self::assertSame(1, $submitted->getRequiredLevels());
+        $allocation = $submitted->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        self::assertSame(2850000, $allocation->getAmountClp());
+    }
+
+    /**
+     * Regression: the CLP submit path (spec: "Required levels computed at
+     * submit") must be unaffected by the currency-conversion freeze.
+     */
+    public function testSubmitClpExpensePathIsUnchanged(): void
+    {
+        $this->addLevel(2, 500000, 'ROLE_ADMIN');
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        $expense = $this->createDraftExpense($project, $creator, 1000000, Expense::CURRENCY_CLP);
+
+        $submitted = $this->getSut()->submit($expense);
+
+        self::assertSame(Expense::STATUS_PENDING_APPROVAL, $submitted->getStatus());
+        self::assertSame(2, $submitted->getRequiredLevels());
+        $allocation = $submitted->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        self::assertSame(1000000, $allocation->getAmountClp());
     }
 
     public function testApproveSingleLevelExpenseRecordsAuditRowAndMovesToApproved(): void

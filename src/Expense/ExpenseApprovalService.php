@@ -27,19 +27,33 @@ final class ExpenseApprovalService
         private readonly EntityManagerInterface $entityManager,
         private readonly ApprovalLevelResolver $levelResolver,
         private readonly ExpenseApprovalPolicy $policy,
+        private readonly ExpenseClpAmountResolver $clpAmountResolver,
+        private readonly ExpenseAllocationAmountUpdater $allocationAmountUpdater,
     ) {
     }
 
     /**
-     * Computes and freezes requiredLevels for the current level configuration.
-     * Later changes to the level configuration must not affect this expense.
+     * Converts the expense amount to CLP once (design D4), then freezes
+     * BOTH the allocation split and requiredLevels from that same
+     * converted amount for the current level configuration. Later changes
+     * to the level configuration, or to the FX rate, must not affect this
+     * expense. Blocked with a DomainException before any write when no FX
+     * rate is available for the expense's currency/date (design D3).
      */
     public function submit(Expense $expense): Expense
     {
         $this->entityManager->beginTransaction();
 
         try {
-            $requiredLevels = $this->levelResolver->requiredLevelsFor($expense->getAmount() ?? 0);
+            $clpAmount = $this->clpAmountResolver->toClp($expense);
+
+            if (null === $clpAmount) {
+                throw new \DomainException('No exchange rate is available to convert this expense to CLP.');
+            }
+
+            $this->allocationAmountUpdater->applyAmount($expense, $clpAmount);
+
+            $requiredLevels = $this->levelResolver->requiredLevelsFor($clpAmount);
             $expense->submitForApproval($requiredLevels);
 
             $this->entityManager->persist($expense);
