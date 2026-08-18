@@ -2734,6 +2734,10 @@
         <source>quotation.fx_rate_as_of</source>
         <target>1 %currency% = %rate% CLP (rate as of %date%)</target>
       </trans-unit>
+      <trans-unit id="quotationNumber" resname="quotation.number"><source>quotation.number</source><target>Number</target></trans-unit>
+      <trans-unit id="quotationIssueDate" resname="quotation.issue_date"><source>quotation.issue_date</source><target>Issue date</target></trans-unit>
+      <trans-unit id="quotationIssuer" resname="quotation.issuer"><source>quotation.issuer</source><target>Issuer</target></trans-unit>
+      <trans-unit id="quotationClpUnavailable" resname="quotation.clp_unavailable"><source>quotation.clp_unavailable</source><target>This quotation's currency has no CLP exchange rate available yet. Ask an administrator to add one before viewing it.</target></trans-unit>
       <trans-unit id="quotationCreateTitle" resname="quotation.create_title"><source>quotation.create_title</source><target>New quotation</target></trans-unit>
       <trans-unit id="quotationEditTitle" resname="quotation.edit_title"><source>quotation.edit_title</source><target>Edit quotation</target></trans-unit>
       <trans-unit id="quotationGeneralInfo" resname="quotation.general_info"><source>quotation.general_info</source><target>General information</target></trans-unit>

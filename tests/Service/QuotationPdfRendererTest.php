@@ -14,6 +14,7 @@ use App\Entity\Quotation;
 use App\Entity\QuotationLine;
 use App\FxRate\ClpConversion;
 use App\FxRate\ClpConverter;
+use App\Invoice\QuotationClpSummary;
 use App\Pdf\HtmlToPdfConverter;
 use App\Service\QuotationPdfRenderer;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Twig\Environment;
 
 #[CoversClass(QuotationPdfRenderer::class)]
+#[CoversClass(QuotationClpSummary::class)]
 class QuotationPdfRendererTest extends TestCase
 {
     public function testRendersQuotationDataWithoutCreatingARepositoryFile(): void
@@ -43,14 +45,44 @@ class QuotationPdfRendererTest extends TestCase
 
         $twig = $this->createMock(Environment::class);
         $twig->expects(self::once())->method('render')->with('quotation/pdf.html.twig', self::callback(static function (array $context) use ($conversion): bool {
-            // the quotation's own currency wins, not the (differing) customer currency
-            return $context['currency'] === Quotation::CURRENCY_USD
-                && $context['subtotal'] === 200.0 && $context['discount_amount'] === 20.0 && $context['surcharge_amount'] === 10.0 && $context['tax_amount'] === 38.0
-                && $context['clpConversion'] === $conversion;
+            if (!isset($context['clpSummary']) || !$context['clpSummary'] instanceof QuotationClpSummary) {
+                return false;
+            }
+            $clpSummary = $context['clpSummary'];
+
+            // derived from the mocked 950 rate, not the (differing) customer currency
+            return $clpSummary->subtotalClp === '190000.0000'
+                && $clpSummary->discountAmountClp === '19000.0000'
+                && $clpSummary->surchargeAmountClp === '9500.0000'
+                && $clpSummary->taxAmountClp === '36100.0000'
+                && $clpSummary->totalClp === $conversion->clpAmount
+                && $clpSummary->totalConversion === $conversion;
         }))->willReturn('<html></html>');
         $converter = $this->createMock(HtmlToPdfConverter::class);
         $converter->expects(self::once())->method('convertToPdf')->with('<html></html>', self::arrayHasKey('filename'))->willReturn('%PDF');
 
         self::assertSame('%PDF', (new QuotationPdfRenderer($twig, $converter, $clpConverter))->render($quotation));
+    }
+
+    public function testThrowsWhenNoClpExchangeRateIsAvailable(): void
+    {
+        $customer = new Customer('PDF customer');
+        $quotation = (new Quotation())->setCustomer($customer)->setCurrency(Quotation::CURRENCY_USD);
+        $quotation->addLine((new QuotationLine())->setDescription('Service')->setQuantity('1')->setUnitPrice('100'));
+        $id = new \ReflectionProperty(Quotation::class, 'id');
+        $id->setValue($quotation, 8);
+
+        $clpConverter = $this->createMock(ClpConverter::class);
+        $clpConverter->method('convert')->willReturn(null);
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects(self::never())->method('render');
+        $converter = $this->createMock(HtmlToPdfConverter::class);
+        $converter->expects(self::never())->method('convertToPdf');
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('No exchange rate is available to convert this quotation to CLP.');
+
+        (new QuotationPdfRenderer($twig, $converter, $clpConverter))->render($quotation);
     }
 }

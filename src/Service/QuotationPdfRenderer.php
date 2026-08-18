@@ -11,6 +11,7 @@ namespace App\Service;
 
 use App\Entity\Quotation;
 use App\FxRate\ClpConverter;
+use App\Invoice\QuotationClpSummary;
 use App\Invoice\QuotationSummary;
 use App\Pdf\HtmlToPdfConverter;
 use Twig\Environment;
@@ -32,23 +33,15 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
         }
 
         $summary = QuotationSummary::fromQuotation($quotation);
+        $clpSummary = QuotationClpSummary::fromSummary($summary, $this->clpConverter, $quotation->getCurrency(), $quotation->getValidUntil());
 
-        $currency = $quotation->getCurrency();
+        if (null === $clpSummary) {
+            throw new \DomainException('No exchange rate is available to convert this quotation to CLP.');
+        }
+
         $html = $this->twig->render('quotation/pdf.html.twig', [
             'quotation' => $quotation,
-            'items' => $summary->items,
-            'currency' => $currency,
-            'subtotal' => $summary->subtotal,
-            'discount_amount' => $summary->discountAmount,
-            'surcharge_amount' => $summary->surchargeAmount,
-            'adjusted_subtotal' => $summary->adjustedSubtotal,
-            'tax_amount' => $summary->taxAmount,
-            'total' => $summary->total,
-            'clpConversion' => $this->clpConverter->convert(
-                number_format($summary->total, 4, '.', ''),
-                $currency,
-                $quotation->getValidUntil()
-            ),
+            'clpSummary' => $clpSummary,
         ]);
 
         try {

@@ -225,7 +225,7 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString('alternative-link', $row->attr('class') ?? '');
     }
 
-    public function testViewAndPdfShowClpEquivalentForNonClpQuotationsUsingTheValidUntilDate(): void
+    public function testViewAndPdfShowAmountsInClpOnlyForNonClpQuotationsUsingTheValidUntilDate(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
         $em = $this->getEntityManager();
@@ -250,12 +250,34 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/quotation/' . $quotation->getId());
         self::assertTrue($client->getResponse()->isSuccessful());
         $viewContent = (string) $client->getResponse()->getContent();
-        self::assertStringContainsString('CLP equivalent', $viewContent);
+        // 2 x 100 USD @ 950 = 190,000 CLP total, shown directly, no UF/USD or FX-rate mention
         self::assertStringContainsString('190', $viewContent);
-        self::assertStringContainsString('1 USD = 950.00 CLP', $viewContent);
+        self::assertStringNotContainsString('CLP equivalent', $viewContent);
+        self::assertStringNotContainsString('1 USD = 950.00 CLP', $viewContent);
 
         $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
         self::assertTrue($client->getResponse()->isSuccessful());
+        $pdfContent = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('CLP equivalent', $pdfContent);
+    }
+
+    public function testViewRedirectsWithFlashErrorWhenNoClpExchangeRateIsAvailable(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('No FX rate test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setCurrency(Quotation::CURRENCY_USD);
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('1')->setUnitPrice('100'));
+        $em->persist($quotation);
+        $em->flush();
+
+        $this->request($client, '/quotation/' . $quotation->getId());
+        self::assertTrue($client->getResponse()->isRedirect($this->createUrl('/quotation/')));
     }
 
     public function testFxRateEndpointReturnsTheRateAsOfTheGivenDate(): void

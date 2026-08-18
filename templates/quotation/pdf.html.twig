@@ -5,15 +5,22 @@
     <title>{{ 'quotation.view_title'|trans }} #{{ quotation.id }}</title>
     <style>
         body { font-family: sans-serif; font-size: 11pt; color: #222; }
-        .quotation-logo { max-height: 60px; max-width: 260px; margin-bottom: 14px; }
-        h1 { margin: 0 0 4px; font-size: 20pt; }
-        .quotation-meta { margin-bottom: 20px; color: #555; }
-        .quotation-meta strong { color: #222; }
+        .quotation-logo { max-height: 60px; max-width: 260px; margin-bottom: 8px; }
+        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+        .doc-title { margin: 0; font-size: 24pt; }
+        .doc-meta { text-align: right; color: #555; font-size: 10pt; }
+        .doc-meta p { margin: 2px 0; }
+        .doc-meta strong { color: #222; }
+        hr.doc-divider { border: none; border-top: 2px solid #222; margin: 0 0 18px; }
+        .doc-parties { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+        .doc-parties > div { flex: 1; }
+        .doc-parties h4 { margin: 0 0 4px; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
+        .doc-parties p { margin: 2px 0; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 7px 4px; border-bottom: 1px solid #ddd; }
         th, .number { text-align: right; }
         th:first-child, td:first-child { text-align: left; }
-        thead th { border-bottom: 2px solid #222; }
+        thead th { background: #1f2933; color: #fff; border-bottom: none; }
         .summary { margin-top: 18px; margin-left: auto; width: 45%; }
         .summary td { border: 0; padding: 4px; }
         .summary .total td { border-top: 2px solid #222; font-weight: bold; font-size: 13pt; }
@@ -23,15 +30,34 @@
 <body>
     {% set invoiceTemplate = quotation.customer.invoiceTemplate %}
     {% set logo = invoiceTemplate is not null and invoiceTemplate.logo is not empty ? invoiceTemplate.logo : config('theme.branding.logo') %}
-    {% if logo is not empty %}
-        <img class="quotation-logo" src="{{ logo }}" alt="{{ invoiceTemplate ? invoiceTemplate.company : '' }}">
-    {% endif %}
 
-    <h1>{{ 'quotation.view_title'|trans }} #{{ quotation.id }}</h1>
-    <div class="quotation-meta">
-        <p><strong>{{ 'customer'|trans }}:</strong> {{ quotation.customer.name }}</p>
-        {% if quotation.project %}<p><strong>{{ 'project'|trans }}:</strong> {{ quotation.project.name }}</p>{% endif %}
-        {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('Y-m-d') }}</p>{% endif %}
+    <div class="doc-header">
+        <div>
+            {% if logo is not empty %}
+                <img class="quotation-logo" src="{{ logo }}" alt="{{ invoiceTemplate ? invoiceTemplate.company : '' }}"><br>
+            {% endif %}
+            <h1 class="doc-title">{{ 'quotation.view_title'|trans }}</h1>
+        </div>
+        <div class="doc-meta">
+            <p><strong>{{ 'quotation.number'|trans }}:</strong> {{ quotation.id }}</p>
+            <p><strong>{{ 'quotation.issue_date'|trans }}:</strong> {{ quotation.createdAt|date('d/m/Y') }}</p>
+            {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('d/m/Y') }}</p>{% endif %}
+        </div>
+    </div>
+    <hr class="doc-divider">
+
+    <div class="doc-parties">
+        <div>
+            <h4>{{ 'quotation.issuer'|trans }}</h4>
+            <p>{{ invoiceTemplate and invoiceTemplate.company ? invoiceTemplate.company : config('theme.branding.company') }}</p>
+            {% if invoiceTemplate and invoiceTemplate.address %}<p>{{ invoiceTemplate.address|nl2br }}</p>{% endif %}
+            {% if invoiceTemplate and invoiceTemplate.vatId %}<p>{{ invoiceTemplate.vatId }}</p>{% endif %}
+        </div>
+        <div>
+            <h4>{{ 'customer'|trans }}</h4>
+            <p>{{ quotation.customer.name }}</p>
+            {% if quotation.project %}<p>{{ 'project'|trans }}: {{ quotation.project.name }}</p>{% endif %}
+        </div>
     </div>
 
     <table>
@@ -44,30 +70,24 @@
             </tr>
         </thead>
         <tbody>
-        {% for item in items %}
+        {% for item in clpSummary.items %}
             <tr>
                 <td>{{ item.description }}</td>
                 <td class="number">{{ item.amount }}</td>
-                <td class="number">{{ item.fixedRate|money(currency) }}</td>
-                <td class="number">{{ item.rate|money(currency) }}</td>
+                <td class="number">{{ item.unitPriceClp|money('CLP') }}</td>
+                <td class="number">{{ item.lineTotalClp|money('CLP') }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <table class="summary">
-        <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="number">{{ subtotal|money(currency) }}</td></tr>
-        {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="number">-{{ discount_amount|money(currency) }}</td></tr>{% endif %}
-        {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge }}%)</td><td class="number">{{ surcharge_amount|money(currency) }}</td></tr>{% endif %}
-        <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="number">{{ adjusted_subtotal|money(currency) }}</td></tr>
-        {% if tax_amount is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="number">{{ tax_amount|money(currency) }}</td></tr>{% endif %}
-        <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ total|money(currency) }}</td></tr>
-        {% if clpConversion is not null and clpConversion.isConverted() %}
-            <tr>
-                <td>{{ 'quotation.clp_equivalent'|trans }}<br><small>{{ 'quotation.fx_rate_as_of'|trans({'%currency%': clpConversion.sourceCurrency == 'CLF' ? 'UF' : clpConversion.sourceCurrency, '%rate%': clpConversion.rate|number_format(2), '%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small></td>
-                <td class="number">≈ {{ clpConversion.clpAmount|money('CLP') }}</td>
-            </tr>
-        {% endif %}
+        <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="number">{{ clpSummary.subtotalClp|money('CLP') }}</td></tr>
+        {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="number">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}
+        {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge }}%)</td><td class="number">{{ clpSummary.surchargeAmountClp|money('CLP') }}</td></tr>{% endif %}
+        <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="number">{{ clpSummary.adjustedSubtotalClp|money('CLP') }}</td></tr>
+        {% if clpSummary.taxAmountClp is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="number">{{ clpSummary.taxAmountClp|money('CLP') }}</td></tr>{% endif %}
+        <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ clpSummary.totalClp|money('CLP') }}</td></tr>
     </table>
 
     <p class="response-hint">{{ 'quotation.response_hint'|trans }}</p>

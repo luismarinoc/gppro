@@ -2656,6 +2656,10 @@
       </trans-unit>
       <trans-unit id="quotationClpEquivalent" resname="quotation.clp_equivalent" xml:space="preserve"><source>quotation.clp_equivalent</source><target state="translated">Equivalente en CLP</target></trans-unit>
       <trans-unit id="quotationFxRateAsOf" resname="quotation.fx_rate_as_of" xml:space="preserve"><source>quotation.fx_rate_as_of</source><target state="translated">1 %currency% = %rate% CLP (tipo de cambio al %date%)</target></trans-unit>
+      <trans-unit id="quotationNumber" resname="quotation.number" xml:space="preserve"><source>quotation.number</source><target state="translated">Número</target></trans-unit>
+      <trans-unit id="quotationIssueDate" resname="quotation.issue_date" xml:space="preserve"><source>quotation.issue_date</source><target state="translated">Fecha de emisión</target></trans-unit>
+      <trans-unit id="quotationIssuer" resname="quotation.issuer" xml:space="preserve"><source>quotation.issuer</source><target state="translated">Emisor</target></trans-unit>
+      <trans-unit id="quotationClpUnavailable" resname="quotation.clp_unavailable" xml:space="preserve"><source>quotation.clp_unavailable</source><target state="translated">La moneda de esta cotización todavía no tiene un tipo de cambio a CLP disponible. Pedile a un administrador que lo cargue antes de ver la cotización.</target></trans-unit>
       <trans-unit id="quotationCreateTitle" resname="quotation.create_title" xml:space="preserve"><source>quotation.create_title</source><target state="translated">Nueva cotización</target></trans-unit>
       <trans-unit id="quotationEditTitle" resname="quotation.edit_title" xml:space="preserve"><source>quotation.edit_title</source><target state="translated">Editar cotización</target></trans-unit>
       <trans-unit id="quotationGeneralInfo" resname="quotation.general_info" xml:space="preserve"><source>quotation.general_info</source><target state="translated">Información general</target></trans-unit>

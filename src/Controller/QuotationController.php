@@ -13,6 +13,7 @@ use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Form\QuotationForm;
 use App\FxRate\ClpConverter;
+use App\Invoice\QuotationClpSummary;
 use App\Invoice\QuotationInvoiceService;
 use App\Invoice\QuotationSummary;
 use App\Pdf\PdfContext;
@@ -154,17 +155,18 @@ final class QuotationController extends AbstractController
     public function view(Quotation $quotation, ClpConverter $clpConverter): Response
     {
         $summary = QuotationSummary::fromQuotation($quotation);
+        $clpSummary = QuotationClpSummary::fromSummary($summary, $clpConverter, $quotation->getCurrency(), $quotation->getValidUntil());
+
+        if (null === $clpSummary) {
+            $this->flashError('quotation.clp_unavailable');
+
+            return $this->redirectToRoute('quotation_list');
+        }
 
         return $this->render('quotation/view.html.twig', [
             'page_setup' => $this->createPageSetup(),
             'quotation' => $quotation,
-            'summary' => $summary,
-            'currency' => $quotation->getCurrency(),
-            'clpConversion' => $clpConverter->convert(
-                number_format($summary->total, 4, '.', ''),
-                $quotation->getCurrency(),
-                $quotation->getValidUntil()
-            ),
+            'clpSummary' => $clpSummary,
         ]);
     }
 

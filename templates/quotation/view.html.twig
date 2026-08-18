@@ -17,6 +17,8 @@
         </div>
         <div class="card-body">
             <dl class="row">
+                <dt class="col-sm-3">{{ 'quotation.number'|trans }}</dt><dd class="col-sm-9">{{ quotation.id }}</dd>
+                <dt class="col-sm-3">{{ 'quotation.issue_date'|trans }}</dt><dd class="col-sm-9">{{ quotation.createdAt|date('Y-m-d') }}</dd>
                 <dt class="col-sm-3">{{ 'customer'|trans }}</dt><dd class="col-sm-9">{{ quotation.customer.name }}</dd>
                 <dt class="col-sm-3">{{ 'project'|trans }}</dt><dd class="col-sm-9">{{ quotation.project ? quotation.project.name : '-' }}</dd>
                 <dt class="col-sm-3">{{ 'status'|trans }}</dt><dd class="col-sm-9">{{ ('quotation.status.' ~ quotation.status)|trans }}</dd>
@@ -25,33 +27,24 @@
             <table class="table table-vcenter">
                 <thead><tr><th>{{ 'quotation.description'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th><th class="text-end">{{ 'quotation.line_subtotal'|trans }}</th></tr></thead>
                 <tbody>
-                {% for item in summary.items %}
+                {% for item in clpSummary.items %}
                     <tr>
-                        <td>{{ item.line.description }}</td>
+                        <td>{{ item.description }}</td>
                         <td class="text-end">{{ item.amount }}</td>
-                        <td class="text-end">{{ item.fixedRate|money(currency) }}</td>
-                        <td class="text-end">{{ item.rate|money(currency) }}</td>
+                        <td class="text-end">{{ item.unitPriceClp|money('CLP') }}</td>
+                        <td class="text-end">{{ item.lineTotalClp|money('CLP') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
             <table class="table table-vcenter w-auto ms-auto">
                 <tbody>
-                    <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="text-end">{{ summary.subtotal|money(currency) }}</td></tr>
-                    {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="text-end">-{{ summary.discountAmount|money(currency) }}</td></tr>{% endif %}
-                    {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge }}%)</td><td class="text-end">{{ summary.surchargeAmount|money(currency) }}</td></tr>{% endif %}
-                    <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="text-end">{{ summary.adjustedSubtotal|money(currency) }}</td></tr>
-                    {% if summary.taxAmount is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="text-end">{{ summary.taxAmount|money(currency) }}</td></tr>{% endif %}
-                    <tr class="fw-bold fs-5"><td>{{ 'quotation.total'|trans }}</td><td class="text-end">{{ summary.total|money(currency) }}</td></tr>
-                    {% if clpConversion is not null and clpConversion.isConverted() %}
-                        <tr class="text-muted">
-                            <td>
-                                {{ 'quotation.clp_equivalent'|trans }}
-                                <br><small>{{ 'quotation.fx_rate_as_of'|trans({'%currency%': clpConversion.sourceCurrency == 'CLF' ? 'UF' : clpConversion.sourceCurrency, '%rate%': clpConversion.rate|number_format(2), '%date%': clpConversion.rateDate|date('Y-m-d')}) }}</small>
-                            </td>
-                            <td class="text-end">≈ {{ clpConversion.clpAmount|money('CLP') }}</td>
-                        </tr>
-                    {% endif %}
+                    <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="text-end">{{ clpSummary.subtotalClp|money('CLP') }}</td></tr>
+                    {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="text-end">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}
+                    {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge }}%)</td><td class="text-end">{{ clpSummary.surchargeAmountClp|money('CLP') }}</td></tr>{% endif %}
+                    <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="text-end">{{ clpSummary.adjustedSubtotalClp|money('CLP') }}</td></tr>
+                    {% if clpSummary.taxAmountClp is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="text-end">{{ clpSummary.taxAmountClp|money('CLP') }}</td></tr>{% endif %}
+                    <tr class="fw-bold fs-5"><td>{{ 'quotation.total'|trans }}</td><td class="text-end">{{ clpSummary.totalClp|money('CLP') }}</td></tr>
                 </tbody>
             </table>
         </div>
