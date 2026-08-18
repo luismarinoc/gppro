@@ -13,8 +13,10 @@ use App\Entity\Customer;
 use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Entity\Project;
+use App\Entity\Quotation;
 use App\Entity\Team;
 use App\Entity\User;
+use App\Expense\ExpenseCrossChargeService;
 use App\Repository\ExpenseRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -339,6 +341,97 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
         self::assertContains($source->getId(), $sourceIds);
         self::assertNotContains($copy->getId(), $sourceIds);
         self::assertNotContains($notRecurring->getId(), $sourceIds);
+    }
+
+    /**
+     * Design/spec: "Identify historical expenses processed under the
+     * raw-amount assumption" - non-CLP expenses whose currency=CLP default
+     * predates this change (Version20260817140000) never went through the
+     * conversion seam. A currency's amount is "processed" when it was
+     * submitted (requiredLevels frozen), allocated (amountClp written), or
+     * cross-charged.
+     */
+    private function createNonClpExpense(Project $project, string $currency, ?int $requiredLevels = null, ?int $amountClp = null): Expense
+    {
+        $expense = new Expense();
+        $expense->setDescription('Non-CLP expense ' . uniqid());
+        $expense->setAmount(500);
+        $expense->setCurrency($currency);
+        $expense->setExpenseDate(new \DateTimeImmutable('2026-08-01'));
+        $expense->addAllocation((new ExpenseAllocation())->setProject($project)->setPercentage('100.00')->setAmountClp($amountClp));
+        $this->getRepository()->saveExpense($expense);
+
+        if (null !== $requiredLevels) {
+            $expense->submitForApproval($requiredLevels);
+            $this->getRepository()->saveExpense($expense);
+        }
+
+        return $expense;
+    }
+
+    public function testFindNonClpProcessedBeforeNormalizationReturnsEmptyWhenOnlyClpExpensesExist(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $this->createExpense($project);
+
+        self::assertSame([], $repository->findNonClpProcessedBeforeNormalization());
+    }
+
+    public function testFindNonClpProcessedBeforeNormalizationExcludesUntouchedNonClpDraft(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $this->createNonClpExpense($project, Expense::CURRENCY_USD);
+
+        self::assertSame([], $repository->findNonClpProcessedBeforeNormalization());
+    }
+
+    public function testFindNonClpProcessedBeforeNormalizationIncludesExpenseWithFrozenRequiredLevels(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $expense = $this->createNonClpExpense($project, Expense::CURRENCY_USD, 1);
+
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $repository->findNonClpProcessedBeforeNormalization());
+
+        self::assertContains($expense->getId(), $ids);
+    }
+
+    public function testFindNonClpProcessedBeforeNormalizationIncludesAllocationWithAmountClp(): void
+    {
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $expense = $this->createNonClpExpense($project, Expense::CURRENCY_USD, null, 475000);
+
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $repository->findNonClpProcessedBeforeNormalization());
+
+        self::assertContains($expense->getId(), $ids);
+    }
+
+    public function testFindNonClpProcessedBeforeNormalizationIncludesChargedAllocation(): void
+    {
+        $em = $this->getEntityManager();
+        $repository = $this->getRepository();
+        $project = $this->createProject();
+        $customer = $project->getCustomer();
+        self::assertInstanceOf(Customer::class, $customer);
+
+        $expense = $this->createNonClpExpense($project, Expense::CURRENCY_USD, 1, 475000);
+        $expense->clearLevel(1);
+        $repository->saveExpense($expense);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setProject($project)->setCurrency(Quotation::CURRENCY_CLP);
+        $em->persist($quotation);
+        $em->flush();
+
+        $allocation = $expense->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        (new ExpenseCrossChargeService($em))->charge($allocation, $quotation);
+
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $repository->findNonClpProcessedBeforeNormalization());
+
+        self::assertContains($expense->getId(), $ids);
     }
 
     public function testFindGeneratedCopyReturnsExistingCopyForSourceAndPeriod(): void

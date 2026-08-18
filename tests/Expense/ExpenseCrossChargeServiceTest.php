@@ -79,6 +79,27 @@ class ExpenseCrossChargeServiceTest extends AbstractRepositoryTestCase
         return $allocation;
     }
 
+    /**
+     * A non-CLP expense that already went through the submit freeze
+     * (design D4): amountClp is set directly, never re-converted here.
+     */
+    private function createApprovedAllocationWithCurrency(Project $project, string $currency, ?int $amountClp): ExpenseAllocation
+    {
+        $expense = new Expense();
+        $expense->setDescription('Consulting fee');
+        $expense->setAmount(150);
+        $expense->setCurrency($currency);
+        $expense->setExpenseDate(new \DateTimeImmutable('2026-08-01'));
+        $allocation = (new ExpenseAllocation())->setProject($project)->setPercentage('100.00')->setAmountClp($amountClp);
+        $expense->addAllocation($allocation);
+        $expense->submitForApproval(1);
+        $expense->clearLevel(1);
+        $this->getEntityManager()->persist($expense);
+        $this->getEntityManager()->flush();
+
+        return $allocation;
+    }
+
     public function testChargeApprovedAllocationAddsQuotationLineAndMarksAllocationCharged(): void
     {
         $customer = $this->createCustomer();
@@ -143,5 +164,48 @@ class ExpenseCrossChargeServiceTest extends AbstractRepositoryTestCase
         $this->expectException(\DomainException::class);
 
         $this->getSut()->charge($allocation, $quotation);
+    }
+
+    /**
+     * Design D6: an allocation whose amountClp was never successfully
+     * converted (submit's freeze never happened, or it was cleared) must
+     * never write a mislabeled foreign amount as a CLP unit price.
+     */
+    public function testChargeIsRejectedWhenAllocationAmountClpIsNull(): void
+    {
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $quotation = $this->createDraftQuotation($customer, $project);
+        $allocation = $this->createApprovedAllocationWithCurrency($project, Expense::CURRENCY_USD, null);
+        $this->getEntityManager()->flush();
+
+        $this->expectException(\DomainException::class);
+
+        try {
+            $this->getSut()->charge($allocation, $quotation);
+        } finally {
+            self::assertFalse($allocation->isCharged());
+            self::assertCount(0, $quotation->getLines());
+        }
+    }
+
+    /**
+     * Design D6: the source currency is appended to the line description
+     * only for a non-CLP expense - see
+     * testChargeApprovedAllocationAddsQuotationLineAndMarksAllocationCharged
+     * above for the CLP regression case (byte-identical description).
+     */
+    public function testChargeAppendsSourceCurrencyToDescriptionForNonClpExpense(): void
+    {
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $quotation = $this->createDraftQuotation($customer, $project);
+        $allocation = $this->createApprovedAllocationWithCurrency($project, Expense::CURRENCY_USD, 150000);
+        $this->getEntityManager()->flush();
+
+        $line = $this->getSut()->charge($allocation, $quotation);
+
+        self::assertSame('150000.0000', $line->getUnitPrice());
+        self::assertSame('Consulting fee (2026-08-01) [USD]', $line->getDescription());
     }
 }

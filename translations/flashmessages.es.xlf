@@ -98,6 +98,10 @@
         <source>expense_approval_level.not_monotonic</source>
         <target state="translated">El monto mínimo debe aumentar estrictamente con el nivel.</target>
       </trans-unit>
+      <trans-unit id="gpExpenseF4" resname="expense.fx_rate_unavailable" xml:space="preserve">
+        <source>expense.fx_rate_unavailable</source>
+        <target state="translated">El borrador se guardó, pero aún no hay un tipo de cambio disponible para convertir este gasto a CLP.</target>
+      </trans-unit>
       <trans-unit id="gpInvPayLvlF1" resname="invoice_payment_approval_level.not_monotonic" xml:space="preserve">
         <source>invoice_payment_approval_level.not_monotonic</source>
         <target state="translated">El monto mínimo debe aumentar estrictamente con el nivel.</target>

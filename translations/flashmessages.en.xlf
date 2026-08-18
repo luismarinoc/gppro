@@ -98,6 +98,10 @@
         <source>expense_approval_level.not_monotonic</source>
         <target>The minimum amount must strictly increase with the level.</target>
       </trans-unit>
+      <trans-unit id="gpExpenseF4" resname="expense.fx_rate_unavailable">
+        <source>expense.fx_rate_unavailable</source>
+        <target>The draft was saved, but no exchange rate is available yet to convert this expense to CLP.</target>
+      </trans-unit>
       <trans-unit id="gpInvPayLvlF1" resname="invoice_payment_approval_level.not_monotonic">
         <source>invoice_payment_approval_level.not_monotonic</source>
         <target>The minimum amount must strictly increase with the level.</target>

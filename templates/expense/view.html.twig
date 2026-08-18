@@ -36,7 +36,7 @@
                     <tr>
                         <td>{{ allocation.project ? allocation.project.name : '' }}</td>
                         <td>{{ allocation.percentage }}%</td>
-                        <td>{{ allocation.amountClp }}</td>
+                        <td>{{ allocation.amountClp|money('CLP') }}</td>
                         <td>{{ (allocation.charged ? 'yes' : 'no')|trans }}</td>
                         <td>
                             {% if charge_forms[allocation.id] is defined %}
