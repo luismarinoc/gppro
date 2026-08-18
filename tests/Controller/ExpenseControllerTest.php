@@ -238,6 +238,31 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertNull($reloadedAllocation->getAmountClp());
     }
 
+    /**
+     * Spec: "Allocation amount displays with the money filter" - the view
+     * screen must never render a raw, unformatted amountClp number.
+     */
+    public function testViewRendersAllocationAmountThroughMoneyFilter(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $allocation = $expense->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        $allocation->setAmountClp(100000);
+        $this->getEntityManager()->flush();
+
+        $this->request($client, '/expense/' . $expense->getId());
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        // The money filter formats with a thousands separator and a
+        // U+00A0 no-break space between currency and amount - assert on
+        // the formatted marker rather than the exact byte sequence.
+        self::assertStringContainsString('100,000', $content);
+        self::assertStringNotContainsString('<td>100000</td>', $content);
+    }
+
     public function testSubmitIsRejectedWhenAllocationsDoNotSumToExactly100Percent(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
