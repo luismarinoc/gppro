@@ -2534,6 +2534,14 @@
         <source>expense_approval_level.approver_user.help</source>
         <target>Optional. This person can clear the level in addition to anyone holding the required role. Leave it empty to use the role only.</target>
       </trans-unit>
+      <trans-unit id="gpExpense53" resname="expense.currency_preview.converted">
+        <source>expense.currency_preview.converted</source>
+        <target>≈ %amount% CLP (rate from %date%)</target>
+      </trans-unit>
+      <trans-unit id="gpExpense54" resname="expense.currency_preview.unavailable">
+        <source>expense.currency_preview.unavailable</source>
+        <target>No exchange rate available for that date.</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title">
         <source>activity_board.title</source>
         <target>Activity board</target>

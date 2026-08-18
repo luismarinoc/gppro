@@ -10,6 +10,11 @@
             {{ form_row(form.amount) }}
             {{ form_row(form.currency) }}
             {{ form_row(form.expenseDate) }}
+            <div class="form-text mb-3 d-none"
+                 data-expense-currency-preview
+                 data-currency-preview-url="{{ path('expense_currency_preview') }}"
+                 data-trans-converted="{{ 'expense.currency_preview.converted'|trans({'%amount%': '__AMOUNT__', '%date%': '__DATE__'}) }}"
+                 data-trans-unavailable="{{ 'expense.currency_preview.unavailable'|trans }}"></div>
             {{ form_row(form.category) }}
             {{ form_row(form.recurrence) }}
 
@@ -69,6 +74,101 @@
                     button.closest('[data-expense-allocation]')?.remove();
                 }
             });
+
+            const amountField = document.querySelector('[name="expense_form[amount]"]');
+            const currencyField = document.querySelector('[name="expense_form[currency]"]');
+            const dateField = document.querySelector('[name="expense_form[expenseDate]"]');
+            const previewBox = document.querySelector('[data-expense-currency-preview]');
+            if (!amountField || !currencyField || !dateField || !previewBox) return;
+
+            const previewUrl = previewBox.dataset.currencyPreviewUrl;
+            const transConverted = previewBox.dataset.transConverted || '';
+            const transUnavailable = previewBox.dataset.transUnavailable || '';
+            const locale = document.documentElement.lang || 'es-CL';
+
+            // Same locale-format -> ISO parsing as templates/quotation/edit.html.twig
+            // (the expenseDate field carries the same data-format attribute,
+            // set by the date_widget form theme block).
+            const parseDateWithFormat = function (value, format) {
+                if (!value || !format) return null;
+                const formatParts = format.match(/[A-Za-z]+/g);
+                const valueParts = value.match(/[0-9]+/g);
+                if (!formatParts || !valueParts || formatParts.length !== valueParts.length) return null;
+                let day = null, month = null, year = null;
+                formatParts.forEach(function (token, i) {
+                    const v = Number.parseInt(valueParts[i], 10);
+                    if (token.charAt(0) === 'D') day = v;
+                    else if (token.charAt(0) === 'M') month = v;
+                    else if (token.charAt(0) === 'Y') year = v;
+                });
+                if (!day || !month || !year) return null;
+                return String(year).padStart(4, '0') + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            };
+
+            const formatClpAmount = function (value) {
+                return new Intl.NumberFormat(locale, {minimumFractionDigits: 0, maximumFractionDigits: 0}).format(Number.parseFloat(value));
+            };
+
+            const formatDate = function (isoDate) {
+                const parsed = new Date(isoDate + 'T00:00:00');
+                return Number.isNaN(parsed.getTime()) ? isoDate : parsed.toLocaleDateString(locale);
+            };
+
+            const hidePreview = function () {
+                previewBox.classList.add('d-none');
+                previewBox.classList.remove('text-danger');
+                previewBox.textContent = '';
+            };
+            const showConverted = function (clpAmount, rateDate) {
+                previewBox.classList.remove('d-none', 'text-danger');
+                previewBox.textContent = transConverted.replace('__AMOUNT__', formatClpAmount(clpAmount)).replace('__DATE__', formatDate(rateDate));
+            };
+            const showUnavailable = function () {
+                previewBox.classList.remove('d-none');
+                previewBox.classList.add('text-danger');
+                previewBox.textContent = transUnavailable;
+            };
+
+            let requestToken = 0;
+            const fetchPreview = function () {
+                if (!previewUrl || currencyField.value === 'CLP') {
+                    hidePreview();
+                    return;
+                }
+                const amount = amountField.value;
+                const isoDate = parseDateWithFormat(dateField.value, dateField.dataset.format);
+                if (!amount || !isoDate) {
+                    hidePreview();
+                    return;
+                }
+                const token = ++requestToken;
+                const params = new URLSearchParams({amount: amount, currency: currencyField.value, date: isoDate});
+                fetch(previewUrl + '?' + params.toString(), {headers: {'Accept': 'application/json'}})
+                    .then(function (response) { return response.ok ? response.json() : {convertible: false}; })
+                    .then(function (data) {
+                        if (token !== requestToken) return;
+                        if (data.convertible) {
+                            showConverted(data.clpAmount, data.rateDate);
+                        } else {
+                            showUnavailable();
+                        }
+                    })
+                    .catch(function () {
+                        if (token !== requestToken) return;
+                        hidePreview();
+                    });
+            };
+
+            let debounceTimer = null;
+            const debouncedFetchPreview = function () {
+                window.clearTimeout(debounceTimer);
+                debounceTimer = window.setTimeout(fetchPreview, 350);
+            };
+            [amountField, currencyField, dateField].forEach(function (field) {
+                field.addEventListener('input', debouncedFetchPreview);
+                field.addEventListener('change', debouncedFetchPreview);
+            });
+            fetchPreview();
         });
     </script>
 {% endblock %}
