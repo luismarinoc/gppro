@@ -9,9 +9,7 @@
         .doc-header { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
         .doc-header td { padding: 0; border: 0; vertical-align: top; }
         .doc-header .doc-issuer-cell { width: 60%; }
-        .doc-issuer-name { margin: 0 0 2px; font-size: 13pt; font-weight: bold; text-transform: uppercase; color: #183870; }
-        .doc-issuer-meta { color: #666; font-size: 9pt; }
-        .doc-issuer-meta p { margin: 1px 0; }
+        .doc-issuer-name { margin: 0; font-size: 13pt; font-weight: bold; text-transform: uppercase; color: #183870; }
         .doc-meta { width: 40%; text-align: right; }
         .doc-type { margin: 0 0 4px; font-size: 22pt; font-weight: bold; text-transform: uppercase; color: #183870; }
         .doc-meta p { margin: 2px 0; color: #555; font-size: 10pt; }
@@ -24,7 +22,8 @@
         .doc-parties { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         .doc-parties td { padding: 0; border: 0; width: 50%; vertical-align: top; }
         .doc-parties h4 { margin: 0 0 4px; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
-        .doc-parties p { margin: 2px 0; }
+        .doc-parties p { margin: 2px 0; color: #555; }
+        .doc-parties .party-name { color: #222; font-weight: bold; font-size: 11pt; margin-bottom: 3px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 7px 4px; border-bottom: 1px solid #ddd; }
         th, .number { text-align: right; }
@@ -59,19 +58,13 @@
             <td class="doc-issuer-cell">
                 {% if logo is not empty %}<img class="quotation-logo" src="{{ logo }}" alt="{{ issuerName }}">{% endif %}
                 <p class="doc-issuer-name">{{ issuerName }}</p>
-                <div class="doc-issuer-meta">
-                    {% if issuerVatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
-                    {% if issuerAddress %}<p>{{ 'quotation.issuer_address'|trans }}: {{ issuerAddress }}</p>{% endif %}
-                    {% if issuerPhone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
-                    {% if issuerEmail %}<p>{{ 'quotation.issuer_email'|trans }}: {{ issuerEmail }}</p>{% endif %}
-                    {% if issuerWebsite %}<p>{{ 'quotation.issuer_website'|trans }}: {{ issuerWebsite }}</p>{% endif %}
-                </div>
             </td>
             <td class="doc-meta">
                 <p class="doc-type">{{ 'quotation.view_title'|trans }}</p>
                 <p><strong>{{ 'quotation.number'|trans }}:</strong> {{ quotation.id }}</p>
                 <p><strong>{{ 'quotation.issue_date'|trans }}:</strong> {{ quotation.createdAt|date('d/m/Y') }}</p>
                 {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('d/m/Y') }}</p>{% endif %}
+                <p><strong>{{ 'quotation.payment_term'|trans }}:</strong> {{ quotation.paymentTermDays ? 'quotation.payment_term_days'|trans({'%days%': quotation.paymentTermDays}) : 'quotation.payment_term_placeholder'|trans }}</p>
             </td>
         </tr>
     </table>
@@ -80,17 +73,22 @@
     <table class="doc-parties" cellpadding="0" cellspacing="0">
         <tr>
             <td>
-                <h4>{{ 'quotation.quoted_for'|trans }}</h4>
-                <p>{{ quotation.customer.company|default(quotation.customer.name) }}</p>
-                {% if quotation.customer.vatId %}<p>{{ quotation.customer.vatId }}</p>{% endif %}
-                {% if quotation.customer.formattedAddress %}<p>{{ quotation.customer.formattedAddress|nl2br }}</p>{% endif %}
-                {% if quotation.customer.phone %}<p>{{ quotation.customer.phone }}</p>{% endif %}
-                {% if quotation.customer.email %}<p>{{ quotation.customer.email }}</p>{% endif %}
-                {% if quotation.project %}<p>{{ 'project'|trans }}: {{ quotation.project.name }}</p>{% endif %}
+                <h4>{{ 'quotation.issuer'|trans }}</h4>
+                <p class="party-name">{{ issuerName }}</p>
+                {% if issuerVatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
+                {% if issuerAddress %}<p>{{ issuerAddress }}</p>{% endif %}
+                {% if issuerPhone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
+                {% if issuerEmail %}<p>{{ issuerEmail }}</p>{% endif %}
+                {% if issuerWebsite %}<p>{{ issuerWebsite }}</p>{% endif %}
             </td>
             <td>
-                <h4>{{ 'quotation.payment_term'|trans }}</h4>
-                <p>{{ quotation.paymentTermDays ? 'quotation.payment_term_days'|trans({'%days%': quotation.paymentTermDays}) : 'quotation.payment_term_placeholder'|trans }}</p>
+                <h4>{{ 'quotation.quoted_for'|trans }}</h4>
+                <p class="party-name">{{ quotation.customer.company|default(quotation.customer.name) }}</p>
+                {% if quotation.customer.vatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ quotation.customer.vatId }}</p>{% endif %}
+                {% if quotation.customer.formattedAddress %}<p>{{ quotation.customer.formattedAddress|nl2br }}</p>{% endif %}
+                {% if quotation.customer.phone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ quotation.customer.phone }}</p>{% endif %}
+                {% if quotation.customer.email %}<p>{{ quotation.customer.email }}</p>{% endif %}
+                {% if quotation.project %}<p>{{ 'project'|trans }}: {{ quotation.project.name }}</p>{% endif %}
             </td>
         </tr>
     </table>
@@ -119,10 +117,10 @@
     <div class="doc-bottom">
         <table class="summary">
             <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="number">{{ clpSummary.subtotalClp|money('CLP') }}</td></tr>
-            {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="number">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}
-            {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge }}%)</td><td class="number">{{ clpSummary.surchargeAmountClp|money('CLP') }}</td></tr>{% endif %}
+            {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount + 0 }}%)</td><td class="number">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}
+            {% if quotation.surcharge is not null %}<tr><td>{{ 'quotation.surcharge_amount'|trans }} ({{ quotation.surcharge + 0 }}%)</td><td class="number">{{ clpSummary.surchargeAmountClp|money('CLP') }}</td></tr>{% endif %}
             <tr><td>{{ 'quotation.adjusted_subtotal'|trans }}</td><td class="number">{{ clpSummary.adjustedSubtotalClp|money('CLP') }}</td></tr>
-            {% if clpSummary.taxAmountClp is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax }}%)</td><td class="number">{{ clpSummary.taxAmountClp|money('CLP') }}</td></tr>{% endif %}
+            {% if clpSummary.taxAmountClp is not null %}<tr><td>{{ 'quotation.tax_amount'|trans }} ({{ quotation.tax + 0 }}%)</td><td class="number">{{ clpSummary.taxAmountClp|money('CLP') }}</td></tr>{% endif %}
             <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ clpSummary.totalClp|money('CLP') }}</td></tr>
         </table>
 

@@ -2660,6 +2660,7 @@
       <trans-unit id="quotationIssueDate" resname="quotation.issue_date" xml:space="preserve"><source>quotation.issue_date</source><target state="translated">Fecha de emisión</target></trans-unit>
       <trans-unit id="quotationClpUnavailable" resname="quotation.clp_unavailable" xml:space="preserve"><source>quotation.clp_unavailable</source><target state="translated">La moneda de esta cotización todavía no tiene un tipo de cambio a CLP disponible. Pedile a un administrador que lo cargue antes de ver la cotización.</target></trans-unit>
       <trans-unit id="quotationQuotedFor" resname="quotation.quoted_for" xml:space="preserve"><source>quotation.quoted_for</source><target state="translated">Cotizado para</target></trans-unit>
+      <trans-unit id="quotationIssuer" resname="quotation.issuer" xml:space="preserve"><source>quotation.issuer</source><target state="translated">Emisor</target></trans-unit>
       <trans-unit id="quotationPaymentTermDays" resname="quotation.payment_term_days" xml:space="preserve"><source>quotation.payment_term_days</source><target state="translated">%days% días</target></trans-unit>
       <trans-unit id="quotationCreateTitle" resname="quotation.create_title" xml:space="preserve"><source>quotation.create_title</source><target state="translated">Nueva cotización</target></trans-unit>
       <trans-unit id="quotationEditTitle" resname="quotation.edit_title" xml:space="preserve"><source>quotation.edit_title</source><target state="translated">Editar cotización</target></trans-unit>

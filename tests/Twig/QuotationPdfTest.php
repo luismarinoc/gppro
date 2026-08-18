@@ -162,10 +162,11 @@ class QuotationPdfTest extends KernelTestCase
         $content = $this->renderQuotation($this->buildQuotation($customer), 'es');
 
         self::assertStringContainsString('RUT: 77.073.462-2', $content);
-        self::assertStringContainsString('Dirección: Avenida Apoquindo 4700, Depto. 11, Las Condes, Santiago', $content);
+        self::assertStringContainsString('Avenida Apoquindo 4700, Depto. 11, Las Condes, Santiago', $content);
         self::assertStringContainsString('Teléfono: +56 9 44516977', $content);
-        self::assertStringContainsString('Email: info@gpartnerc.com', $content);
-        self::assertStringContainsString('Sitio web: www.gpartnerc.com', $content);
+        self::assertStringContainsString('info@gpartnerc.com', $content);
+        self::assertStringContainsString('www.gpartnerc.com', $content);
+        self::assertStringContainsString('Emisor', $content);
         self::assertStringContainsString('Firma del emisor', $content);
         self::assertStringContainsString('Firma del cliente', $content);
         self::assertStringContainsString('Fecha:', $content);
