@@ -12,6 +12,7 @@ namespace App\Tests\Twig;
 use App\Entity\Customer;
 use App\Entity\Quotation;
 use App\Entity\QuotationLine;
+use App\Entity\User;
 use App\FxRate\ClpConversion;
 use App\FxRate\ClpConverter;
 use App\Invoice\QuotationClpSummary;
@@ -179,5 +180,51 @@ class QuotationPdfTest extends KernelTestCase
         self::assertStringNotContainsString('quotation.signature_issuer', $content);
         self::assertStringNotContainsString('quotation.signature_customer', $content);
         self::assertStringNotContainsString('quotation.signature_date', $content);
+    }
+
+    public function testSellerBlockRendersWhenQuotationHasACreator(): void
+    {
+        $creator = new User();
+        $creator->setAlias('Carlos Rodríguez');
+        $creator->setEmail('carlos@gpartnerc.com');
+
+        $quotation = $this->buildQuotation(new Customer('Seller Customer'));
+        $quotation->setCreatedBy($creator);
+
+        $content = $this->renderQuotation($quotation, 'es');
+
+        self::assertStringContainsString('Vendedor', $content);
+        self::assertStringContainsString('Carlos Rodríguez', $content);
+        self::assertStringContainsString('carlos@gpartnerc.com', $content);
+    }
+
+    public function testSellerBlockIsOmittedWithoutACreator(): void
+    {
+        $content = $this->renderQuotation($this->buildQuotation(new Customer('No Seller Customer')), 'es');
+
+        self::assertStringNotContainsString('quotation.seller', $content);
+    }
+
+    public function testNotesRenderWhenPresentAndAreOmittedWhenAbsent(): void
+    {
+        $withNotes = $this->buildQuotation(new Customer('Notes Customer'));
+        $withNotes->setNotes('Precios válidos por 30 días.');
+
+        $content = $this->renderQuotation($withNotes, 'es');
+        self::assertStringContainsString('Precios válidos por 30 días.', $content);
+
+        $withoutNotes = $this->buildQuotation(new Customer('No Notes Customer'));
+        $contentWithout = $this->renderQuotation($withoutNotes, 'es');
+        self::assertStringNotContainsString('quotation.notes', $contentWithout);
+    }
+
+    public function testFooterBarAlwaysRenders(): void
+    {
+        $content = $this->renderQuotation($this->buildQuotation(new Customer('Footer Customer')), 'es');
+
+        self::assertStringContainsString('doc-footer-bar', $content);
+        self::assertStringContainsString('info@gpartnerc.com', $content);
+        self::assertStringNotContainsString('quotation.footer_payment', $content);
+        self::assertStringNotContainsString('quotation.footer_terms', $content);
     }
 }

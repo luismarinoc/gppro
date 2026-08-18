@@ -111,6 +111,10 @@ class Quotation implements CreatedAt, ModifiedAt
     #[Assert\Range(min: 0, max: 100)]
     private ?string $surcharge = null;
 
+    #[ORM\Column(name: 'notes', type: Types::TEXT, nullable: true)]
+    #[Assert\Length(max: 2000)]
+    private ?string $notes = null;
+
     /** @var Collection<int, QuotationLine> */
     #[ORM\OneToMany(mappedBy: 'quotation', targetEntity: QuotationLine::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Assert\Count(min: 1, max: 10, minMessage: 'quotation.lines_minimum', maxMessage: 'quotation.lines_maximum')]
@@ -297,6 +301,18 @@ class Quotation implements CreatedAt, ModifiedAt
     public function setSurcharge(?string $surcharge): Quotation
     {
         $this->surcharge = $surcharge;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): Quotation
+    {
+        $this->notes = $notes;
 
         return $this;
     }

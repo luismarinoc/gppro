@@ -33,6 +33,7 @@ class QuotationTest extends TestCase
         self::assertNull($sut->getTax());
         self::assertNull($sut->getDiscount());
         self::assertNull($sut->getSurcharge());
+        self::assertNull($sut->getNotes());
         self::assertSame(Quotation::CURRENCY_CLP, $sut->getCurrency());
         self::assertNull($sut->getInvoice());
         self::assertCount(0, $sut->getLines());
@@ -90,6 +91,17 @@ class QuotationTest extends TestCase
         self::assertSame('10.0000', $sut->getDiscount());
         self::assertSame('5.0000', $sut->getSurcharge());
         self::assertSame(Quotation::STATUS_SENT, $sut->getStatus());
+    }
+
+    public function testNotesCanBeSetAndCleared(): void
+    {
+        $sut = new Quotation();
+
+        $sut->setNotes('Precios válidos por 30 días.');
+        self::assertSame('Precios válidos por 30 días.', $sut->getNotes());
+
+        $sut->setNotes(null);
+        self::assertNull($sut->getNotes());
     }
 
     public function testCurrencyCanBeSetToAnAllowedValue(): void

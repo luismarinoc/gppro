@@ -24,6 +24,12 @@
         .doc-parties h4 { margin: 0 0 5px; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
         .doc-parties p { margin: 3px 0; color: #555; line-height: 1.4; }
         .doc-parties .party-name { color: #222; font-weight: bold; font-size: 11pt; margin-bottom: 4px; }
+        .doc-parties .party-subheading { margin: 10px 0 3px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .04em; color: #999; }
+        .doc-notes { margin-top: 10pt; padding: 8pt 10pt; background: #eef2fa; }
+        .doc-notes-title { margin: 0 0 3px; font-size: 9pt; font-weight: bold; color: #183870; text-transform: uppercase; letter-spacing: .03em; }
+        .doc-notes p { margin: 2px 0; font-size: 9pt; color: #555; }
+        .doc-footer-bar { width: 100%; border-collapse: collapse; margin-top: 12pt; }
+        .doc-footer-bar td { border: 0; border-top: 1px solid #ddd; padding: 6pt 4pt 0; font-size: 8.5pt; color: #777; width: 33.33%; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 7px 4px; border-bottom: 1px solid #ddd; }
         th, .number { text-align: right; }
@@ -80,6 +86,11 @@
                 {% if issuerPhone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
                 {% if issuerEmail %}<p>{{ issuerEmail }}</p>{% endif %}
                 {% if issuerWebsite %}<p>{{ issuerWebsite }}</p>{% endif %}
+                {% if quotation.createdBy %}
+                    <p class="party-subheading">{{ 'quotation.seller'|trans }}</p>
+                    <p>{{ quotation.createdBy.displayName }}</p>
+                    {% if quotation.createdBy.email %}<p>{{ quotation.createdBy.email }}</p>{% endif %}
+                {% endif %}
             </td>
             <td>
                 <h4>{{ 'quotation.quoted_for'|trans }}</h4>
@@ -124,6 +135,13 @@
             <tr class="total"><td>{{ 'quotation.total'|trans }}</td><td class="number">{{ clpSummary.totalClp|money('CLP') }}</td></tr>
         </table>
 
+        {% if quotation.notes %}
+            <div class="doc-notes">
+                <p class="doc-notes-title">{{ 'quotation.notes'|trans }}</p>
+                <p>{{ quotation.notes|nl2br }}</p>
+            </div>
+        {% endif %}
+
         <p class="response-hint">{{ 'quotation.response_hint'|trans }}</p>
 
         <table class="doc-signatures" cellpadding="0" cellspacing="0">
@@ -134,6 +152,14 @@
                 <td class="sign-name">{% if quotation.customer.contact %}{{ quotation.customer.contact }}{% else %}&nbsp;{% endif %}</td></tr>
             <tr><td class="sign-date">{{ 'quotation.signature_date'|trans }}: ______________</td><td>&nbsp;</td>
                 <td class="sign-date">{{ 'quotation.signature_date'|trans }}: ______________</td></tr>
+        </table>
+
+        <table class="doc-footer-bar" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>{{ issuerEmail }}{% if issuerPhone %} · {{ issuerPhone }}{% endif %}</td>
+                <td>{{ 'quotation.footer_payment'|trans }}</td>
+                <td>{{ 'quotation.footer_terms'|trans }}</td>
+            </tr>
         </table>
     </div>
 </body>

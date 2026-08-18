@@ -18,6 +18,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -63,6 +64,7 @@ final class QuotationForm extends AbstractType
             ->add('tax', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.tax', 'help' => 'quotation.percentage_help'])
             ->add('discount', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.discount', 'help' => 'quotation.percentage_help'])
             ->add('surcharge', NumberType::class, ['required' => false, 'scale' => 4, 'html5' => true, 'label' => 'quotation.surcharge', 'help' => 'quotation.percentage_help'])
+            ->add('notes', TextareaType::class, ['required' => false, 'label' => 'quotation.notes', 'help' => 'quotation.notes_help'])
             ->add('lines', CollectionType::class, [
                 'entry_type' => QuotationLineForm::class,
                 'entry_options' => ['catalog_items' => $options['catalog_items']],
