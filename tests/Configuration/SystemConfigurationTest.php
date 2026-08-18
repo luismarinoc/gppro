@@ -260,6 +260,26 @@ class SystemConfigurationTest extends TestCase
         self::assertEquals(5, $sut->getTimesheetIncrementMinutes());
     }
 
+    public function testBrandingDefaultsWithoutLoader(): void
+    {
+        $sut = $this->getSut([
+            'theme' => [
+                'branding' => [
+                    'vat_id' => '77.073.462-2',
+                    'address' => 'Avenida Apoquindo 4700, Depto. 11, Las Condes, Santiago',
+                    'phone' => '+56 9 44516977',
+                    'email' => 'info@gpartnerc.com',
+                    'website' => 'www.gpartnerc.com',
+                ],
+            ],
+        ], []);
+        self::assertEquals('77.073.462-2', $sut->find('theme.branding.vat_id'));
+        self::assertEquals('Avenida Apoquindo 4700, Depto. 11, Las Condes, Santiago', $sut->find('theme.branding.address'));
+        self::assertEquals('+56 9 44516977', $sut->find('theme.branding.phone'));
+        self::assertEquals('info@gpartnerc.com', $sut->find('theme.branding.email'));
+        self::assertEquals('www.gpartnerc.com', $sut->find('theme.branding.website'));
+    }
+
     public function testTimesheetWithLoader(): void
     {
         $sut = $this->getSut($this->getDefaultSettings(), $this->getDefaultLoaderSettings());

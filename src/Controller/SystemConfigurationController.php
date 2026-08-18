@@ -617,6 +617,26 @@ final class SystemConfigurationController extends AbstractController
                         ->setTranslationDomain('system-configuration')
                         ->setRequired(false)
                         ->setType(TextType::class),
+                    (new Configuration('theme.branding.vat_id'))
+                        ->setTranslationDomain('system-configuration')
+                        ->setRequired(false)
+                        ->setType(TextType::class),
+                    (new Configuration('theme.branding.address'))
+                        ->setTranslationDomain('system-configuration')
+                        ->setRequired(false)
+                        ->setType(TextType::class),
+                    (new Configuration('theme.branding.phone'))
+                        ->setTranslationDomain('system-configuration')
+                        ->setRequired(false)
+                        ->setType(TextType::class),
+                    (new Configuration('theme.branding.email'))
+                        ->setTranslationDomain('system-configuration')
+                        ->setRequired(false)
+                        ->setType(TextType::class),
+                    (new Configuration('theme.branding.website'))
+                        ->setTranslationDomain('system-configuration')
+                        ->setRequired(false)
+                        ->setType(TextType::class),
                     (new Configuration('defaults.customer.currency'))
                         ->setLabel('currency')
                         ->setType(CurrencyType::class)

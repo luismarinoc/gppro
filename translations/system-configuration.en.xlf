@@ -126,6 +126,26 @@
         <source>theme.branding.company</source>
         <target>Company name</target>
       </trans-unit>
+      <trans-unit id="brandingVatId" resname="theme.branding.vat_id">
+        <source>theme.branding.vat_id</source>
+        <target>Company tax ID (shown on the quotation PDF)</target>
+      </trans-unit>
+      <trans-unit id="brandingAddress" resname="theme.branding.address">
+        <source>theme.branding.address</source>
+        <target>Company address (shown on the quotation PDF)</target>
+      </trans-unit>
+      <trans-unit id="brandingPhone" resname="theme.branding.phone">
+        <source>theme.branding.phone</source>
+        <target>Company phone (shown on the quotation PDF)</target>
+      </trans-unit>
+      <trans-unit id="brandingEmail" resname="theme.branding.email">
+        <source>theme.branding.email</source>
+        <target>Company email (shown on the quotation PDF)</target>
+      </trans-unit>
+      <trans-unit id="brandingWebsite" resname="theme.branding.website">
+        <source>theme.branding.website</source>
+        <target>Company website (shown on the quotation PDF)</target>
+      </trans-unit>
       <trans-unit id="AzOiQES" resname="company.financial_year">
         <source>company.financial_year</source>
         <target>Financial year</target>

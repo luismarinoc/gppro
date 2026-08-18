@@ -35,18 +35,37 @@
         .summary td { border: 0; padding: 4px; }
         .summary .total td { background: #eef2fa; color: #183870; font-weight: bold; font-size: 13pt; }
         .response-hint { margin-top: 12pt; color: #555; font-size: 9.5pt; }
+        .doc-signatures { width: 100%; border-collapse: collapse; margin-top: 12pt; }
+        .doc-signatures td { border: 0; padding: 0; vertical-align: bottom; }
+        .doc-signatures .sign-space { padding-top: 14mm; }
+        .doc-signatures .sign-gap { width: 8%; }
+        .doc-signatures .sign-line { width: 46%; border-top: 1px solid #555; padding-top: 4pt; font-size: 9pt; color: #777; text-transform: uppercase; }
+        .doc-signatures .sign-name { font-size: 10pt; padding-top: 2pt; }
+        .doc-signatures .sign-date { font-size: 9pt; color: #555; padding-top: 6pt; }
     </style>
 </head>
 <body>
     {# GPartner Consulting always issues the quotation - never the customer's own billing template. #}
     {% set issuerName = config('theme.branding.company') is not empty ? config('theme.branding.company') : 'Gpartner Consulting' %}
     {% set logo = config('theme.branding.logo') is not empty ? config('theme.branding.logo') : defaultLogo %}
+    {% set issuerVatId = config('theme.branding.vat_id') %}
+    {% set issuerAddress = config('theme.branding.address') %}
+    {% set issuerPhone = config('theme.branding.phone') %}
+    {% set issuerEmail = config('theme.branding.email') %}
+    {% set issuerWebsite = config('theme.branding.website') %}
 
     <table class="doc-header" cellpadding="0" cellspacing="0">
         <tr>
             <td class="doc-issuer-cell">
                 {% if logo is not empty %}<img class="quotation-logo" src="{{ logo }}" alt="{{ issuerName }}">{% endif %}
                 <p class="doc-issuer-name">{{ issuerName }}</p>
+                <div class="doc-issuer-meta">
+                    {% if issuerVatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
+                    {% if issuerAddress %}<p>{{ 'quotation.issuer_address'|trans }}: {{ issuerAddress }}</p>{% endif %}
+                    {% if issuerPhone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
+                    {% if issuerEmail %}<p>{{ 'quotation.issuer_email'|trans }}: {{ issuerEmail }}</p>{% endif %}
+                    {% if issuerWebsite %}<p>{{ 'quotation.issuer_website'|trans }}: {{ issuerWebsite }}</p>{% endif %}
+                </div>
             </td>
             <td class="doc-meta">
                 <p class="doc-type">{{ 'quotation.view_title'|trans }}</p>
@@ -62,8 +81,10 @@
         <tr>
             <td>
                 <h4>{{ 'quotation.quoted_for'|trans }}</h4>
-                <p>{{ quotation.customer.name }}</p>
-                {% if quotation.customer.address %}<p>{{ quotation.customer.address|nl2br }}</p>{% endif %}
+                <p>{{ quotation.customer.company|default(quotation.customer.name) }}</p>
+                {% if quotation.customer.vatId %}<p>{{ quotation.customer.vatId }}</p>{% endif %}
+                {% if quotation.customer.formattedAddress %}<p>{{ quotation.customer.formattedAddress|nl2br }}</p>{% endif %}
+                {% if quotation.customer.phone %}<p>{{ quotation.customer.phone }}</p>{% endif %}
                 {% if quotation.customer.email %}<p>{{ quotation.customer.email }}</p>{% endif %}
                 {% if quotation.project %}<p>{{ 'project'|trans }}: {{ quotation.project.name }}</p>{% endif %}
             </td>
@@ -106,6 +127,16 @@
         </table>
 
         <p class="response-hint">{{ 'quotation.response_hint'|trans }}</p>
+
+        <table class="doc-signatures" cellpadding="0" cellspacing="0">
+            <tr><td class="sign-space">&nbsp;</td><td class="sign-gap">&nbsp;</td><td class="sign-space">&nbsp;</td></tr>
+            <tr><td class="sign-line">{{ 'quotation.signature_issuer'|trans }}</td><td>&nbsp;</td>
+                <td class="sign-line">{{ 'quotation.signature_customer'|trans }}</td></tr>
+            <tr><td class="sign-name">{{ issuerName }}</td><td>&nbsp;</td>
+                <td class="sign-name">{% if quotation.customer.contact %}{{ quotation.customer.contact }}{% else %}&nbsp;{% endif %}</td></tr>
+            <tr><td class="sign-date">{{ 'quotation.signature_date'|trans }}: ______________</td><td>&nbsp;</td>
+                <td class="sign-date">{{ 'quotation.signature_date'|trans }}: ______________</td></tr>
+        </table>
     </div>
 </body>
 </html>

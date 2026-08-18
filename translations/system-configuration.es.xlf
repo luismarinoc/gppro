@@ -130,6 +130,26 @@
         <source>theme.branding.company</source>
         <target state="translated">Nombre de empresa</target>
       </trans-unit>
+      <trans-unit id="brandingVatId" resname="theme.branding.vat_id" xml:space="preserve">
+        <source>theme.branding.vat_id</source>
+        <target state="translated">RUT de la empresa (aparece en el PDF de cotización)</target>
+      </trans-unit>
+      <trans-unit id="brandingAddress" resname="theme.branding.address" xml:space="preserve">
+        <source>theme.branding.address</source>
+        <target state="translated">Dirección de la empresa (aparece en el PDF de cotización)</target>
+      </trans-unit>
+      <trans-unit id="brandingPhone" resname="theme.branding.phone" xml:space="preserve">
+        <source>theme.branding.phone</source>
+        <target state="translated">Teléfono de la empresa (aparece en el PDF de cotización)</target>
+      </trans-unit>
+      <trans-unit id="brandingEmail" resname="theme.branding.email" xml:space="preserve">
+        <source>theme.branding.email</source>
+        <target state="translated">Email de la empresa (aparece en el PDF de cotización)</target>
+      </trans-unit>
+      <trans-unit id="brandingWebsite" resname="theme.branding.website" xml:space="preserve">
+        <source>theme.branding.website</source>
+        <target state="translated">Sitio web de la empresa (aparece en el PDF de cotización)</target>
+      </trans-unit>
       <trans-unit id="RLgv62J" resname="timesheet.rules.lockdown_grace_period">
         <source>timesheet.rules.lockdown_grace_period</source>
         <target>Final de período de gracia de cierre (fecha relativa PHP hasta el final del período de cierre)</target>
