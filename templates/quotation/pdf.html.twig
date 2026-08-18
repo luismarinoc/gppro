@@ -11,7 +11,8 @@
         .doc-header .doc-issuer-cell { width: 60%; }
         .doc-issuer-name { margin: 0; font-size: 13pt; font-weight: bold; text-transform: uppercase; color: #183870; }
         .doc-meta { width: 40%; text-align: right; }
-        .doc-type { margin: 0 0 4px; font-size: 22pt; font-weight: bold; text-transform: uppercase; color: #183870; }
+        .doc-type { margin: 0 0 6px; font-size: 22pt; font-weight: bold; text-transform: uppercase; color: #183870; }
+        .doc-number-badge { display: inline-block; background: #183870; color: #fff; padding: 4pt 12pt; border-radius: 10pt; font-size: 10.5pt; font-weight: bold; margin-bottom: 6px; }
         .doc-meta p { margin: 2px 0; color: #555; font-size: 10pt; }
         .doc-meta strong { color: #222; }
         .doc-accent-bar { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
@@ -20,22 +21,28 @@
         .doc-accent-bar td:nth-child(2) { background: #e00830; }
         .doc-accent-bar td:nth-child(3) { background: #009038; }
         .doc-parties { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .doc-parties td { padding: 0; border: 0; width: 50%; vertical-align: top; }
-        .doc-parties h4 { margin: 0 0 5px; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
+        .doc-parties td { border: 0; vertical-align: top; }
+        .doc-parties .party-cell { width: 47%; background: #f4f6fb; border-radius: 6pt; padding: 10pt 12pt; }
+        .doc-parties .party-gap { width: 6%; }
+        .doc-parties h4 { margin: 0 0 6px; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #183870; }
+        .doc-parties h4 .marker { color: #e00830; font-weight: bold; margin-right: 3pt; }
         .doc-parties p { margin: 3px 0; color: #555; line-height: 1.4; }
         .doc-parties .party-name { color: #222; font-weight: bold; font-size: 11pt; margin-bottom: 4px; }
         .doc-parties .party-subheading { margin: 10px 0 3px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .04em; color: #999; }
         .doc-notes { margin-top: 10pt; padding: 8pt 10pt; background: #eef2fa; }
         .doc-notes-title { margin: 0 0 3px; font-size: 9pt; font-weight: bold; color: #183870; text-transform: uppercase; letter-spacing: .03em; }
         .doc-notes p { margin: 2px 0; font-size: 9pt; color: #555; }
-        .doc-footer-bar { width: 100%; border-collapse: collapse; margin-top: 12pt; }
-        .doc-footer-bar td { border: 0; border-top: 1px solid #ddd; padding: 6pt 4pt 0; font-size: 8.5pt; color: #777; width: 33.33%; }
+        .doc-footer-bar { width: 100%; border-collapse: collapse; margin-top: 14pt; }
+        .doc-footer-bar td { border: 0; background: #f4f6fb; padding: 8pt 10pt; font-size: 8.5pt; color: #555; width: 33.33%; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 7px 4px; border-bottom: 1px solid #ddd; }
         th, .number { text-align: right; }
         th:first-child, td:first-child { text-align: left; }
         thead th { background: #183870; color: #fff; border-bottom: none; }
         .doc-bottom { margin-top: 36pt; }
+        .doc-total-highlight { margin-bottom: 10pt; padding: 10pt 12pt; background: #f4f6fb; }
+        .doc-total-highlight .label { margin: 0 0 3px; font-size: 9pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
+        .doc-total-highlight .value { margin: 0; font-size: 22pt; font-weight: bold; color: #183870; }
         .summary { margin-left: auto; width: 55%; border-top: 1px solid #ddd; padding-top: 8pt; }
         .summary td { border: 0; padding: 4px; }
         .summary .total td { background: #eef2fa; color: #183870; font-weight: bold; font-size: 13pt; }
@@ -67,7 +74,7 @@
             </td>
             <td class="doc-meta">
                 <p class="doc-type">{{ 'quotation.view_title'|trans }}</p>
-                <p><strong>{{ 'quotation.number'|trans }}:</strong> {{ quotation.id }}</p>
+                <p class="doc-number-badge">{{ 'quotation.number'|trans }} {{ quotation.id }}</p>
                 <p><strong>{{ 'quotation.issue_date'|trans }}:</strong> {{ quotation.createdAt|date('d/m/Y') }}</p>
                 {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('d/m/Y') }}</p>{% endif %}
                 <p><strong>{{ 'quotation.payment_term'|trans }}:</strong> {{ quotation.paymentTermDays ? 'quotation.payment_term_days'|trans({'%days%': quotation.paymentTermDays}) : 'quotation.payment_term_placeholder'|trans }}</p>
@@ -78,8 +85,8 @@
 
     <table class="doc-parties" cellpadding="0" cellspacing="0">
         <tr>
-            <td>
-                <h4>{{ 'quotation.issuer'|trans }}</h4>
+            <td class="party-cell">
+                <h4><span class="marker">&#9656;</span>{{ 'quotation.issuer'|trans }}</h4>
                 <p class="party-name">{{ issuerName }}</p>
                 {% if issuerVatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
                 {% if issuerAddress %}<p>{{ issuerAddress }}</p>{% endif %}
@@ -92,8 +99,9 @@
                     {% if quotation.createdBy.email %}<p>{{ quotation.createdBy.email }}</p>{% endif %}
                 {% endif %}
             </td>
-            <td>
-                <h4>{{ 'quotation.quoted_for'|trans }}</h4>
+            <td class="party-gap">&nbsp;</td>
+            <td class="party-cell">
+                <h4><span class="marker">&#9656;</span>{{ 'quotation.quoted_for'|trans }}</h4>
                 <p class="party-name">{{ quotation.customer.company|default(quotation.customer.name) }}</p>
                 {% if quotation.customer.vatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ quotation.customer.vatId }}</p>{% endif %}
                 {% if quotation.customer.formattedAddress %}<p>{{ quotation.customer.formattedAddress|nl2br }}</p>{% endif %}
@@ -126,6 +134,10 @@
     </table>
 
     <div class="doc-bottom">
+        <div class="doc-total-highlight">
+            <p class="label">{{ 'quotation.total'|trans }}</p>
+            <p class="value">{{ clpSummary.totalClp|money('CLP') }}</p>
+        </div>
         <table class="summary">
             <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="number">{{ clpSummary.subtotalClp|money('CLP') }}</td></tr>
             {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount + 0 }}%)</td><td class="number">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}
