@@ -22,6 +22,7 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
         private readonly Environment $twig,
         private readonly HtmlToPdfConverter $converter,
         private readonly ClpConverter $clpConverter,
+        private readonly string $projectDirectory,
     ) {
     }
 
@@ -42,6 +43,7 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
         $html = $this->twig->render('quotation/pdf.html.twig', [
             'quotation' => $quotation,
             'clpSummary' => $clpSummary,
+            'defaultLogo' => $this->defaultLogoDataUri(),
         ]);
 
         try {
@@ -54,5 +56,20 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
         } catch (\Throwable $exception) {
             throw new \RuntimeException('Quotation PDF rendering failed: ' . $exception->getMessage(), 0, $exception);
         }
+    }
+
+    /**
+     * Embedded as a data URI so the PDF renderer never needs a network round-trip
+     * for the default GPartner Consulting letterhead logo.
+     */
+    private function defaultLogoDataUri(): ?string
+    {
+        $path = $this->projectDirectory . '/public/gpartner-consulting-logo.png';
+        $contents = @file_get_contents($path);
+        if ($contents === false) {
+            return null;
+        }
+
+        return 'data:image/png;base64,' . base64_encode($contents);
     }
 }

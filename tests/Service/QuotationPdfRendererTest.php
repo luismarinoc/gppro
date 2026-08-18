@@ -61,7 +61,7 @@ class QuotationPdfRendererTest extends TestCase
         $converter = $this->createMock(HtmlToPdfConverter::class);
         $converter->expects(self::once())->method('convertToPdf')->with('<html></html>', self::arrayHasKey('filename'))->willReturn('%PDF');
 
-        self::assertSame('%PDF', (new QuotationPdfRenderer($twig, $converter, $clpConverter))->render($quotation));
+        self::assertSame('%PDF', (new QuotationPdfRenderer($twig, $converter, $clpConverter, \dirname(__DIR__, 2)))->render($quotation));
     }
 
     public function testThrowsWhenNoClpExchangeRateIsAvailable(): void
@@ -83,6 +83,6 @@ class QuotationPdfRendererTest extends TestCase
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('No exchange rate is available to convert this quotation to CLP.');
 
-        (new QuotationPdfRenderer($twig, $converter, $clpConverter))->render($quotation);
+        (new QuotationPdfRenderer($twig, $converter, $clpConverter, \dirname(__DIR__, 2)))->render($quotation);
     }
 }
