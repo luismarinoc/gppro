@@ -9,6 +9,7 @@
 
 namespace App\Expense;
 
+use App\Entity\Expense;
 use App\Entity\ExpenseAllocation;
 use App\Entity\Quotation;
 use App\Entity\QuotationLine;
@@ -52,8 +53,19 @@ final class ExpenseCrossChargeService
                 throw new \DomainException('Only a CLP quotation can be cross-charged.');
             }
 
-            $amountClp = $allocation->getAmountClp() ?? 0;
+            $amountClp = $allocation->getAmountClp();
+
+            if (null === $amountClp) {
+                throw new \DomainException('This allocation has no converted CLP amount to charge.');
+            }
+
             $description = \sprintf('%s (%s)', $expense->getDescription(), $expense->getExpenseDate()?->format('Y-m-d'));
+
+            // Design D6: label the amount's provenance for a non-CLP expense
+            // only - a CLP expense's line stays byte-identical to today.
+            if (Expense::CURRENCY_CLP !== $expense->getCurrency()) {
+                $description .= \sprintf(' [%s]', $expense->getCurrency());
+            }
 
             $line = (new QuotationLine())
                 ->setDescription($description)
