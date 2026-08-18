@@ -2370,6 +2370,12 @@
         <source>expense.allocation_percentage</source>
         <target state="translated">Porcentaje</target>
       </trans-unit>
+      <trans-unit id="gpExpenseAllocationAmount" resname="expense.allocation_amount" xml:space="preserve"><source>expense.allocation_amount</source><target state="translated">Monto</target></trans-unit>
+      <trans-unit id="gpExpensePdfTitle" resname="expense.pdf_title" xml:space="preserve"><source>expense.pdf_title</source><target state="translated">Comprobante de gasto</target></trans-unit>
+      <trans-unit id="gpExpenseCreatedBy" resname="expense.created_by" xml:space="preserve"><source>expense.created_by</source><target state="translated">Registrado por</target></trans-unit>
+      <trans-unit id="gpExpenseApprovalLevelCol" resname="expense.approval_level" xml:space="preserve"><source>expense.approval_level</source><target state="translated">Nivel</target></trans-unit>
+      <trans-unit id="gpExpenseApprovalBy" resname="expense.approval_by" xml:space="preserve"><source>expense.approval_by</source><target state="translated">Aprobado por</target></trans-unit>
+      <trans-unit id="gpExpenseApprovalDate" resname="expense.approval_date" xml:space="preserve"><source>expense.approval_date</source><target state="translated">Fecha</target></trans-unit>
       <trans-unit id="gpExpense19" resname="expense_approval_level.level" xml:space="preserve">
         <source>expense_approval_level.level</source>
         <target state="translated">Nivel</target>

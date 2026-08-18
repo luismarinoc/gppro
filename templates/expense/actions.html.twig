@@ -1,0 +1,5 @@
+{% macro expense(expense, view) %}
+    {% import "macros/widgets.html.twig" as widgets %}
+    {% set event = actions(app.user, 'expense', view, {'expense': expense, 'token': csrf_token('expense_delete_' ~ expense.id)}) %}
+    {{ widgets.table_actions(event.actions) }}
+{% endmacro %}

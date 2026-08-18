@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% import "expense/actions.html.twig" as actions %}
+
 {% block main %}
     <div class="card">
         <div class="card-header">
@@ -21,7 +23,7 @@
                         <td>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</td>
                         <td>{{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</td>
                         <td>{{ ('expense.status.' ~ expense.status)|trans }}</td>
-                        <td class="text-end"><a href="{{ path('expense_view', {id: expense.id}) }}">{{ 'view'|trans }}</a></td>
+                        <td class="text-end">{{ actions.expense(expense, 'index') }}</td>
                     </tr>
                 {% else %}
                     <tr><td colspan="6">{{ 'expense.none_found'|trans }}</td></tr>

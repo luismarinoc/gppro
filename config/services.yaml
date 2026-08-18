@@ -52,6 +52,7 @@ services:
         arguments: ['%env(MAILER_FROM)%']
 
     App\Service\QuotationPdfRendererInterface: '@App\Service\QuotationPdfRenderer'
+    App\Service\ExpensePdfRendererInterface: '@App\Service\ExpensePdfRenderer'
 
     # Doctrine repositories extending EntityRepository need an explicit factory
     # when injected into controllers/services. The factory supplies the

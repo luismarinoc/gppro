@@ -20,7 +20,10 @@ use App\Form\ExpenseApprovalDecisionForm;
 use App\Form\ExpenseChargeForm;
 use App\Form\ExpenseForm;
 use App\FxRate\ClpConverter;
+use App\Pdf\PdfContext;
+use App\Pdf\PdfRendererTrait;
 use App\Repository\ExpenseRepository;
+use App\Service\ExpensePdfRendererInterface;
 use App\Utils\PageSetup;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +35,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('view_expense')]
 final class ExpenseController extends AbstractController
 {
+    use PdfRendererTrait;
+
     #[Route(path: '/', name: 'expense_list', methods: ['GET'])]
     public function index(Request $request, ExpenseRepository $repository, ExpenseApprovalPolicy $approvalPolicy): Response
     {
@@ -130,6 +135,25 @@ final class ExpenseController extends AbstractController
             'expense' => $expense,
             'charge_forms' => $chargeForms,
         ]);
+    }
+
+    #[Route(path: '/{id}/pdf', name: 'expense_pdf', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[IsGranted('view_expense', 'expense')]
+    public function pdf(Expense $expense, ExpensePdfRendererInterface $pdfRenderer): Response
+    {
+        try {
+            $content = $pdfRenderer->render($expense);
+        } catch (\Exception $exception) {
+            $this->flashUpdateException($exception);
+
+            return $this->redirectToRoute('expense_view', ['id' => $expense->getId()]);
+        }
+
+        $this->setDispositionInline(true);
+        $context = new PdfContext();
+        $context->setOption('filename', 'expense-' . $expense->getId());
+
+        return $this->createPdfResponse($content, $context);
     }
 
     #[Route(path: '/{id}/submit', name: 'expense_submit', methods: ['POST'], requirements: ['id' => '\d+'])]
