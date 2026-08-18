@@ -49,8 +49,10 @@ final class QuotationPdfRenderer implements QuotationPdfRendererInterface
         try {
             return $this->converter->convertToPdf($html, [
                 'format' => 'A4',
-                'margin_top' => 12,
+                'margin_top' => 15,
                 'margin_bottom' => 12,
+                'margin_left' => 20,
+                'margin_right' => 20,
                 'filename' => 'quotation-' . $quotation->getId(),
             ]);
         } catch (\Throwable $exception) {
