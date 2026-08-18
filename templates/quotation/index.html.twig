@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% import "quotation/actions.html.twig" as actions %}
+
 {% block main %}
     <div class="card">
         <div class="card-header">
@@ -39,7 +41,7 @@
                         <td>{{ quotation.project ? quotation.project.name : '-' }}</td>
                         <td>{{ quotation.createdAt|date('Y-m-d') }}</td>
                         <td>{{ ('quotation.status.' ~ quotation.status)|trans }}</td>
-                        <td class="text-end"><a href="{{ path('quotation_view', {id: quotation.id}) }}">{{ 'view'|trans }}</a></td>
+                        <td class="text-end">{{ actions.quotation(quotation, 'index') }}</td>
                     </tr>
                 {% else %}
                     <tr><td colspan="6">{{ 'quotation.none_found'|trans }}</td></tr>
