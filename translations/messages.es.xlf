@@ -2502,6 +2502,14 @@
         <source>expense_approval_level.approver_user.help</source>
         <target state="translated">Opcional. Esta persona puede aprobar el nivel además de cualquier usuario con el rol requerido. Déjalo vacío para usar solo el rol.</target>
       </trans-unit>
+      <trans-unit id="gpExpense53" resname="expense.currency_preview.converted" xml:space="preserve">
+        <source>expense.currency_preview.converted</source>
+        <target state="translated">≈ %amount% CLP (tasa del %date%)</target>
+      </trans-unit>
+      <trans-unit id="gpExpense54" resname="expense.currency_preview.unavailable" xml:space="preserve">
+        <source>expense.currency_preview.unavailable</source>
+        <target state="translated">Sin tasa disponible para esa fecha.</target>
+      </trans-unit>
       <trans-unit id="gpActBrd1" resname="activity_board.title" xml:space="preserve">
         <source>activity_board.title</source>
         <target state="translated">Tablero</target>
