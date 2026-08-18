@@ -158,4 +158,31 @@ class ExpenseRepository extends EntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Read-only identification of non-CLP expenses that went through
+     * approval-level resolution, allocation split, or cross-charge before
+     * the currency-normalization fix (design/spec: "Identify historical
+     * expenses processed under the raw-amount assumption"). Never
+     * auto-corrects - callers must scope any retroactive fix separately.
+     *
+     * @return Expense[]
+     */
+    public function findNonClpProcessedBeforeNormalization(): array
+    {
+        $qb = $this->createQueryBuilder('e');
+
+        return $qb
+            ->leftJoin('e.allocations', 'ea')
+            ->distinct()
+            ->andWhere('e.currency != :clp')
+            ->andWhere($qb->expr()->orX(
+                'e.requiredLevels IS NOT NULL',
+                'ea.amountClp IS NOT NULL',
+                'ea.charged = true'
+            ))
+            ->setParameter('clp', Expense::CURRENCY_CLP)
+            ->getQuery()
+            ->getResult();
+    }
 }
