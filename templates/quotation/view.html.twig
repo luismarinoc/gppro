@@ -23,6 +23,7 @@
                 <dt class="col-sm-3">{{ 'project'|trans }}</dt><dd class="col-sm-9">{{ quotation.project ? quotation.project.name : '-' }}</dd>
                 <dt class="col-sm-3">{{ 'status'|trans }}</dt><dd class="col-sm-9">{{ ('quotation.status.' ~ quotation.status)|trans }}</dd>
                 <dt class="col-sm-3">{{ 'quotation.valid_until'|trans }}</dt><dd class="col-sm-9">{{ quotation.validUntil ? quotation.validUntil|date('Y-m-d') : '-' }}</dd>
+                {% if quotation.notes %}<dt class="col-sm-3">{{ 'quotation.notes'|trans }}</dt><dd class="col-sm-9">{{ quotation.notes|nl2br }}</dd>{% endif %}
             </dl>
             <table class="table table-vcenter">
                 <thead><tr><th>{{ 'quotation.description'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th><th class="text-end">{{ 'quotation.line_subtotal'|trans }}</th></tr></thead>
