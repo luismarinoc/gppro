@@ -9,18 +9,19 @@
         .doc-header { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
         .doc-header td { padding: 0; border: 0; vertical-align: top; }
         .doc-header .doc-issuer-cell { width: 60%; }
-        .doc-issuer-name { margin: 0; font-size: 13pt; font-weight: bold; text-transform: uppercase; color: #183870; }
+        .doc-issuer-name { margin: 0 0 4px; font-size: 13pt; font-weight: bold; text-transform: uppercase; color: #183870; }
+        .doc-issuer-cell p.doc-meta-line { margin: 2px 0; color: #666; font-size: 9pt; }
         .doc-meta { width: 40%; text-align: right; }
-        .doc-type { margin: 0 0 6px; font-size: 22pt; font-weight: bold; text-transform: uppercase; color: #183870; }
-        .doc-number-badge { display: inline-block; background: #183870; color: #fff; padding: 4pt 12pt; border-radius: 10pt; font-size: 10.5pt; font-weight: bold; margin-bottom: 6px; }
-        .doc-meta p { margin: 2px 0; color: #555; font-size: 10pt; }
-        .doc-meta strong { color: #222; }
+        .doc-type { margin: 0 0 8px; font-size: 22pt; font-weight: bold; text-transform: uppercase; color: #183870; }
+        .doc-meta-box { display: inline-block; text-align: left; background: #f4f6fb; border-radius: 6pt; padding: 8pt 12pt; }
+        .doc-meta-box p { margin: 2px 0; color: #555; font-size: 9.5pt; white-space: nowrap; }
+        .doc-meta-box strong { color: #222; }
         .doc-accent-bar { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
         .doc-accent-bar td { padding: 0; border: 0; height: 3px; line-height: 3px; font-size: 1px; }
         .doc-accent-bar td:nth-child(1) { background: #183870; }
         .doc-accent-bar td:nth-child(2) { background: #e00830; }
         .doc-accent-bar td:nth-child(3) { background: #009038; }
-        .doc-parties { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .doc-parties { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
         .doc-parties td { border: 0; vertical-align: top; }
         .doc-parties .party-cell { width: 47%; background: #f4f6fb; border-radius: 6pt; padding: 10pt 12pt; }
         .doc-parties .party-gap { width: 6%; }
@@ -28,7 +29,6 @@
         .doc-parties h4 .marker { color: #e00830; font-weight: bold; margin-right: 3pt; }
         .doc-parties p { margin: 3px 0; color: #555; line-height: 1.4; }
         .doc-parties .party-name { color: #222; font-weight: bold; font-size: 11pt; margin-bottom: 4px; }
-        .doc-parties .party-subheading { margin: 10px 0 3px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .04em; color: #999; }
         .doc-notes { margin-top: 10pt; padding: 8pt 10pt; background: #eef2fa; }
         .doc-notes-title { margin: 0 0 3px; font-size: 9pt; font-weight: bold; color: #183870; text-transform: uppercase; letter-spacing: .03em; }
         .doc-notes p { margin: 2px 0; font-size: 9pt; color: #555; }
@@ -39,7 +39,7 @@
         th, .number { text-align: right; }
         th:first-child, td:first-child { text-align: left; }
         thead th { background: #183870; color: #fff; border-bottom: none; }
-        .doc-bottom { margin-top: 36pt; }
+        .doc-bottom { margin-top: 18pt; }
         .doc-total-highlight { margin-bottom: 10pt; padding: 10pt 12pt; background: #f4f6fb; }
         .doc-total-highlight .label { margin: 0 0 3px; font-size: 9pt; text-transform: uppercase; letter-spacing: .04em; color: #777; }
         .doc-total-highlight .value { margin: 0; font-size: 22pt; font-weight: bold; color: #183870; }
@@ -49,7 +49,7 @@
         .response-hint { margin-top: 12pt; color: #555; font-size: 9.5pt; }
         .doc-signatures { width: 100%; border-collapse: collapse; margin-top: 12pt; }
         .doc-signatures td { border: 0; padding: 0; vertical-align: bottom; }
-        .doc-signatures .sign-space { padding-top: 14mm; }
+        .doc-signatures .sign-space { padding-top: 8mm; }
         .doc-signatures .sign-gap { width: 8%; }
         .doc-signatures .sign-line { width: 46%; border-top: 1px solid #555; padding-top: 4pt; font-size: 9pt; color: #777; text-transform: uppercase; }
         .doc-signatures .sign-name { font-size: 10pt; padding-top: 2pt; }
@@ -71,13 +71,20 @@
             <td class="doc-issuer-cell">
                 {% if logo is not empty %}<img class="quotation-logo" src="{{ logo }}" alt="{{ issuerName }}">{% endif %}
                 <p class="doc-issuer-name">{{ issuerName }}</p>
+                {% if issuerAddress %}<p class="doc-meta-line">{{ issuerAddress }}</p>{% endif %}
+                {% if issuerVatId %}<p class="doc-meta-line">{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
+                {% if issuerPhone %}<p class="doc-meta-line">{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
+                {% if issuerEmail %}<p class="doc-meta-line">{{ issuerEmail }}</p>{% endif %}
+                {% if issuerWebsite %}<p class="doc-meta-line">{{ issuerWebsite }}</p>{% endif %}
             </td>
             <td class="doc-meta">
                 <p class="doc-type">{{ 'quotation.view_title'|trans }}</p>
-                <p class="doc-number-badge">{{ 'quotation.number'|trans }} {{ quotation.id }}</p>
-                <p><strong>{{ 'quotation.issue_date'|trans }}:</strong> {{ quotation.createdAt|date('d/m/Y') }}</p>
-                {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('d/m/Y') }}</p>{% endif %}
-                <p><strong>{{ 'quotation.payment_term'|trans }}:</strong> {{ quotation.paymentTermDays ? 'quotation.payment_term_days'|trans({'%days%': quotation.paymentTermDays}) : 'quotation.payment_term_placeholder'|trans }}</p>
+                <div class="doc-meta-box">
+                    <p><strong>{{ 'quotation.number'|trans }}:</strong> {{ quotation.id }}</p>
+                    <p><strong>{{ 'quotation.issue_date'|trans }}:</strong> {{ quotation.createdAt|date('d/m/Y') }}</p>
+                    {% if quotation.validUntil %}<p><strong>{{ 'quotation.valid_until'|trans }}:</strong> {{ quotation.validUntil|date('d/m/Y') }}</p>{% endif %}
+                    <p><strong>{{ 'quotation.payment_term'|trans }}:</strong> {{ quotation.paymentTermDays ? 'quotation.payment_term_days'|trans({'%days%': quotation.paymentTermDays}) : 'quotation.payment_term_placeholder'|trans }}</p>
+                </div>
             </td>
         </tr>
     </table>
@@ -86,21 +93,6 @@
     <table class="doc-parties" cellpadding="0" cellspacing="0">
         <tr>
             <td class="party-cell">
-                <h4><span class="marker">&#9656;</span>{{ 'quotation.issuer'|trans }}</h4>
-                <p class="party-name">{{ issuerName }}</p>
-                {% if issuerVatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ issuerVatId }}</p>{% endif %}
-                {% if issuerAddress %}<p>{{ issuerAddress }}</p>{% endif %}
-                {% if issuerPhone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ issuerPhone }}</p>{% endif %}
-                {% if issuerEmail %}<p>{{ issuerEmail }}</p>{% endif %}
-                {% if issuerWebsite %}<p>{{ issuerWebsite }}</p>{% endif %}
-                {% if quotation.createdBy %}
-                    <p class="party-subheading">{{ 'quotation.seller'|trans }}</p>
-                    <p>{{ quotation.createdBy.displayName }}</p>
-                    {% if quotation.createdBy.email %}<p>{{ quotation.createdBy.email }}</p>{% endif %}
-                {% endif %}
-            </td>
-            <td class="party-gap">&nbsp;</td>
-            <td class="party-cell">
                 <h4><span class="marker">&#9656;</span>{{ 'quotation.quoted_for'|trans }}</h4>
                 <p class="party-name">{{ quotation.customer.company|default(quotation.customer.name) }}</p>
                 {% if quotation.customer.vatId %}<p>{{ 'quotation.issuer_vat_id'|trans }}: {{ quotation.customer.vatId }}</p>{% endif %}
@@ -108,6 +100,14 @@
                 {% if quotation.customer.phone %}<p>{{ 'quotation.issuer_phone'|trans }}: {{ quotation.customer.phone }}</p>{% endif %}
                 {% if quotation.customer.email %}<p>{{ quotation.customer.email }}</p>{% endif %}
                 {% if quotation.project %}<p>{{ 'project'|trans }}: {{ quotation.project.name }}</p>{% endif %}
+            </td>
+            <td class="party-gap">&nbsp;</td>
+            <td class="party-cell">
+                <h4><span class="marker">&#9656;</span>{{ 'quotation.seller'|trans }}</h4>
+                {% if quotation.createdBy %}
+                    <p class="party-name">{{ quotation.createdBy.displayName }}</p>
+                    {% if quotation.createdBy.email %}<p>{{ quotation.createdBy.email }}</p>{% endif %}
+                {% endif %}
             </td>
         </tr>
     </table>

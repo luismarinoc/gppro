@@ -167,7 +167,7 @@ class QuotationPdfTest extends KernelTestCase
         self::assertStringContainsString('Teléfono: +56 9 44516977', $content);
         self::assertStringContainsString('info@gpartnerc.com', $content);
         self::assertStringContainsString('www.gpartnerc.com', $content);
-        self::assertStringContainsString('Emisor', $content);
+        self::assertStringContainsString('Vendedor', $content);
         self::assertStringContainsString('Firma del emisor', $content);
         self::assertStringContainsString('Firma del cliente', $content);
         self::assertStringContainsString('Fecha:', $content);
