@@ -910,6 +910,30 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $this->assertUrlIsSecured('/expense/currency-preview?amount=1&currency=USD');
     }
 
+    public function testDownloadPdfReturnsARealPdfDocument(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+
+        $this->request($client, '/expense/' . $expense->getId() . '/pdf');
+
+        $response = $client->getResponse();
+        self::assertTrue($response->isSuccessful(), 'Expected a successful response, got ' . $response->getStatusCode());
+        self::assertStringContainsString('application/pdf', (string) $response->headers->get('Content-Type'));
+        $content = (string) $response->getContent();
+        self::assertNotSame('', $content);
+        self::assertStringStartsWith('%PDF', $content);
+    }
+
+    public function testPdfRouteIsSecured(): void
+    {
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+
+        $this->assertUrlIsSecured('/expense/' . $expense->getId() . '/pdf');
+    }
+
     /** @return array<string, mixed> */
     private function decodeJsonResponse(HttpKernelBrowser $client): array
     {

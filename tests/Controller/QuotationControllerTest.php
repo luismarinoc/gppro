@@ -179,6 +179,38 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertSame('USD', $reloaded->getCurrency());
     }
 
+    public function testEditFormRendersAndSavesTheNotesField(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Notes field test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+
+        $quotation = (new Quotation())->setCustomer($customer)->setValidUntil(new \DateTimeImmutable('2026-08-20'));
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('1.0000')->setUnitPrice('95.0000'));
+        $em->persist($quotation);
+        $em->flush();
+        $quotationId = $quotation->getId();
+
+        $this->request($client, '/quotation/' . $quotationId . '/edit');
+        self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertGreaterThan(0, $client->getCrawler()->filter('textarea[name="quotation_form[notes]"]')->count(), 'The notes field must actually render in the edit form.');
+
+        $form = $client->getCrawler()->filter('form')->form();
+        $form['quotation_form[notes]'] = 'Precios válidos por 30 días.';
+        $client->submit($form);
+
+        $this->assertIsRedirect($client, $this->createUrl('/quotation/' . $quotationId));
+
+        $em->clear();
+        $reloaded = $em->getRepository(Quotation::class)->find($quotationId);
+        self::assertInstanceOf(Quotation::class, $reloaded);
+        self::assertSame('Precios válidos por 30 días.', $reloaded->getNotes());
+    }
+
     public function testEditFormOffersTheThreeAllowedCurrencies(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
