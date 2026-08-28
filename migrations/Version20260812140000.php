@@ -37,13 +37,6 @@ final class Version20260812140000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gppro_expense_allocations DROP FOREIGN KEY FK_GPPRO_EXPENSE_ALLOCATIONS_EXPENSE');
-        $this->addSql('ALTER TABLE gppro_expense_allocations DROP FOREIGN KEY FK_GPPRO_EXPENSE_ALLOCATIONS_PROJECT');
-        $this->addSql('ALTER TABLE gppro_expense_allocations DROP FOREIGN KEY FK_GPPRO_EXPENSE_ALLOCATIONS_QUOTATION_LINE');
-        $this->addSql('ALTER TABLE gppro_expense_approvals DROP FOREIGN KEY FK_GPPRO_EXPENSE_APPROVALS_EXPENSE');
-        $this->addSql('ALTER TABLE gppro_expense_approvals DROP FOREIGN KEY FK_GPPRO_EXPENSE_APPROVALS_APPROVED_BY');
-        $this->addSql('ALTER TABLE gppro_expenses DROP FOREIGN KEY FK_GPPRO_EXPENSES_CREATED_BY');
-        $this->addSql('ALTER TABLE gppro_expenses DROP FOREIGN KEY FK_GPPRO_EXPENSES_SOURCE');
         $schema->dropTable('gppro_expense_approvals');
         $schema->dropTable('gppro_expense_allocations');
         $schema->dropTable('gppro_expense_approval_levels');

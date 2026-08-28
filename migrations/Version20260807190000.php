@@ -33,11 +33,6 @@ final class Version20260807190000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gppro_quotation_lines DROP FOREIGN KEY FK_GPPRO_QUOTATION_LINES_QUOTATION');
-        $this->addSql('ALTER TABLE gppro_quotation_lines DROP FOREIGN KEY FK_GPPRO_QUOTATION_LINES_CATALOG');
-        $this->addSql('ALTER TABLE gppro_quotations DROP FOREIGN KEY FK_GPPRO_QUOTATIONS_CUSTOMER');
-        $this->addSql('ALTER TABLE gppro_quotations DROP FOREIGN KEY FK_GPPRO_QUOTATIONS_PROJECT');
-        $this->addSql('ALTER TABLE gppro_quotations DROP FOREIGN KEY FK_GPPRO_QUOTATIONS_CREATED_BY');
         $schema->dropTable('gppro_quotation_lines');
         $schema->dropTable('gppro_quotations');
         $schema->dropTable('gppro_quotation_catalog_items');
