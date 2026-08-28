@@ -40,10 +40,12 @@ class ExpenseAllocationAmountUpdaterTest extends TestCase
     public function testApplySharesConvertedTotalAcrossAllocationsAndReturnsTrue(): void
     {
         $expense = $this->makeExpense(['60.00', '40.00']);
+        $rateDate = $expense->getExpenseDate();
+        self::assertInstanceOf(\DateTimeImmutable::class, $rateDate);
 
         $converter = $this->createMock(ClpConverter::class);
         $converter->method('convert')->willReturn(
-            ClpConversion::converted('100000', Expense::CURRENCY_USD, '1.0000', $expense->getExpenseDate(), '100000.0000')
+            ClpConversion::converted('100000', Expense::CURRENCY_USD, '1.0000', $rateDate, '100000.0000')
         );
         $resolver = new ExpenseClpAmountResolver($converter);
 
@@ -60,7 +62,9 @@ class ExpenseAllocationAmountUpdaterTest extends TestCase
     public function testApplyClearsAllAmountsToNullAndReturnsFalseWhenNotConvertible(): void
     {
         $expense = $this->makeExpense(['100.00']);
-        $expense->getAllocations()->first()->setAmountClp(12345); // stale value from an earlier conversion
+        $allocation = $expense->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        $allocation->setAmountClp(12345); // stale value from an earlier conversion
 
         $converter = $this->createMock(ClpConverter::class);
         $converter->method('convert')->willReturn(null);
@@ -71,6 +75,6 @@ class ExpenseAllocationAmountUpdaterTest extends TestCase
         $result = $sut->apply($expense);
 
         self::assertFalse($result);
-        self::assertNull($expense->getAllocations()->first()->getAmountClp());
+        self::assertNull($allocation->getAmountClp());
     }
 }

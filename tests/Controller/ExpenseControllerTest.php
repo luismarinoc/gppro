@@ -967,8 +967,13 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
     {
         $data = json_decode((string) $client->getResponse()->getContent(), true);
         self::assertIsArray($data);
-        /* @var array<string, mixed> $data */
 
-        return $data;
+        $result = [];
+        foreach ($data as $key => $value) {
+            self::assertIsString($key);
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 }
