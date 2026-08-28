@@ -26,6 +26,6 @@ final class Version20260811220000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE gppro_quotation_lines ADD unit VARCHAR(50) NOT NULL DEFAULT ''");
+        $this->addSql('ALTER TABLE gppro_quotation_lines ADD unit VARCHAR(50) NOT NULL DEFAULT \'\'');
     }
 }

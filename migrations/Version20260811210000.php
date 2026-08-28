@@ -21,7 +21,7 @@ final class Version20260811210000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE gppro_quotations ADD currency VARCHAR(3) NOT NULL DEFAULT 'CLP'");
+        $this->addSql('ALTER TABLE gppro_quotations ADD currency VARCHAR(3) NOT NULL DEFAULT \'CLP\'');
     }
 
     public function down(Schema $schema): void
