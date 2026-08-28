@@ -237,12 +237,14 @@ final class UserController extends AbstractController
         $userToApprove->setEnabled(true);
         $this->repository->saveUser($userToApprove);
 
-        $mail = $this->generateApprovalEmail($userToApprove, $translator);
-        $event = new EmailUserApprovedEvent($userToApprove, $mail);
-        $this->dispatcher->dispatch($event);
+        if ($userToApprove->hasEmail()) {
+            $mail = $this->generateApprovalEmail($userToApprove, $translator);
+            $event = new EmailUserApprovedEvent($userToApprove, $mail);
+            $this->dispatcher->dispatch($event);
 
-        // this will finally send the email
-        $this->dispatcher->dispatch(new EmailEvent($event->getEmail()));
+            // this will finally send the email
+            $this->dispatcher->dispatch(new EmailEvent($event->getEmail()));
+        }
 
         $this->flashSuccess('action.update.success');
 
