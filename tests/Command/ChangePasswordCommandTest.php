@@ -74,7 +74,7 @@ class ChangePasswordCommandTest extends KernelTestCase
         $options = [];
         if ($interactive) {
             $options = ['interactive' => true];
-            $commandTester->setInputs(['12345678']);
+            $commandTester->setInputs(['Password123']);
         }
 
         $commandTester->execute($input, $options);
@@ -84,7 +84,7 @@ class ChangePasswordCommandTest extends KernelTestCase
 
     public function testChangePassword(): void
     {
-        $commandTester = $this->callCommand('john_user', '0987654321');
+        $commandTester = $this->callCommand('john_user', 'Password123');
 
         $output = $commandTester->getDisplay();
         self::assertStringContainsString('[OK] Changed password for user "john_user".', $output);
@@ -98,7 +98,7 @@ class ChangePasswordCommandTest extends KernelTestCase
 
         /** @var PasswordHasherFactoryInterface $passwordEncoder */
         $passwordEncoder = self::getContainer()->get('security.password_hasher_factory');
-        self::assertTrue($passwordEncoder->getPasswordHasher($user)->verify($user->getPassword(), '0987654321'));
+        self::assertTrue($passwordEncoder->getPasswordHasher($user)->verify($user->getPassword(), 'Password123'));
     }
 
     public function testChangePasswordFailsOnShortPassword(): void

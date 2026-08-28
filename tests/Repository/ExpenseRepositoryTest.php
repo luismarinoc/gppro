@@ -18,6 +18,7 @@ use App\Entity\Team;
 use App\Entity\User;
 use App\Expense\ExpenseCrossChargeService;
 use App\Repository\ExpenseRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -412,6 +413,7 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
     public function testFindNonClpProcessedBeforeNormalizationIncludesChargedAllocation(): void
     {
         $em = $this->getEntityManager();
+        \assert($em instanceof EntityManagerInterface);
         $repository = $this->getRepository();
         $project = $this->createProject();
         $customer = $project->getCustomer();

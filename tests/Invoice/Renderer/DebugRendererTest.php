@@ -87,6 +87,7 @@ class DebugRendererTest extends TestCase
     protected function assertModelStructure(array $model, int $projectCounter = 0, int $activityCounter = 0): void
     {
         $keys = [
+            'invoice.adjustments',
             'invoice.due_date',
             'invoice.due_date_process',
             'invoice.date',

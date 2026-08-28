@@ -347,7 +347,13 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $data = json_decode((string) $client->getResponse()->getContent(), true);
         self::assertIsArray($data);
 
-        return $data;
+        $result = [];
+        foreach ($data as $key => $value) {
+            self::assertIsString($key);
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 
     public function testEditFormRequiresTheValidUntilDate(): void

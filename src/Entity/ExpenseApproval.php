@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: 'gppro_expense_approvals')]
-#[ORM\UniqueConstraint(name: 'UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_LEVEL', columns: ['expense_id', 'level'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_ATTEMPT_LEVEL', columns: ['expense_id', 'approval_attempt', 'level'])]
 #[ORM\Index(columns: ['approved_by_id'])]
 #[ORM\Entity(repositoryClass: ExpenseApprovalRepository::class)]
 class ExpenseApproval
@@ -39,6 +39,10 @@ class ExpenseApproval
     #[ORM\Column(name: 'level', type: Types::INTEGER, nullable: false)]
     #[Assert\Range(min: 1)]
     private ?int $level = null;
+
+    #[ORM\Column(name: 'approval_attempt', type: Types::INTEGER, nullable: false, options: ['default' => 1])]
+    #[Assert\Range(min: 1)]
+    private int $approvalAttempt = 1;
 
     #[ORM\Column(name: 'decision', type: Types::STRING, length: 20, nullable: false)]
     #[Assert\Choice(choices: self::DECISIONS)]
@@ -81,6 +85,18 @@ class ExpenseApproval
     public function setLevel(int $level): ExpenseApproval
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    public function getApprovalAttempt(): int
+    {
+        return $this->approvalAttempt;
+    }
+
+    public function setApprovalAttempt(int $approvalAttempt): ExpenseApproval
+    {
+        $this->approvalAttempt = $approvalAttempt;
 
         return $this;
     }

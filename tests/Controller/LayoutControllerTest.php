@@ -28,7 +28,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringContainsString('data-teamlead-indicator="text">Teamlead</span>', $content);
         self::assertStringContainsString('data-teamlead-indicator="avatar"', $content);
@@ -41,7 +41,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringNotContainsString('data-teamlead-indicator', $content);
     }
@@ -53,7 +53,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringNotContainsString('data-teamlead-indicator', $content);
     }
@@ -65,7 +65,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringContainsString('data-teamlead-indicator="text">Administration</span>', $content);
         self::assertStringContainsString('data-teamlead-indicator="avatar"', $content);
@@ -82,7 +82,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringContainsString('data-teamlead-indicator="text">Administration</span>', $content);
         self::assertStringNotContainsString('data-teamlead-indicator="text">Teamlead</span>', $content);
@@ -95,7 +95,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/dashboard/');
         self::assertTrue($client->getResponse()->isSuccessful());
 
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringContainsString('<div class="mt-1 small text-body-secondary">Head of Development</div>', $content);
     }
@@ -132,7 +132,7 @@ class LayoutControllerTest extends AbstractControllerBaseTestCase
 
     protected function assertHasMainHeader(HttpKernelBrowser $client, User $user): void
     {
-        $content = $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         self::assertStringContainsString('data-bs-toggle="dropdown" aria-label="Open personal menu"', $content);
         self::assertStringContainsString('href="/en/profile/' . $user->getUserIdentifier() . '"', $content);

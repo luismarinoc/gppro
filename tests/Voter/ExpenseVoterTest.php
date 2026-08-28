@@ -158,6 +158,16 @@ class ExpenseVoterTest extends AbstractVoterTestCase
         $this->assertVote($user, $expense, 'edit_expense', VoterInterface::ACCESS_DENIED, ['edit_expense']);
     }
 
+    public function testEditIsGrantedForRejectedExpenseWithPermission(): void
+    {
+        $expense = new Expense();
+        $expense->submitForApproval(1);
+        $expense->rejectApproval();
+        $user = self::getUser(1, User::ROLE_TEAMLEAD);
+
+        $this->assertVote($user, $expense, 'edit_expense', VoterInterface::ACCESS_GRANTED, ['edit_expense']);
+    }
+
     public function testDeleteIsGrantedForRejectedExpenseWithPermission(): void
     {
         $expense = new Expense();

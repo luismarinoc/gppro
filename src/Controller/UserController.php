@@ -237,12 +237,15 @@ final class UserController extends AbstractController
         $userToApprove->setEnabled(true);
         $this->repository->saveUser($userToApprove);
 
-        $mail = $this->generateApprovalEmail($userToApprove, $translator);
-        $event = new EmailUserApprovedEvent($userToApprove, $mail);
-        $this->dispatcher->dispatch($event);
+        $email = $userToApprove->getEmail();
+        if ($email !== null) {
+            $mail = $this->generateApprovalEmail($userToApprove, $translator, $email);
+            $event = new EmailUserApprovedEvent($userToApprove, $mail);
+            $this->dispatcher->dispatch($event);
 
-        // this will finally send the email
-        $this->dispatcher->dispatch(new EmailEvent($event->getEmail()));
+            // this will finally send the email
+            $this->dispatcher->dispatch(new EmailEvent($event->getEmail()));
+        }
 
         $this->flashSuccess('action.update.success');
 
@@ -267,7 +270,7 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('admin_user');
     }
 
-    private function generateApprovalEmail(User $user, TranslatorInterface $translator): Email
+    private function generateApprovalEmail(User $user, TranslatorInterface $translator, string $email): Email
     {
         $username = $user->getDisplayName();
         $language = $user->getLanguage();
@@ -275,7 +278,7 @@ final class UserController extends AbstractController
         $url = $this->generateUrl('login', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return (new TemplatedEmail())
-            ->to(new Address($user->getEmail()))
+            ->to(new Address($email))
             ->subject(
                 $translator->trans('user_approved.subject', ['%username%' => $username], 'email', $language)
             )

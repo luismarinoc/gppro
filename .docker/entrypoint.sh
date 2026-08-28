@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 GPPRO=$(cat /opt/gppro/version.txt)
 echo $GPPRO
@@ -91,11 +91,6 @@ function ensureAppSecret() {
   # is the directory mounted as a named volume in the documented Docker setup, so it
   # stays stable across container restarts and re-creations.
   #
-  # Disable xtrace around all reads/writes of APP_SECRET so the secret never appears
-  # in container logs. The braces around `set +x` keep the disable command itself
-  # from being traced.
-  { set +x; } 2>/dev/null
-
   local SECRET_FILE=/opt/gppro/var/data/.appsecret
   local ENV_LOCAL=/opt/gppro/.env.local
 
@@ -107,7 +102,6 @@ function ensureAppSecret() {
   rm -f "$ENV_LOCAL"
 
   if [ -n "$APP_SECRET" ] && [ "$APP_SECRET" != "change_this_to_something_unique" ]; then
-    set -x
     return
   fi
 
@@ -134,14 +128,12 @@ function ensureAppSecret() {
   # would otherwise be 0600 root:root and unreadable to the web user, causing
   # Symfony's Dotenv to throw PathException at boot.
   chown "$USER_ID:$GROUP_ID" "$ENV_LOCAL"
-
-  set -x
 }
 
 function runServer() {
   # Just while I'm fixing things
   /opt/gppro/bin/console gppro:reload --env="$APP_ENV"
-  chown -R $USER_ID:$GROUP_ID /opt/gppro/var
+  chown -R "$USER_ID:$GROUP_ID" /opt/gppro/var
   if [ -e /use_apache ]; then
     exec /usr/sbin/apache2 -D FOREGROUND
   elif [ -e /use_fpm ]; then

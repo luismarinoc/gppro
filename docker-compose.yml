@@ -11,7 +11,10 @@ services:
       DATABASE_URL: mysql://${DATABASE_USER}:${DATABASE_PASS}@mysql:3306/${DATABASE_BASE}?charset=utf8mb4&serverVersion=10.11.0-MariaDB
       ADMINMAIL: ${ADMINMAIL}
       ADMINPASS: ${ADMINPASS}
-      TRUSTED_PROXIES: "*"
+      # Override with the exact reverse-proxy IP, CIDR, or hostname when one is
+      # present. The loopback-only default prevents forwarded-header spoofing
+      # when this compose file is used without a proxy container.
+      TRUSTED_PROXIES: "${TRUSTED_PROXIES:-127.0.0.1,::1}"
       TRUSTED_HOSTS: ${TRUSTED_HOSTS}
     volumes:
       - gppro_data:/opt/gppro/var/data

@@ -29,9 +29,7 @@ final class Version20260814120000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gppro_invoice_payment_approvals DROP FOREIGN KEY FK_GPPRO_INVOICE_PAYMENT_APPROVALS_INVOICE');
-        $this->addSql('ALTER TABLE gppro_invoice_payment_approvals DROP FOREIGN KEY FK_GPPRO_INVOICE_PAYMENT_APPROVALS_APPROVED_BY');
-        $this->addSql('DROP TABLE gppro_invoice_payment_approvals');
+        $schema->dropTable('gppro_invoice_payment_approvals');
         $this->addSql('ALTER TABLE gppro_invoices DROP payment_approval_status, DROP payment_required_levels, DROP payment_current_level');
     }
 }

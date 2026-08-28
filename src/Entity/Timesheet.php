@@ -54,6 +54,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Constraints\TimesheetDeactivated]
 class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, CreatedAt
 {
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_PENDING_APPROVAL = 'pending_approval';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
     use ModifiedTrait;
     use CreatedTrait;
 
@@ -237,11 +241,19 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
     private ?User $approvedBy = null;
     #[ORM\Column(name: 'approved_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $approvedAt = null;
+    #[ORM\Column(name: 'approval_status', type: Types::STRING, length: 30, nullable: false, options: ['default' => self::STATUS_DRAFT])]
+    private string $approvalStatus = self::STATUS_DRAFT;
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 1])]
+    private int $approvalAttempt = 1;
+    /** @var Collection<int, TimesheetApproval> */
+    #[ORM\OneToMany(mappedBy: 'timesheet', targetEntity: TimesheetApproval::class, cascade: ['persist'])]
+    private Collection $approvals;
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->meta = new ArrayCollection();
+        $this->approvals = new ArrayCollection();
         $this->markAsModified();
     }
 
@@ -501,7 +513,38 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
 
     public function isApproved(): bool
     {
-        return null !== $this->approvedAt;
+        return self::STATUS_APPROVED === $this->approvalStatus || null !== $this->approvedAt;
+    }
+
+    public function getApprovalStatus(): string { return $this->approvalStatus; }
+
+    public function isPendingApproval(): bool { return self::STATUS_PENDING_APPROVAL === $this->approvalStatus; }
+
+    public function isEditable(): bool { return \in_array($this->approvalStatus, [self::STATUS_DRAFT, self::STATUS_REJECTED], true); }
+
+    public function getApprovalAttempt(): int { return $this->approvalAttempt; }
+
+    /** @return Collection<int, TimesheetApproval> */
+    public function getApprovals(): Collection { return $this->approvals; }
+
+    public function submitForApproval(): Timesheet
+    {
+        if ($this->isRunning()) { throw new \DomainException('Only stopped timesheets can be submitted for approval.'); }
+        if (!$this->isEditable()) { throw new \DomainException('Only draft or rejected timesheets can be submitted for approval.'); }
+        if (self::STATUS_REJECTED === $this->approvalStatus) { ++$this->approvalAttempt; }
+        $this->approvalStatus = self::STATUS_PENDING_APPROVAL;
+        $this->approvedBy = null;
+        $this->approvedAt = null;
+
+        return $this;
+    }
+
+    public function rejectApproval(): Timesheet
+    {
+        if (!$this->isPendingApproval()) { throw new \DomainException('Only pending timesheets can be rejected.'); }
+        $this->approvalStatus = self::STATUS_REJECTED;
+
+        return $this;
     }
 
     public function getApprovedBy(): ?User
@@ -518,6 +561,7 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
     {
         $this->approvedBy = $approver;
         $this->approvedAt = new \DateTimeImmutable();
+        $this->approvalStatus = self::STATUS_APPROVED;
 
         return $this;
     }
@@ -689,6 +733,11 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
         }
 
         $timesheet->meta = new ArrayCollection();
+        $timesheet->approvals = new ArrayCollection();
+        $timesheet->approvalStatus = self::STATUS_DRAFT;
+        $timesheet->approvalAttempt = 1;
+        $timesheet->approvedBy = null;
+        $timesheet->approvedAt = null;
 
         /** @var TimesheetMeta $meta */
         foreach ($this->meta as $meta) {
@@ -715,6 +764,11 @@ class Timesheet implements EntityWithMetaFields, ExportableItem, ModifiedAt, Cre
 
         $this->markAsModified();
         $this->exported = false;
+        $this->approvalStatus = self::STATUS_DRAFT;
+        $this->approvalAttempt = 1;
+        $this->approvedBy = null;
+        $this->approvedAt = null;
+        $this->approvals = new ArrayCollection();
 
         $currentMeta = $this->meta;
         $this->meta = new ArrayCollection();

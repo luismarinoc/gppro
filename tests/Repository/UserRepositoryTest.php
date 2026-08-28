@@ -96,6 +96,6 @@ class UserRepositoryTest extends AbstractRepositoryTestCase
         self::assertContains($lead->getId(), $resultIds, 'The teamlead themselves must always be included.');
         self::assertContains($existingMember->getId(), $resultIds, 'Existing members of a led team must be included.');
         self::assertContains($unassigned->getId(), $resultIds, 'A user on no team at all must be discoverable, otherwise a teamlead can never add a brand new person to a first team.');
-        self::assertNotContains($otherTeamUser->getId(), $resultIds, "A member of a team the lead does not lead must stay hidden.");
+        self::assertNotContains($otherTeamUser->getId(), $resultIds, 'A member of a team the lead does not lead must stay hidden.');
     }
 }

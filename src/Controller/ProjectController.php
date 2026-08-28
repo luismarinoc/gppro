@@ -377,8 +377,8 @@ final class ProjectController extends AbstractController
      *
      * @param ProjectRate[] $rates
      * @return array<int, string|null> rate id => fix-it URL, or null when the
-     *                                  warning applies but no direct link is
-     *                                  authorized for the current user
+     *                                 warning applies but no direct link is
+     *                                 authorized for the current user
      */
     private function getRateAccessWarnings(Project $project, array $rates, RolePermissionManager $permissionManager): array
     {

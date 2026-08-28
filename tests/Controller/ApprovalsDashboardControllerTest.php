@@ -208,6 +208,7 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
         $timesheet->setActivity($activity);
         $timesheet->setBegin(new \DateTime('-2 hours'));
         $timesheet->setEnd(new \DateTime('-1 hours'));
+        $timesheet->submitForApproval();
         $em->persist($timesheet);
         $em->flush();
 

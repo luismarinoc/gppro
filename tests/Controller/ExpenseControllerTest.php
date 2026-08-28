@@ -377,6 +377,34 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertInstanceOf(Expense::class, $reloaded);
         self::assertSame(Expense::STATUS_REJECTED, $reloaded->getStatus());
         self::assertSame(0, $reloaded->getCurrentLevel());
+
+        $creatorUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_SUPER_ADMIN);
+        $teamlead->loginUser($creatorUser, 'secured_area');
+        $editToken = $this->extractToken($teamlead, '/expense/' . $expenseId . '/edit', 'input[name="expense_form[_token]"]');
+        self::assertTrue($teamlead->getResponse()->isSuccessful());
+        $this->request($teamlead, '/expense/' . $expenseId . '/edit', 'POST', [
+            'expense_form' => [
+                'description' => 'Corrected expense',
+                'amount' => '120000',
+                'currency' => Expense::CURRENCY_CLP,
+                'expenseDate' => $this->formatDate(new \DateTime('2026-08-01')),
+                'category' => Expense::CATEGORY_OTHER,
+                'allocations' => [0 => ['project' => $project->getId(), 'percentage' => '100.00']],
+                '_token' => $editToken,
+            ],
+        ]);
+        $this->assertIsRedirect($teamlead, $this->createUrl('/expense/' . $expenseId));
+
+        $submitToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/submit"] input[name=_token]');
+        $this->request($teamlead, '/expense/' . $expenseId . '/submit', 'POST', ['_token' => $submitToken]);
+        $this->assertIsRedirect($teamlead, $this->createUrl('/expense/' . $expenseId));
+
+        $em->clear();
+        $resubmitted = $em->getRepository(Expense::class)->find($expenseId);
+        self::assertInstanceOf(Expense::class, $resubmitted);
+        self::assertSame(Expense::STATUS_PENDING_APPROVAL, $resubmitted->getStatus());
+        self::assertSame(2, $resubmitted->getApprovalAttempt());
+        self::assertCount(2, $resubmitted->getApprovals());
     }
 
     public function testDeleteRemovesDraftExpense(): void
@@ -940,6 +968,12 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $data = json_decode((string) $client->getResponse()->getContent(), true);
         self::assertIsArray($data);
 
-        return $data;
+        $result = [];
+        foreach ($data as $key => $value) {
+            self::assertIsString($key);
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 }

@@ -243,6 +243,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $em = $this->getEntityManager();
 
         $project = $em->find(Project::class, 1);
+        self::assertInstanceOf(Project::class, $project);
 
         // a team is linked to the project, but the rate's user is not a
         // member of it, so team access is blocked while the price is set
@@ -272,6 +273,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         $em = $this->getEntityManager();
 
         $project = $em->find(Project::class, 1);
+        self::assertInstanceOf(Project::class, $project);
 
         $rateUser = $this->getUserByRole(User::ROLE_USER);
         $team = new Team('granting team');
@@ -317,6 +319,7 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
         /** @var EntityManager $em */
         $em = $this->getEntityManager();
         $project = $em->find(Project::class, 1);
+        self::assertInstanceOf(Project::class, $project);
         $project->setMetaField((new ProjectMeta())->setName('foo')->setValue('bar'));
         $project->setEnd(new \DateTime());
         $em->persist($project);

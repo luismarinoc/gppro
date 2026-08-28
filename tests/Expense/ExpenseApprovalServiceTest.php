@@ -299,6 +299,51 @@ class ExpenseApprovalServiceTest extends AbstractRepositoryTestCase
         self::assertSame(ExpenseApproval::DECISION_REJECTED, $approvals[1]->getDecision());
     }
 
+    public function testRejectedExpenseCanBeEditedAndResubmittedWithoutLosingApprovalHistory(): void
+    {
+        $this->addLevel(2, 500000, 'ROLE_ADMIN');
+        $project = $this->createProject();
+        $creator = $this->createUser();
+        $firstApprover = $this->createUser('ROLE_TEAMLEAD');
+        $rejecter = $this->createUser('ROLE_ADMIN');
+        $secondApprover = $this->createUser('ROLE_TEAMLEAD');
+        $expense = $this->createDraftExpense($project, $creator, 1000000);
+
+        $service = $this->getSut();
+        $service->submit($expense);
+        $service->approve($expense, $firstApprover);
+        $service->reject($expense, $rejecter, 'Missing receipt');
+
+        $expense->setAmount(1200000);
+        $resubmitted = $service->submit($expense);
+
+        self::assertSame(Expense::STATUS_PENDING_APPROVAL, $resubmitted->getStatus());
+        self::assertSame(2, $resubmitted->getApprovalAttempt());
+        self::assertSame(2, $resubmitted->getRequiredLevels());
+        self::assertSame(0, $resubmitted->getCurrentLevel());
+        $allocation = $resubmitted->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        self::assertSame(1200000, $allocation->getAmountClp());
+
+        /** @var ExpenseApprovalRepository $approvalRepository */
+        $approvalRepository = $this->getEntityManager()->getRepository(ExpenseApproval::class);
+        $approvals = $approvalRepository->findByExpense($resubmitted);
+        self::assertCount(2, $approvals);
+        self::assertSame(1, $approvals[0]->getApprovalAttempt());
+        self::assertSame(1, $approvals[1]->getApprovalAttempt());
+
+        try {
+            $service->approve($resubmitted, $firstApprover);
+            self::fail('A prior approver must not approve a later approval attempt.');
+        } catch (\DomainException) {
+            self::assertSame(0, $resubmitted->getCurrentLevel());
+            self::assertSame(Expense::STATUS_PENDING_APPROVAL, $resubmitted->getStatus());
+        }
+
+        $service->approve($resubmitted, $secondApprover);
+        self::assertSame(1, $resubmitted->getCurrentLevel());
+    }
+
     /**
      * Integration coverage for the "SET NULL fallback" scenario (design
      * D4 / testing-strategy Integration row): deleting a level's named

@@ -171,7 +171,7 @@ class UserControllerTest extends APIControllerBaseTestCase
             'username' => 'foo',
             'email' => 'foo@example.com',
             'title' => 'asdfghjkl',
-            'plainPassword' => 'foo@example.com',
+            'plainPassword' => 'foo123@example.com',
             'enabled' => true,
             'supervisor' => 2,
             'language' => 'ru',
@@ -264,7 +264,7 @@ class UserControllerTest extends APIControllerBaseTestCase
             'username' => 'foo',
             'email' => 'foo@example.com',
             'title' => 'asdfghjkl',
-            'plainPassword' => 'foo@example.com',
+            'plainPassword' => 'foo123@example.com',
             'language' => 'ru',
             'timezone' => 'Europe/Paris',
             'roles' => [

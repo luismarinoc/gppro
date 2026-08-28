@@ -750,6 +750,7 @@ class TimesheetVoterTest extends AbstractVoterTestCase
         $timesheet->setUser($member);
         $timesheet->setProject($project);
         $timesheet->setActivity((new Activity())->setProject($project));
+        $timesheet->setBegin(new \DateTime('-2 hours'))->setEnd(new \DateTime('-1 hour'))->submitForApproval();
 
         $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_GRANTED);
         $this->assertVote($lead, $timesheet, 'reject_timesheet', VoterInterface::ACCESS_GRANTED);
@@ -772,6 +773,7 @@ class TimesheetVoterTest extends AbstractVoterTestCase
         $timesheet->setUser($member);
         $timesheet->setProject($project);
         $timesheet->setActivity((new Activity())->setProject($project));
+        $timesheet->setBegin(new \DateTime('-2 hours'))->setEnd(new \DateTime('-1 hour'))->submitForApproval();
 
         $this->assertVote($plainMember, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_DENIED);
         $this->assertVote($plainMember, $timesheet, 'reject_timesheet', VoterInterface::ACCESS_DENIED);
@@ -811,6 +813,7 @@ class TimesheetVoterTest extends AbstractVoterTestCase
         $timesheet->setUser($lead);
         $timesheet->setProject($project);
         $timesheet->setActivity((new Activity())->setProject($project));
+        $timesheet->setBegin(new \DateTime('-2 hours'))->setEnd(new \DateTime('-1 hour'))->submitForApproval();
 
         $this->assertVote($lead, $timesheet, 'approve_timesheet', VoterInterface::ACCESS_GRANTED);
     }

@@ -1016,8 +1016,10 @@ class TimesheetRepository extends EntityRepository
             ->join('team.members', 'tm')
             ->andWhere('tm.user = :user')
             ->andWhere('tm.teamlead = true')
-            ->andWhere('t.approvedAt IS NULL')
+            ->andWhere('t.approvalStatus = :pending')
+            ->andWhere('t.end IS NOT NULL')
             ->setParameter('user', $user)
+            ->setParameter('pending', Timesheet::STATUS_PENDING_APPROVAL)
             ->orderBy('t.begin', 'ASC')
             ->getQuery()
             ->getResult();
@@ -1039,8 +1041,10 @@ class TimesheetRepository extends EntityRepository
             ->join('team.members', 'tm')
             ->andWhere('tm.user = :user')
             ->andWhere('tm.teamlead = true')
-            ->andWhere('t.approvedAt IS NULL')
+            ->andWhere('t.approvalStatus = :pending')
+            ->andWhere('t.end IS NOT NULL')
             ->setParameter('user', $user)
+            ->setParameter('pending', Timesheet::STATUS_PENDING_APPROVAL)
             ->getQuery()
             ->getSingleScalarResult();
     }
