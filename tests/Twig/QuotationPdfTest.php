@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Twig\Environment;
 
 #[Group('integration')]
@@ -39,7 +39,7 @@ class QuotationPdfTest extends KernelTestCase
         $request->setLocale($locale);
         $stack->push($request);
         $translator = self::getContainer()->get('translator');
-        self::assertInstanceOf(Translator::class, $translator);
+        self::assertInstanceOf(LocaleAwareInterface::class, $translator);
         $translator->setLocale($locale);
 
         $summary = QuotationSummary::fromQuotation($quotation);
