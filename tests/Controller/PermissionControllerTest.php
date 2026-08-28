@@ -130,7 +130,7 @@ class PermissionControllerTest extends AbstractControllerBaseTestCase
             'user_roles[roles]' => [
                 0 => 'ROLE_TEAMLEAD',
                 2 => 'ROLE_SUPER_ADMIN',
-                3 => 'TEST_ROLE'
+                4 => 'TEST_ROLE'
             ]
         ]);
         $this->assertIsRedirect($client, $this->createUrl('/profile/' . urlencode(UserFixtures::USERNAME_USER) . '/roles'));
