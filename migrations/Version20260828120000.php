@@ -24,13 +24,17 @@ final class Version20260828120000 extends AbstractMigration
         $this->addSql('ALTER TABLE gppro_expenses ADD approval_attempt INT NOT NULL DEFAULT 1');
         $this->addSql('ALTER TABLE gppro_expense_approvals ADD approval_attempt INT NOT NULL DEFAULT 1');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_ATTEMPT_LEVEL ON gppro_expense_approvals (expense_id, approval_attempt, level)');
+        $this->addSql('ALTER TABLE gppro_expense_approvals DROP FOREIGN KEY FK_GPPRO_EXPENSE_APPROVALS_EXPENSE');
         $this->addSql('DROP INDEX UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_LEVEL ON gppro_expense_approvals');
+        $this->addSql('ALTER TABLE gppro_expense_approvals ADD CONSTRAINT FK_GPPRO_EXPENSE_APPROVALS_EXPENSE FOREIGN KEY (expense_id) REFERENCES gppro_expenses (id) ON DELETE CASCADE');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE gppro_expense_approvals DROP FOREIGN KEY FK_GPPRO_EXPENSE_APPROVALS_EXPENSE');
         $this->addSql('DROP INDEX UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_ATTEMPT_LEVEL ON gppro_expense_approvals');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_GPPRO_EXPENSE_APPROVALS_EXPENSE_LEVEL ON gppro_expense_approvals (expense_id, level)');
+        $this->addSql('ALTER TABLE gppro_expense_approvals ADD CONSTRAINT FK_GPPRO_EXPENSE_APPROVALS_EXPENSE FOREIGN KEY (expense_id) REFERENCES gppro_expenses (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE gppro_expense_approvals DROP approval_attempt');
         $this->addSql('ALTER TABLE gppro_expenses DROP approval_attempt');
     }

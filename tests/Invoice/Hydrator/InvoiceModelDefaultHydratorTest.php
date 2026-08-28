@@ -66,6 +66,7 @@ class InvoiceModelDefaultHydratorTest extends TestCase
     protected function assertModelStructure(array $model, bool $hasProject = true): void
     {
         $keys = [
+            'invoice.adjustments',
             'invoice.due_date',
             'invoice.due_date_process',
             'invoice.date',
