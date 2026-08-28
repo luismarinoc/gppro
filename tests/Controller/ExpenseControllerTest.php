@@ -329,6 +329,11 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         // The expense is now pending_approval, its own creator: the "decide"
         // form (approve/reject) is only rendered for a user who could act on
         // it - so the creator's own view of the page renders no such form.
+        $this->request($client, '/expense/' . $expenseId);
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('form[action$="/approve"]', $content);
+        self::assertStringNotContainsString('form[action$="/reject"]', $content);
+
         // The route itself must still deny a forged submission.
         $this->request($client, '/expense/' . $expenseId . '/approve', 'POST', [
             'expense_approval_decision_form' => ['note' => '', '_token' => 'irrelevant-because-denied-before-csrf'],
