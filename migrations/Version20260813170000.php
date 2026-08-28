@@ -28,8 +28,6 @@ final class Version20260813170000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gppro_activities_comments DROP FOREIGN KEY FK_GPPRO_ACTIVITIES_COMMENTS_ACTIVITY');
-        $this->addSql('ALTER TABLE gppro_activities_comments DROP FOREIGN KEY FK_GPPRO_ACTIVITIES_COMMENTS_CREATED_BY');
         $schema->dropTable('gppro_activities_comments');
     }
 }
