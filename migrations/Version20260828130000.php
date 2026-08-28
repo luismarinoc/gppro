@@ -27,9 +27,7 @@ final class Version20260828130000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gppro_timesheet_approvals DROP FOREIGN KEY FK_GPPRO_TS_APPROVAL_TS');
-        $this->addSql('ALTER TABLE gppro_timesheet_approvals DROP FOREIGN KEY FK_GPPRO_TS_APPROVAL_USER');
-        $this->addSql('DROP TABLE gppro_timesheet_approvals');
+        $schema->dropTable('gppro_timesheet_approvals');
         $this->addSql('ALTER TABLE gppro_timesheet DROP approval_status, DROP approval_attempt');
     }
 }
