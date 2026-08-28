@@ -22,6 +22,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[Group('integration')]
@@ -37,7 +38,9 @@ class QuotationPdfTest extends KernelTestCase
         $request = new Request();
         $request->setLocale($locale);
         $stack->push($request);
-        self::getContainer()->get('translator')->setLocale($locale);
+        $translator = self::getContainer()->get('translator');
+        self::assertInstanceOf(TranslatorInterface::class, $translator);
+        $translator->setLocale($locale);
 
         $summary = QuotationSummary::fromQuotation($quotation);
         $converter = $this->createMock(ClpConverter::class);
@@ -104,7 +107,7 @@ class QuotationPdfTest extends KernelTestCase
     }
 
     /**
-     * @return list<array{0: string}>
+     * @return array<string, array{0: string}>
      */
     public static function statusProvider(): array
     {
