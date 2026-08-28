@@ -63,10 +63,12 @@
     <div class="d-print-none hidden-no-space">
         {% block main_before %}{% endblock %}
     </div>
-    <section id="main-content" class="content gp-content-frame {% block page_class %}{% endblock %}">
+    <section class="content {% block page_class %}{% endblock %}">
+        <div id="main-content" class="gp-content-frame">
 {% endblock %}
 
 {% block page_content_after %}
+        </div>
     </section>
     {% set event = trigger(constant('App\\Event\\ThemeEvent::CONTENT_AFTER')) %}
     {{ event.content|raw }}
