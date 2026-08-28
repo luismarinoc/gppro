@@ -23,7 +23,7 @@ class ExpenseApprovalRepository extends EntityRepository
         return $this->createQueryBuilder('a')
             ->andWhere('a.expense = :expense')
             ->setParameter('expense', $expense)
-            ->orderBy('a.level', 'ASC')
+            ->orderBy('a.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

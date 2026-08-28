@@ -1,10 +1,12 @@
 {% extends tabler_bundle.isBoxedLayout() ? '@Tabler/layout_horizontal.html.twig' : '@Tabler/layout_vertical.html.twig' %}
 
 {% block body_start %}
+    class="gp-app-shell"
     data-title="{{- get_title()|e('html_attr') -}}"
 {%- endblock -%}
 
 {% block after_body_start %}
+    <a class="gp-skip-link" href="#main-content">{{ 'gppro.skip_to_main'|trans }}</a>
     <button type="button" class="sidebar-show-btn" aria-label="Show sidebar">
         <i class="fas fa-angle-double-right"></i>
     </button>
@@ -61,7 +63,7 @@
     <div class="d-print-none hidden-no-space">
         {% block main_before %}{% endblock %}
     </div>
-    <section class="content {% block page_class %}{% endblock %}">
+    <section id="main-content" class="content gp-content-frame {% block page_class %}{% endblock %}">
 {% endblock %}
 
 {% block page_content_after %}

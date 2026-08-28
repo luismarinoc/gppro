@@ -297,7 +297,7 @@ RUN \
     composer --no-ansi clearcache && \
     cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini && \
     chown -R www-data:www-data /opt/gppro /usr/local/etc/php/php.ini && \
-    mkdir -p /opt/gppro/var/logs && chmod 777 /opt/gppro/var/logs && \
+    mkdir -p /opt/gppro/var/logs && chown www-data:www-data /opt/gppro/var/logs && chmod 750 /opt/gppro/var/logs && \
     sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/gppro/php-cli.ini && \
     sed -i "s/env php/env -S php -c \/opt\/gppro\/php-cli.ini/g" /opt/gppro/bin/console && \
     /opt/gppro/bin/console gppro:version | awk '{print $2}' > /opt/gppro/version.txt
@@ -325,7 +325,7 @@ RUN \
     sed -i "s/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files=100000/g" /usr/local/etc/php/php.ini && \
     sed -i "s/opcache.validate_timestamps=1/opcache.validate_timestamps=0/g" /usr/local/etc/php/php.ini && \
     sed -i "s/session.gc_maxlifetime = 1440/session.gc_maxlifetime = 604800/g" /usr/local/etc/php/php.ini && \
-    mkdir -p /opt/gppro/var/logs && chmod 777 /opt/gppro/var/logs && \
+    mkdir -p /opt/gppro/var/logs && chown www-data:www-data /opt/gppro/var/logs && chmod 750 /opt/gppro/var/logs && \
     sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/gppro/php-cli.ini && \
     chown -R www-data:www-data /opt/gppro /usr/local/etc/php/php.ini && \
     /opt/gppro/bin/console gppro:version | awk '{print $2}' > /opt/gppro/version.txt

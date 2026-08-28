@@ -118,6 +118,9 @@ class Expense implements CreatedAt, ModifiedAt
     #[ORM\Column(name: 'current_level', type: Types::INTEGER, nullable: false, options: ['default' => 0])]
     private int $currentLevel = 0;
 
+    #[ORM\Column(name: 'approval_attempt', type: Types::INTEGER, nullable: false, options: ['default' => 1])]
+    private int $approvalAttempt = 1;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'created_by_id', nullable: true, onDelete: 'SET NULL')]
     private ?User $createdBy = null;
@@ -244,6 +247,11 @@ class Expense implements CreatedAt, ModifiedAt
         return $this->currentLevel;
     }
 
+    public function getApprovalAttempt(): int
+    {
+        return $this->approvalAttempt;
+    }
+
     public function getCreatedBy(): ?User
     {
         return $this->createdBy;
@@ -313,7 +321,7 @@ class Expense implements CreatedAt, ModifiedAt
 
     public function isEditable(): bool
     {
-        return self::STATUS_DRAFT === $this->status;
+        return \in_array($this->status, [self::STATUS_DRAFT, self::STATUS_REJECTED], true);
     }
 
     public function isApproved(): bool
@@ -340,8 +348,12 @@ class Expense implements CreatedAt, ModifiedAt
      */
     public function submitForApproval(int $requiredLevels): Expense
     {
-        if (self::STATUS_DRAFT !== $this->status) {
-            throw new \DomainException('Only draft expenses can be submitted for approval.');
+        if (!\in_array($this->status, [self::STATUS_DRAFT, self::STATUS_REJECTED], true)) {
+            throw new \DomainException('Only draft or rejected expenses can be submitted for approval.');
+        }
+
+        if (self::STATUS_REJECTED === $this->status) {
+            ++$this->approvalAttempt;
         }
 
         $this->requiredLevels = $requiredLevels;

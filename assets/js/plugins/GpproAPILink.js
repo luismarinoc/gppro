@@ -69,8 +69,6 @@ export default class GpproAPILink extends GpproPlugin {
         const API = this.getContainer().getPlugin('api');
         /** @type {GpproEvent} EVENTS */
         const EVENTS = this.getContainer().getPlugin('event');
-        /** @type {GpproAlert} ALERT */
-        const ALERT = this.getContainer().getPlugin('alert');
         const successHandle = () => {
             EVENTS.trigger(eventName);
             document.dispatchEvent(new CustomEvent('gppro.reloadedContent'));

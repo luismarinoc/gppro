@@ -377,6 +377,7 @@ class TimesheetRepositoryTest extends AbstractRepositoryTestCase
         $timesheet->setActivity($activity);
         $timesheet->setBegin(new \DateTime('-2 hours'));
         $timesheet->setEnd(new \DateTime('-1 hours'));
+        $timesheet->submitForApproval();
         $em->persist($timesheet);
         $em->flush();
 

@@ -62,6 +62,10 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: [App\Entity\Quotation]
 
+    App\Repository\TimesheetApprovalRepository:
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments: [App\Entity\TimesheetApproval]
+
     App\Repository\QuotationCatalogItemRepository:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: [App\Entity\QuotationCatalogItem]

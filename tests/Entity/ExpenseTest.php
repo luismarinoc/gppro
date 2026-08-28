@@ -31,6 +31,7 @@ class ExpenseTest extends TestCase
         self::assertSame(Expense::STATUS_DRAFT, $sut->getStatus());
         self::assertNull($sut->getRequiredLevels());
         self::assertSame(0, $sut->getCurrentLevel());
+        self::assertSame(1, $sut->getApprovalAttempt());
         self::assertNull($sut->getCreatedBy());
         self::assertNull($sut->getSourceExpense());
         self::assertNull($sut->getPeriodKey());
@@ -79,6 +80,30 @@ class ExpenseTest extends TestCase
 
         $this->expectException(\DomainException::class);
         $sut->submitForApproval(1);
+    }
+
+    public function testRejectedExpenseCanBeResubmittedAsANewApprovalAttempt(): void
+    {
+        $sut = new Expense();
+        $sut->submitForApproval(2);
+        $sut->rejectApproval();
+
+        $sut->submitForApproval(1);
+
+        self::assertSame(Expense::STATUS_PENDING_APPROVAL, $sut->getStatus());
+        self::assertSame(1, $sut->getRequiredLevels());
+        self::assertSame(0, $sut->getCurrentLevel());
+        self::assertSame(2, $sut->getApprovalAttempt());
+        self::assertFalse($sut->isEditable());
+    }
+
+    public function testRejectedExpenseIsEditable(): void
+    {
+        $sut = new Expense();
+        $sut->submitForApproval(1);
+        $sut->rejectApproval();
+
+        self::assertTrue($sut->isEditable());
     }
 
     public function testClearLevelInOrderAdvancesCurrentLevel(): void

@@ -482,8 +482,12 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
         $member = $this->createTeamleadUser();
         $this->addUserToTeam($member, $team);
         $this->addUserToTeamAsLead($lead, $team);
+        $lead = $this->loadUserFromDatabase($lead->getUserIdentifier());
 
         $entry = $this->createTimesheetEntryFor($member, $project);
+        $entry->submitForApproval();
+        $this->getEntityManager()->persist($entry);
+        $this->getEntityManager()->flush();
         $id = $entry->getId();
         self::assertIsInt($id);
 
@@ -516,8 +520,12 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
         [, $project] = $this->createCustomerAndProjectWithTeam($team);
         $lead = $this->createTeamleadUser();
         $this->addUserToTeamAsLead($lead, $team);
+        $lead = $this->loadUserFromDatabase($lead->getUserIdentifier());
 
         $entry = $this->createTimesheetEntryFor($lead, $project);
+        $entry->submitForApproval();
+        $this->getEntityManager()->persist($entry);
+        $this->getEntityManager()->flush();
         $id = $entry->getId();
         self::assertIsInt($id);
 
@@ -555,8 +563,12 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
         $member = $this->createTeamleadUser();
         $this->addUserToTeam($member, $team);
         $this->addUserToTeamAsLead($lead, $team);
+        $lead = $this->loadUserFromDatabase($lead->getUserIdentifier());
 
         $entry = $this->createTimesheetEntryFor($member, $project);
+        $entry->submitForApproval();
+        $this->getEntityManager()->persist($entry);
+        $this->getEntityManager()->flush();
         $id = $entry->getId();
         self::assertIsInt($id);
 
@@ -616,8 +628,7 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
 
     public function testRejectActionIsNoOpAndKeepsEntryEditable(): void
     {
-        // D3: reject is not a persisted state - the entry simply stays
-        // unapproved and remains editable by its owner.
+        // Rejection is persisted and the entry remains editable for correction.
         $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
         $team = $this->createTeam();
         [, $project] = $this->createCustomerAndProjectWithTeam($team);
@@ -625,8 +636,12 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
         $member = $this->createTeamleadUser();
         $this->addUserToTeam($member, $team);
         $this->addUserToTeamAsLead($lead, $team);
+        $lead = $this->loadUserFromDatabase($lead->getUserIdentifier());
 
         $entry = $this->createTimesheetEntryFor($member, $project);
+        $entry->submitForApproval();
+        $this->getEntityManager()->persist($entry);
+        $this->getEntityManager()->flush();
         $id = $entry->getId();
         self::assertIsInt($id);
 
@@ -694,6 +709,8 @@ class TimesheetTeamControllerTest extends AbstractControllerBaseTestCase
     private function extractApproveToken(HttpKernelBrowser $client, int $ownerId, int $id, string $action): string
     {
         $crawler = $this->request($client, '/team/timesheet/');
+        $form = $crawler->filter('form.searchform')->form();
+        $crawler = $client->submit($form, ['users' => [$ownerId]]);
 
         $value = $crawler->filter('form[action$="/team/timesheet/' . $id . '/' . $action . '"] input[name=_token]')->attr('value');
         self::assertIsString($value, 'Could not find ' . $action . ' CSRF token for entry ' . $id);

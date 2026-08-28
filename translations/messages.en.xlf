@@ -2810,6 +2810,13 @@
       <trans-unit id="gpApprovalsNotif2" resname="approvals.notification.expense"><source>approvals.notification.expense</source><target>%count% pending expense(s) awaiting approval</target></trans-unit>
       <trans-unit id="gpApprovalsNotif3" resname="approvals.notification.invoice"><source>approvals.notification.invoice</source><target>%count% pending invoice payment(s) awaiting approval</target></trans-unit>
       <trans-unit id="gpApprovalsNotif4" resname="approvals.notification.timesheet"><source>approvals.notification.timesheet</source><target>%count% pending timesheet entry(ies) awaiting approval</target></trans-unit>
+       <trans-unit id="gpPilot1" resname="gppro.skip_to_main"><source>gppro.skip_to_main</source><target>Skip to main content</target></trans-unit>
+       <trans-unit id="gpPilot2" resname="gppro.dashboard.eyebrow"><source>gppro.dashboard.eyebrow</source><target>Operations brief</target></trans-unit>
+       <trans-unit id="gpPilot3" resname="gppro.dashboard.description"><source>gppro.dashboard.description</source><target>Start with the work that needs attention, then follow each record to its source.</target></trans-unit>
+       <trans-unit id="gpPilot4" resname="gppro.dashboard.domains"><source>gppro.dashboard.domains</source><target>Platform areas</target></trans-unit>
+       <trans-unit id="gpPilot5" resname="gppro.domain.work"><source>gppro.domain.work</source><target>Work</target></trans-unit>
+       <trans-unit id="gpPilot6" resname="gppro.domain.money"><source>gppro.domain.money</source><target>Money</target></trans-unit>
+       <trans-unit id="gpPilot7" resname="gppro.domain.company"><source>gppro.domain.company</source><target>Company</target></trans-unit>
     </body>
   </file>
 </xliff>

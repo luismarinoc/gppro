@@ -20,6 +20,7 @@ use App\Form\TimesheetAdminEditForm;
 use App\Form\TimesheetMultiUserEditForm;
 use App\Repository\Query\TimesheetQuery;
 use App\Repository\Query\TimesheetQueryHint;
+use App\Timesheet\TimesheetApprovalService;
 use App\Utils\PageSetup;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormInterface;
@@ -82,8 +83,7 @@ final class TimesheetTeamController extends TimesheetAbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $entry->approve($user);
-        $this->repository->save($entry);
+        $this->approvalService->approve($entry, $user);
 
         $this->flashSuccess('action.update.success');
 
@@ -98,8 +98,20 @@ final class TimesheetTeamController extends TimesheetAbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
-        // D3: reject is not a persisted state - the entry simply stays/returns
-        // to its normal unapproved, editable state. No entity mutation needed.
+        $this->approvalService->reject($entry, $this->getUser());
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute($this->getTimesheetRoute());
+    }
+
+    #[Route(path: '/{id}/submit', name: 'admin_timesheet_submit', methods: ['POST'])]
+    #[IsGranted('edit', 'entry')]
+    public function submitAction(Timesheet $entry, Request $request, TimesheetApprovalService $approvalService): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_timesheet_submit_' . $entry->getId(), $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+        $approvalService->submit($entry);
         $this->flashSuccess('action.update.success');
 
         return $this->redirectToRoute($this->getTimesheetRoute());

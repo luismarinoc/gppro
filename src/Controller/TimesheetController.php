@@ -13,6 +13,7 @@ use App\Entity\Timesheet;
 use App\Event\TimesheetMetaDisplayEvent;
 use App\Export\ServiceExport;
 use App\Form\TimesheetEditForm;
+use App\Timesheet\TimesheetApprovalService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,6 +54,19 @@ final class TimesheetController extends TimesheetAbstractController
     public function editAction(Timesheet $entry, Request $request): Response
     {
         return $this->edit($entry, $request);
+    }
+
+    #[Route(path: '/{id}/submit', name: 'timesheet_submit', methods: ['POST'])]
+    #[IsGranted('edit', 'entry')]
+    public function submitAction(Timesheet $entry, Request $request, TimesheetApprovalService $approvalService): Response
+    {
+        if (!$this->isCsrfTokenValid('timesheet_submit_' . $entry->getId(), $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+        $approvalService->submit($entry);
+        $this->flashSuccess('action.update.success');
+
+        return $this->redirectToRoute('timesheet');
     }
 
     #[Route(path: '/{id}/duplicate', name: 'timesheet_duplicate', methods: ['GET', 'POST'])]

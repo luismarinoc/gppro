@@ -21,8 +21,20 @@
 
 {% block main %}
 
+    <div class="gp-dashboard-orientation" aria-labelledby="dashboard-orientation-title">
+        <div class="gp-dashboard-orientation__copy">
+            <div class="gp-dashboard-orientation__eyebrow" id="dashboard-orientation-title">{{ 'gppro.dashboard.eyebrow'|trans }}</div>
+            <p>{{ 'gppro.dashboard.description'|trans }}</p>
+        </div>
+        <div class="gp-domain-markers" aria-label="{{ 'gppro.dashboard.domains'|trans }}">
+            <span class="gp-domain-marker">{{ 'gppro.domain.work'|trans }}</span>
+            <span class="gp-domain-marker">{{ 'gppro.domain.money'|trans }}</span>
+            <span class="gp-domain-marker">{{ 'gppro.domain.company'|trans }}</span>
+        </div>
+    </div>
+
     {% if widgets is empty %}
-        {{ widgets.nothing_found() }}
+        <div class="gp-dashboard-empty">{{ widgets.nothing_found() }}</div>
     {% else %}
         <div class="row row-deck row-cards">
         {% for widget in widgets %}

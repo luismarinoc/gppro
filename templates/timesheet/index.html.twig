@@ -154,7 +154,14 @@
         {{ widgets.label_user(entry.user) }}
     {% elseif column == 'actions' %}
         {% set event = actions(app.user, action_single, 'index', {'timesheet': entry}) %}
-        {{ widgets.table_actions(event.actions) }}
+         {{ widgets.table_actions(event.actions) }}
+         {% if entry.end and entry.isEditable and is_granted('edit', entry) %}
+             {% set submitRoute = action_single == 'timesheet_team' ? 'admin_timesheet_submit' : 'timesheet_submit' %}
+             <form class="d-inline" method="post" action="{{ path(submitRoute, {id: entry.id}) }}">
+                 <input type="hidden" name="_token" value="{{ csrf_token(submitRoute ~ '_' ~ entry.id) }}">
+                 <button class="btn btn-sm btn-link" type="submit">{{ 'submit'|trans }}</button>
+             </form>
+         {% endif %}
         {% if is_granted('approve_timesheet', entry) %}
             <form class="d-inline" method="post" action="{{ path('admin_timesheet_approve', {id: entry.id}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('admin_timesheet_approve_' ~ entry.id) }}">

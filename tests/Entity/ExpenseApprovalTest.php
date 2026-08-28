@@ -26,6 +26,7 @@ class ExpenseApprovalTest extends TestCase
         self::assertNull($sut->getId());
         self::assertNull($sut->getExpense());
         self::assertNull($sut->getLevel());
+        self::assertSame(1, $sut->getApprovalAttempt());
         self::assertNull($sut->getDecision());
         self::assertNull($sut->getApprovedBy());
         self::assertNull($sut->getApprovedAt());
@@ -41,6 +42,7 @@ class ExpenseApprovalTest extends TestCase
         $sut = (new ExpenseApproval())
             ->setExpense($expense)
             ->setLevel(1)
+            ->setApprovalAttempt(2)
             ->setDecision(ExpenseApproval::DECISION_APPROVED)
             ->setApprovedBy($user)
             ->setApprovedAt($approvedAt)
@@ -48,6 +50,7 @@ class ExpenseApprovalTest extends TestCase
 
         self::assertSame($expense, $sut->getExpense());
         self::assertSame(1, $sut->getLevel());
+        self::assertSame(2, $sut->getApprovalAttempt());
         self::assertSame(ExpenseApproval::DECISION_APPROVED, $sut->getDecision());
         self::assertSame($user, $sut->getApprovedBy());
         self::assertSame($approvedAt, $sut->getApprovedAt());

@@ -114,7 +114,7 @@ final class TimesheetVoter extends Voter
                 // that was already approved (the approval itself persists
                 // correctly, but the buttons never disappear on a fresh page
                 // load, making the approval look like a no-op).
-                if ($subject->isApproved()) {
+                if (!$subject->isPendingApproval()) {
                     return false;
                 }
 
@@ -286,7 +286,7 @@ final class TimesheetVoter extends Voter
      */
     private function isAllowedApproved(Timesheet $timesheet): bool
     {
-        return !$timesheet->isApproved();
+        return $timesheet->isEditable();
     }
 
     /**

@@ -28,6 +28,7 @@ use App\Repository\Query\BaseQuery;
 use App\Repository\Query\TimesheetQuery;
 use App\Repository\TagRepository;
 use App\Repository\TimesheetRepository;
+use App\Timesheet\TimesheetApprovalService;
 use App\Timesheet\TimesheetService;
 use App\Timesheet\TrackingMode\TrackingModeInterface;
 use App\Utils\DataTable;
@@ -44,6 +45,7 @@ abstract class TimesheetAbstractController extends AbstractController
         protected readonly TimesheetRepository $repository,
         protected readonly EventDispatcherInterface $dispatcher,
         protected readonly TimesheetService $service,
+        protected readonly TimesheetApprovalService $approvalService,
         protected readonly SystemConfiguration $configuration,
         protected readonly TagRepository $tagRepository
     ) {

@@ -1,15 +1,36 @@
 :root {
+    /* gppro pilot tokens: a compatibility layer for Tabler and Bootstrap. */
+    --gp-bg: #f3f6fa;
+    --gp-surface: #fbfcfe;
+    --gp-surface-muted: #e7edf5;
+    --gp-ink: #223047;
+    --gp-ink-muted: #53647a;
+    --gp-brand: #1B3A6B;
+    --gp-brand-soft: #e5edf8;
+    --gp-line: #c5d0df;
+    --gp-positive: #176b4d;
+    --gp-warning: #8a5a00;
+    --gp-danger: #a33b3b;
+    --gp-focus: #245b9c;
+    --gp-radius-control: 6px;
+    --gp-radius-surface: 8px;
+    --gp-shadow-surface: 0 8px 24px rgba(27, 58, 107, 0.06);
+    --gp-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --gp-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
     /* GPartner Consulting brand palette */
-    --tblr-primary: #1B3A6B;
+    --tblr-primary: var(--gp-brand);
     --tblr-primary-rgb: 27, 58, 107;
     --tblr-primary-text-emphasis: #0d1d36;
-    --tblr-primary-bg-subtle: #EBF0F8;
-    --tblr-primary-border-subtle: #9bb3d1;
+    --tblr-primary-bg-subtle: var(--gp-brand-soft);
+    --tblr-primary-border-subtle: var(--gp-line);
 
-    --tblr-body-bg: #EBF0F8;
-    --tblr-body-bg-rgb: 235, 240, 248;
-    --tblr-card-border-width: 0px;
-    --tblr-card-box-shadow: 0 2px 16px rgba(27, 58, 107, 0.08);
+    --tblr-body-bg: var(--gp-bg);
+    --tblr-body-bg-rgb: 243, 246, 250;
+    --tblr-body-color: var(--gp-ink);
+    --tblr-card-border-width: 1px;
+    --tblr-card-border-color: var(--gp-line);
+    --tblr-card-box-shadow: var(--gp-shadow-surface);
 
     --gppro-public-holiday: var(--tblr-lime);
     --gppro-holiday: var(--tblr-green);
@@ -45,8 +66,8 @@
 .bg-weekend { background-color: var(--gppro-weekend-bg); --tblr-table-bg: var(--gppro-weekend-bg); };
 
 .navbar[data-bs-theme="dark"] {
-    --tblr-bg-surface: #1B3A6B;
-    --tblr-navbar-bg: #1B3A6B;
+    --tblr-bg-surface: var(--gp-brand);
+    --tblr-navbar-bg: var(--gp-brand);
 }
 
 .navbar-brand-logo-plate {
