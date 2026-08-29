@@ -59,14 +59,14 @@
             <div class="card-body">
                 {% if is_granted('approve_expense', expense) %}
                     <form method="post" action="{{ path('expense_approve', {id: expense.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_decision') }}">
+                        <input type="hidden" name="expense_approval_decision_form[_token]" value="{{ csrf_token('expense_approval_decision') }}">
                         <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
                         <button class="btn btn-primary" type="submit">{{ 'approve'|trans }}</button>
                     </form>
                 {% endif %}
                 {% if is_granted('reject_expense', expense) %}
                     <form method="post" action="{{ path('expense_reject', {id: expense.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('expense_approval_decision') }}">
+                        <input type="hidden" name="expense_approval_decision_form[_token]" value="{{ csrf_token('expense_approval_decision') }}">
                         <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
                         <button class="btn btn-danger" type="submit">{{ 'reject'|trans }}</button>
                     </form>

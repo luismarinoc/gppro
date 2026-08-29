@@ -300,10 +300,11 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/expense/' . $expenseId . '/submit', 'POST', ['_token' => $submitToken]);
         $this->assertIsRedirect($client, $this->createUrl('/expense/' . $expenseId));
 
-        $approveToken = $this->extractToken($client, '/expense/' . $expenseId, 'form[action$="/approve"] input[name=_token]');
-        $this->request($client, '/expense/' . $expenseId . '/approve', 'POST', [
-            'expense_approval_decision_form' => ['note' => '', '_token' => $approveToken],
-        ]);
+        $this->request($client, '/expense/' . $expenseId);
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $form = $client->getCrawler()->filter('form[action$="/approve"]')->form();
+        $form['expense_approval_decision_form[note]'] = 'Rendered approval note';
+        $client->submit($form);
         $this->assertIsRedirect($client, $this->createUrl('/expense/' . $expenseId));
 
         $em = $this->getEntityManager();
@@ -312,6 +313,9 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertInstanceOf(Expense::class, $reloaded);
         self::assertSame(Expense::STATUS_APPROVED, $reloaded->getStatus());
         self::assertCount(1, $reloaded->getApprovals());
+        $approval = $reloaded->getApprovals()->first();
+        self::assertNotFalse($approval);
+        self::assertSame('Rendered approval note', $approval->getNote());
     }
 
     public function testCreatorCannotApproveOwnExpense(): void
@@ -360,7 +364,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $this->request($teamlead, '/expense/' . $expenseId . '/submit', 'POST', ['_token' => $submitToken]);
         $this->assertIsRedirect($teamlead);
 
-        $approveToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/approve"] input[name=_token]');
+        $approveToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/approve"] input[name="expense_approval_decision_form[_token]"]');
         $this->request($teamlead, '/expense/' . $expenseId . '/approve', 'POST', [
             'expense_approval_decision_form' => ['note' => '', '_token' => $approveToken],
         ]);
@@ -371,7 +375,7 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         $adminUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
         \assert($teamlead instanceof KernelBrowser);
         $teamlead->loginUser($adminUser, 'secured_area');
-        $rejectToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/reject"] input[name=_token]');
+        $rejectToken = $this->extractToken($teamlead, '/expense/' . $expenseId, 'form[action$="/reject"] input[name="expense_approval_decision_form[_token]"]');
         $this->request($teamlead, '/expense/' . $expenseId . '/reject', 'POST', [
             'expense_approval_decision_form' => ['note' => 'Missing receipt', '_token' => $rejectToken],
         ]);
