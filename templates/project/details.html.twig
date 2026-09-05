@@ -4,6 +4,8 @@
 {% block main %}
     {% set can_edit = is_granted('edit', project) %}
 
+    <div class="gp-project-details">
+        <section class="gp-project-details__section gp-project-details__section--summary" aria-labelledby="gp-project-details-title">
     {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
         {% import "macros/widgets.html.twig" as widgets %}
         {% import "customer/actions.html.twig" as customerActions %}
@@ -17,6 +19,19 @@
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}
         {% block box_body %}
+            <header class="gp-project-details__hero">
+                <div class="gp-project-details__hero-copy">
+                    <div class="gp-project-details__eyebrow">{{ 'project'|trans }}</div>
+                    <h1 id="gp-project-details-title" class="gp-project-details__title">{{ project.name }}</h1>
+                    <div class="gp-project-details__customer">{{ widgets.label_customer(project.customer) }}</div>
+                </div>
+                {% if project.number is not empty %}
+                    <div class="gp-project-details__reference">
+                        <span>{{ 'project_number'|trans }}</span>
+                        <strong>{{ project.number }}</strong>
+                    </div>
+                {% endif %}
+            </header>
             {% if project.comment is not empty %}
                 <div class="comment p-3">
                     {{ project.comment|comment2html(true) }}
@@ -136,40 +151,54 @@
             </table>
         {% endblock %}
     {% endembed %}
+        </section>
 
-    {{ render(controller('App\\Controller\\ProjectController::activitiesAction', {'project': project.id, 'page': 1})) }}
+        <section class="gp-project-details__section gp-project-details__section--activities">
+            {{ render(controller('App\\Controller\\ProjectController::activitiesAction', {'project': project.id, 'page': 1})) }}
+        </section>
 
-    {% if can_edit %}
-        {{ include('embeds/rates-table.html.twig', {'id': 'project_rates_box', 'entity': project, 'create_url': path('admin_project_rate_add', {'id': project.id}), 'delete_route': 'delete_project_rate', 'currency': project.customer.currency, 'edit_route': 'admin_project_rate_edit', 'access_warnings': rate_access_warnings}) }}
-        {{ include('embeds/milestones-table.html.twig', {'id': 'project_milestones_box', 'entity': project, 'milestones': milestones, 'create_url': path('admin_milestone_add', {'id': project.id})}) }}
-    {% endif %}
-
-    {% if stats is not null %}
-        {{ include('embeds/budgets.html.twig', {'entity': project, 'stats': stats, 'currency': project.customer.currency, 'invoiced_milestone_total': invoiced_milestone_total}) }}
-    {% endif %}
-
-    {% for controller in boxes %}
-        {{ render(controller(controller, {'project': project, 'page': 1})) }}
-    {% endfor %}
-
-    {% if teams is not null%}
-        {% set options = {'teams': teams, 'team': team} %}
-        {% if is_granted('permissions', project) %}
-            {% set options = options|merge({'route_create': path('post_project_team', {'id': project.id}), 'route_edit': path('admin_project_permissions', {'id': project.id})}) %}
-        {% endif %}
-        {% if project.customer.teams|length > 0 %}
-            {% set options = options|merge({'empty_message': 'team.project_visibility_inherited'}) %}
-        {% endif %}
-        {{ include('embeds/teams.html.twig', options) }}
-    {% endif %}
-
-    {% if comments is not null %}
-        {% set options = {'form': commentForm, 'comments': comments} %}
         {% if can_edit %}
-            {% set options = options|merge({'route_pin': 'toggle_project_comment_pin', 'route_api_options': {'id': project.id}, 'route_delete': 'delete_project_comment'}) %}
+            <section class="gp-project-details__section gp-project-details__section--management">
+                {{ include('embeds/rates-table.html.twig', {'id': 'project_rates_box', 'entity': project, 'create_url': path('admin_project_rate_add', {'id': project.id}), 'delete_route': 'delete_project_rate', 'currency': project.customer.currency, 'edit_route': 'admin_project_rate_edit', 'access_warnings': rate_access_warnings}) }}
+                {{ include('embeds/milestones-table.html.twig', {'id': 'project_milestones_box', 'entity': project, 'milestones': milestones, 'create_url': path('admin_milestone_add', {'id': project.id})}) }}
+            </section>
         {% endif %}
-        {{ include('embeds/comments.html.twig', options) }}
-    {% endif %}
+
+        {% if stats is not null %}
+            <section class="gp-project-details__section gp-project-details__section--budgets">
+                {{ include('embeds/budgets.html.twig', {'entity': project, 'stats': stats, 'currency': project.customer.currency, 'invoiced_milestone_total': invoiced_milestone_total}) }}
+            </section>
+        {% endif %}
+
+        <section class="gp-project-details__section gp-project-details__section--plugins">
+            {% for controller in boxes %}
+                {{ render(controller(controller, {'project': project, 'page': 1})) }}
+            {% endfor %}
+        </section>
+
+        {% if teams is not null%}
+            <section class="gp-project-details__section gp-project-details__section--teams">
+                {% set options = {'teams': teams, 'team': team} %}
+                {% if is_granted('permissions', project) %}
+                    {% set options = options|merge({'route_create': path('post_project_team', {'id': project.id}), 'route_edit': path('admin_project_permissions', {'id': project.id})}) %}
+                {% endif %}
+                {% if project.customer.teams|length > 0 %}
+                    {% set options = options|merge({'empty_message': 'team.project_visibility_inherited'}) %}
+                {% endif %}
+                {{ include('embeds/teams.html.twig', options) }}
+            </section>
+        {% endif %}
+
+        {% if comments is not null %}
+            <section class="gp-project-details__section gp-project-details__section--comments">
+                {% set options = {'form': commentForm, 'comments': comments} %}
+                {% if can_edit %}
+                    {% set options = options|merge({'route_pin': 'toggle_project_comment_pin', 'route_api_options': {'id': project.id}, 'route_delete': 'delete_project_comment'}) %}
+                {% endif %}
+                {{ include('embeds/comments.html.twig', options) }}
+            </section>
+        {% endif %}
+    </div>
 
 {% endblock %}
 
