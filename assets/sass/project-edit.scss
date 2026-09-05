@@ -1,0 +1,139 @@
+.gp-project-edit {
+    display: grid;
+    gap: 1.25rem;
+    color: var(--gp-ink, var(--tblr-body-color));
+
+    &__section {
+        min-width: 0;
+        padding: 1.25rem;
+        border: 1px solid var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+        background: var(--gp-surface, var(--tblr-card-bg));
+        box-shadow: var(--gp-shadow-surface, var(--tblr-card-box-shadow));
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    &__section:focus-within {
+        border-color: var(--gp-focus, var(--tblr-primary));
+        box-shadow: 0 0 0 .2rem rgba(var(--tblr-primary-rgb), .12), var(--gp-shadow-surface, var(--tblr-card-box-shadow));
+    }
+
+    &__section--invoice {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    &__metafields {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gp-line, var(--tblr-border-color));
+    }
+
+    .row + .row {
+        margin-top: .25rem;
+    }
+
+    .form-label,
+    label:not(.form-check-label) {
+        margin-bottom: .375rem;
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 2.5rem;
+        border-color: var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+        background-color: var(--gp-surface, var(--tblr-card-bg));
+    }
+
+    textarea.form-control {
+        min-height: 6rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-check-input:focus {
+        border-color: var(--gp-focus, var(--tblr-primary));
+        box-shadow: 0 0 0 .2rem rgba(var(--tblr-primary-rgb), .15);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        min-height: 2.5rem;
+        padding: .5rem .75rem .5rem 2.25rem;
+        border: 1px solid var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+        background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
+
+    .form-check-input {
+        margin-top: 0;
+    }
+
+    .form-check-label {
+        color: var(--gp-ink, var(--tblr-body-color));
+        font-weight: 600;
+    }
+
+    &__section--invoice .card {
+        overflow: hidden;
+        border: 1px solid var(--gp-line, var(--tblr-card-border-color));
+        border-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+        background: var(--gp-surface, var(--tblr-card-bg));
+        box-shadow: var(--gp-shadow-surface, var(--tblr-card-box-shadow));
+    }
+
+    &__section--invoice .card-header {
+        padding: 1rem 1.25rem;
+        border-bottom-color: var(--gp-line, var(--tblr-border-color));
+        background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
+
+    &__section--invoice .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header [data-bs-toggle="collapse"]:focus-visible,
+    .card-header [data-toggle="collapse"]:focus-visible {
+        outline: 2px solid var(--gp-focus, var(--tblr-primary));
+        outline-offset: 2px;
+    }
+
+    @include media-breakpoint-down(sm) {
+        gap: 1rem;
+
+        &__section {
+            padding: 1rem;
+        }
+
+        &__section--invoice {
+            padding: 0;
+        }
+
+        &__section--invoice .card-header,
+        &__section--invoice .card-body {
+            padding: 1rem;
+        }
+    }
+}
+
+.modal .gp-project-edit {
+    gap: 1rem;
+
+    &__section {
+        padding: 1rem;
+    }
+
+    &__section--invoice {
+        padding: 0;
+    }
+}

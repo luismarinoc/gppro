@@ -2,6 +2,14 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% import "project/actions.html.twig" as actions %}
 
+{% block page_class %}gp-project-list{% endblock %}
+
+{% block table_actions %}
+    <div class="gp-project-list__toolbar">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% block datatable_row_attr %} {{ widgets.project_row_attr(entry, now, board_mode ?? false, workspace_mode ?? false) }}{% endblock %}
 
 {% block datatable_column_value %}

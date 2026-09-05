@@ -2,6 +2,14 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% import "customer/actions.html.twig" as actions %}
 
+{% block page_class %}gp-customer-list{% endblock %}
+
+{% block table_actions %}
+    <div class="gp-customer-list__toolbar">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% block datatable_row_attr %} {{ widgets.customer_row_attr(entry, now) }}{% endblock %}
 
 {% block datatable_column_value %}
