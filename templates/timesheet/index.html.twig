@@ -2,6 +2,14 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% import "macros/datatables.html.twig" as tables %}
 
+{% block page_class %}gp-timesheet-list{% endblock %}
+
+{% block table_actions %}
+    <div class="gp-timesheet-list__toolbar">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% block datatable_outer %}
     {% set checkOverlappingDesc = false %}
     {% set checkOverlappingAsc = false %}
@@ -72,7 +80,7 @@
 {% endblock %}
 
 {% block datatable_row_attr %}
-    {% set class = '' %}
+    {% set class = ' gp-timesheet-list__row' %}
     {% if checkOverlappingDesc or checkOverlappingAsc %}
         {% if lastEntry is not null and entry.end is not null and entry.user is same as (lastEntry.user) %}
             {% if checkOverlappingDesc and entry.end.timestamp > lastEntry.begin.timestamp %}
@@ -182,7 +190,7 @@
 
 {% macro summary(day, duration, dayHourlyRate, dayInternalRates, dayRates, sortedColumns, dataTable) %}
     {% import "macros/datatables.html.twig" as tables %}
-    <tr class="summary info">
+    <tr class="summary info gp-timesheet-list__summary-row">
     {% for column, data in sortedColumns %}
         <td class="{{ tables.class(dataTable, column) }}">
         {% if column == 'date' %}
