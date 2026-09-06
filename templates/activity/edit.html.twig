@@ -10,70 +10,91 @@
     {% embed formEditTemplate with formOptions %}
         {% import "macros/form_helper.html.twig" as form_helper %}
         {% block form_body %}
-            {% if board_status|default(null) is not null %}
-                {% include 'activity/_board_status_stepper.html.twig' with {'board_status': board_status} %}
-            {% endif %}
-            <div class="row">
-                <div class="col-md-9">
-                    {{ form_row(form.name) }}
-                </div>
-                <div class="col-md-3">
-                    {{ form_row(form.color) }}
-                </div>
-            </div>
-            {{ form_row(form.comment) }}
-            {% if form.customer is defined %}
-                {{ form_row(form.customer) }}
-            {% endif %}
-            {% if form.project is defined %}
-                {{ form_row(form.project) }}
-            {% endif %}
-            {{ form_row(form.number) }}
-            {% if form.budgetType is defined %}
-                <div class="row">
-                    {% if form.budget is defined %}
-                        <div class="col-md-4">
-                            {{ form_row(form.budget) }}
+            <div class="gp-activity-edit{{ gppro_context.modalRequest ? ' gp-activity-edit--modal' : '' }}">
+                {% if board_status|default(null) is not null %}
+                    <section class="gp-activity-edit__section gp-activity-edit__section--board-status">
+                        {% include 'activity/_board_status_stepper.html.twig' with {'board_status': board_status} %}
+                    </section>
+                {% endif %}
+
+                <section class="gp-activity-edit__section gp-activity-edit__section--identity">
+                    <div class="row">
+                        <div class="col-md-9">
+                            {{ form_row(form.name) }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form_row(form.color) }}
+                        </div>
+                    </div>
+                    {{ form_row(form.comment) }}
+                </section>
+
+                <section class="gp-activity-edit__section gp-activity-edit__section--assignment">
+                    {% if form.customer is defined %}
+                        {{ form_row(form.customer) }}
+                    {% endif %}
+                    {% if form.project is defined %}
+                        {{ form_row(form.project) }}
+                    {% endif %}
+                    {{ form_row(form.number) }}
+                </section>
+
+                <section class="gp-activity-edit__section gp-activity-edit__section--budget-team-meta">
+                    {% if form.budgetType is defined %}
+                        <div class="row">
+                            {% if form.budget is defined %}
+                                <div class="col-md-4">
+                                    {{ form_row(form.budget) }}
+                                </div>
+                            {% endif %}
+                            {% if form.timeBudget is defined %}
+                                <div class="col-md-4">
+                                    {{ form_row(form.timeBudget) }}
+                                </div>
+                            {% endif %}
+                            <div class="col-md-4">
+                                {{ form_row(form.budgetType) }}
+                            </div>
                         </div>
                     {% endif %}
-                    {% if form.timeBudget is defined %}
-                        <div class="col-md-4">
-                            {{ form_row(form.timeBudget) }}
+                    {% if form.teams is defined %}
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form_row(form.teams) }}
+                            </div>
                         </div>
                     {% endif %}
-                    <div class="col-md-4">
-                        {{ form_row(form.budgetType) }}
+                    <div class="gp-activity-edit__metafields">
+                        {{ form_helper.metafields(form, null) }}
                     </div>
-                </div>
-            {% endif %}
-            {% if form.teams is defined %}
-                <div class="row">
-                    <div class="col-12">
-                        {{ form_row(form.teams) }}
+                </section>
+
+                <section class="gp-activity-edit__section gp-activity-edit__section--invoice">
+                    {% embed '@theme/embeds/collapsible.html.twig' with {id: 'activity_invoice_settings'} %}
+                        {% import "macros/widgets.html.twig" as widgets %}
+                        {% import "macros/form_helper.html.twig" as form_helper %}
+                        {% block title %}{{ 'invoices'|trans }}{% endblock %}
+                        {% block body %}
+                            {% if form.invoiceText is defined %}
+                                {{ form_row(form.invoiceText) }}
+                            {% endif %}
+                            {{ form_helper.metafields(form, 'invoice') }}
+                        {% endblock %}
+                    {% endembed %}
+                </section>
+
+                <section class="gp-activity-edit__section gp-activity-edit__section--status">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_row(form.visible) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.billable) }}
+                        </div>
                     </div>
-                </div>
-            {% endif %}
-            {{ form_helper.metafields(form, null) }}
-            {% embed '@theme/embeds/collapsible.html.twig' with {id: 'activity_invoice_settings'} %}
-                {% import "macros/widgets.html.twig" as widgets %}
-                {% import "macros/form_helper.html.twig" as form_helper %}
-                {% block title %}{{ 'invoices'|trans }}{% endblock %}
-                {% block body %}
-                    {% if form.invoiceText is defined %}
-                        {{ form_row(form.invoiceText) }}
-                    {% endif %}
-                    {{ form_helper.metafields(form, 'invoice') }}
-                {% endblock %}
-            {% endembed %}
-            <div class="row">
-                <div class="col-md-6">
-                    {{ form_row(form.visible) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.billable) }}
-                </div>
+                </section>
+                {{ form_rest(form) }}
             </div>
-            {{ form_rest(form) }}
         {% endblock %}
     {% endembed %}
 {% endblock %}
