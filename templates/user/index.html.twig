@@ -3,6 +3,14 @@
 {% import "macros/datatables.html.twig" as tables %}
 {% import "user/actions.html.twig" as actions %}
 
+{% block page_class %}gp-user-list{% endblock %}
+
+{% block table_actions %}
+    <div class="gp-user-list__toolbar">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% block datatable_row_attr %} {{ widgets.user_row_attr(entry) }}{% endblock %}
 
 {% block datatable_column_value %}
