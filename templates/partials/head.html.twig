@@ -15,6 +15,7 @@
 <meta name="application-name" content="{{ constant('App\\Constants::SOFTWARE') }}">
 <meta name="msapplication-config" content="{{ asset('browserconfig.xml') }}">
 <meta name="theme-color" content="#262626">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 {% if tabler_bundle.isThemeAuto() %}
     <script>if (window.matchMedia) { document.documentElement.setAttribute('data-bs-theme', (window.matchMedia("(prefers-color-scheme: dark)").matches) ? 'dark': 'light'); }</script>
 {% endif %}
