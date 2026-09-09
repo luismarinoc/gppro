@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="card">
-        <div class="card-header">
+    <div class="card gp-workflow gp-workflow--expense gp-workflow__surface">
+        <div class="card-header gp-workflow__header">
             <h3 class="card-title">{{ expense.description }}</h3>
-            <div class="card-actions">
+            <div class="card-actions gp-workflow__actions">
                 {% if expense.editable %}
                     <a class="btn btn-link" href="{{ path('expense_edit', {id: expense.id}) }}">{{ 'action.edit'|trans }}</a>
                     <form class="d-inline" method="post" action="{{ path('expense_submit', {id: expense.id}) }}">
@@ -21,15 +21,18 @@
             </div>
         </div>
         <div class="card-body">
-            <p>{{ 'expense.amount'|trans }}: {{ expense.amount|money(expense.currency) }}</p>
-            <p>{{ 'date'|trans }}: {{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</p>
-            <p>{{ 'expense.category'|trans }}: {{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</p>
-            <p>{{ 'status'|trans }}: {{ ('expense.status.' ~ expense.status)|trans }}</p>
-            {% if expense.requiredLevels is not null %}
-                <p>{{ 'expense.approval_progress'|trans }}: {{ expense.currentLevel }} / {{ expense.requiredLevels }}</p>
-            {% endif %}
+            <dl class="gp-workflow--expense__details">
+                <div><dt>{{ 'expense.amount'|trans }}</dt><dd>{{ expense.amount|money(expense.currency) }}</dd></div>
+                <div><dt>{{ 'date'|trans }}</dt><dd>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</dd></div>
+                <div><dt>{{ 'expense.category'|trans }}</dt><dd>{{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</dd></div>
+                <div><dt>{{ 'status'|trans }}</dt><dd><span class="gp-workflow__status gp-workflow--expense__status">{{ ('expense.status.' ~ expense.status)|trans }}</span></dd></div>
+                {% if expense.requiredLevels is not null %}
+                    <div><dt>{{ 'expense.approval_progress'|trans }}</dt><dd>{{ expense.currentLevel }} / {{ expense.requiredLevels }}</dd></div>
+                {% endif %}
+            </dl>
 
-            <table class="table table-vcenter card-table">
+            <div class="table-responsive gp-workflow__table-scroll gp-workflow--expense__allocations-table">
+            <table class="table table-vcenter card-table gp-workflow__table">
                 <thead><tr><th>{{ 'expense.allocation_project'|trans }}</th><th>{{ 'expense.allocation_percentage'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'expense.charged'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for allocation in expense.allocations %}
@@ -50,25 +53,28 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
     {% if is_granted('approve_expense', expense) or is_granted('reject_expense', expense) %}
-        <div class="card mt-3">
-            <div class="card-header"><h3 class="card-title">{{ 'expense.decision'|trans }}</h3></div>
-            <div class="card-body">
+        <div class="card mt-3 gp-workflow__section gp-workflow__surface gp-workflow--expense__decision">
+            <div class="card-header gp-workflow__header"><h3 class="card-title">{{ 'expense.decision'|trans }}</h3></div>
+            <div class="card-body gp-workflow--expense__decision-grid">
                 {% if is_granted('approve_expense', expense) %}
-                    <form method="post" action="{{ path('expense_approve', {id: expense.id}) }}">
+                    <form class="gp-workflow--expense__decision-form" method="post" action="{{ path('expense_approve', {id: expense.id}) }}">
                         <input type="hidden" name="expense_approval_decision_form[_token]" value="{{ csrf_token('expense_approval_decision') }}">
-                        <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
-                        <button class="btn btn-primary" type="submit">{{ 'approve'|trans }}</button>
+                        <label class="form-label" for="expense-approve-note-{{ expense.id }}">{{ 'expense.note_placeholder'|trans }}</label>
+                        <textarea class="form-control" id="expense-approve-note-{{ expense.id }}" name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
+                        <button class="btn btn-primary mt-2" type="submit">{{ 'approve'|trans }}</button>
                     </form>
                 {% endif %}
                 {% if is_granted('reject_expense', expense) %}
-                    <form method="post" action="{{ path('expense_reject', {id: expense.id}) }}">
+                    <form class="gp-workflow--expense__decision-form" method="post" action="{{ path('expense_reject', {id: expense.id}) }}">
                         <input type="hidden" name="expense_approval_decision_form[_token]" value="{{ csrf_token('expense_approval_decision') }}">
-                        <textarea name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
-                        <button class="btn btn-danger" type="submit">{{ 'reject'|trans }}</button>
+                        <label class="form-label" for="expense-reject-note-{{ expense.id }}">{{ 'expense.note_placeholder'|trans }}</label>
+                        <textarea class="form-control" id="expense-reject-note-{{ expense.id }}" name="expense_approval_decision_form[note]" placeholder="{{ 'expense.note_placeholder'|trans }}"></textarea>
+                        <button class="btn btn-danger mt-2" type="submit">{{ 'reject'|trans }}</button>
                     </form>
                 {% endif %}
             </div>

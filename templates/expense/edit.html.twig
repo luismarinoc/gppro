@@ -1,24 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="card">
-        <div class="card-header"><h3 class="card-title">{{ (expense.id ? 'expense.edit_title' : 'expense.create_title')|trans }}</h3></div>
-        <div class="card-body">
-            {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.description) }}
-            {{ form_row(form.amount) }}
-            {{ form_row(form.currency) }}
-            {{ form_row(form.expenseDate) }}
-            <div class="form-text mb-3 d-none"
-                 data-expense-currency-preview
-                 data-currency-preview-url="{{ path('expense_currency_preview') }}"
-                 data-trans-converted="{{ 'expense.currency_preview.converted'|trans({'%amount%': '__AMOUNT__', '%date%': '__DATE__'}) }}"
-                 data-trans-unavailable="{{ 'expense.currency_preview.unavailable'|trans }}"></div>
-            {{ form_row(form.category) }}
-            {{ form_row(form.recurrence) }}
+    <div class="card gp-workflow gp-workflow--expense gp-workflow__surface">
+        <div class="card-header gp-workflow__header"><h3 class="card-title">{{ (expense.id ? 'expense.edit_title' : 'expense.create_title')|trans }}</h3></div>
+            <div class="card-body gp-workflow--expense__editor">
+                {{ form_start(form, {attr: {class: 'gp-workflow__form'}}) }}
+                {{ form_errors(form) }}
+                <div class="gp-workflow--expense__form-grid">
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.amount) }}
+                    {{ form_row(form.currency) }}
+                    {{ form_row(form.expenseDate) }}
+                </div>
+                <div class="form-text mb-3 gp-workflow__status gp-workflow--expense__currency-status"
+                     role="status"
+                     aria-live="polite"
+                     aria-atomic="true"
+                     data-state="idle"
+                     data-expense-currency-preview
+                     data-currency-preview-url="{{ path('expense_currency_preview') }}"
+                     data-trans-loading="{{ 'expense.currency_preview.loading'|trans }}"
+                     data-trans-converted="{{ 'expense.currency_preview.converted'|trans({'%amount%': '__AMOUNT__', '%date%': '__DATE__'}) }}"
+                     data-trans-unavailable="{{ 'expense.currency_preview.unavailable'|trans }}"></div>
+                {{ form_row(form.category) }}
+                {{ form_row(form.recurrence) }}
 
-            <label class="form-label">{{ 'expense.allocations'|trans }}</label>
+                <div class="gp-workflow--expense__allocations">
+                <label class="form-label">{{ 'expense.allocations'|trans }}</label>
             {{ form_errors(form.allocations) }}
             <template data-expense-allocation-prototype>
                 <div class="row g-2 align-items-end mb-2" data-expense-allocation>
@@ -41,7 +49,8 @@
                 {% endfor %}
             </div>
             <button class="btn btn-outline-secondary btn-sm mb-3" type="button" data-add-expense-allocation>{{ 'expense.allocation_add'|trans }}</button>
-            <div>
+            </div>
+            <div class="gp-workflow__actions">
                 <button class="btn btn-primary" type="submit">{{ 'action.save'|trans }}</button>
                 {% if expense.id %}
                     <a class="btn btn-link" href="{{ path('expense_view', {id: expense.id}) }}">{{ 'cancel'|trans }}</a>
@@ -82,6 +91,7 @@
             if (!amountField || !currencyField || !dateField || !previewBox) return;
 
             const previewUrl = previewBox.dataset.currencyPreviewUrl;
+            const transLoading = previewBox.dataset.transLoading || '';
             const transConverted = previewBox.dataset.transConverted || '';
             const transUnavailable = previewBox.dataset.transUnavailable || '';
             const locale = document.documentElement.lang || 'es-CL';
@@ -114,23 +124,29 @@
                 return Number.isNaN(parsed.getTime()) ? isoDate : parsed.toLocaleDateString(locale);
             };
 
+            const setPreviewState = function (state, message) {
+                previewBox.dataset.state = state;
+                previewBox.classList.toggle('text-danger', state === 'unavailable');
+                previewBox.classList.toggle('gp-workflow__status--positive', state === 'available');
+                previewBox.classList.toggle('gp-workflow__status--danger', state === 'unavailable');
+                previewBox.textContent = message;
+            };
             const hidePreview = function () {
-                previewBox.classList.add('d-none');
-                previewBox.classList.remove('text-danger');
-                previewBox.textContent = '';
+                setPreviewState('idle', '');
+            };
+            const showLoading = function () {
+                setPreviewState('loading', transLoading);
             };
             const showConverted = function (clpAmount, rateDate) {
-                previewBox.classList.remove('d-none', 'text-danger');
-                previewBox.textContent = transConverted.replace('__AMOUNT__', formatClpAmount(clpAmount)).replace('__DATE__', formatDate(rateDate));
+                setPreviewState('available', transConverted.replace('__AMOUNT__', formatClpAmount(clpAmount)).replace('__DATE__', formatDate(rateDate)));
             };
             const showUnavailable = function () {
-                previewBox.classList.remove('d-none');
-                previewBox.classList.add('text-danger');
-                previewBox.textContent = transUnavailable;
+                setPreviewState('unavailable', transUnavailable);
             };
 
             let requestToken = 0;
             const fetchPreview = function () {
+                const token = ++requestToken;
                 if (!previewUrl || currencyField.value === 'CLP') {
                     hidePreview();
                     return;
@@ -141,7 +157,7 @@
                     hidePreview();
                     return;
                 }
-                const token = ++requestToken;
+                showLoading();
                 const params = new URLSearchParams({amount: amount, currency: currencyField.value, date: isoDate});
                 fetch(previewUrl + '?' + params.toString(), {headers: {'Accept': 'application/json'}})
                     .then(function (response) { return response.ok ? response.json() : {convertible: false}; })
@@ -155,7 +171,7 @@
                     })
                     .catch(function () {
                         if (token !== requestToken) return;
-                        hidePreview();
+                        showUnavailable();
                     });
             };
 

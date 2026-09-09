@@ -839,6 +839,73 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
      * equivalent without submitting the form. CLP is a passthrough via
      * ClpConversion::identity() - same behaviour as ClpConverter::convert().
      */
+    public function testExpenseWorkflowRootAndSharedEmptyStateAreRendered(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $this->createDraftExpenseWithAllocation($project, 100000);
+
+        $index = $this->request($client, '/expense/');
+        self::assertCount(1, $index->filter('.gp-workflow.gp-workflow--expense'));
+
+        $pending = $this->request($client, '/expense/pending');
+        self::assertCount(1, $pending->filter('.gp-workflow.gp-workflow--expense'));
+        self::assertCount(1, $pending->filter('.gp-workflow__empty-state.gp-workflow-state.gp-workflow-state--empty'));
+        self::assertCount(0, $pending->filter('tbody .gp-workflow-state--empty'));
+    }
+
+    public function testExpenseRowsExposeOptInKeyboardNavigationContract(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
+
+        $index = $this->request($client, '/expense/');
+        $row = $index->filter('tr[data-gp-row-link][data-href$="/expense/' . $expenseId . '/edit"]');
+        self::assertCount(1, $row);
+        self::assertSame('0', $row->attr('tabindex'));
+        self::assertSame('link', $row->attr('role'));
+        self::assertNotSame('', trim((string) $row->attr('aria-label')));
+    }
+
+    public function testExpenseEditExposesPersistentCurrencyStatusRegion(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $crawler = $this->request($client, '/expense/create');
+        $status = $crawler->filter('[data-expense-currency-preview]');
+        self::assertCount(1, $status);
+        self::assertSame('status', $status->attr('role'));
+        self::assertSame('polite', $status->attr('aria-live'));
+        self::assertSame('true', $status->attr('aria-atomic'));
+        self::assertSame('idle', $status->attr('data-state'));
+        self::assertNotSame('', trim((string) $status->attr('data-trans-loading')));
+        self::assertNotSame('', trim((string) $status->attr('data-trans-unavailable')));
+    }
+
+    public function testExpenseDecisionNotesHaveUniqueVisibleLabelsAndPreserveForms(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $creatorUser = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000, '100.00', $creatorUser);
+        $expense->submitForApproval(1);
+        $this->getEntityManager()->flush();
+        $expenseId = $expense->getId();
+        self::assertIsInt($expenseId);
+
+        $crawler = $this->request($client, '/expense/' . $expenseId);
+        self::assertCount(1, $crawler->filter('form[action$="/approve"][method="post"]'));
+        self::assertCount(1, $crawler->filter('form[action$="/reject"][method="post"]'));
+        self::assertCount(2, $crawler->filter('input[name="expense_approval_decision_form[_token]"]'));
+        self::assertCount(1, $crawler->filter('label[for="expense-approve-note-' . $expenseId . '"]'));
+        self::assertCount(1, $crawler->filter('label[for="expense-reject-note-' . $expenseId . '"]'));
+        self::assertCount(1, $crawler->filter('#expense-approve-note-' . $expenseId . '[name="expense_approval_decision_form[note]"]'));
+        self::assertCount(1, $crawler->filter('#expense-reject-note-' . $expenseId . '[name="expense_approval_decision_form[note]"]'));
+    }
+
     public function testCurrencyPreviewReturnsIdentityForClp(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);

@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {{ form_start(form) }}
-    <div class="row">
-        <div class="col-lg-8">
+    {{ form_start(form, {attr: {class: 'gp-workflow gp-workflow--quotation gp-workflow__form'}}) }}
+    <div class="row gp-workflow--quotation__layout">
+        <div class="col-lg-8 gp-workflow--quotation__editor">
             {% embed '@theme/embeds/card.html.twig' %}
                 {% block box_title %}{{ 'quotation.general_info'|trans }}{% endblock %}
                 {% block box_body %}
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        <div class="text-muted text-center py-4" data-quotation-lines-empty>
+                        <div class="text-muted text-center py-4 gp-workflow-state gp-workflow-state--empty" data-quotation-lines-empty>
                             {{ icon('info', true) }} {{ 'quotation.lines_empty'|trans }}
                         </div>
                     </div>
@@ -99,8 +99,9 @@
             {% endembed %}
         </div>
 
-        <div class="col-lg-4">
-            <div class="quotation_summary_sticky"
+            <div class="col-lg-4 gp-workflow--quotation__summary">
+                <div class="quotation_summary_sticky"
+
                  data-quotation-summary
                  data-fx-rate-url="{{ path('quotation_fx_rate') }}"
                  data-fx-as-of-label="{{ 'quotation.fx_rate_as_of'|trans({'%currency%': '__CURRENCY__', '%rate%': '__RATE__', '%date%': '__DATE__'}) }}">
@@ -128,13 +129,14 @@
                             <span class="fs-5">{{ 'quotation.total'|trans }}</span>
                             <strong class="fs-1 text-primary" data-summary-total>0.00</strong>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3 text-muted d-none" data-summary-clp-row>
+                        <div class="d-flex justify-content-between align-items-center mb-3 text-muted d-none gp-workflow--quotation__clp-row" data-summary-clp-row>
                             <span>
                                 {{ 'quotation.clp_equivalent'|trans }}
                                 <br><small data-summary-clp-date></small>
                             </span>
                             <strong data-summary-clp>—</strong>
                         </div>
+                        <div class="gp-workflow-state gp-workflow--quotation__fx-status" data-quotation-fx-status role="status" aria-live="polite" aria-atomic="true" data-state="idle" data-loading-text="{{ 'expense.currency_preview.loading'|trans }}" data-unavailable-text="{{ 'expense.currency_preview.unavailable'|trans }}"></div>
                         <small class="text-muted d-block mb-3">{{ 'quotation.server_authoritative'|trans }}</small>
                         <button class="btn btn-primary w-100" type="submit">{{ 'quotation.save'|trans }}</button>
                     {% endblock %}
@@ -184,8 +186,16 @@
             const summaryContainer = document.querySelector('[data-quotation-summary]');
             const fxRateUrl = summaryContainer?.dataset.fxRateUrl;
             const fxAsOfLabel = summaryContainer?.dataset.fxAsOfLabel || '';
+            const fxStatus = summaryContainer?.querySelector('[data-quotation-fx-status]');
             let currentRate = null;
             let currentRateDate = null;
+            let rateRequest = 0;
+
+            const updateFxStatus = function (state, text = '') {
+                if (!fxStatus) return;
+                fxStatus.dataset.state = state;
+                fxStatus.replaceChildren(text);
+            };
 
             const parseDateWithFormat = function (value, format) {
                 if (!value || !format) return null;
@@ -205,25 +215,37 @@
 
             const fetchRate = function () {
                 const code = currencyField?.value;
+                const request = ++rateRequest;
                 if (!fxRateUrl || !code || code === 'CLP') {
                     currentRate = null;
                     currentRateDate = null;
+                    updateFxStatus('idle');
                     updateSummary();
                     return;
                 }
                 const isoDate = parseDateWithFormat(validUntilField?.value, validUntilField?.dataset.format);
                 const params = new URLSearchParams({currency: code});
                 if (isoDate) params.set('date', isoDate);
+                currentRate = null;
+                currentRateDate = null;
+                updateFxStatus('loading', fxStatus?.dataset.loadingText || '');
+                updateSummary();
                 fetch(fxRateUrl + '?' + params.toString(), {headers: {'Accept': 'application/json'}})
                     .then(function (response) { return response.ok ? response.json() : {available: false}; })
                     .then(function (data) {
+                        if (request !== rateRequest) return;
                         currentRate = data.available ? Number.parseFloat(data.rate) : null;
                         currentRateDate = data.available ? data.rateDate : null;
+                        updateFxStatus(data.available ? 'available' : 'unavailable', data.available
+                            ? fxAsOfLabel.replace('__CURRENCY__', code === 'CLF' ? 'UF' : code).replace('__RATE__', data.rate).replace('__DATE__', data.rateDate || '')
+                            : fxStatus?.dataset.unavailableText || '');
                         updateSummary();
                     })
                     .catch(function () {
+                        if (request !== rateRequest) return;
                         currentRate = null;
                         currentRateDate = null;
+                        updateFxStatus('unavailable', fxStatus?.dataset.unavailableText || '');
                         updateSummary();
                     });
             };

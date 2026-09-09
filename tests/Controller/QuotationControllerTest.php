@@ -255,6 +255,53 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $row = $client->getCrawler()->filter('tr[data-href$="/quotation/' . $quotation->getId() . '/edit"]');
         self::assertCount(1, $row);
         self::assertStringContainsString('alternative-link', $row->attr('class') ?? '');
+        self::assertSame('link', $row->attr('role'));
+        self::assertSame('0', $row->attr('tabindex'));
+        self::assertNotEmpty($row->attr('aria-label'));
+        self::assertCount(1, $row->filter('[data-gp-row-link]'));
+        self::assertCount(1, $row->filter('td:first-child > a[href$="/quotation/' . $quotation->getId() . '/edit"]'));
+    }
+
+    public function testQuotationWorkflowRootAndSharedEmptyStateAreRendered(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $em = $this->getEntityManager();
+
+        $customer = new Customer('Workflow root test customer ' . uniqid());
+        $customer->setCountry('CL');
+        $customer->setTimezone('America/Santiago');
+        $em->persist($customer);
+        $quotation = (new Quotation())->setCustomer($customer);
+        $em->persist($quotation);
+        $em->flush();
+
+        $index = $this->request($client, '/quotation/');
+        self::assertCount(1, $index->filter('.gp-workflow.gp-workflow--quotation'));
+        self::assertCount(1, $index->filter('.gp-workflow__header'));
+        self::assertCount(1, $index->filter('form.gp-workflow--quotation__filters select[name="status"]'));
+        self::assertCount(1, $index->filter('.gp-workflow--quotation__status'));
+
+        $emptyIndex = $this->request($client, '/quotation/?status=accepted');
+        self::assertCount(1, $emptyIndex->filter('.gp-workflow__empty-state.gp-workflow-state--empty'));
+        self::assertCount(0, $emptyIndex->filter('.gp-workflow__table'));
+
+        $edit = $this->request($client, '/quotation/create');
+        self::assertCount(1, $edit->filter('.gp-workflow.gp-workflow--quotation'));
+        self::assertCount(1, $edit->filter('.gp-workflow-state.gp-workflow-state--empty'));
+        $fxStatus = $edit->filter('[data-quotation-fx-status]');
+        self::assertCount(1, $fxStatus);
+        self::assertSame('status', $fxStatus->attr('role'));
+        self::assertSame('polite', $fxStatus->attr('aria-live'));
+        self::assertSame('true', $fxStatus->attr('aria-atomic'));
+        self::assertSame('idle', $fxStatus->attr('data-state'));
+        self::assertNotEmpty($fxStatus->attr('data-loading-text'));
+        self::assertNotEmpty($fxStatus->attr('data-unavailable-text'));
+
+        $view = $this->request($client, '/quotation/' . $quotation->getId());
+        self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__header'));
+        self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__metadata'));
+        self::assertCount(1, $view->filter('.gp-workflow--quotation__table-scroll .gp-workflow__table'));
+
     }
 
     public function testViewAndPdfShowAmountsInClpOnlyForNonClpQuotationsUsingTheValidUntilDate(): void

@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="card">
-        <div class="card-header">
+    <div class="card gp-workflow gp-workflow--quotation gp-workflow__surface">
+        <div class="card-header gp-workflow__header">
             <h3 class="card-title">{{ 'quotation.view_title'|trans }} #{{ quotation.id }}</h3>
-            <div class="card-actions">
+            <div class="card-actions gp-workflow__actions">
                 <a class="btn btn-outline-secondary" href="{{ path('quotation_pdf', {id: quotation.id}) }}" target="_blank" rel="noopener">{{ icon('print', true) }} {{ 'quotation.view_pdf'|trans }}</a>
                 {% if is_granted('edit_quotation', quotation) %}<a class="btn btn-primary" href="{{ path('quotation_edit', {id: quotation.id}) }}">{{ 'edit'|trans }}</a>{% endif %}
                 {% if quotation.status == 'draft' and is_granted('send_quotation', quotation) %}
@@ -15,8 +15,8 @@
                 {% endif %}
             </div>
         </div>
-        <div class="card-body">
-            <dl class="row">
+        <div class="card-body gp-workflow--quotation__detail">
+            <dl class="row gp-workflow__metadata">
                 <dt class="col-sm-3">{{ 'quotation.number'|trans }}</dt><dd class="col-sm-9">{{ quotation.id }}</dd>
                 <dt class="col-sm-3">{{ 'quotation.issue_date'|trans }}</dt><dd class="col-sm-9">{{ quotation.createdAt|date('Y-m-d') }}</dd>
                 <dt class="col-sm-3">{{ 'customer'|trans }}</dt><dd class="col-sm-9">{{ quotation.customer.name }}</dd>
@@ -25,7 +25,8 @@
                 <dt class="col-sm-3">{{ 'quotation.valid_until'|trans }}</dt><dd class="col-sm-9">{{ quotation.validUntil ? quotation.validUntil|date('Y-m-d') : '-' }}</dd>
                 {% if quotation.notes %}<dt class="col-sm-3">{{ 'quotation.notes'|trans }}</dt><dd class="col-sm-9">{{ quotation.notes|nl2br }}</dd>{% endif %}
             </dl>
-            <table class="table table-vcenter">
+            <div class="gp-workflow__table-scroll gp-workflow--quotation__table-scroll">
+                <table class="table table-vcenter gp-workflow__table">
                 <thead><tr><th>{{ 'quotation.description'|trans }}</th><th class="text-end">{{ 'quotation.quantity'|trans }}</th><th class="text-end">{{ 'quotation.unit_price'|trans }}</th><th class="text-end">{{ 'quotation.line_subtotal'|trans }}</th></tr></thead>
                 <tbody>
                 {% for item in clpSummary.items %}
@@ -37,8 +38,9 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>
-            <table class="table table-vcenter w-auto ms-auto">
+                </table>
+            </div>
+            <table class="table table-vcenter w-auto ms-auto gp-workflow--quotation__totals">
                 <tbody>
                     <tr><td>{{ 'quotation.subtotal'|trans }}</td><td class="text-end">{{ clpSummary.subtotalClp|money('CLP') }}</td></tr>
                     {% if quotation.discount is not null %}<tr><td>{{ 'quotation.discount_amount'|trans }} ({{ quotation.discount }}%)</td><td class="text-end">-{{ clpSummary.discountAmountClp|money('CLP') }}</td></tr>{% endif %}

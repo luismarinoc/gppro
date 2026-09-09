@@ -3,15 +3,15 @@
 {% import "quotation/actions.html.twig" as actions %}
 
 {% block main %}
-    <div class="card">
-        <div class="card-header">
+    <div class="card gp-workflow gp-workflow--quotation gp-workflow__surface">
+        <div class="card-header gp-workflow__header">
             <h3 class="card-title">{{ customer ? 'quotation.history_title'|trans({'%customer%': customer.name}) : 'quotations'|trans }}</h3>
             {% if is_granted('create_quotation') %}
-                <div class="card-actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">{{ 'quotation.create_action'|trans }}</a></div>
+                <div class="card-actions gp-workflow__actions"><a class="btn btn-primary" href="{{ path('quotation_create') }}">{{ 'quotation.create_action'|trans }}</a></div>
             {% endif %}
         </div>
         <div class="card-body border-bottom">
-            <form method="get" class="row g-2">
+            <form method="get" class="row g-2 gp-workflow--quotation__filters">
                 <div class="col-auto">
                     <select class="form-select" name="status">
                         <option value="">{{ 'quotation.all_statuses'|trans }}</option>
@@ -23,31 +23,36 @@
                 <div class="col-auto"><button class="btn btn-secondary" type="submit">{{ 'filter'|trans }}</button></div>
             </form>
         </div>
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table">
-                <thead><tr><th>#</th><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
-                <tbody>
-                {% for quotation in quotations %}
-                    {% set quotation_row_url = is_granted('edit_quotation', quotation) ? path('quotation_edit', {id: quotation.id}) : path('quotation_view', {id: quotation.id}) %}
-                    <tr class="alternative-link cursor-pointer" data-href="{{ quotation_row_url }}">
-                        <td>
-                            {% if is_granted('edit_quotation', quotation) %}
-                                <a href="{{ path('quotation_edit', {id: quotation.id}) }}">#{{ quotation.id }}</a>
-                            {% else %}
-                                <a href="{{ path('quotation_view', {id: quotation.id}) }}">#{{ quotation.id }}</a>
-                            {% endif %}
-                        </td>
-                        <td>{{ quotation.customer.name }}</td>
-                        <td>{{ quotation.project ? quotation.project.name : '-' }}</td>
-                        <td>{{ quotation.createdAt|date('Y-m-d') }}</td>
-                        <td>{{ ('quotation.status.' ~ quotation.status)|trans }}</td>
-                        <td class="text-end">{{ actions.quotation(quotation, 'index') }}</td>
-                    </tr>
-                {% else %}
-                    <tr><td colspan="6">{{ 'quotation.none_found'|trans }}</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% if quotations is empty %}
+            <div class="card-body gp-workflow__empty-state gp-workflow-state gp-workflow-state--empty">
+                {{ 'quotation.none_found'|trans }}
+            </div>
+        {% else %}
+            <div class="table-responsive gp-workflow__table-scroll gp-workflow--quotation__table-scroll">
+                <table class="table table-vcenter card-table gp-workflow__table">
+                    <thead><tr><th>#</th><th>{{ 'customer'|trans }}</th><th>{{ 'project'|trans }}</th><th>{{ 'created_at'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for quotation in quotations %}
+                        {% set can_edit = is_granted('edit_quotation', quotation) %}
+                        {% set quotation_row_url = can_edit ? path('quotation_edit', {id: quotation.id}) : path('quotation_view', {id: quotation.id}) %}
+                        <tr class="alternative-link cursor-pointer gp-workflow--quotation__row" data-href="{{ quotation_row_url }}" data-gp-row-link tabindex="0" role="link" aria-label="{{ (can_edit ? 'quotation.edit_title' : 'quotation.view_title')|trans }} #{{ quotation.id }}">
+                            <td>
+                                {% if can_edit %}
+                                    <a href="{{ path('quotation_edit', {id: quotation.id}) }}">#{{ quotation.id }}</a>
+                                {% else %}
+                                    <a href="{{ path('quotation_view', {id: quotation.id}) }}">#{{ quotation.id }}</a>
+                                {% endif %}
+                            </td>
+                            <td>{{ quotation.customer.name }}</td>
+                            <td>{{ quotation.project ? quotation.project.name : '-' }}</td>
+                            <td>{{ quotation.createdAt|date('Y-m-d') }}</td>
+                            <td><span class="gp-workflow__status gp-workflow--quotation__status">{{ ('quotation.status.' ~ quotation.status)|trans }}</span></td>
+                            <td class="text-end">{{ actions.quotation(quotation, 'index') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

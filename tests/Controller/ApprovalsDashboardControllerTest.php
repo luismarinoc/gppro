@@ -245,9 +245,11 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
 
         $em->clear();
 
-        $this->request($client, '/approvals/');
+        $crawler = $this->request($client, '/approvals/');
 
         self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--approvals'));
+        self::assertCount(3, $crawler->filter('.gp-workflow--approvals__section[data-gp-approval-domain]'));
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString((string) $expense->getDescription(), $content);
         self::assertStringContainsString((string) $invoice->getInvoiceNumber(), $content);
@@ -273,12 +275,14 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
 
         $em->clear();
 
-        $this->request($client, '/approvals/');
+        $crawler = $this->request($client, '/approvals/');
 
         self::assertTrue($client->getResponse()->isSuccessful());
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString((string) $timesheet->getId(), $content);
         self::assertStringNotContainsString('inv-dashboard-', $content, 'No Invoice rows must appear when nothing is pending for this user in that domain.');
+        self::assertCount(1, $crawler->filter('.gp-workflow--approvals__section[data-gp-approval-domain="expense"] .gp-workflow-state--empty'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--approvals__section[data-gp-approval-domain="invoice"] .gp-workflow-state--empty'));
     }
 
     /**
@@ -289,9 +293,11 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
 
-        $this->request($client, '/approvals/');
+        $crawler = $this->request($client, '/approvals/');
 
         self::assertTrue($client->getResponse()->isSuccessful());
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--approvals'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--approvals__state.gp-workflow-state--empty'));
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('You have no pending approvals', $content);
     }
@@ -380,6 +386,9 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
 
         $admin = $this->loadUserFromDatabase(UserFixtures::USERNAME_ADMIN);
 
+        [, $expenseProject] = $this->createCustomerAndProject('-navigation-only');
+        $expense = $this->createPendingExpense($expenseProject, $admin);
+
         $invoiceCustomer = $this->createInvoiceCustomer();
         $invoice = $this->createPendingInvoice($invoiceCustomer, $admin);
         $invoiceId = $invoice->getId();
@@ -394,11 +403,16 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
         // Navigates to Invoice's own payment-approval screen (where the
         // approve/reject buttons actually live, per task 2.10), not an
         // inline action on this page.
-        self::assertGreaterThan(
-            0,
-            $crawler->filter('a[href="' . $this->createUrl('/invoice/edit/' . $invoiceId) . '"]')->count(),
-            'Dashboard must link the Invoice row to its own edit/approve screen.'
-        );
+        $expenseReviewLink = $crawler->filter('[data-gp-approval-domain="expense"] a[aria-label]');
+        self::assertCount(1, $expenseReviewLink, 'Dashboard must render one descriptively named native expense review link.');
+        self::assertStringContainsString((string) $expense->getDescription(), (string) $expenseReviewLink->attr('aria-label'));
+
+        $invoiceReviewLink = $crawler->filter('[data-gp-approval-domain="invoice"] a[href="' . $this->createUrl('/invoice/edit/' . $invoiceId) . '"][aria-label]');
+        self::assertCount(1, $invoiceReviewLink, 'Dashboard must render one descriptively named native invoice review link.');
+        self::assertStringContainsString((string) $invoice->getInvoiceNumber(), (string) $invoiceReviewLink->attr('aria-label'));
+
+        self::assertCount(0, $crawler->filter('[data-gp-approval-domain="expense"] form'), 'Expense remains navigation-only on the dashboard.');
+        self::assertCount(0, $crawler->filter('[data-gp-approval-domain="invoice"] form'), 'Invoice remains navigation-only on the dashboard.');
 
         $content = (string) $client->getResponse()->getContent();
         self::assertStringNotContainsString('approve-payment', $content, 'The dashboard must not render a form posting to the Invoice approve-payment write endpoint.');
@@ -441,10 +455,13 @@ class ApprovalsDashboardControllerTest extends AbstractControllerBaseTestCase
 
         $approveForm = $crawler->filter('form[action="' . $this->createUrl('/team/timesheet/' . $timesheetId . '/approve') . '"]');
         self::assertGreaterThan(0, $approveForm->count(), 'Dashboard must render a form posting to this timesheet\'s own approve endpoint.');
+        self::assertSame('post', $approveForm->attr('method'), 'The approve form must retain its POST method.');
         self::assertGreaterThan(0, $approveForm->filter('input[name="_token"]')->count(), 'The approve form must carry a CSRF token.');
 
         $rejectForm = $crawler->filter('form[action="' . $this->createUrl('/team/timesheet/' . $timesheetId . '/reject') . '"]');
         self::assertGreaterThan(0, $rejectForm->count(), 'Dashboard must render a form posting to this timesheet\'s own reject endpoint.');
+        self::assertSame('post', $rejectForm->attr('method'), 'The reject form must retain its POST method.');
+        self::assertGreaterThan(0, $rejectForm->filter('input[name="_token"]')->count(), 'The reject form must carry a CSRF token.');
     }
 
     /**

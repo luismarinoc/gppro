@@ -1,0 +1,91 @@
+schema: spec-driven
+strict_tdd: true
+context: |
+  GPPro is a professional time-tracking, invoicing, and financial workflow product based on Kimai.
+  Runtime: PHP 8.2+ on Symfony 6.4 with Doctrine ORM and MariaDB/MySQL.
+  Backend and presentation: Symfony services/controllers, Doctrine entities/repositories/migrations, Twig templates, and translations.
+  Frontend: Bootstrap 5 with Tabler, Sass, and Webpack Encore; dependencies are managed with pnpm.
+  Testing: PHPUnit 10 with Symfony's PHPUnit bridge and DAMA Doctrine transaction support; unit and database-backed integration groups are available.
+  Quality: PHP-CS-Fixer for style, PHPStan level 9 for src and test scopes, Symfony/Twig/YAML/XLIFF/schema linting, and frontend ESLint/build checks.
+  Architecture: keep business logic out of controllers, prefer services, preserve upgrade compatibility, and accompany Doctrine schema changes with migrations.
+  Scope constraints: do not modify generated or runtime-managed vendor, cache, data, log, public build/bundle, or plugin content unless explicitly requested.
+  SDD: preserve existing OpenSpec specs and changes, use strict RED-GREEN-TRIANGULATE-REFACTOR evidence, and protect a 400 changed-line review budget with ask-on-risk delivery.
+rules:
+  proposal:
+    require_problem_statement: true
+    require_scope_and_non_goals: true
+  spec:
+    require_acceptance_criteria: true
+  design:
+    require_tradeoffs: true
+    preserve_backward_compatibility: true
+  tasks:
+    protect_review_workload: true
+    review_budget_lines: 400
+    delivery_strategy: "ask-on-risk"
+  apply:
+    test_command: "composer tests-unit"
+    require_strict_tdd_evidence: true
+    do_not_modify_generated_files: true
+  verify:
+    test_command: "composer tests-unit"
+    build_command: "pnpm build"
+    coverage_threshold: 0
+    require_scope_appropriate_validation: true
+  archive:
+    warn_before_destructive_deltas: true
+testing:
+  detected: "2026-09-07"
+  runner:
+    command: "composer tests-unit"
+    framework: "PHPUnit 10 with Symfony PHPUnit Bridge"
+  layers:
+    unit: "PHPUnit tests excluding the integration group"
+    integration: "PHPUnit integration group with Doctrine and a test database"
+    e2e: ""
+  commands:
+    unit:
+      - scope: "tests/"
+        command: "composer tests-unit"
+        framework: "PHPUnit 10"
+      - scope: "focused test file"
+        command: "vendor/bin/phpunit tests/<directory>/<TestClassName>.php"
+        framework: "PHPUnit 10"
+    integration:
+      - scope: "tests/ integration group"
+        command: "composer tests-integration"
+        framework: "PHPUnit 10 with DAMA DoctrineTestBundle"
+      - scope: "all tests"
+        command: "composer tests"
+        framework: "PHPUnit 10"
+    e2e: []
+  coverage:
+    command: ""
+    commands: []
+quality:
+  lint: "composer linting"
+  lint_commands:
+    - scope: "Symfony container, YAML, Twig, Doctrine schema, and XLIFF"
+      command: "composer linting"
+      framework: "Symfony console linters"
+    - scope: "assets/js/"
+      command: "pnpm lint"
+      framework: "ESLint"
+  typecheck: "./phpstan.sh core"
+  typecheck_commands:
+    - scope: "src/"
+      command: "./phpstan.sh core"
+      framework: "PHPStan level 9"
+    - scope: "tests/"
+      command: "./phpstan.sh test"
+      framework: "PHPStan"
+  format: "./php-cs-fixer.sh core"
+  format_commands:
+    - scope: "core PHP"
+      command: "./php-cs-fixer.sh core"
+      framework: "PHP-CS-Fixer"
+  build: "pnpm build"
+  build_commands:
+    - scope: "frontend assets"
+      command: "pnpm build"
+      framework: "Webpack Encore"
