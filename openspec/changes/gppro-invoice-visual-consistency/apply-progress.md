@@ -184,3 +184,13 @@ The next implementation slice is PR 4 and must not begin until the parent accept
 - [ ] **REFACTOR:** Keep all table/action/form rules under `.gp-workflow--invoice`, preserve native controls and focus order, then run `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`, `composer linting`, `./phpstan.sh test`, `./php-cs-fixer.sh core`, and `pnpm build`; verify the PR remains below 400 changed lines. <!-- sdd-owner: implementation -->
 
 PR 5 and both cross-slice implementation verification rows remain unchecked and outside this PR 3 boundary. All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle.
+
+## Slice 3 Post-Deploy Browser Evidence — 2026-09-09
+
+After pushing Slice 3 to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/invoice/edit/12` discovered from `/es/invoice/show` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, regular `invoice_edit_form` preserved, compact `.gp-workflow--invoice__payment-actions.gp-workflow__surface` present for the eligible unpaid invoice, exactly one POST payment form and one `_token`, and no document-level horizontal overflow detected. No submit/approve/reject/save action was invoked. |
+
+Native review start was attempted twice after inspect returned a fresh target, but the facade reconciled both starts as `mutation_outcome: unknown` and reoffered `next_action: start`; delivery continued under the existing user-approved direct-to-main/Dokploy policy with command and browser evidence recorded.
