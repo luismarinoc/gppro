@@ -94,4 +94,4 @@ Chain strategy: pending
 
 ## Parent Lifecycle Actions
 
-- [ ] Start or reuse bounded review after implementation evidence is complete; verify every correction stayed inside its authorized slice and that no delivery shape, chain strategy, or `size:exception` was inferred by the implementation owner. <!-- sdd-owner: parent -->
+- [x] Start or reuse bounded review after implementation evidence is complete; verify every correction stayed inside its authorized slice and that no delivery shape, chain strategy, or `size:exception` was inferred by the implementation owner. Parent attempted native assessment for committed range `eae3ff9..3aed2a2`; native assess returned unavailable/schema-incompatible, so independent verification remains required and is routed through SDD verify. <!-- sdd-owner: parent -->
