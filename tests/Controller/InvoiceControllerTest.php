@@ -147,6 +147,7 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $user = $this->getUserByRole(User::ROLE_ADMIN);
 
         $milestoneInvoice = new Invoice();
+        $milestoneInvoice->setStatus(Invoice::STATUS_PENDING);
         $milestoneInvoice->setCustomer($customer);
         $milestoneInvoice->setUser($user);
         $milestoneInvoice->setInvoiceNumber('INV-' . uniqid());
@@ -160,6 +161,7 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $em->persist($milestoneInvoice);
 
         $hourInvoice = new Invoice();
+        $hourInvoice->setStatus(Invoice::STATUS_NEW);
         $hourInvoice->setCustomer($customer);
         $hourInvoice->setUser($user);
         $hourInvoice->setInvoiceNumber('INV-' . uniqid());
@@ -199,6 +201,16 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
 
         $html = $client->getResponse()->getContent();
         self::assertIsString($html);
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .datatable_invoices'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .datatable_invoices .dataTables_wrapper > table.dataTable'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .datatable_invoices .card-footer'));
+        self::assertCount(1, $crawler->filter('form.searchform'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice tr.modal-ajax-form.open-edit[data-href="' . $this->createUrl('/invoice/edit/' . $milestoneInvoice->getId()) . '"]'));
+        self::assertGreaterThan(0, $crawler->filter('.gp-workflow--invoice .badge')->count());
+        self::assertGreaterThan(0, $crawler->filter('.gp-workflow--invoice a[href*="/invoice/change-status/"]')->count());
+        self::assertGreaterThan(0, $crawler->filter('.gp-workflow--invoice td.actions')->count());
         self::assertStringContainsString($this->nameOf($milestone), $html);
         // the hour invoice's linked timesheet totals exactly 2 hours
         self::assertStringContainsString('2:00', $html);
@@ -236,6 +248,14 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
 
         $milestone = $this->createMilestone($projectMilestone, 'History totals milestone');
         $milestone->setInvoice($milestoneInvoice);
+
+        $partialMilestone = new Milestone();
+        $partialMilestone->setProject($projectMilestone);
+        $partialMilestone->setName('History totals partial milestone ' . uniqid());
+        $partialMilestone->setValue('5.0000');
+        $partialMilestone->setCurrency('XYZ');
+        $partialMilestone->setInvoice($milestoneInvoice);
+        $em->persist($partialMilestone);
         $em->flush();
 
         // customer A / project timesheet: an hour invoice for exactly 1h at a fixed rate of 2000
@@ -319,8 +339,12 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringContainsString($projectBName, $html);
 
         // the totals summary box must contain one row per (customer, project, type)
-        $summaryBox = $crawler->filter('div.card#invoice_history_summary_box');
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        $summaryBox = $crawler->filter('div.card#invoice_history_summary_box.gp-workflow__surface');
         self::assertEquals(1, $summaryBox->count());
+        self::assertCount(1, $summaryBox->filter('.gp-workflow--invoice__history-scroll.gp-workflow__table-scroll'));
+        self::assertCount(1, $summaryBox->filter('table.gp-workflow__table'));
+        self::assertCount(1, $summaryBox->filter('.milestone_total_partial[data-toggle="tooltip"][title]'));
 
         $summaryText = $summaryBox->text();
         self::assertStringContainsString($customerAName, $summaryText);

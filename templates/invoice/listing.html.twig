@@ -3,6 +3,8 @@
 {% import "macros/datatables.html.twig" as tables %}
 {% import "invoice/actions.html.twig" as actions %}
 
+{% block page_class %}gp-workflow gp-workflow--invoice{% endblock %}
+
 {% block datatable_row %}
     <tr class="modal-ajax-form open-edit{% if entry.canceled %} text-body-secondary{% endif %}" data-href="{{ path('admin_invoice_edit', {'id': entry.id}) }}">
         <td class="{{ tables.class(dataTable, 'avatar') }}">{{ widgets.user_avatar(entry.user) }}</td>
@@ -49,10 +51,11 @@
         {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
             {% block box_title %}{{ 'invoice.history_totals'|trans }}{% endblock %}
             {% block box_attributes %}id="invoice_history_summary_box"{% endblock %}
+            {% block box_class %}gp-workflow__section gp-workflow__surface{% endblock %}
             {% block box_body_class %}p-0{% endblock %}
             {% block box_body %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-responsive gp-workflow__table-scroll gp-workflow--invoice__history-scroll">
+                    <table class="table table-hover gp-workflow__table">
                         <thead>
                             <tr>
                                 <th>{{ 'customer'|trans }}</th>

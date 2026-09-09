@@ -132,6 +132,30 @@
     }
 }
 
+.gp-workflow--invoice {
+    .datatable_invoices {
+background-color: var(--gp-surface);
+border-color: var(--gp-line);
+border-radius: var(--gp-radius-surface);
+box-shadow: var(--gp-shadow-surface);
+    }
+
+    .datatable_invoices .card-body {
+min-width: 0;
+overflow-x: auto;
+    }
+
+    .datatable_invoices .dataTables_wrapper {
+min-width: max-content;
+    }
+
+    .datatable_invoices .dataTable {
+--tblr-table-border-color: var(--gp-line);
+--tblr-table-color: var(--gp-ink);
+margin-bottom: 0;
+    }
+}
+
 .gp-workflow--expense {
     &__row {
         transition: background-color .18s ease-out;
