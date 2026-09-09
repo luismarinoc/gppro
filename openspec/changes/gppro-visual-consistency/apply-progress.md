@@ -364,3 +364,34 @@ The browser matrix therefore remains blocked until the current candidate is eith
 ### Remaining Browser Requirement
 
 To close the browser evidence requirement, run the current candidate — not the older deployed site — behind an authenticated URL and repeat the same matrix for expense, quotation, and approvals in 360px/768px/1024px widths, light/dark theme, keyboard-only traversal, reduced motion, row Enter/Space behavior, nested-control protection, and async advisory lookup states.
+
+## Post-Deploy Authenticated Browser Evidence — 2026-09-09
+
+After the maintainer confirmed Dokploy deployment from `origin/main`, the parent reran authenticated Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` test credentials without printing secrets.
+
+### Deployed Candidate Evidence
+
+| Check | Result |
+| --- | --- |
+| Login | PASS — authenticated and redirected to `/es/timesheet/` |
+| Candidate selectors deployed | PASS — `.gp-workflow` roots detected on all 54 sampled page/theme/viewport passes |
+| Authenticated routes sampled | PASS — `/es/expense/`, `/es/expense/pending`, `/es/expense/create`, `/es/quotation/`, `/es/quotation/create`, `/es/approvals/` |
+| Viewports sampled | PASS — 360px, 768px, 1024px |
+| Theme coverage | PASS — default light plus forced dark `data-bs-theme` pass |
+| Reduced motion | PASS — `prefers-reduced-motion: reduce` emulated |
+| Login redirects | PASS — no sampled route redirected to login |
+| Row keyboard Enter | PASS — focused expense row navigated to `/es/expense/12`; focused quotation row navigated to `/es/quotation/5/edit` |
+| Row keyboard Space | PASS — Space did not navigate focused expense or quotation rows |
+| Nested interactive protection | PASS — sampled rows reported nested interactive controls protected in the DOM-level check |
+| Page-level horizontal overflow | Follow-up inspection PASS for the 360px dark expense page: `documentElement.scrollWidth` and `body.scrollWidth` stayed at 360px; wide table content is confined to local table scrolling. The first broad report listed two expense-index labels as overflow-like because table descendants extend inside their local scroll container, not because the page itself scrolls horizontally. |
+
+### Evidence Files
+
+- Browser matrix report: `/var/folders/8m/r2yz6vdj28n5b7vv7c7j11080000gn/T/gppro-browser-evidence-joVOa6/report.json`
+- Keyboard report: `/tmp/gppro-keyboard-report.json`
+- Combined evidence digest: `sha256:7d9301654a16d08de45eca0a3f279fbe3a22cc6b028bd6f778ed63229d115205`
+- Deployed app script observed by keyboard check: `/build/app.60915c64.js`
+
+### Remaining External Gate
+
+`composer linting` remains blocked by the pre-existing Doctrine mapping issue: `TimesheetApproval#timesheet` references missing inverse `Timesheet#approvals`. This change did not edit `src/` entities or mappings, so the deployed browser evidence closes the candidate UI/browser gap but not that repository-wide lint blocker.
