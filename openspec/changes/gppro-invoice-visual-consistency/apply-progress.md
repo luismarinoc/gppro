@@ -53,3 +53,13 @@ The next exact unchecked implementation slice is PR 2; it must not start until p
 - [ ] **REFACTOR:** Deduplicate only invoice-scoped layout declarations, retain dense information and native keyboard order, then run `vendor/bin/phpunit tests/Controller/InvoiceControllerTest.php`, `composer linting`, `./phpstan.sh test`, `./php-cs-fixer.sh core`, and `pnpm build`; measure the PR and split before 360 changed lines rather than exceed 400. <!-- sdd-owner: implementation -->
 
 PR 3–5 and the two cross-slice implementation gates remain unchecked in `tasks.md` and are outside this accepted PR 1 boundary.
+
+## Slice 1 Post-Deploy Browser Evidence — 2026-09-09
+
+After pushing Slice 1 to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/invoice/show` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, `#invoice_history_summary_box` present, local `.gp-workflow__table-scroll` present, modal edit links `.modal-ajax-form.open-edit` preserved, and no document-level horizontal overflow detected. |
+
+The route served the deployed Slice 1 archive/listing/history candidate. This evidence is read-only and did not invoke invoice save/status/payment actions.
