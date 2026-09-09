@@ -45,12 +45,13 @@
 {% endblock %}
 
 {% block main %}
-
+    <div class="gp-workflow gp-workflow--invoice">
+        <section class="gp-workflow__section gp-workflow--invoice__filter gp-workflow__surface">
     {% embed '@theme/embeds/card.html.twig' %}
         {% import "macros/search.html.twig" as search %}
         {% form_theme form 'form/horizontal.html.twig' %}
         {% block box_title %}{{ 'invoice.filter'|trans }}{% endblock %}
-        {% block box_before %}{{ form_start(form) }}{% endblock %}
+        {% block box_before %}{{ form_start(form, {'attr': {'class': 'gp-workflow__form'}}) }}{% endblock %}
         {% block box_body %}
             {{ form_errors(form) }}
             {{ form_row(form.invoiceType, {'row_attr': {'class': 'mb-3 invoice_search_form_row_invoiceType'}}) }}
@@ -87,20 +88,29 @@
             {{ search.searchButton(form) }}
         {% endblock %}
         {% block box_after %}{{ form_end(form) }}{% endblock %}
-    {% endembed %}
+        {% endembed %}
+        </section>
 
-    {% if is_milestone_mode %}
-        {% if milestone_customer is null %}
-            {{ widgets.nothing_found() }}
-        {% else %}
-            {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+        {% if is_milestone_mode %}
+
+            {% if milestone_customer is null %}
+                <div class="gp-workflow-state gp-workflow-state--empty">
+                    {{ widgets.nothing_found() }}
+                </div>
+            {% else %}
+                <section class="gp-workflow__section gp-workflow--invoice__preview">
+                {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+
                 {% import "macros/widgets.html.twig" as widgets %}
                 {% import "macros/datatables.html.twig" as tables %}
                 {% block box_title %}{{ 'preview'|trans }}{% endblock %}
                 {% block box_body %}
-                    {% if milestones is empty %}
-                        {{ widgets.nothing_found() }}
-                    {% else %}
+                        {% if milestones is empty %}
+                            <div class="gp-workflow-state gp-workflow-state--empty">
+                                {{ widgets.nothing_found() }}
+                            </div>
+                        {% else %}
+
                         {% set milestoneColumns = {
                             'id': {'class': 'alwaysVisible multiCheckbox', 'orderBy': false, 'title': false, 'batchUpdate': true},
                             'name': {'class': 'alwaysVisible'},
@@ -109,8 +119,10 @@
                             'value': {'class': 'text-end w-min', 'orderBy': false},
                             'currency': {'class': 'd-none text-end w-min', 'orderBy': false},
                         } %}
-                        {{ tables.datatable_header('invoice_milestone', milestoneColumns, null, {'orderBy': false}) }}
-                        {% for milestone in milestones %}
+                            <div class="gp-workflow--invoice__milestone-scroll gp-workflow__table-scroll">
+                            {{ tables.datatable_header('invoice_milestone', milestoneColumns, null, {'orderBy': false}) }}
+                            {% for milestone in milestones %}
+
                             <tr>
                                 <td>{{ tables.datatable_multiupdate_row(milestone.id) }}</td>
                                 <td>{{ milestone.name }}</td>
@@ -120,19 +132,26 @@
                                 <td class="d-none text-end w-min">{{ milestone.currency == 'CLF' ? 'UF' : milestone.currency }}</td>
                             </tr>
                         {% endfor %}
-                        {{ tables.data_table_footer(null, '', milestone_form) }}
-                    {% endif %}
+                            {{ tables.data_table_footer(null, '', milestone_form) }}
+                            </div>
+                        {% endif %}
+
                 {% endblock %}
             {% endembed %}
+            </section>
         {% endif %}
     {% endif %}
 
     {% if showEmpty %}
+        <div class="gp-workflow-state gp-workflow-state--empty">
         {{ widgets.nothing_found() }}
+        </div>
     {% endif %}
 
-    {% if not is_milestone_mode and models|length > 0 %}
-        {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
+        {% if not is_milestone_mode and models|length > 0 %}
+            <section class="gp-workflow__section gp-workflow--invoice__preview">
+            {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
+
             {% import "macros/widgets.html.twig" as widgets %}
             {% import "macros/datatables.html.twig" as tables %}
             {% block box_title %}
@@ -140,7 +159,8 @@
             {% endblock %}
             {% block box_attributes %}id="invoice_customer_forms"{% endblock %}
             {% block box_body %}
-                <table class="table dataTable">
+                <div class="gp-workflow--invoice__preview-scroll gp-workflow__table-scroll">
+                <table class="table dataTable gp-workflow__table">
                     <thead>
                         <tr>
                             <th class="d-sm-table-cell d-none"></th>
@@ -175,12 +195,16 @@
                                 <td class="w-min text-end d-sm-table-cell d-none">
                                     <span title="{{ 'vat'|trans }}: {{ model.calculator.tax|money(currency) }}" data-toggle="tooltip">{{ model.calculator.total|money(currency) }}</span>
                                 </td>
-                                <td class="w-min text-center actions alwaysVisible">
-                                    {% for attrs in [{'class': 'd-inline-flex d-md-none'}, {'icon': false, 'class': 'd-none d-md-inline-flex'}] %}
+                                    <td class="w-min text-center actions alwaysVisible">
+                                        <div class="gp-workflow--invoice__preview-actions gp-workflow__actions">
+                                        {% for attrs in [{'class': 'd-inline-flex d-md-none'}, {'icon': false, 'class': 'd-none d-md-inline-flex'}] %}
+
                                     {{ widgets.action_button('print', {'url': '#', 'onclick': 'return singleInvoice(this, true)', 'title': 'preview'|trans, 'target': '_blank', 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_preview', {'customer': model.customer.id, 'token': csrf_token('invoice.preview')})}}|merge(attrs)) }}
                                     {{ widgets.action_button('invoice', {'url': '#', 'onclick': 'return singleInvoice(this, false)', 'title': 'action.save'|trans, 'attr': {'data-customer': model.customer.id, 'data-href': path('invoice_create', {'customer': model.customer.id, 'token': csrf_token('invoice.create')})}}|merge(attrs), 'primary') }}
-                                    {% endfor %}
-                                </td>
+                                        {% endfor %}
+                                        </div>
+                                    </td>
+
                             </tr>
                             <tr class="d-none">
                                 <td colspan="5" class="p-2">
@@ -193,8 +217,10 @@
                                         {% set entries = model.calculator.entries %}
                                         {% set currency = model.currency %}
                                         {% set itemsAmount = entries|length %}
-                                        {{ tables.datatable_header(tableName, columns, model.query, {'boxClass': ''}) }}
-                                        {% if limit_preview %}
+                                            <div class="gp-workflow--invoice__entry-scroll gp-workflow__table-scroll">
+                                            {{ tables.datatable_header(tableName, columns, model.query, {'boxClass': ''}) }}
+                                            {% if limit_preview %}
+
                                             {% set entries = entries|slice(0, 100) %}
                                         {% endif %}
                                         {% for entry in entries %}
@@ -242,19 +268,25 @@
                                                 <td colspan="8">&raquo; {{ 'preview.skipped_rows'|trans({'%rows%': (itemsAmount - 100)}) }}</td>
                                             </tr>
                                         {% endif %}
-                                        {{ tables.data_table_footer(entries) }}
-                                    {% endif %}
+                                            {{ tables.data_table_footer(entries) }}
+                                            </div>
+                                        {% endif %}
+
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
-                <div style="display: none" id="create-token" data-value="{{ csrf_token('invoice.create') }}"></div>
+                    </table>
+                    </div>
+                    <div style="display: none" id="create-token" data-value="{{ csrf_token('invoice.create') }}"></div>
+
                 <div style="display: none" id="preview-token" data-value="{{ csrf_token('invoice.preview') }}"></div>
             {% endblock %}
         {% endembed %}
+        </section>
 
     {% endif %}
+</div>
 
 {% endblock %}
 

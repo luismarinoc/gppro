@@ -86,6 +86,18 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $this->assertHasNoEntriesWithFilter($client);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow--invoice__filter.gp-workflow__surface'));
+        self::assertCount(1, $crawler->filter('form#invoice-print-form.gp-workflow__form'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_invoiceType'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_daterange'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_customers'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_projects'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_template'));
+        self::assertCount(1, $crawler->filter('.invoice_search_form_row_invoiceDate'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow-state.gp-workflow-state--empty'));
     }
 
     private function createCustomer(): Customer
@@ -393,6 +405,13 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $html = $client->getResponse()->getContent();
         self::assertIsString($html);
         self::assertStringContainsString($this->nameOf($milestone), $html);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow--invoice__preview.gp-workflow__section'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow--invoice__milestone-scroll.gp-workflow__table-scroll'));
+        self::assertStringContainsString('invoice_milestone', $html);
+        $this->assertDataTableRowCount($client, 'datatable_invoice_milestone', 1);
     }
 
     public function testIndexActionMilestoneModeShowsNothingWithoutCustomerSelected(): void
@@ -401,6 +420,10 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
 
         $this->request($client, '/invoice/?invoiceType=milestone');
         self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow-state.gp-workflow-state--empty'));
     }
 
     public function testIndexActionMilestoneModeDeniesUnauthorizedCustomerIdor(): void
@@ -554,6 +577,20 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertEquals(0, $node->count());
         // but the datatable with all timesheets
         $this->assertDataTableRowCount($client, 'datatable_invoice_create', 20);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__preview.gp-workflow__section #invoice_customer_forms'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__preview-scroll.gp-workflow__table-scroll > table.gp-workflow__table'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__entry-scroll.gp-workflow__table-scroll'));
+        self::assertCount(1, $crawler->filter('#customer_1_template'));
+        self::assertCount(1, $crawler->filter('#customer_1_invoiceDate'));
+        self::assertCount(2, $crawler->filter('a[onclick="return singleInvoice(this, true)"][target="_blank"][data-customer="1"][data-href*="/invoice/preview/1/"]'));
+        self::assertCount(2, $crawler->filter('a[onclick="return singleInvoice(this, false)"][data-customer="1"][data-href*="/invoice/save-invoice/1/"]'));
+        self::assertCount(1, $crawler->filter('[onclick*="nextElementSibling.classList.toggle"]'));
+        self::assertCount(1, $crawler->filter('#create-token[data-value]'));
+        self::assertCount(1, $crawler->filter('#preview-token[data-value]'));
+        self::assertGreaterThan(0, $crawler->filter('.gp-workflow--invoice__preview-actions.gp-workflow__actions')->count());
 
         $urlParams = [
             'daterange' => $dateRange,

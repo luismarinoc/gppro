@@ -154,6 +154,28 @@ min-width: max-content;
 --tblr-table-color: var(--gp-ink);
 margin-bottom: 0;
     }
+
+    &__filter,
+    &__preview {
+min-width: 0;
+    }
+
+    &__preview-scroll,
+    &__entry-scroll,
+    &__milestone-scroll {
+max-width: 100%;
+min-width: 0;
+    }
+
+    &__preview-actions {
+justify-content: flex-end;
+    }
+
+    @media (max-width: 575.98px) {
+&__preview-actions {
+align-items: stretch;
+}
+    }
 }
 
 .gp-workflow--expense {
