@@ -1010,6 +1010,67 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         return $invoice;
     }
 
+    public function testInvoiceEditPaymentActionSurfaceRendersSubmitActionInDirectAndModalRequests(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+        $customer = $this->createInvoiceCustomer();
+        $invoice = $this->createNewInvoice($customer, $this->getUserByRole(User::ROLE_ADMIN));
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $direct = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertCount(1, $direct->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $direct->filter('.gp-workflow--invoice__payment-actions.gp-workflow__surface'));
+        $submitForm = $direct->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/submit-payment-approval"]');
+        self::assertCount(1, $submitForm);
+        self::assertCount(1, $submitForm->filter('input[name="_token"]'));
+        self::assertStringContainsString('Submit for payment approval', $submitForm->text());
+        self::assertCount(0, $direct->filter('form[action$="/approve-payment"], form[action$="/reject-payment"]'));
+
+        $client->request('GET', $this->createUrl('/invoice/edit/' . $invoiceId), [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $modal = $client->getCrawler();
+        self::assertCount(1, $modal->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $modal->filter('.gp-workflow--invoice__payment-actions.gp-workflow__surface'));
+        $modalSubmitForm = $modal->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/submit-payment-approval"]');
+        self::assertCount(1, $modalSubmitForm);
+        self::assertCount(1, $modalSubmitForm->filter('input[name="_token"]'));
+        self::assertStringContainsString('Submit for payment approval', $modalSubmitForm->text());
+    }
+
+    public function testInvoiceEditPaymentActionSurfaceRendersPendingActionsOnlyWhilePending(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $customer = $this->createInvoiceCustomer();
+        $invoice = $this->createNewInvoice($customer, $this->getUserByRole(User::ROLE_ADMIN));
+        $invoice->submitForPaymentApproval(1);
+        $this->getEntityManager()->persist($invoice);
+        $this->getEntityManager()->flush();
+        $invoiceId = $invoice->getId();
+        self::assertIsInt($invoiceId);
+
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__payment-actions.gp-workflow__surface'));
+        $approveForm = $crawler->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/approve-payment"]');
+        $rejectForm = $crawler->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/reject-payment"]');
+        self::assertCount(1, $approveForm);
+        self::assertCount(1, $approveForm->filter('input[name="_token"]'));
+        self::assertStringContainsString('Approve payment', $approveForm->text());
+        self::assertCount(1, $rejectForm);
+        self::assertCount(1, $rejectForm->filter('input[name="_token"]'));
+        self::assertStringContainsString('Reject payment', $rejectForm->text());
+        self::assertCount(0, $crawler->filter('form[action$="/submit-payment-approval"]'));
+
+        $client->request('GET', $this->createUrl('/invoice/edit/' . $invoiceId), [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $modal = $client->getCrawler();
+        self::assertCount(1, $modal->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $modal->filter('.gp-workflow--invoice__payment-actions.gp-workflow__surface'));
+        self::assertCount(1, $modal->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/approve-payment"] input[name="_token"]'));
+        self::assertCount(1, $modal->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/reject-payment"] input[name="_token"]'));
+    }
+
     /**
      * Task 2.9: new routes reachable and correctly gated - submit freezes
      * the required levels for an eligible caller.
@@ -1293,6 +1354,11 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         $reloaded = $em->getRepository(Invoice::class)->find($invoiceId);
         self::assertInstanceOf(Invoice::class, $reloaded);
         self::assertTrue($reloaded->isCanceled());
+
+        $crawler = $this->request($client, '/invoice/edit/' . $invoiceId);
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__payment-actions'));
+        self::assertCount(1, $crawler->filter('form.gp-workflow--invoice__payment-form[method="post"][action$="/invoice/' . $invoiceId . '/submit-payment-approval"] input[name="_token"]'));
     }
 
     /**
@@ -1319,11 +1385,23 @@ class InvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $content = (string) $client->getResponse()->getContent();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(0, $crawler->filter('.gp-workflow--invoice__payment-actions'));
+        self::assertStringNotContainsString('payment approval', strtolower($content));
         self::assertStringNotContainsString('Submit for payment approval', $content);
         self::assertStringNotContainsString('Approve payment', $content);
         self::assertStringNotContainsString('Reject payment', $content);
         self::assertCount(0, $crawler->filter('form[action$="/submit-payment-approval"]'));
         self::assertCount(0, $crawler->filter('form[action$="/approve-payment"]'));
         self::assertCount(0, $crawler->filter('form[action$="/reject-payment"]'));
+
+        $client->request('GET', $this->createUrl('/invoice/edit/' . $invoiceId), [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $modal = $client->getCrawler();
+        $modalContent = (string) $client->getResponse()->getContent();
+        self::assertCount(1, $modal->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(0, $modal->filter('.gp-workflow--invoice__payment-actions'));
+        self::assertStringNotContainsString('payment approval', strtolower($modalContent));
+        self::assertCount(0, $modal->filter('form[action$="/submit-payment-approval"], form[action$="/approve-payment"], form[action$="/reject-payment"]'));
     }
 }

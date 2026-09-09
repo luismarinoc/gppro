@@ -130,3 +130,57 @@ After pushing Slice 2 to `origin/main`, the parent waited for Dokploy and ran au
 | `/es/invoice` → `/es/invoice/` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, `#invoice-print-form` present, invoice filter surface present, and no document-level horizontal overflow detected. No save/preview/generation action was invoked. |
 
 The initially probed literal `/es/invoice/` URL can return a web-server 404 in a fresh browser; navigating through `/es/invoice` resolves to the Symfony route and canonical trailing slash.
+
+## Slice 3 — Edit payment action panel
+
+- **Delivery:** auto-chain / stacked-to-main; PR 3 only (`invoice-slice-3-edit-payment-panel`). Parent supplied settlement authority token `sha256:e0a851e92f948baadcdfddb0c64d07568728e57054d79ab7fc53ed75bd50f4d3`; no attempt lifecycle operation was performed here.
+- **Review boundary:** direct/modal invoice-edit payment actions only. Application diff: **143 changed lines** (121 additions, 22 deletions), below the 360-line safety margin and 400-line hard limit.
+- **Structured status consumed:** parent explicitly selected `gppro-invoice-visual-consistency`, Slice 3, with apply ready and repo-local action context rooted at `/Users/luismarinoc/Documents/Dev/tbema/gppro`. All edits remained within the provided allowed surfaces; no action-context warnings.
+- **Evidence revision hash (application patch):** `sha256:98bbefebf0585bf295210d5a1059bc8f685e2ea3ef470200ee5e911583b0afc4`.
+
+### Completed implementation tasks
+
+The following persisted task checkboxes were updated to `- [x]` in `tasks.md`:
+
+1. PR 3 RED
+2. PR 3 GREEN
+3. PR 3 TRIANGULATE
+4. PR 3 REFACTOR
+
+### Files changed
+
+- `templates/invoice/invoice_edit.html.twig` — added one invoice workflow root around the unchanged direct/modal embed and grouped only the existing currently-rendered payment forms in a compact action surface.
+- `assets/sass/_workflow.scss` — added invoice-scoped payment-surface spacing, compact form margins, focus visibility, and narrow-width action layout.
+- `tests/Controller/InvoiceControllerTest.php` — added direct/modal DOM coverage for submit, approve/reject, canceled, and historical-PAID action-surface contracts while retaining the existing outcome/gate tests.
+- `openspec/changes/gppro-invoice-visual-consistency/tasks.md` — marked the four PR 3 implementation tasks complete.
+- `openspec/changes/gppro-invoice-visual-consistency/apply-progress.md` — this cumulative evidence.
+
+### TDD Cycle Evidence
+
+| Task | Test file | Layer | Safety net | RED | GREEN | TRIANGULATE | REFACTOR |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| PR 3 edit payment action panel | `tests/Controller/InvoiceControllerTest.php` | Symfony controller integration | 30 tests / 358 assertions passed | Added direct/modal submit, pending approve/reject, and historical-PAID DOM contracts before Twig/Sass changes. The automatic disposable test-schema reset intermittently failed on stale FK cleanup twice; after recreating only `kimai2_test`, RED ran and failed in the 3 expected missing-root assertions (32 tests / 357 assertions). | Minimum root, surface, and scoped Sass passed: 32 tests / 394 assertions. | Added canceled-state coverage and reran direct/modal plus existing submit, eligible/ineligible approval, reject, PAID gate, PENDING/CANCELED, and historical-paid resave cases: 32 tests / 397 assertions passed. Historical PAID has no panel/forms/language; canceled retains its pre-existing submit action because its unchanged guard remains `paymentApprovalStatus is null and not paid`. | No semantic markup refactor was needed after the minimal implementation. Scoped action/focus/responsive rules were kept under `.gp-workflow--invoice`; focused suite passed: 32 tests / 397 assertions. |
+
+### Verification
+
+- `vendor/bin/phpunit tests/Controller/InvoiceControllerTest.php` — passed, 32 tests / 397 assertions (final focused execution).
+- `APP_DEBUG=1 composer linting` — passed.
+- `./phpstan.sh test` — passed, no errors.
+- `./php-cs-fixer.sh core` — completed with its existing PHP 8.5-versus-8.2 warning and reported an unrelated `tests/Controller/QuotationControllerTest.php` whitespace finding; that out-of-slice formatter change was restored.
+- `pnpm build` — passed with existing upstream Sass deprecation warnings. Generated `public/build/` output was restored/removed and is clean.
+- `git diff --check` — passed.
+
+### Design conformance and risks
+
+No design deviation. The direct/modal form embed selection, permission and state guards, original form classes, POST methods, action routes, per-invoice CSRF token IDs, button translations, redirects, and modal behavior remain unchanged. The action surface is omitted whenever no existing action form is emitted, including historical PAID invoices; no payment-progress, status, eligibility, or retroactive language was introduced. Browser/deployment evidence remains a parent-owned lifecycle gate.
+
+### Remaining tasks and handoff
+
+The next implementation slice is PR 4 and must not begin until the parent accepts, merges, deploys, and records Slice 3 evidence:
+
+- [ ] **RED:** In `tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`, add DOM assertions for invoice workflow roots, list/form surfaces, header/action grouping, local table-scroll hook, and structured empty state using the existing translation; protect create/edit targets, `alternative-link` rows, level-one delete absence, non-base POST delete action, `_token`, CSRF ID, Symfony fields/errors, save, and cancel; run `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php` and record RED. <!-- sdd-owner: implementation -->
+- [ ] **GREEN:** In `templates/invoice_payment_approval_level/index.html.twig`, `templates/invoice_payment_approval_level/edit.html.twig`, and invoice-scoped Sass, add only shared workflow root/surface/header/actions/form/table/empty-state structure; retain ordered raw thresholds, role/user labels, em-dash fallback, authorization boundaries, methods, delete rule, form rendering, validation, flash, and redirect behavior; rerun `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`. <!-- sdd-owner: implementation -->
+- [ ] **TRIANGULATE:** Exercise empty and populated list DOM, super-admin versus admin access, named approver, create/edit validation including non-monotonic threshold rejection, level-one deletion denial, and non-base deletion using the existing suite; run `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`. <!-- sdd-owner: implementation -->
+- [ ] **REFACTOR:** Keep all table/action/form rules under `.gp-workflow--invoice`, preserve native controls and focus order, then run `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`, `composer linting`, `./phpstan.sh test`, `./php-cs-fixer.sh core`, and `pnpm build`; verify the PR remains below 400 changed lines. <!-- sdd-owner: implementation -->
+
+PR 5 and both cross-slice implementation verification rows remain unchecked and outside this PR 3 boundary. All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle.
