@@ -395,3 +395,21 @@ After the maintainer confirmed Dokploy deployment from `origin/main`, the parent
 ### Remaining External Gate
 
 `composer linting` remains blocked by the pre-existing Doctrine mapping issue: `TimesheetApproval#timesheet` references missing inverse `Timesheet#approvals`. This change did not edit `src/` entities or mappings, so the deployed browser evidence closes the candidate UI/browser gap but not that repository-wide lint blocker.
+
+## Final Local Gate After Deployment — 2026-09-09
+
+After deployment evidence was recorded and the deployed candidate was confirmed, the parent reran the final local validation gate from the current repository state.
+
+| Command | Result |
+| --- | --- |
+| `composer tests-unit` | PASS — 3464 tests, 18798 assertions, 4 skipped; existing deprecation notices reported |
+| `vendor/bin/phpunit tests/Controller/ExpenseControllerTest.php tests/Controller/QuotationControllerTest.php tests/Controller/ApprovalsDashboardControllerTest.php` | PASS — 63 tests, 451 assertions |
+| `pnpm lint` | PASS — ESLint no errors |
+| `pnpm build` | PASS — Webpack compiled with existing Sass deprecation warnings |
+| `./phpstan.sh test` | PASS — no errors |
+| `APP_DEBUG=1 composer linting` | PASS — container, YAML, Twig, Doctrine mapping, and XLIFF valid |
+| `composer linting` | FAIL in default prod-cache mode in this Pi workspace only: Doctrine metadata still reports stale `Timesheet#approvals` missing, while PHP reflection and `APP_DEBUG=1` schema validation see the property and pass. No `src/` mapping change was introduced by this SDD change. |
+
+### Final Classification
+
+Implementation, deploy, authenticated browser evidence, focused tests, full unit tests, frontend lint/build, PHPStan test scope, and non-cached linting are complete. The remaining default `composer linting` failure is classified as a stale prod-cache/local-environment artifact in this Pi workspace, not a candidate code failure, because `APP_DEBUG=1 composer linting` validates the same mapping successfully and deployment served the candidate assets.
