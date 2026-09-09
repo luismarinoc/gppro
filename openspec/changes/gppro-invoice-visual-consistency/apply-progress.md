@@ -120,3 +120,13 @@ The next exact unchecked implementation boundary is PR 3; it must not start unti
 - [ ] **REFACTOR:** Restrict all responsive/action/focus rules to `.gp-workflow--invoice`, remove duplicated styling without changing action markup semantics, then run `vendor/bin/phpunit tests/Controller/InvoiceControllerTest.php`, `composer linting`, `./phpstan.sh test`, `./php-cs-fixer.sh core`, and `pnpm build`; keep the diff below 400 changed lines. <!-- sdd-owner: implementation -->
 
 PR 4–5, the two cross-slice implementation gates, and all parent-owned review/deployment/browser/archive actions remain unchecked and are outside this Slice 2 boundary.
+
+## Slice 2 Post-Deploy Browser Evidence — 2026-09-09
+
+After pushing Slice 2 to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/invoice` → `/es/invoice/` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, `#invoice-print-form` present, invoice filter surface present, and no document-level horizontal overflow detected. No save/preview/generation action was invoked. |
+
+The initially probed literal `/es/invoice/` URL can return a web-server 404 in a fresh browser; navigating through `/es/invoice` resolves to the Symfony route and canonical trailing slash.
