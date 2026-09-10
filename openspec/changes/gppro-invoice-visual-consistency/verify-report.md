@@ -4,8 +4,8 @@ evidence_revision: sha256:507ed4fce80b9bbc3b049be4212d762796cea97670ebed467e267f
 verdict: pass_with_warnings
 blockers: 0
 critical_findings: 0
-requirements: 5/5
-scenarios: 20/20
+requirements: 14/14
+scenarios: 23/23
 test_command: vendor/bin/phpunit invoice suites; ./phpstan.sh test; APP_DEBUG=1 composer linting; ./php-cs-fixer.sh core; composer tests-unit
 test_exit_code: 0
 test_output_hash: sha256:1906cbbcf9b7fc7a92c88f6c582a579f0c01493c9cc0654715aa6ff5d02c8bd9
