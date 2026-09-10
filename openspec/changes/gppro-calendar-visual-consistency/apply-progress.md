@@ -71,3 +71,13 @@ The complete delivery diff is **309 changed lines**, including OpenSpec artifact
 - [ ] Before deployment, start or reuse bounded review of the completed diff, confirm only the allowed edit surfaces changed, verify `public/build/` is restored, and require the recorded RED/GREEN/TRIANGULATE/REFACTOR command evidence before lifecycle advancement. <!-- sdd-owner: parent -->
 - [ ] After deployment, collect read-only browser evidence against `https://gppro.tbema.net` at 360px, 768px, and 1024px in light and dark themes: toolbar, events, weekend/today/selection, hover/disabled/focus, sidebar-present/absent layouts, and document-versus-local horizontal overflow; use `.env.local` credentials without printing secrets and do not perform mutating interactions. <!-- sdd-owner: parent -->
 - [ ] If browser evidence exposes a visual or containment defect, return the slice to implementation with the affected viewport/theme/state; if scope grows beyond the forecast, stop for the `ask-on-risk` delivery decision rather than applying an unapproved chain or size exception. <!-- sdd-owner: parent -->
+
+## Post-Deploy Browser Evidence — 2026-09-10
+
+After pushing the implementation to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/calendar/` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--calendar` root, `#calendar-form` preserved, `#timesheet_calendar` preserved inside `.gp-calendar-scroll`, FullCalendar toolbar present, drag source container and draggable item data preserved, and no document-level horizontal overflow detected. No calendar/timesheet mutation was invoked. |
+
+The non-trailing `/es/calendar` path can return a web-server 404; the Symfony calendar route is the canonical trailing-slash path `/es/calendar/`.

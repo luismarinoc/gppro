@@ -53,9 +53,9 @@ Do not edit controllers, JavaScript, routes, permissions, translations, integrat
 
 ## Parent Lifecycle and Browser Evidence Gates
 
-- [ ] Before deployment, start or reuse bounded review of the completed diff, confirm only the allowed edit surfaces changed, verify `public/build/` is restored, and require the recorded RED/GREEN/TRIANGULATE/REFACTOR command evidence before lifecycle advancement. <!-- sdd-owner: parent -->
-- [ ] After deployment, collect read-only browser evidence against `https://gppro.tbema.net` at 360px, 768px, and 1024px in light and dark themes: toolbar, events, weekend/today/selection, hover/disabled/focus, sidebar-present/absent layouts, and document-versus-local horizontal overflow; use `.env.local` credentials without printing secrets and do not perform mutating interactions. <!-- sdd-owner: parent -->
-- [ ] If browser evidence exposes a visual or containment defect, return the slice to implementation with the affected viewport/theme/state; if scope grows beyond the forecast, stop for the `ask-on-risk` delivery decision rather than applying an unapproved chain or size exception. <!-- sdd-owner: parent -->
+- [x] Before deployment, start or reuse bounded review of the completed diff, confirm only the allowed edit surfaces changed, verify `public/build/` is restored, and require the recorded RED/GREEN/TRIANGULATE/REFACTOR command evidence before lifecycle advancement. <!-- sdd-owner: parent -->
+- [x] After deployment, collect read-only browser evidence against `https://gppro.tbema.net` at 360px, 768px, and 1024px in light and dark themes: toolbar, events, weekend/today/selection, hover/disabled/focus, sidebar-present/absent layouts, and document-versus-local horizontal overflow; use `.env.local` credentials without printing secrets and do not perform mutating interactions. <!-- sdd-owner: parent -->
+- [x] If browser evidence exposes a visual or containment defect, return the slice to implementation with the affected viewport/theme/state; if scope grows beyond the forecast, stop for the `ask-on-risk` delivery decision rather than applying an unapproved chain or size exception. <!-- sdd-owner: parent -->
 
 ## Rollback Boundary
 
