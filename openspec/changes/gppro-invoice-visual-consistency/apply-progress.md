@@ -306,3 +306,14 @@ Slice 5 implementation is complete. The following exact implementation rows rema
 - [ ] Run `composer tests-unit` as the final non-destructive regression gate; inspect each PR diff and the complete chain for 400-line compliance, invoice-scoped selectors only, unchanged JS/data/form/CSRF contracts, and absence of prohibited payment-pending/progress/historical-paid language. <!-- sdd-owner: implementation -->
 
 All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle. The next recommendation is `parent-lifecycle` for PR 5 review, merge, deployment, and browser evidence; parent settlement may use the supplied token and application-patch hash above.
+
+## Slice 5 Post-Deploy Browser Evidence — 2026-09-09
+
+After pushing Slice 5 to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/invoice/milestones/` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, chooser surface and local table scroll present, and no document-level horizontal overflow detected. |
+| `/es/invoice/milestones/1` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, selected-customer surface and local table scroll present, existing batch form present, warnings and disabled controls visible, and no document-level horizontal overflow detected. No generation action was invoked. |
+
+The selected customer URL was discovered from the chooser row `data-href`, preserving the existing alternative-link navigation contract.
