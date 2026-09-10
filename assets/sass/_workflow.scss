@@ -180,6 +180,19 @@ min-width: 0;
         margin-bottom: 0 !important;
     }
 
+    &__approval-levels,
+    &__approval-level-form {
+        min-width: 0;
+    }
+
+    &__approval-levels .gp-workflow__table {
+        min-width: 42rem;
+    }
+
+    &__approval-level-form .gp-workflow__actions {
+        margin-top: 1rem;
+    }
+
     &__payment-actions .btn:focus-visible {
         outline: 2px solid var(--gp-focus);
         outline-offset: 2px;

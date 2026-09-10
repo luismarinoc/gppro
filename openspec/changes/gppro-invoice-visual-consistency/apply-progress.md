@@ -194,3 +194,51 @@ After pushing Slice 3 to `origin/main`, the parent waited for Dokploy and ran au
 | `/es/invoice/edit/12` discovered from `/es/invoice/show` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, regular `invoice_edit_form` preserved, compact `.gp-workflow--invoice__payment-actions.gp-workflow__surface` present for the eligible unpaid invoice, exactly one POST payment form and one `_token`, and no document-level horizontal overflow detected. No submit/approve/reject/save action was invoked. |
 
 Native review start was attempted twice after inspect returned a fresh target, but the facade reconciled both starts as `mutation_outcome: unknown` and reoffered `next_action: start`; delivery continued under the existing user-approved direct-to-main/Dokploy policy with command and browser evidence recorded.
+
+## Slice 4 — Payment approval level administration
+
+- **Delivery:** auto-chain / stacked-to-main; PR 4 only (`invoice-slice-4-payment-approval-levels`). Parent supplied settlement authority token `sha256:ec7cd525e1eb6a8a1b94f6f12da82b8eef6b83b37e8040667ecf33ec803a31c6`; no attempt lifecycle operation was performed here.
+- **Review boundary:** approval-level list/form presentation and its controller DOM contracts only. Application diff: **219 changed lines** (179 additions, 40 deletions), below the 360-line safety margin and the 400-line hard limit.
+- **Structured status consumed:** the native OpenSpec status was stale/ambiguous, but the parent explicitly selected `gppro-invoice-visual-consistency`, Slice 4, as apply-ready with repo-local action context rooted at `/Users/luismarinoc/Documents/Dev/tbema/gppro`. All edits remained in the parent-provided allowed surfaces; no action-context warnings.
+- **Evidence revision hash (application patch):** `sha256:49ff0642cddf7a08fb062cbfa918225231d2af297be32221bd80bec778e6e744`.
+
+### Completed implementation tasks
+
+The following persisted task checkboxes were updated to `- [x]` in `tasks.md`:
+
+1. PR 4 RED
+2. PR 4 GREEN
+3. PR 4 TRIANGULATE
+4. PR 4 REFACTOR
+
+### Files changed
+
+- `templates/invoice_payment_approval_level/index.html.twig` — added the invoice workflow root, shared list surface/header/action classes, local table scroll/table hooks, and a contextual existing-copy empty state while retaining raw thresholds, role/user labels, em-dash fallback, edit routes, row links, level-one delete omission, and non-base POST/CSRF delete form.
+- `templates/invoice_payment_approval_level/edit.html.twig` — added the invoice workflow root/surface/header/form/action hierarchy while preserving the generated Symfony form, field names/errors, POST action, save/cancel controls, flashes, and redirects.
+- `assets/sass/_workflow.scss` — added only approval-level sizing, table minimum width, and action spacing below `.gp-workflow--invoice`.
+- `tests/Controller/InvoicePaymentApprovalLevelControllerTest.php` — added DOM and behavior coverage for populated/empty lists, create/edit forms, action targets, row/delete/token contracts, named approvers, empty translation, invalid form errors, and monotonic rejection.
+- `openspec/changes/gppro-invoice-visual-consistency/tasks.md` — marked all four PR 4 implementation tasks complete.
+- `openspec/changes/gppro-invoice-visual-consistency/apply-progress.md` — this cumulative evidence.
+
+### TDD Cycle Evidence
+
+| Task | Test file | Layer | Safety net | RED | GREEN | TRIANGULATE | REFACTOR |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| PR 4 approval-level administration | `tests/Controller/InvoicePaymentApprovalLevelControllerTest.php` | Symfony controller integration | 7 tests / 43 assertions passed | New DOM contracts were added before Twig/Sass changes. The first runner attempt hit the known disposable-schema FK cleanup failure; after recreating only `kimai2_test`, the RED run failed in the expected three missing-root assertions (10 tests / 50 assertions). | Minimum roots, surfaces, table/empty/form/action hooks, and invoice-scoped Sass passed (10 tests / 73 assertions). | Added populated named-approver, empty translated state, create/edit form action, invalid Symfony error, non-monotonic rejection, level-one delete-denial, non-base deletion, and admin/super-admin coverage; final focused suite passed (11 tests / 83 assertions). | No semantic production refactor was needed beyond keeping all approval-level rules inside `.gp-workflow--invoice`; final focused suite passed (11 tests / 83 assertions). |
+
+### Verification
+
+- `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php` — passed, 11 tests / 83 assertions (final focused execution).
+- `APP_DEBUG=1 composer linting` — passed.
+- `./phpstan.sh test` — passed, no errors.
+- `./php-cs-fixer.sh core` — completed with the project PHP 8.5-versus-8.2 warning and reported an unrelated `tests/Controller/QuotationControllerTest.php` whitespace finding; that out-of-slice formatter change was restored.
+- `pnpm build` — passed with existing upstream Sass deprecation warnings. Generated `public/build/` output was restored/removed and is clean.
+- `git diff --check` — passed.
+
+### Design conformance and risks
+
+No design deviation. Authorization, routes, methods, ordered raw thresholds, widgets, em-dash fallback, row links, level-one deletion rule, delete CSRF ID/token, Symfony field names/errors, validation, flashes, save, and redirect behavior remain unchanged. No controller, form, translation, JavaScript, shared macro, generated asset, or runtime-data change was made. The test runner's disposable database schema reset intermittently fails on stale foreign-key cleanup; dropping and recreating only `kimai2_test` recovered each run without touching application data. Browser/deployment/review/merge actions remain parent-owned lifecycle gates.
+
+### Remaining tasks and handoff
+
+PR 5 and both cross-slice implementation verification rows remain unchecked and outside this Slice 4 boundary. All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle. The next recommendation is `parent-lifecycle` for Slice 4 review/merge/deploy/browser evidence; do not start PR 5 until the parent has accepted that lifecycle boundary.

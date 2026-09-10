@@ -14,6 +14,7 @@ use App\Entity\InvoicePaymentApprovalLevel;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\HttpKernelBrowser;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CSRF tokens are always read back from the actually rendered page - see
@@ -40,6 +41,95 @@ class InvoicePaymentApprovalLevelControllerTest extends AbstractControllerBaseTe
     public function testAdminCannotAccessApprovalLevelManagement(): void
     {
         $this->assertUrlIsSecuredForRole(User::ROLE_ADMIN, '/admin/invoice/payment-approval-levels/');
+    }
+
+    public function testApprovalLevelListWorkflowPresentationPreservesPopulatedControls(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $em = $this->getEntityManager();
+        $level1 = $em->getRepository(InvoicePaymentApprovalLevel::class)->findOneBy(['level' => 1]);
+        self::assertInstanceOf(InvoicePaymentApprovalLevel::class, $level1);
+
+        $approver = $this->loadUserFromDatabase(UserFixtures::USERNAME_TEAMLEAD);
+        $level2 = (new InvoicePaymentApprovalLevel())
+            ->setLevel(2)
+            ->setMinAmount(500000)
+            ->setRequiredRole(User::ROLE_ADMIN)
+            ->setApproverUser($approver);
+        $em->persist($level2);
+        $em->flush();
+        $level2Id = $level2->getId();
+        self::assertIsInt($level2Id);
+
+        $crawler = $this->request($client, '/admin/invoice/payment-approval-levels/');
+
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__approval-levels.gp-workflow__surface'));
+        self::assertCount(1, $crawler->filter('.gp-workflow__header'));
+        self::assertCount(1, $crawler->filter('.gp-workflow__actions a[href$="/create"]'));
+        self::assertCount(1, $crawler->filter('.gp-workflow__table-scroll > table.gp-workflow__table'));
+
+        $level2Row = $crawler->filter('tr.alternative-link[data-href$="/' . $level2Id . '/edit"]');
+        self::assertCount(1, $level2Row);
+        self::assertStringContainsString('500000', $level2Row->text());
+        self::assertStringContainsString($approver->getDisplayName(), $level2Row->text());
+        self::assertCount(1, $level2Row->filter('a[href$="/' . $level2Id . '/edit"]'));
+        $deleteForm = $level2Row->filter('form[method="post"][action$="/' . $level2Id . '/delete"]');
+        self::assertCount(1, $deleteForm);
+        self::assertNotSame('', $deleteForm->filter('input[name="_token"]')->attr('value'));
+
+        $level1Row = $crawler->filter('tr.alternative-link[data-href$="/' . $level1->getId() . '/edit"]');
+        self::assertCount(1, $level1Row);
+        self::assertCount(0, $level1Row->filter('form[action$="/delete"]'));
+    }
+
+    public function testApprovalLevelListWorkflowPresentationPreservesEmptyState(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $em = $this->getEntityManager();
+        foreach ($em->getRepository(InvoicePaymentApprovalLevel::class)->findAll() as $level) {
+            $em->remove($level);
+        }
+        $em->flush();
+
+        $crawler = $this->request($client, '/admin/invoice/payment-approval-levels/');
+        $translator = self::getContainer()->get(TranslatorInterface::class);
+        self::assertInstanceOf(TranslatorInterface::class, $translator);
+
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        $emptyState = $crawler->filter('.gp-workflow-state.gp-workflow-state--empty');
+        self::assertCount(1, $emptyState);
+        self::assertSame(
+            $translator->trans('invoice_payment_approval_level.none_found'),
+            trim($emptyState->text())
+        );
+    }
+
+    public function testApprovalLevelFormWorkflowPresentationPreservesSymfonyControls(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $em = $this->getEntityManager();
+        $level = $em->getRepository(InvoicePaymentApprovalLevel::class)->findOneBy(['level' => 1]);
+        self::assertInstanceOf(InvoicePaymentApprovalLevel::class, $level);
+
+        $createCrawler = $this->request($client, '/admin/invoice/payment-approval-levels/create');
+        self::assertCount(1, $createCrawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $createCrawler->filter('form.gp-workflow__form[action$="/create"][method="post"]'));
+
+        $crawler = $this->request($client, '/admin/invoice/payment-approval-levels/' . $level->getId() . '/edit');
+
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__approval-level-form.gp-workflow__surface'));
+        self::assertCount(1, $crawler->filter('.gp-workflow__header'));
+        $form = $crawler->filter('form.gp-workflow__form[action$="/' . $level->getId() . '/edit"][method="post"]');
+        self::assertCount(1, $form);
+        self::assertCount(1, $form->filter('input[name="invoice_payment_approval_level_form[level]"]'));
+        self::assertCount(1, $form->filter('input[name="invoice_payment_approval_level_form[minAmount]"]'));
+        self::assertCount(1, $form->filter('[name="invoice_payment_approval_level_form[requiredRole]"]'));
+        self::assertCount(1, $form->filter('[name="invoice_payment_approval_level_form[approverUser]"]'));
+        self::assertCount(1, $form->filter('input[name="invoice_payment_approval_level_form[_token]"]'));
+        self::assertCount(1, $form->filter('button[type="submit"]'));
+        self::assertCount(1, $form->filter('a[href$="/admin/invoice/payment-approval-levels/"]'));
     }
 
     public function testSuperAdminCanListAndCreateApprovalLevel(): void
@@ -112,7 +202,7 @@ class InvoicePaymentApprovalLevelControllerTest extends AbstractControllerBaseTe
             '/admin/invoice/payment-approval-levels/create',
             'input[name="invoice_payment_approval_level_form[_token]"]'
         );
-        $this->request($client, '/admin/invoice/payment-approval-levels/create', 'POST', [
+        $crawler = $this->request($client, '/admin/invoice/payment-approval-levels/create', 'POST', [
             'invoice_payment_approval_level_form' => [
                 'level' => '3',
                 'minAmount' => '500000',
@@ -123,8 +213,34 @@ class InvoicePaymentApprovalLevelControllerTest extends AbstractControllerBaseTe
 
         self::assertTrue($client->getResponse()->isSuccessful());
         self::assertFalse($client->getResponse()->isRedirect());
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice form.gp-workflow__form'));
 
         self::assertNull($em->getRepository(InvoicePaymentApprovalLevel::class)->findOneBy(['level' => 3]));
+    }
+
+    public function testInvalidApprovalLevelRetainsSymfonyErrorsInTheWorkflowForm(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_SUPER_ADMIN);
+        $token = $this->extractToken(
+            $client,
+            '/admin/invoice/payment-approval-levels/create',
+            'input[name="invoice_payment_approval_level_form[_token]"]'
+        );
+
+        $crawler = $this->request($client, '/admin/invoice/payment-approval-levels/create', 'POST', [
+            'invoice_payment_approval_level_form' => [
+                'level' => '',
+                'minAmount' => '',
+                'requiredRole' => '',
+                '_token' => $token,
+            ],
+        ]);
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $form = $crawler->filter('form.gp-workflow__form');
+        self::assertCount(1, $form);
+        self::assertGreaterThan(0, $form->filter('.invalid-feedback')->count());
+        self::assertCount(1, $form->filter('input[name="invoice_payment_approval_level_form[_token]"]'));
     }
 
     public function testLastRemainingLevelCannotBeDeleted(): void
