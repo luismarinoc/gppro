@@ -242,3 +242,14 @@ No design deviation. Authorization, routes, methods, ordered raw thresholds, wid
 ### Remaining tasks and handoff
 
 PR 5 and both cross-slice implementation verification rows remain unchecked and outside this Slice 4 boundary. All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle. The next recommendation is `parent-lifecycle` for Slice 4 review/merge/deploy/browser evidence; do not start PR 5 until the parent has accepted that lifecycle boundary.
+
+## Slice 4 Post-Deploy Browser Evidence — 2026-09-09
+
+After pushing Slice 4 to `origin/main`, the parent waited for Dokploy and ran authenticated read-only Chrome/CDP evidence against `https://gppro.tbema.net` using `.env.local` credentials without printing secrets.
+
+| Route | Widths | Themes | Result |
+| --- | --- | --- | --- |
+| `/es/admin/invoice/payment-approval-levels/` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, list surface/header/actions present, local table scroll present, and no document-level horizontal overflow detected. |
+| `/es/admin/invoice/payment-approval-levels/create` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, form surface/header/actions present, Symfony form and `_token` preserved, and no document-level horizontal overflow detected. No form submit/delete action was invoked. |
+
+The non-trailing-slash list URL can return a web-server 404; the Symfony route is the canonical trailing-slash path.
