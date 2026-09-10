@@ -1,34 +1,40 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
-        {% import "macros/widgets.html.twig" as widgets %}
-        {% block box_title %}
-            {{ 'milestone_invoice.title'|trans }}
-        {% endblock %}
-        {% block box_body %}
-            {% if customers is empty %}
-                <div class="comment">{{ 'milestone_invoice.no_customers'|trans }}</div>
-            {% else %}
-                <table class="table table-hover dataTable">
-                    <thead>
-                    <tr>
-                        <th>{{ 'customer'|trans }}</th>
-                        <th class="actions"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for customer in customers %}
-                        <tr>
-                            <td>{{ widgets.label_customer(customer) }}</td>
-                            <td class="actions">
-                                <a href="{{ path('milestone_invoice_index', {'id': customer.id}) }}" class="btn btn-icon">{{ icon('invoice', true) }}</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        {% endblock %}
-    {% endembed %}
+    <div class="gp-workflow gp-workflow--invoice">
+        <div class="gp-workflow__surface gp-workflow--invoice__milestone-customers">
+            {% embed '@theme/embeds/card.html.twig' with {fullsize: true} %}
+                {% import "macros/widgets.html.twig" as widgets %}
+                {% block box_title %}
+                    {{ 'milestone_invoice.title'|trans }}
+                {% endblock %}
+                {% block box_body %}
+                    {% if customers is empty %}
+                        <div class="gp-workflow-state gp-workflow-state--empty comment">{{ 'milestone_invoice.no_customers'|trans }}</div>
+                    {% else %}
+                        <div class="gp-workflow__table-scroll">
+                            <table class="gp-workflow__table table table-hover dataTable">
+                                <thead>
+                                <tr>
+                                    <th>{{ 'customer'|trans }}</th>
+                                    <th class="actions"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for customer in customers %}
+                                    <tr>
+                                        <td>{{ widgets.label_customer(customer) }}</td>
+                                        <td class="actions">
+                                            <a href="{{ path('milestone_invoice_index', {'id': customer.id}) }}" class="btn btn-icon" aria-label="{{ 'milestone_invoice.action.generate'|trans }}">{{ icon('invoice', true) }}</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
 {% endblock %}

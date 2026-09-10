@@ -253,3 +253,56 @@ After pushing Slice 4 to `origin/main`, the parent waited for Dokploy and ran au
 | `/es/admin/invoice/payment-approval-levels/create` | 360px, 768px, 1024px | light, forced dark | PASS — exactly one `.gp-workflow.gp-workflow--invoice` root, form surface/header/actions present, Symfony form and `_token` preserved, and no document-level horizontal overflow detected. No form submit/delete action was invoked. |
 
 The non-trailing-slash list URL can return a web-server 404; the Symfony route is the canonical trailing-slash path.
+
+## Slice 5 — Milestone invoicing
+
+- **Delivery:** auto-chain / stacked-to-main; PR 5 only (`invoice-slice-5-milestone-invoicing`). Parent supplied settlement authority token `sha256:25782ab5a3b31c8a52c9fe67c9ff5c02c866bf5e025d1f48f35f3be9af21d879`; no attempt lifecycle operation was performed here.
+- **Review boundary:** milestone customer chooser and customer-scoped selection presentation only. Application diff: **186 changed lines** (155 additions, 31 deletions), below the 360-line safety margin and 400-line hard limit.
+- **Structured status consumed:** the native OpenSpec status was stale and ambiguous, but the parent explicitly selected `gppro-invoice-visual-consistency`, PR/Slice 5, with repo-local action context rooted at `/Users/luismarinoc/Documents/Dev/tbema/gppro`. All edits remained inside the parent-provided allowed surfaces; no action-context warnings.
+- **Evidence revision hash (application patch):** `sha256:8de5b2fd9176fa7d3e4c16aaedadc2e2816f50eafe85096097aded84b7780a81`.
+
+### Completed implementation tasks
+
+The following persisted task checkboxes were updated to `- [x]` in `tasks.md`:
+
+1. PR 5 RED
+2. PR 5 GREEN
+3. PR 5 TRIANGULATE
+4. PR 5 REFACTOR
+
+### Files changed
+
+- `templates/milestone-invoice/customers.html.twig` — added the invoice workflow root/surface, local table scroll/table hooks, existing-copy empty state, and the translated `milestone_invoice.action.generate` accessible name without changing the customer route.
+- `templates/milestone-invoice/index.html.twig` — added the invoice workflow page root, customer context, selection surface, conditional local table containment/empty state, and retained datatable configuration and generated form ownership.
+- `assets/sass/_workflow.scss` — added only `.gp-workflow--invoice` milestone sizing, table containment, warning emphasis, checkbox focus, and native disabled-control rules using existing semantic tokens.
+- `tests/Controller/MilestoneInvoiceControllerTest.php` — added chooser and selection DOM-contract coverage for roots, surfaces, scroll containment, empty states, accessible name, customer context, reload event, batch form CSV/template/CSRF fields, warning tooltip, and disabled selection; retained generation, filtering, access, IDOR, stale, mixed-customer, and invalid-ID coverage.
+- `openspec/changes/gppro-invoice-visual-consistency/tasks.md` — marked the four Slice 5 implementation tasks complete.
+- `openspec/changes/gppro-invoice-visual-consistency/apply-progress.md` — this cumulative evidence.
+
+### TDD Cycle Evidence
+
+| Task | Test file | Layer | Safety net | RED | GREEN | TRIANGULATE | REFACTOR |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| PR 5 milestone invoicing | `tests/Controller/MilestoneInvoiceControllerTest.php` | Symfony controller integration | 14 tests / 108 assertions passed | Added chooser/selection DOM contracts before Twig/Sass. The first test reset hit a disposable-schema collision; after resetting only `kimai2_test`, the valid RED failed in the three expected missing-workflow-contract assertions (15 tests / 115 assertions). | Minimum roots, surfaces, accessible name, context, conditional scroll/empty wrappers, and scoped CSS passed (15 tests / 131 assertions). | Added the customer-scoped empty-state case; final focused suite passed (16 tests / 136 assertions), including eligible/empty chooser, selected-customer table, no-hours disabled selection, customer filtering/IDOR, invoiceable/convertible filtering, happy path, mixed customer, stale selection, invalid ID, and foreign-customer rejection. | Consolidated only milestone rules under `.gp-workflow--invoice`; preserved native disabled behavior and visible focus. Focused suite passed (16 tests / 136 assertions). |
+
+### Verification
+
+- `vendor/bin/phpunit tests/Controller/MilestoneInvoiceControllerTest.php` — passed, 16 tests / 136 assertions (final).
+- `APP_DEBUG=1 composer linting` — passed.
+- `./phpstan.sh test` — passed, no errors. An initial run correctly flagged new PHPUnit `count()` style; assertions were converted to `assertCount()` before the final pass.
+- `./php-cs-fixer.sh core` — completed with the project PHP 8.5-versus-8.2 warning and touched an unrelated `tests/Controller/QuotationControllerTest.php`; that out-of-slice change was restored. `vendor/bin/php-cs-fixer fix --dry-run --diff tests/Controller/MilestoneInvoiceControllerTest.php` then passed with no violations.
+- `pnpm build` — passed with existing upstream Sass deprecation warnings. Generated `public/build/` output was restored/removed and is clean.
+- `git diff --check` — passed.
+
+### Design conformance and risks
+
+No design deviation. Customer routes/access, `DataTable('milestone_invoice')` output/configuration, reload event, generated `multi_update_table` form, entity CSV, template field, CSRF, warning/checkbox selectors, invoiceable/convertible filtering, and server generation/revalidation behavior remain unchanged. No controller, form, JavaScript, translation, shared macro, generated asset, plugin, or runtime-data change was made. Browser/deployment/review/merge actions remain parent-owned lifecycle gates.
+
+### Remaining tasks and handoff
+
+Slice 5 implementation is complete. The following exact implementation rows remain unchecked and are intentionally deferred to the cross-slice verification boundary:
+
+- [ ] Run `vendor/bin/phpunit tests/Controller/InvoiceControllerTest.php`, `vendor/bin/phpunit tests/Controller/InvoicePaymentApprovalLevelControllerTest.php`, `vendor/bin/phpunit tests/Controller/MilestoneInvoiceControllerTest.php`, `./phpstan.sh test`, `composer linting`, `./php-cs-fixer.sh core`, and `pnpm build`; confirm generated output is not staged and no disallowed edit surface changed. <!-- sdd-owner: implementation -->
+- [ ] Run `composer tests-unit` as the final non-destructive regression gate; inspect each PR diff and the complete chain for 400-line compliance, invoice-scoped selectors only, unchanged JS/data/form/CSRF contracts, and absence of prohibited payment-pending/progress/historical-paid language. <!-- sdd-owner: implementation -->
+
+All parent-owned review, deployment, browser, and archive rows remain byte-for-byte untouched and deferred to parent lifecycle. The next recommendation is `parent-lifecycle` for PR 5 review, merge, deployment, and browser evidence; parent settlement may use the supplied token and application-patch hash above.

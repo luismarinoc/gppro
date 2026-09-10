@@ -204,6 +204,56 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertStringNotContainsString($this->nameOf($alreadyInvoiced), $html);
     }
 
+    public function testIndexActionExposesInvoiceWorkflowAndBatchContracts(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+
+        $customer = $this->createCustomer();
+        $project = $this->createProject($customer);
+        $withoutHours = $this->createMilestone($project, 'No hours yet');
+        $withHours = $this->createMilestone($project, 'Has hours');
+        $this->addBillableHours($withHours, $this->getUserByRole(User::ROLE_TEAMLEAD));
+
+        $this->request($client, '/invoice/milestones/' . $customer->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        $table = $crawler->filter('.datatable_milestone_invoice');
+        $withoutHoursRow = $crawler->filter('table.dataTable tbody tr')->reduce(
+            fn (\Symfony\Component\DomCrawler\Crawler $row): bool => str_contains($row->text(), $this->nameOf($withoutHours))
+        );
+
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow--invoice__milestone-context'));
+        self::assertStringContainsString($customer->getName() ?? '', $crawler->filter('.gp-workflow--invoice__milestone-context')->text());
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__surface'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__table-scroll'));
+        self::assertCount(1, $table);
+        self::assertStringContainsString('gppro.invoiceUpdate', $crawler->filter('.gp-workflow--invoice [data-reload-event]')->attr('data-reload-event') ?? '');
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__surface form[name=multi_update_table]'));
+        self::assertCount(1, $withoutHoursRow->filter('.milestone_no_hours_warning[title]'));
+        self::assertNotEmpty($withoutHoursRow->filter('.milestone_no_hours_warning')->attr('title'));
+        self::assertCount(1, $withoutHoursRow->filter('input.multi_update_single[type=checkbox][disabled]'));
+        self::assertCount(1, $crawler->filter('form[name=multi_update_table] input[name="multi_update_table[entities]"]'));
+        self::assertCount(1, $crawler->filter('form[name=multi_update_table] select[name="multi_update_table[template]"]'));
+        self::assertCount(1, $crawler->filter('form[name=multi_update_table] input[name="multi_update_table[_token]"]'));
+    }
+
+    public function testIndexActionShowsContextualEmptyStateForCustomerWithoutInvoiceableMilestones(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        $customer = $this->createCustomer();
+
+        $this->request($client, '/invoice/milestones/' . $customer->getId());
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice__milestone-context'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__surface .gp-workflow-state.gp-workflow-state--empty'));
+        self::assertNotEmpty($crawler->filter('.gp-workflow-state--empty')->text());
+    }
+
     public function testIndexActionShowsWarningAndDisablesCheckboxForMilestoneWithoutBillableHours(): void
     {
         $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
@@ -310,6 +360,15 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         self::assertNotNull($nameWithoutMilestone);
         self::assertStringContainsString($nameWithMilestone, $table);
         self::assertStringNotContainsString($nameWithoutMilestone, $table);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--invoice'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__surface'));
+        self::assertCount(1, $crawler->filter('.gp-workflow--invoice .gp-workflow__table-scroll .gp-workflow__table'));
+        self::assertSame(
+            'Generate invoice',
+            $crawler->filter('a[href$="/invoice/milestones/' . $customerWithMilestone->getId() . '"]')->attr('aria-label')
+        );
     }
 
     public function testPickCustomerActionShowsEmptyStateWhenNoCustomerHasInvoiceableMilestones(): void
@@ -322,6 +381,7 @@ class MilestoneInvoiceControllerTest extends AbstractControllerBaseTestCase
         $html = $client->getResponse()->getContent();
         self::assertIsString($html);
         self::assertStringContainsString('No customer currently has milestones pending invoicing.', $html);
+        self::assertCount(1, $client->getCrawler()->filter('.gp-workflow.gp-workflow--invoice .gp-workflow-state.gp-workflow-state--empty'));
     }
 
     public function testCreateActionHappyPathGeneratesInvoiceAndMarksMilestonesInvoiced(): void

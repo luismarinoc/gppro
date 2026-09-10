@@ -2,9 +2,31 @@
 {% import "macros/widgets.html.twig" as widgets %}
 {% import "macros/datatables.html.twig" as tables %}
 
+{% block page_class %}gp-workflow gp-workflow--invoice{% endblock %}
+
 {% block main_before %}
     {{ tables.configuration(dataTable) }}
-    <p class="text-body-secondary">{{ customer.name }}</p>
+{% endblock %}
+
+{% block table_actions %}
+    <div class="gp-workflow__actions gp-workflow--invoice__milestone-actions">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="gp-workflow__surface gp-workflow--invoice__milestone-selection">
+        <p class="gp-workflow--invoice__milestone-context text-body-secondary">{{ customer.name }}</p>
+        {% if not dataTable.hasResults() %}
+            <div class="gp-workflow-state gp-workflow-state--empty">
+                {{ parent() }}
+            </div>
+        {% else %}
+            <div class="gp-workflow__table-scroll">
+                {{ parent() }}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block datatable_column_value %}
