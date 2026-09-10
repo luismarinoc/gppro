@@ -35,10 +35,39 @@ class CalendarControllerTest extends AbstractControllerBaseTestCase
         self::assertTrue($client->getResponse()->isSuccessful());
 
         $crawler = $client->getCrawler();
-        $calendar = $crawler->filter('div#timesheet_calendar');
-        self::assertEquals(1, $calendar->count());
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--calendar'));
+        self::assertCount(1, $crawler->filter('.gp-calendar-filter-surface #calendar-form'));
+        self::assertCount(1, $crawler->filter('.gp-calendar-source-surface .external-events'));
+        self::assertCount(1, $crawler->filter('.gp-calendar-scroll > #timesheet_calendar'));
+
         $dragAndDropBoxes = $crawler->filter('div.card-body.drag-and-drop-source');
-        self::assertEquals(1, $dragAndDropBoxes->count());
+        self::assertCount(1, $dragAndDropBoxes);
+        $dragSource = $crawler->filter('.external-events');
+        self::assertNotSame('', $dragSource->attr('data-method'));
+        self::assertNotSame('', $dragSource->attr('data-route'));
+        self::assertNotSame('', $dragSource->attr('data-route-replacer'));
+
+        $dragEntry = $crawler->filter('.external-events .external-event.draggable')->first();
+        self::assertNotSame('', $dragEntry->attr('data-entry'));
+        self::assertIsArray(json_decode(htmlspecialchars_decode((string) $dragEntry->attr('data-entry')), true));
+    }
+
+    public function testCalendarActionWithoutDragAndDropSources(): void
+    {
+        $settings = $this->getDefaultSettings();
+        $settings['calendar']['dragdrop_amount'] = 0;
+        $config = SystemConfigurationFactory::create(new TestConfigLoader([]), $settings);
+
+        $client = $this->getClientForAuthenticatedUser();
+        self::getContainer()->set(SystemConfiguration::class, $config);
+        $this->request($client, '/calendar/');
+        $this->assertSuccessResponse($client);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('.gp-workflow.gp-workflow--calendar'));
+        self::assertCount(1, $crawler->filter('.gp-calendar-filter-surface #calendar-form'));
+        self::assertCount(0, $crawler->filter('.gp-calendar-source-surface'));
+        self::assertCount(1, $crawler->filter('.gp-calendar-scroll > #timesheet_calendar'));
     }
 
     public function testCalendarActionAsSuperAdmin(): void

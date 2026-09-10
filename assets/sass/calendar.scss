@@ -18,3 +18,94 @@
 }
 
 .fc-day-sat, .fc-day-sun { background-color: var(--tblr-bg-surface-secondary); }
+
+.gp-workflow--calendar {
+    .gp-calendar-main,
+    .gp-calendar-sidebar,
+    .gp-calendar-filter-surface,
+    .gp-calendar-source-surface {
+        min-width: 0;
+    }
+
+    .gp-calendar-filter-surface,
+    .gp-calendar-source-surface {
+        margin-bottom: 1rem;
+
+        .card {
+            background-color: var(--gp-surface);
+            border-color: var(--gp-line);
+            border-radius: var(--gp-radius-surface);
+            box-shadow: var(--gp-shadow-surface);
+        }
+    }
+
+    .gp-calendar-scroll {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    #timesheet_calendar {
+        min-width: 42rem;
+
+        .fc-header-toolbar {
+            gap: .5rem;
+        }
+
+        .fc-toolbar-title {
+            color: var(--gp-ink);
+            font-size: 1.125rem;
+        }
+
+        .fc-button {
+            border-radius: var(--gp-radius-control);
+        }
+
+        .fc-button:not(:disabled):hover {
+            background-color: var(--gp-surface-muted);
+            border-color: var(--gp-line);
+        }
+
+        .fc-button:disabled {
+            background-color: var(--gp-surface-muted);
+            border-color: var(--gp-line);
+            color: var(--gp-ink-muted);
+        }
+
+        .fc-button:focus-visible,
+        .fc-event:focus-visible {
+            outline: 2px solid var(--gp-focus);
+            outline-offset: 2px;
+        }
+
+        .fc-event {
+            border-radius: var(--gp-radius-control);
+            box-shadow: var(--gp-shadow-surface);
+        }
+
+        .fc-day-sat,
+        .fc-day-sun {
+            background-color: var(--gp-surface-muted);
+        }
+
+        .fc-day-today,
+        .fc-day-today.fc-day-sat,
+        .fc-day-today.fc-day-sun {
+            background-color: var(--gp-brand-soft);
+        }
+
+        .fc-highlight {
+            background-color: var(--gp-brand-soft);
+        }
+    }
+
+    .external-event:focus-within {
+        outline: 2px solid var(--gp-focus);
+        outline-offset: -2px;
+    }
+
+    @media (max-width: 767.98px) {
+        #timesheet_calendar {
+            min-width: 36rem;
+        }
+    }
+}

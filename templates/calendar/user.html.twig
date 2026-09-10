@@ -2,62 +2,68 @@
 {% import "macros/widgets.html.twig" as widgets %}
 
 {% block main %}
-    <div class="row">
+    <div class="row gp-workflow gp-workflow--calendar">
         {% set hasTwoColumns = (config.dragDropAmount > 0 and dragAndDrop is not empty and (dragAndDrop|filter(s => s.entries|length > 0)|length > 0)) or form is not null %}
         {% if hasTwoColumns %}
-        <div class="col-md-4 col-lg-3 d-none d-md-block order-last">
+        <div class="col-md-4 col-lg-3 d-none d-md-block order-last gp-calendar-sidebar">
             {% if form is not null %}
-                {% embed '@theme/embeds/card.html.twig' %}
-                    {% block box_body %}
-                        {{ form_start(form, {attr: {id: 'calendar-form'}}) }}
-                        {% if form.user is defined %}
-                            {% set user_class = '' %}
-                            {% if form.user.vars.choices|length < 2 %}
-                                {% set user_class = 'd-none' %}
+                <div class="gp-calendar-filter-surface">
+                    {% embed '@theme/embeds/card.html.twig' %}
+                        {% block box_body %}
+                            {{ form_start(form, {attr: {id: 'calendar-form'}}) }}
+                            {% if form.user is defined %}
+                                {% set user_class = '' %}
+                                {% if form.user.vars.choices|length < 2 %}
+                                    {% set user_class = 'd-none' %}
+                                {% endif %}
+                                {{ form_row(form.user, {row_attr: {class: user_class}}) }}
                             {% endif %}
-                            {{ form_row(form.user, {row_attr: {class: user_class}}) }}
-                        {% endif %}
-                        {% if form.date is defined %}
-                            {{ form_row(form.date, {row_attr: {class: 'd-none'}}) }}
-                        {% endif %}
-                        {% if form.view is defined %}
-                            {{ form_row(form.view, {row_attr: {class: 'd-none'}}) }}
-                        {% endif %}
-                        {{ form_rest(form) }}
-                        {{ form_end(form) }}
-                    {% endblock %}
-                {% endembed %}
+                            {% if form.date is defined %}
+                                {{ form_row(form.date, {row_attr: {class: 'd-none'}}) }}
+                            {% endif %}
+                            {% if form.view is defined %}
+                                {{ form_row(form.view, {row_attr: {class: 'd-none'}}) }}
+                            {% endif %}
+                            {{ form_rest(form) }}
+                            {{ form_end(form) }}
+                        {% endblock %}
+                    {% endembed %}
+                </div>
             {% endif %}
             {% for source in dragAndDrop|filter(s => s.entries|length > 0) %}
-                {% embed '@theme/embeds/card.html.twig' %}
-                    {% block box_title %}{{ source.title|trans({}, source.translationDomain) }}{% endblock %}
-                    {% block box_body_class %}drag-and-drop-source p-0{% endblock %}
-                    {% block box_body %}
-                        <div class="list-group list-group-flush external-events" data-method="{{ source.method }}" data-route="{{ path(source.route, source.routeParams) }}" data-route-replacer="{{ source.routeReplacer|json_encode|e('html_attr') }}">
-                            {% for entry in source.entries|slice(0, config.dragDropAmount) %}
-                                <div class="p-2 ps-3 lh-lg list-group-item external-event draggable" data-entry="{{ entry.data|json_encode|e('html_attr') }}"{% if entry.project is not null %} data-toggle="tooltip" title="{{ entry.project.customer.name }}"{% endif %}>
-                                    <div class="row align-items-center">
-                                        <div class="col text-truncate">
-                                            {% if source.blockInclude is not null and entry.blockName is not null and block(entry.blockName, source.blockInclude) is defined %}
-                                                {{ block(entry.blockName, source.blockInclude) }}
-                                            {% else %}
-                                                <span class="d-block text-body-secondary text-truncate">{{ entry.title }}</span>
-                                            {% endif %}
+                <div class="gp-calendar-source-surface">
+                    {% embed '@theme/embeds/card.html.twig' %}
+                        {% block box_title %}{{ source.title|trans({}, source.translationDomain) }}{% endblock %}
+                        {% block box_body_class %}drag-and-drop-source p-0{% endblock %}
+                        {% block box_body %}
+                            <div class="list-group list-group-flush external-events" data-method="{{ source.method }}" data-route="{{ path(source.route, source.routeParams) }}" data-route-replacer="{{ source.routeReplacer|json_encode|e('html_attr') }}">
+                                {% for entry in source.entries|slice(0, config.dragDropAmount) %}
+                                    <div class="p-2 ps-3 lh-lg list-group-item external-event draggable" data-entry="{{ entry.data|json_encode|e('html_attr') }}"{% if entry.project is not null %} data-toggle="tooltip" title="{{ entry.project.customer.name }}"{% endif %}>
+                                        <div class="row align-items-center">
+                                            <div class="col text-truncate">
+                                                {% if source.blockInclude is not null and entry.blockName is not null and block(entry.blockName, source.blockInclude) is defined %}
+                            {{ block(entry.blockName, source.blockInclude) }}
+                                                {% else %}
+                            <span class="d-block text-body-secondary text-truncate">{{ entry.title }}</span>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endblock %}
-                {% endembed %}
+                                {% endfor %}
+                            </div>
+                        {% endblock %}
+                    {% endembed %}
+                </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <div class="col-xs-12 {% if hasTwoColumns %}col-md-8 col-lg-9 col-print-12{% endif %}">
+        <div class="col-xs-12 gp-calendar-main {% if hasTwoColumns %}col-md-8 col-lg-9 col-print-12{% endif %}">
             {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
                 {% block box_body %}
-                    <div id="timesheet_calendar"></div>
+                    <div class="gp-calendar-scroll">
+                        <div id="timesheet_calendar"></div>
+                    </div>
                 {% endblock %}
             {% endembed %}
         </div>
