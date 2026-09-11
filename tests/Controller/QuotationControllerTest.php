@@ -301,7 +301,6 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__header'));
         self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__metadata'));
         self::assertCount(1, $view->filter('.gp-workflow--quotation__table-scroll .gp-workflow__table'));
-
     }
 
     public function testViewAndPdfShowAmountsInClpOnlyForNonClpQuotationsUsingTheValidUntilDate(): void
