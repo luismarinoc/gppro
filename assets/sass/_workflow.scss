@@ -243,6 +243,10 @@ min-width: 0;
 }
 
 .gp-workflow--expense {
+    &__allocations-table {
+        position: relative;
+    }
+
     &__row {
         transition: background-color .18s ease-out;
 
