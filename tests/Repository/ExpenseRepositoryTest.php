@@ -172,6 +172,25 @@ class ExpenseRepositoryTest extends AbstractRepositoryTestCase
         self::assertContains($expense->getId(), $ids);
     }
 
+    public function testFindForListingExcludesAllocationLessExpenseForStranger(): void
+    {
+        $repository = $this->getRepository();
+        $creator = $this->createUser();
+        $stranger = $this->createUser();
+
+        $expense = new Expense();
+        $expense->setDescription('Allocation-less expense ' . uniqid());
+        $expense->setAmount(100000);
+        $expense->setExpenseDate(new \DateTimeImmutable('today'));
+        $expense->setCreatedBy($creator);
+        $repository->saveExpense($expense);
+
+        $results = $repository->findForListing($stranger);
+        $ids = array_map(static fn (Expense $e): ?int => $e->getId(), $results);
+
+        self::assertNotContains($expense->getId(), $ids);
+    }
+
     public function testFindForListingReturnsExpenseOnceDespiteMultipleAllocationsWithPartialTeamMatch(): void
     {
         $repository = $this->getRepository();

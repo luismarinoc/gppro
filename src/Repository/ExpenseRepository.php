@@ -71,7 +71,7 @@ class ExpenseRepository extends EntityRepository
 
         if (empty($teamIds)) {
             $qb->andWhere($qb->expr()->orX(
-                $qb->expr()->andX('SIZE(p.teams) = 0', 'SIZE(c.teams) = 0'),
+                $qb->expr()->andX('p.id IS NOT NULL', 'SIZE(p.teams) = 0', 'SIZE(c.teams) = 0'),
                 $creatorMatch
             ));
             $qb->setParameter('user', $user);
@@ -80,6 +80,7 @@ class ExpenseRepository extends EntityRepository
         }
 
         $teamMatch = $qb->expr()->andX(
+            'p.id IS NOT NULL',
             $qb->expr()->orX('SIZE(p.teams) = 0', $qb->expr()->isMemberOf(':teams', 'p.teams')),
             $qb->expr()->orX('SIZE(c.teams) = 0', $qb->expr()->isMemberOf(':teams', 'c.teams'))
         );
