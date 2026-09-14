@@ -1,0 +1,50 @@
+# Historical later verification at 35580da4a18e6ce5445c542bef6242d52ba73132; execution timestamps not recorded.
+# Portable redaction: <CHECKOUT_ROOT> and <LEDGER_CHECKOUT_ROOT> replace checkout roots.
+# Output hashes cover sanitized output bytes; REPEAT records the original identical-output claim, not a publication rerun.
+# PRE_REDACTION_FILE_SHA256=d6bf5ef0eecfe9d9111c18994cccf264c0eb8fd1fea9d88bd336494f66172b33
+# PRE_REDACTION_ASSERTION_OUTPUT_SHA256=280268f75ee3388cd984c3822802bb2f3ad90aa67fddfb4341dacf7cfb051adc
+HEAD_BEFORE=35580da4a18e6ce5445c542bef6242d52ba73132
+STATUS_BEFORE=' M openspec/changes/gppro-codebase-analysis/verify-report.md\n?? openspec/changes/gppro-codebase-analysis/verification-evidence/\n'
+$ python3 - <<'PY'
+import json, re, subprocess
+from pathlib import Path
+root = Path.cwd()
+base = root / 'openspec/changes/gppro-codebase-analysis'
+ledger = json.loads((root / 'docs/runbooks/codebase-health-baseline/ledger.json').read_text())
+design = (base / 'design.md').read_text()
+backlog = (root / 'docs/runbooks/codebase-health-baseline/backlog.md').read_text()
+assessment = subprocess.check_output(['bash', 'tools/codebase-health-baseline/assess.sh', str(root)], text=True)
+actual = dict(line.split('=', 1) for line in assessment.splitlines())
+required = set(re.search(r'Each check/finding MUST contain:.*?```text(.*?)```', design, re.S).group(1).replace('(nullable)', '').replace('\n', '').replace(' ', '').split(','))
+failures = []
+def check(name, condition, evidence):
+    try:
+        assert condition, evidence
+    except AssertionError as error:
+        failures.append(name)
+        print(f'FAIL {name}: {error}')
+check('checkout-identity', ledger['checkout']['root'] == actual['REPOSITORY_ROOT'] and actual['COMMIT'].startswith(ledger['checkout']['commit']), f"ledger={ledger['checkout']}; assessment={actual['REPOSITORY_ROOT']}@{actual['COMMIT']}")
+for category in ('checks', 'signals'):
+    missing = [(row['id'], sorted(required - row.keys())) for row in ledger[category] if required - row.keys()]
+    check(f'{category}-fields', not missing, f'{len(missing)}/{len(ledger[category])} records incomplete; missing field sets={sorted(set(tuple(fields) for _, fields in missing))}')
+signal = next(row for row in ledger['signals'] if row['id'] == 'runtime-matrix-drift')
+pending = 'owner review is required before compatibility priority' in signal['interpretation'] and '- [ ] Product/operations must confirm reliability-impact tiers and owners before ranking.' in design
+ranked = [row for row in backlog.splitlines() if re.match(r'\| P1 \| CI/runtime matrix', row)]
+check('priority-gate', not (pending and ranked), f"unresolved gate={pending}; ranked rows={ranked}")
+print(f'ASSERTION_FAILURES={len(failures)}')
+raise SystemExit(1 if failures else 0)
+PY
+FAIL checkout-identity: ledger={'root': '<LEDGER_CHECKOUT_ROOT>', 'commit': 'f580368'}; assessment=<CHECKOUT_ROOT>@35580da4a18e6ce5445c542bef6242d52ba73132
+FAIL checks-fields: 8/8 records incomplete; missing field sets=[('follow_up', 'interpretation', 'priority', 'reliability_impact')]
+FAIL signals-fields: 4/4 records incomplete; missing field sets=[('follow_up', 'inputs', 'priority', 'procedure', 'result')]
+FAIL priority-gate: unresolved gate=True; ranked rows=['| P1 | CI/runtime matrix differs across README, Dockerfile, and CI | verified fact | Compatibility can vary across supported deployments | Compare supported PHP/database versions and document one owner-approved matrix; <=400 authored lines |']
+ASSERTION_FAILURES=4
+EXIT=1; OUTPUT_SHA256=sha256:8daf78f5503db91c9fe89b856deadccf52a438c4ef4209d718b7cc25a7a0d665
+REPEAT: identical command/input, exit=1, identical complete output SHA256=sha256:8daf78f5503db91c9fe89b856deadccf52a438c4ef4209d718b7cc25a7a0d665
+$ bash tools/codebase-health-baseline/test-assessment.sh
+Assessment contract tests passed.
+EXIT=0
+$ bash -n tools/codebase-health-baseline/assess.sh tools/codebase-health-baseline/test-assessment.sh
+EXIT=0; OUTPUT_SHA256=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+HEAD_AFTER=35580da4a18e6ce5445c542bef6242d52ba73132
+STATUS_AFTER=' M openspec/changes/gppro-codebase-analysis/verify-report.md\n?? openspec/changes/gppro-codebase-analysis/verification-evidence/\n'

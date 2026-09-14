@@ -1,0 +1,26 @@
+# Historical earlier mixed-checkout record; execution timestamps not recorded. One execution per command is recorded.
+# Portable redaction: <CHECKOUT_ROOT> replaces the personal checkout root; suffixes are retained.
+# output_hash values cover sanitized output bytes; this is not a new execution.
+# PRE_REDACTION_FILE_SHA256=4244591a1f87ae3a77ae3d2ba901cfd48e7c2af2ddd956425f2d96ce9e836f9a
+# PRE_REDACTION_ASSESSMENT_OUTPUT_SHA256=572c4aa8a5f7a1439075c9f398d388a6e81be730de40ec9ba552e9c8ad1a6632
+$ bash tools/codebase-health-baseline/test-assessment.sh
+exit=0; output_hash=sha256:da15fa1c91d145b320495d139bb3414599fb08f54283224d0764dfae457c1b57
+Assessment contract tests passed.
+$ bash -n tools/codebase-health-baseline/assess.sh tools/codebase-health-baseline/test-assessment.sh
+exit=0; output_hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+$ python3 -m json.tool docs/runbooks/codebase-health-baseline/ledger.json >/dev/null
+exit=0; output_hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+$ bash tools/codebase-health-baseline/assess.sh <CHECKOUT_ROOT>
+exit=0; output_hash=sha256:d07c17c5d49b37d9b9008aad99cb280ab17a011f8ab9cbab0f40faead0d1d2f0
+REPOSITORY_ROOT=<CHECKOUT_ROOT>
+COMMIT=35580da4a18e6ce5445c542bef6242d52ba73132
+BASELINE_CLAIM=unavailable
+LEDGER=<CHECKOUT_ROOT>/docs/runbooks/codebase-health-baseline/ledger.json
+REPORT=<CHECKOUT_ROOT>/docs/runbooks/codebase-health-baseline/report.md
+REASON=checks unavailable unless their Docker/dependency prerequisites are present
+$ git diff --check
+exit=0; output_hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+$ command -v docker
+exit=1; output_hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+$ git status --short
+exit=0; output_hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
