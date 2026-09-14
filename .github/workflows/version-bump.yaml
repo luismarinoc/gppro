@@ -29,16 +29,91 @@ jobs:
             -   name: Bump patch version in Constants.php
                 id: bump
                 run: |
-                    CURRENT=$(grep -oP "(?<=VERSION = ')[^']+" src/Constants.php)
-                    IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
-                    NEW_PATCH=$((PATCH + 1))
-                    NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-                    NEW_VERSION_ID=$((MAJOR * 10000 + MINOR * 100 + NEW_PATCH))
+                    python3 -I -S - <<'PY'
+                    import os
+                    import re
+                    import sys
+                    from pathlib import Path
 
-                    sed -i "s/VERSION = '$CURRENT';/VERSION = '$NEW_VERSION';/" src/Constants.php
-                    sed -i "s/VERSION_ID = [0-9]*;/VERSION_ID = $NEW_VERSION_ID;/" src/Constants.php
 
-                    echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+                    def fail():
+                        sys.exit('Invalid or ambiguous release constants.')
+
+
+                    def declaration(data, name, value):
+                        # Reject ambiguous names, including malformed declarations and decoys.
+                        # This deliberately supports the existing single-line layout, not all PHP.
+                        if len(re.findall(rb'\b' + name + rb'\b', data)) != 1:
+                            fail()
+                        pattern = rb'^([ \t]*public const ' + name + rb' = )(' + value + rb')(;[ \t]*\r?$)'
+                        matches = list(re.finditer(pattern, data, re.MULTILINE))
+                        if len(matches) != 1:
+                            fail()
+                        # A declaration-looking line inside a comment/string is not code.
+                        trivia = rb'''/\*[\s\S]*?(?:\*/|\Z)|//[^\r\n]*|\#[^\r\n]*|'(?:\\[\s\S]|[^'\\])*(?:'|\Z)|"(?:\\[\s\S]|[^"\\])*(?:"|\Z)'''
+                        for token in re.finditer(trivia, data):
+                            if token.start() <= matches[0].start() < token.end():
+                                fail()
+                        # Require a PHP document and reject unsupported lexical contexts.
+                        if not data.startswith((b'<?php\n', b'<?php\r\n')):
+                            fail()
+                        if any(marker in data for marker in (b'`', b'<<<', b'?>', b'#[', b'{$', b'${')):
+                            fail()
+                        if re.search(rb'\b__halt_compiler\b', data, re.IGNORECASE):
+                            fail()
+                        return matches[0]
+
+
+                    def bounded(value, limit):
+                        # Compare canonical decimal text before conversion, even for huge inputs.
+                        maximum = str(limit).encode('ascii')
+                        if len(value) > len(maximum) or (len(value) == len(maximum) and value > maximum):
+                            fail()
+                        return int(value)
+
+
+                    try:
+                        path = Path('src/Constants.php')
+                        original = path.read_bytes()
+                        version = declaration(original, b'VERSION', rb"'[^'\r\n]*'")
+                        identifier = declaration(original, b'VERSION_ID', rb'[0-9]+')
+                        current = version.group(2)[1:-1]
+                        component = rb'(?:0|[1-9][0-9]*)'
+                        if re.fullmatch(component + rb'\.' + component + rb'(?:\.' + component + rb')?', current) is None:
+                            fail()
+                        parts = current.split(b'.')
+                        if len(parts) == 2:
+                            parts.append(b'0')
+
+                        maximum = 2147483647
+                        # Reserve the mandatory patch increment before any component arithmetic.
+                        major = bounded(parts[0], (maximum - 1) // 10000)
+                        remaining = maximum - major * 10000
+                        minor = bounded(parts[1], (remaining - 1) // 100)
+                        remaining -= minor * 100
+                        patch = bounded(parts[2], remaining - 1) + 1
+                        new_version = f'{major}.{minor}.{patch}'
+                        new_id = maximum - remaining + patch
+
+                        replacements = [(version.span(2), ("'" + new_version + "'").encode('ascii')),
+                                        (identifier.span(2), str(new_id).encode('ascii'))]
+                        updated = original
+                        for (start, end), replacement in sorted(replacements, reverse=True):
+                            updated = updated[:start] + replacement + updated[end:]
+                        # Verify the exact intended declarations before touching either destination.
+                        if declaration(updated, b'VERSION', rb"'[^'\r\n]*'").group(2) != replacements[0][1]:
+                            fail()
+                        if declaration(updated, b'VERSION_ID', rb'[0-9]+').group(2) != replacements[1][1]:
+                            fail()
+                        output = os.environ['GITHUB_OUTPUT']
+                        path.write_bytes(updated)
+                        if path.read_bytes() != updated:
+                            fail()
+                        with open(output, 'a', encoding='ascii') as stream:
+                            stream.write(f'new_version={new_version}\n')
+                    except (OSError, ValueError, KeyError):
+                        fail()
+                    PY
 
             -   name: Commit and push
                 env:
