@@ -1,13 +1,14 @@
 :root {
     /* gppro pilot tokens: a compatibility layer for Tabler and Bootstrap. */
-    --gp-bg: #f3f6fa;
-    --gp-surface: #fbfcfe;
-    --gp-surface-muted: #e7edf5;
+    --gp-bg: #f5f6f7;
+    --gp-surface: #fff;
+    --gp-surface-muted: #eef0f2;
+    --gp-sidebar-bg: #202b3c;
     --gp-ink: #223047;
     --gp-ink-muted: #53647a;
     --gp-brand: #1B3A6B;
     --gp-brand-soft: #e5edf8;
-    --gp-line: #c5d0df;
+    --gp-line: #d5d9df;
         --gp-positive: #176b4d;
         --gp-positive-soft: #dcefe6;
         --gp-warning: #8a5a00;
@@ -24,7 +25,7 @@
         --gp-radius-control: 6px;
 
     --gp-radius-surface: 8px;
-    --gp-shadow-surface: 0 8px 24px rgba(27, 58, 107, 0.06);
+    --gp-shadow-surface: 0 1px 2px rgba(24, 36, 51, 0.04);
     --gp-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --gp-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
@@ -36,7 +37,7 @@
     --tblr-primary-border-subtle: var(--gp-line);
 
     --tblr-body-bg: var(--gp-bg);
-    --tblr-body-bg-rgb: 243, 246, 250;
+    --tblr-body-bg-rgb: 245, 246, 247;
     --tblr-body-color: var(--gp-ink);
     --tblr-card-border-width: 1px;
     --tblr-card-border-color: var(--gp-line);
@@ -106,7 +107,7 @@
     --gp-control-disabled-bg: #2a3851;
     --gp-control-disabled-ink: #8392a8;
     --gp-control-disabled-line: #40516c;
-    --gp-shadow-surface: 0 8px 24px rgba(7, 13, 25, 0.32);
+    --gp-shadow-surface: 0 1px 2px rgba(7, 13, 25, 0.2);
 
     --tblr-primary: var(--gp-brand);
     --tblr-primary-rgb: 139, 177, 232;
@@ -130,8 +131,11 @@
 }
 
 .navbar[data-bs-theme="dark"] {
-    --tblr-bg-surface: var(--gp-brand);
-    --tblr-navbar-bg: var(--gp-brand);
+    --tblr-bg-surface: var(--gp-sidebar-bg);
+    --tblr-navbar-bg: var(--gp-sidebar-bg);
+    --tblr-navbar-color: #dce3ed;
+    --tblr-navbar-hover-color: #fff;
+    --tblr-navbar-active-color: #fff;
 }
 
 .navbar-brand-logo-plate {
@@ -143,23 +147,23 @@
 }
 
 @media (min-width: 992px) {
-    .navbar-vertical .nav-link {
+    .navbar-vertical[data-bs-theme="dark"] .nav-link {
         margin: 2px 8px;
         border-radius: 8px;
         color: rgba(255, 255, 255, 0.8);
         transition: background-color 0.15s ease, color 0.15s ease;
     }
 
-    .navbar-vertical .nav-link:hover,
-    .navbar-vertical .nav-link:focus-visible {
+    .navbar-vertical[data-bs-theme="dark"] .nav-link:hover,
+    .navbar-vertical[data-bs-theme="dark"] .nav-link:focus-visible {
         background-color: rgba(255, 255, 255, 0.1);
         color: #fff;
     }
 
-    .navbar-vertical .nav-item.active > .nav-link {
-        background-color: #fff;
-        color: #1B3A6B;
-        box-shadow: 0 2px 8px rgba(13, 29, 54, 0.2);
+    .navbar-vertical[data-bs-theme="dark"] .nav-item.active > .nav-link {
+        background-color: #34465f;
+        color: #fff;
+        box-shadow: inset 3px 0 #8bb1e8;
     }
 
     .navbar-vertical .dropdown-menu .dropdown-item.active,
@@ -173,52 +177,15 @@
     }
 
     .navbar-vertical .sidebar-toggle-btn {
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-    }
-
-    .navbar-vertical .navbar-brand-logo-plate + .sidebar-toggle-btn {
-        box-shadow: inset 0 0 0 1px rgba(27, 58, 107, 0.15);
+        box-shadow: inset 0 0 0 1px var(--gp-line);
     }
 
     .sidebar-show-btn {
         box-shadow: 0 4px 12px rgba(13, 29, 54, 0.25);
     }
-
-    header.navbar {
-        margin: 12px 12px 0;
-        border: 1px solid #9bb3d1;
-        border-radius: 12px;
-        background-color: #fff;
-        box-shadow: 0 2px 12px rgba(27, 58, 107, 0.1);
-    }
-
-    .navbar-vertical {
-        top: 12px !important;
-        left: 12px !important;
-        height: calc(100vh - 24px) !important;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(27, 58, 107, 0.25);
-    }
-
-    .page-wrapper {
-        margin-left: calc(15rem + 12px) !important;
-        transition: margin-left 0.25s ease;
-    }
-
-    .navbar-vertical {
-        transition: transform 0.25s ease;
-    }
-
-    html.sidebar-hidden .navbar-vertical {
-        transform: translateX(calc(-100% - 24px));
-    }
-
-    html.sidebar-hidden .page-wrapper {
-        margin-left: 12px !important;
-    }
 }
 
-.sidebar-toggle-btn {
+.navbar .sidebar-toggle-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -228,20 +195,13 @@
     background: transparent;
     border: none;
     border-radius: 8px;
-    color: #fff;
+    color: var(--tblr-navbar-color);
     cursor: pointer;
 }
 
-.sidebar-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.navbar-brand-logo-plate + .sidebar-toggle-btn {
-    color: #1B3A6B;
-}
-
-.navbar-brand-logo-plate + .sidebar-toggle-btn:hover {
-    background: rgba(27, 58, 107, 0.1);
+.navbar .sidebar-toggle-btn:hover {
+    color: var(--tblr-navbar-hover-color);
+    background: rgba(127, 127, 127, 0.15);
 }
 
 .sidebar-show-btn {
@@ -262,6 +222,8 @@
     cursor: pointer;
 }
 
-html.sidebar-hidden .sidebar-show-btn {
-    display: flex;
+@media (min-width: 992px) {
+    html.sidebar-hidden .sidebar-show-btn {
+        display: flex;
+    }
 }

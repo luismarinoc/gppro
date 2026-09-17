@@ -14,6 +14,58 @@
     outline-offset: 2px;
 }
 
+/* Keep the floating desktop navigation and both workspace regions aligned. */
+@include media-breakpoint-up(lg) {
+    .gp-app-shell {
+        --gp-shell-gutter: 12px;
+        --gp-workspace-offset: calc(#{$sidebar-width} + 2 * var(--gp-shell-gutter));
+    }
+
+    .gp-app-shell .navbar-vertical.navbar-expand-lg {
+        top: var(--gp-shell-gutter);
+        left: var(--gp-shell-gutter);
+        bottom: var(--gp-shell-gutter);
+        border-radius: var(--gp-radius-surface);
+        box-shadow: none;
+        transition: none;
+
+        ~ header.navbar,
+        ~ .page-wrapper {
+            margin-left: var(--gp-workspace-offset);
+            margin-right: var(--gp-shell-gutter);
+            transition: none;
+        }
+
+        ~ header.navbar {
+            margin-top: var(--gp-shell-gutter);
+            border: 1px solid var(--gp-line);
+            border-radius: var(--gp-radius-surface);
+            background-color: var(--tblr-navbar-bg);
+            box-shadow: none;
+        }
+    }
+
+    html.sidebar-hidden .gp-app-shell {
+        /* Reserve the reveal button's 40px width and its surrounding gutters. */
+        --gp-workspace-offset: calc(40px + 2 * var(--gp-shell-gutter));
+
+        .navbar-vertical.navbar-expand-lg {
+            visibility: hidden;
+            transform: translateX(calc(-100% - var(--gp-shell-gutter)));
+        }
+    }
+}
+
+.gp-app-shell .navbar-vertical .nav-link-title,
+.gp-app-shell .navbar-vertical .navbar-nav .dropdown-item {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.gp-app-shell .navbar-vertical .navbar-nav .nav-link-icon {
+    flex-shrink: 0;
+}
+
 .gp-skip-link {
     position: fixed;
     top: 0.75rem;
@@ -143,8 +195,13 @@
 
 @media (prefers-reduced-motion: reduce) {
     .gp-skip-link,
-    .btn {
+    .btn,
+    .navbar-vertical[data-bs-theme="dark"] .nav-link {
         transition: none;
+    }
+
+    .btn:active {
+        transform: none;
     }
 }
 
