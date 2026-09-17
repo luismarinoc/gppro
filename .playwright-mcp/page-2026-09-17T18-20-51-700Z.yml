@@ -1,0 +1,23 @@
+- generic [ref=e3]:
+  - heading [level=1] [ref=e5]:
+    - img "gppro" [ref=e6]
+  - generic [ref=e8]:
+    - heading "Iniciar sesión" [level=2] [ref=e9]
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Apodo
+        - textbox "Apodo" [ref=e13]
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - text: Contraseña
+          - link "He olvidado mi contraseña" [ref=e17] [cursor=pointer]:
+            - /url: /es/resetting/request
+        - generic [ref=e18]:
+          - textbox "Contraseña He olvidado mi contraseña" [ref=e19]:
+            - /placeholder: Contraseña
+          - link "Mostrar contraseña" [ref=e21] [cursor=pointer]:
+            - /url: "#"
+      - generic [ref=e27]:
+        - checkbox "Recuérdame" [ref=e28]
+        - generic [ref=e29]: Recuérdame
+      - button "Iniciar sesión" [ref=e31] [cursor=pointer]
