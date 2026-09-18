@@ -16,6 +16,11 @@
 
 /* Keep the floating desktop navigation and both workspace regions aligned. */
 @include media-breakpoint-up(lg) {
+    /* Tabler's root scrollbar compensation shifts content but not the fixed sidebar. */
+    html:root {
+        margin-inline: 0;
+    }
+
     .gp-app-shell {
         --gp-shell-gutter: 12px;
         --gp-workspace-offset: calc(#{$sidebar-width} + 2 * var(--gp-shell-gutter));
