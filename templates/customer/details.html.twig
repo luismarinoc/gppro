@@ -1,6 +1,14 @@
 {% extends 'base.html.twig' %}
 {% import "macros/widgets.html.twig" as widgets %}
 
+{% block page_actions %}
+    {% from "macros/widgets.html.twig" import page_actions %}
+    {%- if page_setup is defined and page_setup.actionName is not null -%}
+        {% set event = actions(app.user, page_setup.actionName, page_setup.actionView, page_setup.actionPayload) %}
+        {{ page_actions(event.actions|filter((action, key) => key != 'edit')) }}
+    {%- endif -%}
+{% endblock %}
+
 {% block main %}
     {% set can_edit = is_granted('edit', customer) %}
 
@@ -12,6 +20,11 @@
                 {% block box_title %}
                     {{ widgets.label_dot(customer.name, customer.color) }}
                     {% if customer.company is not empty %} &ndash; {{ customer.company }}{% endif %}
+                {% endblock %}
+                {% block box_tools %}
+                    {% if can_edit %}
+                        {{ widgets.card_tool_button('edit', {'class': 'modal-ajax-form open-edit', 'title': 'edit', 'url': path('admin_customer_edit', {'id': customer.id})}) }}
+                    {% endif %}
                 {% endblock %}
                 {% block box_body %}
                     <table class="table table-hover dataTable">

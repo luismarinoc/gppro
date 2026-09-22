@@ -1,6 +1,14 @@
 {% extends 'base.html.twig' %}
 {% import "macros/widgets.html.twig" as widgets %}
 
+{% block page_actions %}
+    {% from "macros/widgets.html.twig" import page_actions %}
+    {%- if page_setup is defined and page_setup.actionName is not null -%}
+        {% set event = actions(app.user, page_setup.actionName, page_setup.actionView, page_setup.actionPayload) %}
+        {{ page_actions(event.actions|filter((action, key) => key != 'edit')) }}
+    {%- endif -%}
+{% endblock %}
+
 {% block main %}
     {% set can_edit = is_granted('edit', project) %}
 
@@ -10,6 +18,11 @@
         {% import "macros/widgets.html.twig" as widgets %}
         {% import "customer/actions.html.twig" as customerActions %}
         {% block box_attributes %}id="project_details_box"{% endblock %}
+        {% block box_tools %}
+            {% if can_edit %}
+                {{ widgets.card_tool_button('edit', {'class': 'modal-ajax-form open-edit', 'title': 'edit', 'url': path('admin_project_edit', {'id': project.id})}) }}
+            {% endif %}
+        {% endblock %}
         {% block box_title %}
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}

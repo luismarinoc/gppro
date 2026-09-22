@@ -197,6 +197,19 @@ class ProjectControllerTest extends AbstractControllerBaseTestCase
 
         $node = $client->getCrawler()->filter('div.card#project_details_box');
         self::assertEquals(1, $node->count());
+        $edit = $node->filter('.card-actions a.modal-ajax-form.open-edit');
+        self::assertCount(1, $edit);
+        $detailsUrl = $client->getRequest()->getBaseUrl() . $client->getRequest()->getPathInfo();
+        self::assertStringEndsWith('/details', $detailsUrl);
+        $entityUrl = substr($detailsUrl, 0, -\strlen('/details'));
+        $editUrl = $entityUrl . '/edit';
+        self::assertSame($editUrl, $edit->attr('href'));
+        foreach (['pa-desktop', 'pa-mobile'] as $viewport) {
+            $actions = $client->getCrawler()->filter('.page-actions .' . $viewport);
+            self::assertCount(1, $actions);
+            self::assertCount(0, $actions->filter('a[href="' . $editUrl . '"]'));
+            self::assertCount(1, $actions->filter('a[href="' . $entityUrl . '/board"]'));
+        }
         $node = $client->getCrawler()->filter('div.card#activity_list_box');
         self::assertEquals(1, $node->count());
         $node = $client->getCrawler()->filter('div.card#time_budget_box');
