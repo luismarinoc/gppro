@@ -10,16 +10,17 @@
         {% import "macros/widgets.html.twig" as widgets %}
         {% import "customer/actions.html.twig" as customerActions %}
         {% block box_attributes %}id="project_details_box"{% endblock %}
-        {% block box_tools %}
-            {% if can_edit %}
-                {{ widgets.card_tool_button('edit', {'class': 'modal-ajax-form open-edit', 'title': 'edit', 'url': path('admin_project_edit', {'id': project.id})}) }}
-            {% endif %}
-        {% endblock %}
         {% block box_title %}
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}
         {% block box_body %}
             <table class="table table-hover dataTable">
+                <colgroup>
+                    <col class="gp-project-details__metadata-label">
+                    <col>
+                    <col class="gp-project-details__metadata-team">
+                    <col class="gp-project-details__metadata-actions">
+                </colgroup>
                 {% if not project.visible %}
                     <tr class="{{ widgets.class_project_row(project, now) }}">
                         <th>{{ 'visible'|trans }}</th>

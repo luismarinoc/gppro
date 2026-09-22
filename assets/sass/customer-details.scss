@@ -128,6 +128,28 @@
     }
     #customer_details_box .table td,
     #customer_details_box .table th { padding: .75rem .5rem; overflow-wrap: anywhere; }
+    #project_list_box .table {
+        table-layout: fixed;
+        width: 100%;
+    }
+    #project_list_box .table th:not(.actions),
+    #project_list_box .table td:not(.actions) {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    #project_list_box .table .w-min { width: auto; }
+    #project_list_box .table .actions { width: 2.5rem; }
+    #project_list_box .table > :not(caption) > * > * { padding-inline: .5rem; }
+    #project_list_box .table td.w-min.text-end {
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+    @include media-breakpoint-up(sm) {
+        #project_list_box .table { table-layout: auto; }
+    }
+    @include media-breakpoint-up(md) {
+        #project_list_box .table th:first-child { width: 20%; }
+    }
     #team_listing_box .table { table-layout: fixed; width: 100%; }
     #team_listing_box .table .w-min,
     #team_listing_box .table .hw-min {
@@ -148,7 +170,7 @@
         outline-offset: 3px;
     }
 
-    @include media-breakpoint-down(xl) {
+    @include media-breakpoint-down(xxl) {
         &__workspace { grid-template-columns: minmax(0, 1fr); }
         &__rail { border-inline-start: 0; border-top: 1px solid var(--tblr-border-color); padding: 1.5rem 0 0; }
     }

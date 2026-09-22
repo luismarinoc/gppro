@@ -85,6 +85,11 @@
     }
 
     @include media-breakpoint-down(sm) {
+        table.dataTable .col_name {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
         table.dataTable > thead > tr > th,
         table.dataTable > tbody > tr > td {
             padding: .75rem;

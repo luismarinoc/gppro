@@ -72,7 +72,7 @@
     &__reference strong { font-weight: 500; font-variant-numeric: tabular-nums; }
     #project_details_box > .card-body { padding: 0; }
     &__overview .comment {
-        padding: 0 0 2rem !important;
+        padding: 0 !important;
         max-width: 65ch;
         line-height: 1.85;
         overflow-wrap: anywhere;
@@ -94,6 +94,10 @@
         letter-spacing: .025em;
         padding-block: .75rem;
     }
+    #project_details_box .table { table-layout: fixed; width: 100%; }
+    &__metadata-label { width: 34%; }
+    &__metadata-team { width: 2.5rem; }
+    &__metadata-actions { width: 2.5rem; }
     #project_details_box .table th {
         font-size: .75rem;
         font-weight: 400;
@@ -129,5 +133,10 @@
         &__hero { padding-block: 1.5rem; }
         &__workspace { gap: 1.5rem; }
         .table > :not(caption) > * > * { padding: .875rem .75rem; }
+        #project_rates_box .table th:not(.actions) {
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+        #project_rates_box .table > :not(caption) > * > * { padding-inline: .5rem; }
     }
 }
