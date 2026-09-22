@@ -4,7 +4,7 @@
 {% block main %}
     {% set can_edit = is_granted('edit', project) %}
 
-    <div class="gp-project-details">
+    {% set details_card %}
         <section class="gp-project-details__section gp-project-details__section--summary" aria-labelledby="gp-project-details-title">
     {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
         {% import "macros/widgets.html.twig" as widgets %}
@@ -19,24 +19,6 @@
             {{ widgets.label_dot(project.name, project.color) }}
         {% endblock %}
         {% block box_body %}
-            <header class="gp-project-details__hero">
-                <div class="gp-project-details__hero-copy">
-                    <div class="gp-project-details__eyebrow">{{ 'project'|trans }}</div>
-                    <h1 id="gp-project-details-title" class="gp-project-details__title">{{ project.name }}</h1>
-                    <div class="gp-project-details__customer">{{ widgets.label_customer(project.customer) }}</div>
-                </div>
-                {% if project.number is not empty %}
-                    <div class="gp-project-details__reference">
-                        <span>{{ 'project_number'|trans }}</span>
-                        <strong>{{ project.number }}</strong>
-                    </div>
-                {% endif %}
-            </header>
-            {% if project.comment is not empty %}
-                <div class="comment p-3">
-                    {{ project.comment|comment2html(true) }}
-                </div>
-            {% endif %}
             <table class="table table-hover dataTable">
                 {% if not project.visible %}
                     <tr class="{{ widgets.class_project_row(project, now) }}">
@@ -152,7 +134,31 @@
         {% endblock %}
     {% endembed %}
         </section>
+    {% endset %}
 
+    <div class="gp-project-details">
+        <div class="gp-project-details__workspace">
+        <div class="gp-project-details__main">
+            <div class="gp-project-details__overview">
+                <header class="gp-project-details__hero">
+                    <div class="gp-project-details__hero-copy">
+                        <div class="gp-project-details__eyebrow">{{ 'project'|trans }}</div>
+                        <h1 id="gp-project-details-title" class="gp-project-details__title">{{ project.name }}</h1>
+                        <div class="gp-project-details__customer">{{ widgets.label_customer(project.customer) }}</div>
+                    </div>
+                    {% if project.number is not empty %}
+                        <div class="gp-project-details__reference">
+                            <span>{{ 'project_number'|trans }}</span>
+                            <strong>{{ project.number }}</strong>
+                        </div>
+                    {% endif %}
+                </header>
+                {% if project.comment is not empty %}
+                    <div class="comment p-3">
+                        {{ project.comment|comment2html(true) }}
+                    </div>
+                {% endif %}
+            </div>
         <section class="gp-project-details__section gp-project-details__section--activities">
             {{ render(controller('App\\Controller\\ProjectController::activitiesAction', {'project': project.id, 'page': 1})) }}
         </section>
@@ -170,12 +176,17 @@
             </section>
         {% endif %}
 
-        <section class="gp-project-details__section gp-project-details__section--plugins">
-            {% for controller in boxes %}
-                {{ render(controller(controller, {'project': project, 'page': 1})) }}
-            {% endfor %}
-        </section>
+        {% if boxes is not empty %}
+            <section class="gp-project-details__section gp-project-details__section--plugins">
+                {% for controller in boxes %}
+                    {{ render(controller(controller, {'project': project, 'page': 1})) }}
+                {% endfor %}
+            </section>
+        {% endif %}
 
+        </div>
+        <div class="gp-project-details__rail">
+            {{ details_card }}
         {% if teams is not null%}
             <section class="gp-project-details__section gp-project-details__section--teams">
                 {% set options = {'teams': teams, 'team': team} %}
@@ -198,6 +209,8 @@
                 {{ include('embeds/comments.html.twig', options) }}
             </section>
         {% endif %}
+        </div>
+        </div>
     </div>
 
 {% endblock %}

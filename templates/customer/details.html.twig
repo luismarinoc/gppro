@@ -4,7 +4,7 @@
 {% block main %}
     {% set can_edit = is_granted('edit', customer) %}
 
-    <div class="gp-customer-details">
+    {% set details_card %}
         <section class="gp-customer-details__section gp-customer-details__section--summary" aria-labelledby="gp-customer-details-title">
             {% embed '@theme/embeds/card.html.twig' with {fullsize: true}  %}
                 {% import "macros/widgets.html.twig" as widgets %}
@@ -19,42 +19,6 @@
                     {% endif %}
                 {% endblock %}
                 {% block box_body %}
-                    <header class="gp-customer-details__hero">
-                        <div class="gp-customer-details__hero-copy">
-                            <div class="gp-customer-details__eyebrow">{{ 'customer'|trans }}</div>
-                            <h1 id="gp-customer-details-title" class="gp-customer-details__title">{{ customer.name }}</h1>
-                            {% if customer.company is not empty %}
-                                <div class="gp-customer-details__company">{{ customer.company }}</div>
-                            {% endif %}
-                        </div>
-                        {% if customer.currency is not empty or customer.number is not empty or customer.buyerReference is not empty %}
-                            <dl class="gp-customer-details__facts">
-                                {% if customer.currency is not empty %}
-                                    <div>
-                                        <dt>{{ 'currency'|trans }}</dt>
-                                        <dd>{{ customer.currency }}</dd>
-                                    </div>
-                                {% endif %}
-                                {% if customer.number is not empty %}
-                                    <div>
-                                        <dt>{{ 'number'|trans }}</dt>
-                                        <dd>{{ customer.number }}</dd>
-                                    </div>
-                                {% endif %}
-                                {% if customer.buyerReference is not empty %}
-                                    <div>
-                                        <dt>{{ 'buyerReference'|trans }}</dt>
-                                        <dd>{{ customer.buyerReference }}</dd>
-                                    </div>
-                                {% endif %}
-                            </dl>
-                        {% endif %}
-                    </header>
-                    {% if customer.comment is not empty %}
-                        <div class="comment p-3">
-                            {{ customer.comment|comment2html(true) }}
-                        </div>
-                    {% endif %}
                     <table class="table table-hover dataTable">
                         {% if not customer.visible %}
                             <tr class="{{ widgets.class_customer_row(customer, now) }}">
@@ -175,7 +139,49 @@
                 {% endblock %}
             {% endembed %}
         </section>
+    {% endset %}
 
+    <div class="gp-customer-details">
+        <div class="gp-customer-details__workspace">
+        <div class="gp-customer-details__main">
+            <div class="gp-customer-details__overview">
+                <header class="gp-customer-details__hero">
+                    <div class="gp-customer-details__hero-copy">
+                        <div class="gp-customer-details__eyebrow">{{ 'customer'|trans }}</div>
+                        <h1 id="gp-customer-details-title" class="gp-customer-details__title">{{ customer.name }}</h1>
+                        {% if customer.company is not empty %}
+                            <div class="gp-customer-details__company">{{ customer.company }}</div>
+                        {% endif %}
+                    </div>
+                    {% if customer.currency is not empty or customer.number is not empty or customer.buyerReference is not empty %}
+                        <dl class="gp-customer-details__facts">
+                            {% if customer.currency is not empty %}
+                                <div>
+                                    <dt>{{ 'currency'|trans }}</dt>
+                                    <dd>{{ customer.currency }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if customer.number is not empty %}
+                                <div>
+                                    <dt>{{ 'number'|trans }}</dt>
+                                    <dd>{{ customer.number }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if customer.buyerReference is not empty %}
+                                <div>
+                                    <dt>{{ 'buyerReference'|trans }}</dt>
+                                    <dd>{{ customer.buyerReference }}</dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    {% endif %}
+                </header>
+                {% if customer.comment is not empty %}
+                    <div class="comment p-3">
+                        {{ customer.comment|comment2html(true) }}
+                    </div>
+                {% endif %}
+            </div>
         <section class="gp-customer-details__section gp-customer-details__section--projects">
             {{ render(controller('App\\Controller\\CustomerController::projectsAction', {'customer': customer.id, 'page': 1})) }}
         </section>
@@ -202,14 +208,19 @@
             </section>
         {% endif %}
 
-        <section class="gp-customer-details__section gp-customer-details__section--plugins">
-            {% for controller in boxes %}
-                <div class="gp-customer-details__plugin-box">
-                    {{ render(controller(controller, {'customer': customer, 'page': 1})) }}
-                </div>
-            {% endfor %}
-        </section>
+        {% if boxes is not empty %}
+            <section class="gp-customer-details__section gp-customer-details__section--plugins">
+                {% for controller in boxes %}
+                    <div class="gp-customer-details__plugin-box">
+                        {{ render(controller(controller, {'customer': customer, 'page': 1})) }}
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
 
+        </div>
+        <div class="gp-customer-details__rail">
+            {{ details_card }}
         {% if teams is not null %}
             <section class="gp-customer-details__section gp-customer-details__section--teams">
                 {% set options = {'teams': teams, 'team': team} %}
@@ -229,6 +240,8 @@
                 {{ include('embeds/comments.html.twig', options) }}
             </section>
         {% endif %}
+        </div>
+        </div>
     </div>
 
 {% endblock %}
