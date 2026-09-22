@@ -116,6 +116,65 @@
     }
 }
 
+/* Shared list treatment; preview, allocation and detail embeds remain unchanged. */
+@media screen {
+    :is(.gp-workflow--expense__list-scroll, .gp-workflow--quotation__table-scroll:has(.gp-workflow--quotation__row),
+        .gp-workflow--invoice__history-scroll, .gp-workflow--approvals__section) {
+        .gp-workflow__table {
+            > thead > tr > th {
+                padding: .75rem 1rem;
+                background: var(--gp-surface-muted);
+                color: var(--gp-ink-muted);
+                font-size: .75rem;
+                font-weight: 600;
+                letter-spacing: .025em;
+                text-transform: none;
+            }
+
+            > tbody > tr > td {
+                padding: .875rem 1rem;
+                vertical-align: middle;
+                font-variant-numeric: tabular-nums;
+            }
+
+            > tbody > tr:hover > td,
+            > tbody > tr:focus-within > td {
+                background-color: var(--gp-surface-muted);
+            }
+
+            :is(a, button):focus-visible {
+                outline: 2px solid var(--gp-focus);
+                outline-offset: 2px;
+            }
+
+            .gp-workflow__actions { flex-wrap: nowrap; }
+
+            @include media-breakpoint-down(sm) {
+                > thead > tr > th,
+                > tbody > tr > td { padding: .75rem; }
+            }
+        }
+    }
+}
+
+.gp-workflow--expense__row,
+.gp-workflow--quotation__row {
+    &:hover { background-color: var(--gp-surface-muted); }
+
+    @media (prefers-reduced-motion: no-preference) {
+        transition: background-color .18s ease-out;
+    }
+}
+
+.gp-workflow--expense__status,
+.gp-workflow--quotation__status {
+    background-color: var(--gp-brand-soft);
+    border: 1px solid var(--gp-line);
+    border-radius: 999px;
+    color: var(--gp-ink);
+    padding: .125rem .5rem;
+}
+
 .gp-workflow--approvals {
     &__section {
         overflow: hidden;
@@ -245,22 +304,6 @@ min-width: 0;
 .gp-workflow--expense {
     &__allocations-table {
         position: relative;
-    }
-
-    &__row {
-        transition: background-color .18s ease-out;
-
-        &:hover {
-            background-color: var(--gp-surface-muted);
-        }
-    }
-
-    &__status {
-        background-color: var(--gp-brand-soft);
-        border: 1px solid var(--gp-line);
-        border-radius: 999px;
-        color: var(--gp-ink);
-        padding: .125rem .5rem;
     }
 
     &__currency-status {

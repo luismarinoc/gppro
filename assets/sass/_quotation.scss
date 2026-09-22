@@ -3,22 +3,6 @@
         align-items: end;
     }
 
-    &__row {
-        transition: background-color .18s ease-out;
-
-        &:hover {
-            background-color: var(--gp-surface-muted);
-        }
-    }
-
-    &__status {
-        background-color: var(--gp-brand-soft);
-        border: 1px solid var(--gp-line);
-        border-radius: 999px;
-        color: var(--gp-ink);
-        padding: .125rem .5rem;
-    }
-
     &__fx-status {
         border: 1px solid transparent;
         border-radius: var(--gp-radius-control);

@@ -144,6 +144,105 @@ table.table-hover {
     }
 }
 
+/* List-only contract: nested detail and reporting tables keep their own layout. */
+@media screen {
+    section.content > .gp-content-frame > .data_table {
+        border: 1px solid var(--gp-line);
+        border-radius: var(--gp-radius-surface);
+        background: var(--gp-surface);
+        box-shadow: none;
+
+        table.dataTable {
+            --tblr-table-border-color: var(--gp-line);
+            --tblr-table-hover-bg: var(--gp-surface-muted);
+            --tblr-table-hover-color: var(--gp-ink);
+
+            > thead > tr > th {
+                padding: .75rem 1rem;
+                background: var(--gp-surface-muted);
+                color: var(--gp-ink-muted);
+                font-size: .75rem;
+                font-weight: 600;
+                letter-spacing: .025em;
+                text-transform: none;
+            }
+
+            > tbody > tr > td {
+                padding: .875rem 1rem;
+                vertical-align: middle;
+                font-variant-numeric: tabular-nums;
+            }
+
+            > tbody > tr:not(.summary):not(.recording):not(.overlapping):focus-within > td {
+                background-color: var(--gp-surface-muted);
+            }
+
+            @supports selector(tr:has(input:checked)) {
+                > tbody > tr:has(.multi_update_single:checked) > td {
+                    box-shadow: inset 0 0 0 2px var(--gp-brand);
+                }
+            }
+
+            .badge { vertical-align: middle; }
+            .col_actions { white-space: nowrap; }
+        }
+
+        > .card-footer {
+            gap: 1rem;
+            flex-wrap: wrap;
+            border-top-color: var(--gp-line);
+            background: var(--gp-surface);
+            font-variant-numeric: tabular-nums;
+
+            .page-link { border-radius: var(--gp-radius-control); }
+        }
+
+        :is(a, button, input, select):focus-visible {
+            outline: 2px solid var(--gp-focus);
+            outline-offset: 2px;
+        }
+
+        @include media-breakpoint-down(sm) {
+            table.dataTable > thead > tr > th,
+            table.dataTable > tbody > tr > td { padding: .75rem; }
+
+            > .card-footer {
+                align-items: flex-start !important;
+                flex-direction: column;
+
+                .pagination { margin-left: 0 !important; }
+            }
+        }
+    }
+
+    .content:is(.gp-customer-list, .gp-project-list, .gp-timesheet-list, .gp-user-list)
+        > .gp-content-frame:not(:has(.data_table)) > :is(.empty, .nothing-found, .alert-info) {
+        border: 1px dashed var(--gp-line);
+        border-radius: var(--gp-radius-surface);
+        background: var(--gp-surface-muted);
+    }
+
+    .gp-datatable-toolbar {
+        align-items: stretch;
+        margin-bottom: 1rem;
+
+        .searchform { flex: 1 1 16rem; }
+        .searchform .input-group { box-shadow: none; }
+        .searchform .form-control,
+        .searchform .btn,
+        > .btn { border-color: var(--gp-line); }
+
+        :is(a, button, input, select):focus-visible {
+            outline: 2px solid var(--gp-focus);
+            outline-offset: 2px;
+        }
+
+        @include media-breakpoint-down(sm) {
+            .searchform { flex-basis: 100%; }
+        }
+    }
+}
+
 /* For the context menu */
 .action-dropdown,
 .actions .dropdown .dropdown-menu {
