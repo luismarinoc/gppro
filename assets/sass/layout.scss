@@ -2,7 +2,7 @@
     max-width: 200px;
 }
 
-/* Shared authenticated frame for the reversible visual pilot. */
+/* Shared authenticated foundation; access screens retain their own presentation. */
 .gp-app-shell {
     font-family: var(--gp-font-sans);
     color: var(--gp-ink);
@@ -71,7 +71,7 @@
     flex-shrink: 0;
 }
 
-.gp-skip-link {
+.gp-app-shell .gp-skip-link {
     position: fixed;
     top: 0.75rem;
     left: 0.75rem;
@@ -84,82 +84,100 @@
     transition: transform 160ms ease-out;
 }
 
-.gp-skip-link:focus {
+.gp-app-shell .gp-skip-link:focus {
     transform: translateY(0);
 }
 
-.gp-content-frame {
+.gp-app-shell .gp-content-frame {
+    min-width: 0;
     padding-top: 1.5rem;
     padding-bottom: 2rem;
 }
 
-.page-header {
+.gp-app-shell .page-header {
+    padding-bottom: 1.25rem;
     border-bottom: 1px solid var(--gp-line);
 }
 
-.page-header .page-title {
+.gp-app-shell .page-header .page-title {
     color: var(--gp-ink);
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.25;
     letter-spacing: -0.025em;
 }
 
-.page-header .text-body-secondary,
-.page-header .text-muted {
+.gp-app-shell .page-header .text-body-secondary,
+.gp-app-shell .page-header .text-muted {
     color: var(--gp-ink-muted) !important;
 }
 
-.btn {
-    border-radius: var(--gp-radius-control);
-    transition: transform 140ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
+/* Action meaning and order remain owned by the existing button variants. */
+.gp-app-shell .page-actions {
+    gap: 0.5rem;
 }
 
-.btn:active {
+.gp-app-shell .btn {
+    border-radius: var(--gp-radius-control);
+    transition: transform 140ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
+}
+
+.gp-app-shell .btn:active {
     transform: scale(0.98);
 }
 
-.form-control,
-.form-select,
-.input-group-text {
+.gp-app-shell .form-control,
+.gp-app-shell .form-select,
+.gp-app-shell .input-group-text {
     border-radius: var(--gp-radius-control);
 }
 
-.card {
+.gp-app-shell .card {
     border-radius: var(--gp-radius-surface);
     border-color: var(--gp-line);
     box-shadow: var(--gp-shadow-surface);
 }
 
-.dashboard .gp-dashboard-orientation {
+.gp-app-shell .card .card {
+    box-shadow: none;
+}
+
+.gp-app-shell .card .card-header {
+    border-bottom-color: var(--gp-line);
+}
+
+.gp-app-shell .card .card-footer {
+    border-top-color: var(--gp-line);
+    background-color: var(--gp-surface-muted);
+}
+
+.gp-app-shell .dashboard .gp-dashboard-orientation {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem 1.25rem;
-    background: var(--gp-surface);
-    border: 1px solid var(--gp-line);
-    border-radius: var(--gp-radius-surface);
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--gp-line);
 }
 
-.gp-dashboard-orientation__copy {
-    max-width: 52rem;
+.gp-app-shell .gp-dashboard-orientation__copy {
+    max-width: 70ch;
 }
 
-.gp-dashboard-orientation__eyebrow,
-.gp-domain-marker {
-    color: var(--gp-brand);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.gp-app-shell .gp-dashboard-orientation__eyebrow,
+.gp-app-shell .gp-domain-marker {
+    color: var(--gp-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
-.gp-dashboard-orientation__copy p {
+.gp-app-shell .gp-dashboard-orientation__copy p {
     margin: 0.25rem 0 0;
     color: var(--gp-ink-muted);
 }
 
-.gp-domain-markers {
+.gp-app-shell .gp-domain-markers {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1rem;
@@ -167,45 +185,41 @@
     padding-top: 0.15rem;
 }
 
-.gp-domain-marker {
+.gp-app-shell .gp-domain-marker {
     white-space: nowrap;
 }
 
-.gp-domain-marker + .gp-domain-marker {
+.gp-app-shell .gp-domain-marker + .gp-domain-marker {
     padding-left: 1rem;
     border-left: 1px solid var(--gp-line);
 }
 
-.dashboard .row-deck {
-    row-gap: 1.5rem;
-}
-
-.dashboard .row-deck > [class*="col-"] > .card {
+.gp-app-shell .dashboard .row-deck > [class*="col-"] > .card {
     height: 100%;
 }
 
 @include media-breakpoint-down(md) {
-    .gp-content-frame {
+    .gp-app-shell .gp-content-frame {
         padding-top: 1rem;
     }
 
-    .dashboard .gp-dashboard-orientation {
+    .gp-app-shell .dashboard .gp-dashboard-orientation {
         display: block;
     }
 
-    .gp-domain-markers {
+    .gp-app-shell .gp-domain-markers {
         margin-top: 1rem;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .gp-skip-link,
-    .btn,
-    .navbar-vertical[data-bs-theme="dark"] .nav-link {
+    .gp-app-shell .gp-skip-link,
+    .gp-app-shell .btn,
+    .gp-app-shell .navbar-vertical[data-bs-theme="dark"] .nav-link {
         transition: none;
     }
 
-    .btn:active {
+    .gp-app-shell .btn:active {
         transform: none;
     }
 }
