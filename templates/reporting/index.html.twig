@@ -7,22 +7,16 @@
 {% endblock %}
 
 {% block main %}
-    <div class="row row-deck row-cards">
-
-        {% for report in reports %}
-        <div class="col-md-6 col-lg-4 col-xxl-3">
-            <a class="card card-link" href="{{ path(report.route) }}">
-                <div class="card-body d-flex align-items-center">
-                    <div class="row">
-                        <div class="col-auto">
-                            <span class="avatar"><i class="icon {{ report.reportIcon|icon(false, report.reportIcon) }}" style="color: {{ null|colorize(report.reportIcon) }}"></i></span>
-                        </div>
-                        <div class="col p-2">{{ report.label|trans({}, report.translationDomain) }}</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        {% endfor %}
-
+    <div class="row-cards gp-reporting">
+        <ul class="gp-reporting-list" role="list">
+            {% for report in reports %}
+                <li class="gp-reporting-item">
+                    <a class="card-link gp-reporting-link" href="{{ path(report.route) }}">
+                        <span class="gp-reporting-icon" aria-hidden="true"><i class="icon {{ report.reportIcon|icon(false, report.reportIcon) }}" style="color: {{ null|colorize(report.reportIcon) }}"></i></span>
+                        <span class="gp-reporting-label">{{ report.label|trans({}, report.translationDomain) }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

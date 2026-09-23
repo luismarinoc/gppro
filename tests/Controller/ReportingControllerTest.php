@@ -26,6 +26,18 @@ class ReportingControllerTest extends AbstractControllerBaseTestCase
         $this->request($client, '/reporting/');
         $nodes = $client->getCrawler()->filter('section.content div.row-cards a.card-link');
         self::assertCount(11, $nodes);
+
+        $crawler = $client->getCrawler();
+        self::assertCount(1, $crawler->filter('section.content div.row-cards.gp-reporting > ul.gp-reporting-list[role="list"]'));
+        $items = $crawler->filter('section.content div.row-cards.gp-reporting > ul.gp-reporting-list > li.gp-reporting-item');
+        self::assertCount(11, $items);
+        foreach ($items as $item) {
+            $links = (new \Symfony\Component\DomCrawler\Crawler($item))->filter('a.card-link.gp-reporting-link');
+            self::assertCount(1, $links);
+            self::assertCount(1, $links->filter('.gp-reporting-icon[aria-hidden="true"] > i.icon'));
+            self::assertCount(1, $links->filter('.gp-reporting-label'));
+            self::assertNotSame('', trim($links->filter('.gp-reporting-label')->text()));
+        }
     }
 
     public function testAllReports(): void
