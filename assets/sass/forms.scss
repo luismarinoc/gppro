@@ -1,3 +1,70 @@
+// Keep list filters, reporting and workflow forms outside the edit-surface contract.
+:is(#{$gp-edit-roots}) {
+    .form-text,
+    .help-text {
+        margin-top: .375rem;
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+        font-size: .8125rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    :is(input.form-control, textarea.form-control, select.form-select, .form-check-input).is-invalid {
+        border-color: var(--gp-danger, var(--tblr-danger));
+
+        &:focus {
+            box-shadow: 0 0 0 .2rem rgba(var(--tblr-danger-rgb), .15);
+        }
+    }
+
+    :is(input.form-control, textarea.form-control, select.form-select):is(:disabled, [readonly]) {
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+        background-color: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
+
+    fieldset {
+        min-width: 0;
+    }
+
+    .form-fieldset:not(.form-fieldset-light) {
+        border-color: var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+        background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
+}
+
+// Root form errors precede edit roots in full-page and remote forms.
+:is(#{$gp-edit-roots}) :is(.invalid-feedback, .root-error),
+.card > form > .card-body > :is(.invalid-feedback, .root-error),
+.modal-body > :is(.invalid-feedback, .root-error) {
+    color: var(--gp-danger, var(--tblr-danger));
+    font-size: .8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+// Native upload inputs in authenticated form surfaces, not search/report filters.
+.page-body form input[type='file'].form-control,
+.modal-body input[type='file'].form-control {
+    height: auto;
+
+    &::file-selector-button {
+        margin-inline-end: .75rem;
+        color: var(--gp-ink, var(--tblr-body-color));
+        background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+        border-color: var(--gp-line, var(--tblr-border-color));
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--gp-focus, var(--tblr-primary));
+        outline-offset: 2px;
+    }
+
+    &:disabled::file-selector-button {
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+    }
+}
+
 /* bootstrap thead.sticky-top has z-index 1020 and the reporting form dropdowns hide behind that */
 .checkbox-menu.show {
     z-index: 1021;

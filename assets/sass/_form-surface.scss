@@ -1,0 +1,172 @@
+// Shared edit surfaces. Native controls only: Tom Select owns its wrapper and input.
+$gp-edit-roots: '.gp-customer-edit, .gp-project-edit, .gp-activity-edit, .gp-timesheet-edit';
+$gp-edit-sections: '.gp-customer-edit__section, .gp-project-edit__section, .gp-activity-edit__section, .gp-timesheet-edit__section';
+
+@mixin gp-flat-form-section {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+
+    &:focus-within {
+        box-shadow: none;
+    }
+}
+
+@mixin gp-form-collapse {
+    // The outer borderless card is structural; the accordion is the visible surface.
+    > .card.border-0 > .card-body.p-0 > .accordion {
+        .accordion-item {
+            border: 1px solid var(--gp-line, var(--tblr-border-color));
+            border-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+            background: var(--gp-surface, var(--tblr-card-bg));
+            box-shadow: none;
+
+            + .accordion-item {
+                margin-top: .5rem;
+            }
+        }
+
+        .accordion-header {
+            margin: 0;
+        }
+
+        .accordion-button {
+            padding: 1rem 1.25rem;
+            color: var(--gp-ink, var(--tblr-body-color));
+            background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+            border-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+            box-shadow: none;
+
+            &:not(.collapsed) {
+                border-end-start-radius: 0;
+                border-end-end-radius: 0;
+                border-bottom: 1px solid var(--gp-line, var(--tblr-border-color));
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--gp-focus, var(--tblr-primary));
+                outline-offset: -2px;
+                box-shadow: none;
+            }
+        }
+
+        .accordion-body {
+            padding: 1.25rem;
+            border-end-start-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+            border-end-end-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+            background: var(--gp-surface, var(--tblr-card-bg));
+        }
+
+        @media (max-width: 767.98px) {
+            .accordion-button,
+            .accordion-body {
+                padding: 1rem;
+            }
+        }
+    }
+}
+
+:is(#{$gp-edit-roots}) {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+    color: var(--gp-ink, var(--tblr-body-color));
+
+    .row + .row {
+        margin-top: .25rem;
+    }
+
+    .form-label,
+    label:not(.form-check-label) {
+        margin-bottom: .375rem;
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-select {
+        min-height: 2.5rem;
+        border-color: var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+        background-color: var(--gp-surface, var(--tblr-card-bg));
+    }
+
+    textarea.form-control {
+        min-height: 6rem;
+    }
+
+    :is(input.form-control, textarea.form-control, select.form-select, .form-check-input):focus {
+        border-color: var(--gp-focus, var(--tblr-primary));
+        box-shadow: 0 0 0 .2rem rgba(var(--tblr-primary-rgb), .15);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        min-height: 2.5rem;
+        padding: .5rem .75rem .5rem 2.25rem;
+        border: 1px solid var(--gp-line, var(--tblr-border-color));
+        border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+        background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
+
+    .form-check-input {
+        margin-top: 0;
+    }
+
+    .form-check-label {
+        color: var(--gp-ink, var(--tblr-body-color));
+        font-weight: 600;
+    }
+
+}
+
+:is(#{$gp-edit-sections}) {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--gp-line, var(--tblr-border-color));
+    border-radius: var(--gp-radius-surface, var(--tblr-border-radius));
+    background: var(--gp-surface, var(--tblr-card-bg));
+    box-shadow: none;
+    transition: border-color .15s ease-out;
+
+    &:focus-within {
+        border-color: var(--gp-focus, var(--tblr-primary));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+:is(.gp-customer-edit__metafields, .gp-project-edit__metafields, .gp-activity-edit__metafields, .gp-timesheet-edit__metafields) {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gp-line, var(--tblr-border-color));
+}
+
+@media (max-width: 767.98px) {
+    :is(#{$gp-edit-roots}) {
+        gap: 1rem;
+    }
+
+    :is(#{$gp-edit-sections}) {
+        padding: 1rem;
+    }
+}
+
+.modal {
+    :is(#{$gp-edit-roots}) {
+        gap: 1rem;
+    }
+
+    :is(#{$gp-edit-sections}) {
+        padding: 1rem;
+    }
+}

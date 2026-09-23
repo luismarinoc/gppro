@@ -5,14 +5,51 @@
 */
 .ts-dropdown {
     z-index: 1056;
+    color: var(--gp-ink, var(--tblr-body-color));
+    background: var(--gp-surface, var(--tblr-card-bg));
+    border: 1px solid var(--gp-line, var(--tblr-border-color));
+    border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+    box-shadow: var(--gp-shadow-overlay, var(--tblr-box-shadow-lg));
 
+    .option {
+        padding: .5rem .75rem;
+        color: var(--gp-ink, var(--tblr-body-color));
+        background: var(--gp-surface, var(--tblr-card-bg));
+
+        &.active {
+            background: var(--gp-brand-soft, var(--tblr-primary-bg-subtle));
+        }
+    }
+}
+
+.ts-wrapper.form-control,
+.ts-wrapper.form-select {
+    color: var(--gp-ink, var(--tblr-body-color));
+    background-color: var(--gp-surface, var(--tblr-card-bg));
+    border-color: var(--gp-line, var(--tblr-border-color));
+    border-radius: var(--gp-radius-control, var(--tblr-border-radius));
+
+    &.focus {
+        border-color: var(--gp-focus, var(--tblr-primary));
+        box-shadow: 0 0 0 .2rem rgba(var(--tblr-primary-rgb), .15);
+    }
+
+    &.disabled {
+        color: var(--gp-ink-muted, var(--tblr-secondary));
+        background-color: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+    }
 }
 
 /* Tabler defines a min-width of 7rem, what makes many input fields become a two-line field
   e.g. a 7 rem input does not fit behind a word like "Germany" in a 3 column form inside a modal */
-.ts-control {
+.ts-wrapper .ts-control {
+    min-height: 2.5rem;
+    color: inherit;
+
     > input {
         min-width: unset;
+        color: inherit;
+        caret-color: currentColor;
     }
 }
 
