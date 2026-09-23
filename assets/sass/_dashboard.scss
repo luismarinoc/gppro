@@ -1,0 +1,169 @@
+/* Dashboard presentation only. GridStack owns placement and breakpoint columns. */
+.content.dashboard {
+    .gp-dashboard-widgets {
+        min-width: 0;
+
+        > .row > [id] {
+            min-width: 0;
+        }
+
+        .card-sm {
+            border-color: var(--gp-line, var(--tblr-border-color));
+            background: var(--gp-surface, var(--tblr-bg-surface));
+            box-shadow: none;
+
+            .card-body .row > .col {
+                min-width: 0;
+            }
+
+            .font-weight-medium {
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .text-body-secondary {
+                overflow-wrap: anywhere;
+            }
+
+            .avatar {
+                box-shadow: none;
+            }
+        }
+    }
+
+    #PaginatedWorkingTimeChartBox {
+        border-color: var(--gp-line, var(--tblr-border-color));
+        background: var(--gp-surface, var(--tblr-bg-surface));
+        box-shadow: none;
+
+        .card-header {
+            gap: .75rem;
+            min-width: 0;
+            border-bottom-color: var(--gp-line, var(--tblr-border-color));
+
+            .card-title {
+                min-width: 0;
+                font-weight: 700;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .card-actions {
+                flex-shrink: 0;
+            }
+        }
+
+        .card-body {
+            min-width: 0;
+            overflow-x: auto;
+
+            .chart {
+                min-width: 0;
+            }
+        }
+
+        .card-footer {
+            padding: .75rem 1rem;
+            border-top-color: var(--gp-line, var(--tblr-border-color));
+            background: var(--gp-surface-muted, var(--tblr-bg-surface-secondary));
+
+            > .row {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: .75rem 0;
+                margin: 0;
+
+                > * {
+                    width: auto;
+                    max-width: none;
+                    min-width: 0;
+                    margin: 0 !important;
+                    padding: 0 .5rem;
+
+                    &:nth-child(even) {
+                        border-inline-start: 1px solid var(--gp-line, var(--tblr-border-color));
+                    }
+                }
+            }
+
+            h5 {
+                margin-bottom: .125rem !important;
+                line-height: 1.2;
+                overflow-wrap: anywhere;
+            }
+
+            span {
+                display: block;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+        }
+    }
+
+    #dashboard-grid-container.grid-stack {
+        .grid-stack-item-content {
+            border-radius: var(--gp-radius-surface, .75rem);
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            > .card {
+                height: 100%;
+                border-color: var(--gp-line, var(--tblr-border-color));
+                background: var(--gp-surface, var(--tblr-bg-surface));
+                box-shadow: none;
+            }
+        }
+
+        .card-header {
+            gap: .5rem;
+            min-width: 0;
+            border-bottom-color: var(--gp-line, var(--tblr-border-color));
+
+            .card-title {
+                min-width: 0;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .card-actions {
+                flex-shrink: 0;
+                cursor: auto;
+            }
+        }
+
+        .grid-stack-item:not(.ui-draggable-disabled) .card-header {
+            cursor: grab;
+        }
+
+        .grid-stack-item:not(.ui-draggable-disabled).ui-draggable-dragging .card-header {
+            cursor: grabbing;
+        }
+
+        .card-body svg {
+            display: block;
+            max-width: 100%;
+            stroke: var(--gp-line, var(--tblr-border-color));
+            opacity: .55;
+        }
+    }
+
+    @include media-breakpoint-up(sm) {
+        #PaginatedWorkingTimeChartBox .card-footer > .row {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+
+            > *:not(:first-child) {
+                border-inline-start: 1px solid var(--gp-line, var(--tblr-border-color));
+            }
+        }
+    }
+
+    @media (max-width: 399px) {
+        #PaginatedWorkingTimeChartBox .card-footer {
+            padding-inline: .5rem;
+
+            > .row > * {
+                padding-inline: .375rem;
+            }
+        }
+    }
+}
