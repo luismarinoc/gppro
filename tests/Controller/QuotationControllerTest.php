@@ -101,6 +101,10 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString($this->createUrl('/quotation/' . $quotation->getId() . '/pdf'), $content);
+        $pdfLink = $client->getCrawler()->filter('a[href$="/quotation/' . $quotation->getId() . '/pdf"]');
+        self::assertCount(1, $pdfLink);
+        self::assertSame('_blank', $pdfLink->attr('target'));
+        self::assertSame('noopener', $pdfLink->attr('rel'));
 
         $this->request($client, '/quotation/' . $quotation->getId() . '/pdf');
         self::assertTrue($client->getResponse()->isSuccessful());
@@ -271,7 +275,8 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         $customer->setCountry('CL');
         $customer->setTimezone('America/Santiago');
         $em->persist($customer);
-        $quotation = (new Quotation())->setCustomer($customer);
+        $quotation = (new Quotation())->setCustomer($customer)->setNotes("First line\nSecond line")->setDiscount('5')->setSurcharge('10')->setTax('19');
+        $quotation->addLine((new QuotationLine())->setDescription('Consulting')->setQuantity('2')->setUnitPrice('100'));
         $em->persist($quotation);
         $em->flush();
 
@@ -301,6 +306,26 @@ class QuotationControllerTest extends AbstractControllerBaseTestCase
         self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__header'));
         self::assertCount(1, $view->filter('.gp-workflow--quotation .gp-workflow__metadata'));
         self::assertCount(1, $view->filter('.gp-workflow--quotation__table-scroll .gp-workflow__table'));
+        $article = $view->filter('article.gp-workflow--quotation[aria-labelledby="quotation-detail-title"]');
+        self::assertCount(1, $article);
+        self::assertCount(1, $article->filter('#quotation-detail-title'));
+        self::assertStringContainsString((string) $quotation->getId(), $article->filter('#quotation-detail-title')->text());
+        self::assertCount(7, $article->filter('dl.gp-workflow--quotation__metadata > .gp-workflow--quotation__metadata-item'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__metadata-item--notes dt + dd'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__metadata-item--notes dd br'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__metadata-item dd .gp-workflow--quotation__status'));
+        self::assertCount(3, $article->filter('.gp-workflow--quotation__table-scroll thead .gp-workflow--quotation__numeric'));
+        self::assertCount(3, $article->filter('.gp-workflow--quotation__table-scroll tbody .gp-workflow--quotation__numeric'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__table-scroll tbody .gp-workflow--quotation__description'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__summary-surface table.gp-workflow--quotation__totals'));
+        self::assertCount(6, $article->filter('.gp-workflow--quotation__totals tbody tr'));
+        self::assertCount(1, $article->filter('.gp-workflow--quotation__totals .gp-workflow--quotation__final-total'));
+        $send = $article->filter('form[action$="/quotation/' . $quotation->getId() . '/send"]');
+        self::assertCount(1, $send);
+        self::assertSame('post', $send->attr('method'));
+        self::assertNotEmpty($send->filter('input[name="_token"]')->attr('value'));
+        self::assertCount(1, $send->filter('button[type="submit"]'));
+        self::assertCount(0, $article->filter('form[action$="/convert"]'));
     }
 
     public function testViewAndPdfShowAmountsInClpOnlyForNonClpQuotationsUsingTheValidUntilDate(): void

@@ -36,11 +36,98 @@
         position: static;
     }
 
+    .gp-workflow__header {
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .gp-workflow__header .card-title {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .gp-workflow__actions {
+        flex-wrap: wrap;
+    }
+
+    &__metadata {
+        display: grid;
+        gap: 1rem 1.5rem;
+        grid-template-columns: minmax(0, 1fr);
+        margin-bottom: 1.5rem;
+    }
+
+    &__metadata-item {
+        min-width: 0;
+
+        dt {
+            color: var(--gp-ink-muted);
+            font-size: .875rem;
+            font-weight: 500;
+            margin-bottom: .25rem;
+        }
+
+        dd {
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    &__description {
+        overflow-wrap: anywhere;
+        min-width: 12rem;
+    }
+
+    &__numeric {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    &__summary-surface {
+        background: var(--gp-surface-muted);
+        border: 1px solid var(--gp-line);
+        border-radius: var(--gp-radius-control);
+        margin: 1.5rem 0 0 auto;
+        max-width: min(32rem, 100%);
+        min-width: 0;
+        padding: .5rem 1rem;
+        width: 100%;
+    }
+
     &__totals {
         color: var(--gp-ink);
+        margin-bottom: 0;
+        table-layout: fixed;
+        width: 100%;
+
+        td {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        td:first-child {
+            width: 58%;
+        }
+
+        td:last-child {
+            font-variant-numeric: tabular-nums;
+            width: 42%;
+        }
+    }
+
+    &__final-total td {
+        border-top: 1px solid var(--gp-line);
     }
 
     @media (min-width: 992px) {
+        &__metadata {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__metadata-item--notes {
+            grid-column: 1 / -1;
+        }
+
         .quotation_summary_sticky {
             position: sticky;
             top: 1rem;
