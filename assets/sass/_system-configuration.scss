@@ -1,0 +1,19 @@
+.gp-system-config-summary {
+    cursor: pointer;
+}
+
+.gp-system-config-nav {
+    .list-group-item {
+        min-width: 0;
+        gap: .5rem;
+    }
+
+    &__label {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    &__counter {
+        flex-shrink: 0;
+    }
+}

@@ -1,30 +1,44 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+{% set sorted = [] %}
+{% for section in sections %}
+    {% set title = section.model.translation|trans({}, section.model.translationDomain) %}
+    {% if title == section.model.translation %}
+        {% set title = section.model.section|trans %}
+    {% endif %}
+    {% set sorted = sorted|merge([{'name': title, 'id': section.model.section, 'counter': section.form.children.configuration|length}]) %}
+{% endfor %}
+{% set sorted = sorted|sort((a, b) => a.name <=> b.name) %}
 <div class="row">
 
     <div class="col-12 col-xxl-2 col-md-3 mb-3 d-none d-md-block">
-        <div class="card sticky-xxl-top">
+        <nav class="card sticky-xxl-top gp-system-config-nav" aria-label="{{ 'menu.system_configuration'|trans }}">
             <div class="list-group list-group-flush">
-                {% set sorted = [] %}
-                {% for section in sections %}
-                    {% set title = section.model.translation|trans({}, section.model.translationDomain) %}
-                    {% if title == section.model.translation %}
-                        {% set title = section.model.section|trans %}
-                    {% endif %}
-                    {% set sorted = sorted|merge([{'name': title, 'id': section.model.section, 'counter': section.form.children.configuration|length}]) %}
-                {% endfor %}
-                {% for section in sorted|sort((a, b) => a.name <=> b.name) %}
+                {% for section in sorted %}
                     <a class="list-group-item d-flex ps-4 pe-4 p-lg-3 pb-md-2 pt-md-2" href="#conf_{{ section.id }}">
-                        {{ section.name }}
-                        <small class="text-body-secondary ms-auto">{{ section.counter }}</small>
+                        <span class="gp-system-config-nav__label">{{ section.name }}</span>
+                        <small class="gp-system-config-nav__counter text-body-secondary ms-auto">{{ section.counter }}</small>
                     </a>
                 {% endfor %}
             </div>
-        </div>
+        </nav>
     </div>
 
     <div class="col-12 col-xxl-10 col-md-9">
+        <details class="card mb-3 d-md-none">
+            <summary class="card-header gp-system-config-summary">{{ 'menu.system_configuration'|trans }} <small class="text-body-secondary">({{ sorted|length }})</small><i class="fas fa-angle-down ms-auto" aria-hidden="true"></i></summary>
+            <nav class="gp-system-config-nav" aria-label="{{ 'menu.system_configuration'|trans }}">
+                <div class="list-group list-group-flush">
+                    {% for section in sorted %}
+                        <a class="list-group-item d-flex ps-4 pe-4" href="#conf_{{ section.id }}">
+                            <span class="gp-system-config-nav__label">{{ section.name }}</span>
+                            <small class="gp-system-config-nav__counter text-body-secondary ms-auto">{{ section.counter }}</small>
+                        </a>
+                    {% endfor %}
+                </div>
+            </nav>
+        </details>
         <div class="row">
             <div class="col-12">
                 {% set formEditTemplate = gppro_context.modalRequest ? 'default/_form_modal.html.twig' : 'default/_form.html.twig' %}

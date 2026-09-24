@@ -37,10 +37,48 @@ class SystemConfigurationControllerTest extends AbstractControllerBaseTestCase
         $this->assertAccessIsGranted($client, '/admin/system-config/');
 
         $expectedForms = $this->getTestDataForms();
-        $expectedCount = \count($expectedForms) + 1; // the menu is another card
+        $expectedCount = \count($expectedForms) + 2; // desktop and mobile navigation are cards
 
-        $result = $client->getCrawler()->filter('section.content div.card');
+        $result = $client->getCrawler()->filter('section.content .card');
         self::assertEquals($expectedCount, \count($result));
+
+        $crawler = $client->getCrawler();
+        $mobile = $crawler->filter('section.content details.card.d-md-none');
+        $desktop = $crawler->filter('section.content .d-none.d-md-block > nav.card');
+        self::assertCount(1, $mobile);
+        self::assertCount(1, $desktop);
+        self::assertCount(1, $mobile->filter('summary.gp-system-config-summary'));
+        self::assertNotEmpty(trim($mobile->filter('summary')->text()));
+        self::assertCount(1, $mobile->filter('summary i.fas.fa-angle-down[aria-hidden="true"]'));
+
+        $navigationNames = [];
+        foreach ([$mobile->filter('nav'), $desktop] as $navigation) {
+            self::assertContains('gp-system-config-nav', explode(' ', (string) $navigation->attr('class')));
+            self::assertNotEmpty(trim((string) $navigation->attr('aria-label')));
+            $links = $navigation->filter('a.list-group-item');
+            self::assertCount(\count($expectedForms), $links);
+            self::assertCount(0, $navigation->filter('form'));
+
+            $names = [];
+            foreach ($links as $link) {
+                self::assertInstanceOf(\DOMElement::class, $link);
+                $href = $link->getAttribute('href');
+                self::assertStringStartsWith('#conf_', $href);
+                self::assertCount(1, $crawler->filter('[id="' . substr($href, 1) . '"]'));
+                $labels = (new \Symfony\Component\DomCrawler\Crawler($link))->filter('span.gp-system-config-nav__label');
+                self::assertCount(1, $labels);
+                self::assertNotEmpty(trim($labels->text()));
+                $counters = (new \Symfony\Component\DomCrawler\Crawler($link))->filter('small.gp-system-config-nav__counter');
+                self::assertCount(1, $counters);
+                $counter = $link->getElementsByTagName('small')->item(0);
+                self::assertInstanceOf(\DOMElement::class, $counter);
+                self::assertMatchesRegularExpression('/^\d+$/', trim($counter->textContent));
+                $names[] = preg_replace('/\s+/', ' ', trim($link->textContent));
+            }
+            $navigationNames[] = $names;
+        }
+        self::assertSame($navigationNames[0], $navigationNames[1]);
+        self::assertCount(0, $crawler->filter('form nav, form details'));
 
         $result = $client->getCrawler()->filter('section.content div.card form');
         self::assertEquals(\count($expectedForms), \count($result));
