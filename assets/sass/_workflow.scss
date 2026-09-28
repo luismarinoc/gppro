@@ -301,6 +301,57 @@ min-width: 0;
     }
 }
 
+.gp-workflow--expense-detail {
+    .gp-workflow--expense__details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 1.5rem;
+        margin-bottom: 2rem;
+
+        > div {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid var(--gp-line);
+            border-radius: 0;
+            padding: 1rem 0;
+            min-width: 0;
+        }
+
+        > .gp-workflow--expense-detail__amount {
+            grid-column: 1 / -1;
+            padding-top: 0;
+        }
+
+        .gp-workflow--expense-detail__amount dd {
+            color: var(--gp-ink);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    &__allocations {
+        max-width: 100%;
+
+        .gp-workflow__table {
+            min-width: 40rem;
+
+            th { white-space: nowrap; }
+
+            .gp-workflow--expense-detail__numeric {
+                text-align: end;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .gp-workflow--expense__details { grid-template-columns: 1fr; }
+    }
+}
+
 .gp-workflow--expense {
     &__allocations-table {
         position: relative;

@@ -239,6 +239,39 @@ class ExpenseControllerTest extends AbstractControllerBaseTestCase
         self::assertNull($reloadedAllocation->getAmountClp());
     }
 
+    public function testViewDetailHierarchyPreservesAllocationDataAndDraftActions(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_TEAMLEAD);
+        [, $project] = $this->createCustomerAndProject();
+        $expense = $this->createDraftExpenseWithAllocation($project, 100000);
+        $allocation = $expense->getAllocations()->first();
+        self::assertInstanceOf(ExpenseAllocation::class, $allocation);
+        $allocation->setAmountClp(100000);
+        $this->getEntityManager()->flush();
+        $expenseId = $expense->getId();
+        $crawler = $this->request($client, '/expense/' . $expenseId);
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $detail = $crawler->filter('.gp-workflow--expense-detail');
+        self::assertCount(1, $detail);
+        self::assertCount(1, $detail->filter('dl.gp-workflow--expense__details > div.gp-workflow--expense-detail__amount > dt + dd'));
+        self::assertStringContainsString('100,000', $detail->filter('.gp-workflow--expense-detail__amount dd')->text());
+        self::assertCount(3, $detail->filter('dl.gp-workflow--expense__details > div:not(.gp-workflow--expense-detail__amount)'));
+        self::assertCount(5, $detail->filter('.gp-workflow--expense-detail__allocations th[scope="col"]'));
+        self::assertCount(2, $detail->filter('.gp-workflow--expense-detail__allocations tbody td.gp-workflow--expense-detail__numeric'));
+        $projectName = $project->getName();
+        self::assertIsString($projectName);
+        self::assertStringContainsString($projectName, $detail->filter('.gp-workflow--expense-detail__allocations tbody')->text());
+        self::assertStringContainsString('100,000', $detail->filter('.gp-workflow--expense-detail__allocations tbody')->text());
+        self::assertCount(1, $detail->filter('a[href$="/expense/' . $expenseId . '/edit"]'));
+        foreach (['submit', 'delete'] as $action) {
+            $form = $detail->filter('form[method="post"][action$="/expense/' . $expenseId . '/' . $action . '"]');
+            self::assertCount(1, $form);
+            self::assertNotEmpty($form->filter('input[name="_token"]')->attr('value'));
+        }
+        self::assertCount(0, $detail->filter('.card .card'));
+    }
+
     /**
      * Spec: "Allocation amount displays with the money filter" - the view
      * screen must never render a raw, unformatted amountClp number.

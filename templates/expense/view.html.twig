@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="card gp-workflow gp-workflow--expense gp-workflow__surface">
+    <div class="card gp-workflow gp-workflow--expense gp-workflow--expense-detail gp-workflow__surface">
         <div class="card-header gp-workflow__header">
             <h3 class="card-title">{{ expense.description }}</h3>
             <div class="card-actions gp-workflow__actions">
@@ -22,7 +22,7 @@
         </div>
         <div class="card-body">
             <dl class="gp-workflow--expense__details">
-                <div><dt>{{ 'expense.amount'|trans }}</dt><dd>{{ expense.amount|money(expense.currency) }}</dd></div>
+                <div class="gp-workflow--expense-detail__amount"><dt>{{ 'expense.amount'|trans }}</dt><dd>{{ expense.amount|money(expense.currency) }}</dd></div>
                 <div><dt>{{ 'date'|trans }}</dt><dd>{{ expense.expenseDate ? expense.expenseDate|date('Y-m-d') : '' }}</dd></div>
                 <div><dt>{{ 'expense.category'|trans }}</dt><dd>{{ expense.category ? ('expense.category.' ~ expense.category)|trans : 'expense.category_none'|trans }}</dd></div>
                 <div><dt>{{ 'status'|trans }}</dt><dd><span class="gp-workflow__status gp-workflow--expense__status">{{ ('expense.status.' ~ expense.status)|trans }}</span></dd></div>
@@ -31,15 +31,15 @@
                 {% endif %}
             </dl>
 
-            <div class="table-responsive gp-workflow__table-scroll gp-workflow--expense__allocations-table">
+            <div class="table-responsive gp-workflow__table-scroll gp-workflow--expense__allocations-table gp-workflow--expense-detail__allocations">
             <table class="table table-vcenter card-table gp-workflow__table">
-                <thead><tr><th>{{ 'expense.allocation_project'|trans }}</th><th>{{ 'expense.allocation_percentage'|trans }}</th><th>{{ 'expense.amount'|trans }}</th><th>{{ 'expense.charged'|trans }}</th><th></th></tr></thead>
+                <thead><tr><th scope="col">{{ 'expense.allocation_project'|trans }}</th><th scope="col" class="gp-workflow--expense-detail__numeric">{{ 'expense.allocation_percentage'|trans }}</th><th scope="col" class="gp-workflow--expense-detail__numeric">{{ 'expense.amount'|trans }}</th><th scope="col">{{ 'expense.charged'|trans }}</th><th scope="col"></th></tr></thead>
                 <tbody>
                 {% for allocation in expense.allocations %}
                     <tr>
                         <td>{{ allocation.project ? allocation.project.name : '' }}</td>
-                        <td>{{ allocation.percentage }}%</td>
-                        <td>{{ allocation.amountClp|money('CLP') }}</td>
+                        <td class="gp-workflow--expense-detail__numeric">{{ allocation.percentage }}%</td>
+                        <td class="gp-workflow--expense-detail__numeric">{{ allocation.amountClp|money('CLP') }}</td>
                         <td>{{ (allocation.charged ? 'yes' : 'no')|trans }}</td>
                         <td>
                             {% if charge_forms[allocation.id] is defined %}
