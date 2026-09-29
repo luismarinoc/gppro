@@ -31,6 +31,51 @@ $avatarSizes: "xs" .75, "sm" 1.25, "md" 1.5, "lg" 2;
     }
 }
 
+.box-user-profile {
+    padding: 1.25rem;
+
+    > .row {
+        row-gap: 1rem;
+    }
+
+    .card-title {
+        color: var(--gp-ink);
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+
+    .card-title + .text-body-secondary {
+        margin-top: .25rem;
+        color: var(--gp-ink-muted);
+        overflow-wrap: anywhere;
+    }
+
+    #profile-buttons {
+        display: flex;
+        flex: 0 1 auto;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: .5rem;
+        max-width: 100%;
+        margin-inline-start: auto;
+
+        a {
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        #profile-buttons {
+            flex-basis: 100%;
+            justify-content: flex-start;
+            margin-inline-start: 0;
+        }
+    }
+}
+
 /* Detail tables like my teams (Dashboard) or */
 table.dataTable.table > tbody > tr > td {
     &.avatars {
