@@ -264,6 +264,49 @@ min-width: max-content;
 margin-bottom: 0;
     }
 
+    #invoice_history_summary_box {
+        min-width: 0;
+
+        > .card-header .card-title {
+            color: var(--gp-ink);
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .gp-workflow--invoice__history-scroll {
+            max-width: 100%;
+            min-width: 0;
+            overflow-x: auto;
+            overscroll-behavior-inline: contain;
+        }
+
+        .gp-workflow__table {
+            th { white-space: nowrap; }
+
+            th:nth-child(n + 4),
+            td:nth-child(n + 4) {
+                text-align: end;
+                font-variant-numeric: tabular-nums;
+            }
+
+            td:first-child {
+                color: var(--gp-ink);
+                font-weight: 600;
+            }
+
+            td:nth-child(2) { color: var(--gp-ink-muted); }
+
+            .milestone_total_partial {
+                margin-inline-start: .25rem;
+                vertical-align: baseline;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .gp-workflow__table { min-width: 48rem; }
+        }
+    }
+
     &__filter,
     &__preview {
 min-width: 0;
