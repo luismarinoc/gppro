@@ -68,6 +68,28 @@
     }
 }
 
+@media (max-width: 767.98px) {
+    form[name="quick_entry_weekrange_form"] {
+        max-width: 100%;
+
+        .btn-list.w-100.flex-nowrap {
+            flex-wrap: wrap !important;
+            min-width: 0;
+        }
+
+        .week-picker-btn-group {
+            width: 100%;
+            min-width: 0;
+
+            .btn-default {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
 @media (min-width: 900px) {
     .quick-entry-page {
         .ts-wrapper {
