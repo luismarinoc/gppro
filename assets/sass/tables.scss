@@ -187,6 +187,10 @@ table.table-hover {
             .col_actions { white-space: nowrap; }
         }
 
+        &.datatable_admin_tags table.dataTable > tbody > tr > td.col_name {
+            overflow-wrap: anywhere;
+        }
+
         > .card-footer {
             gap: 1rem;
             flex-wrap: wrap;
