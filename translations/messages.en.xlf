@@ -2850,6 +2850,8 @@
        <trans-unit id="gpQuotPdf9" resname="quotation.footer_terms"><source>quotation.footer_terms</source><target>Prices are subject to availability and to the validity period stated in this quotation.</target></trans-unit>
        <trans-unit id="gpSidebar1" resname="gppro.sidebar.show"><source>gppro.sidebar.show</source><target>Show sidebar</target></trans-unit>
        <trans-unit id="gpSidebar2" resname="gppro.sidebar.toggle"><source>gppro.sidebar.toggle</source><target>Toggle sidebar</target></trans-unit>
+       <trans-unit id="gp2faShowCode" resname="profile.2fa_show_code"><source>profile.2fa_show_code</source><target>Click to show code</target></trans-unit>
+       <trans-unit id="gp2faQrAlt" resname="profile.2fa_qr_alt"><source>profile.2fa_qr_alt</source><target>TOTP QR Code</target></trans-unit>
     </body>
   </file>
 </xliff>
