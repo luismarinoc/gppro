@@ -219,6 +219,8 @@ table.table-hover {
         }
     }
 
+    section.content > .gp-content-frame:has(> .data_table) { padding-top: 0; }
+
     .content:is(.gp-customer-list, .gp-project-list, .gp-timesheet-list, .gp-user-list)
         > .gp-content-frame:not(:has(.data_table)) > :is(.empty, .nothing-found, .alert-info) {
         border: 1px dashed var(--gp-line);
