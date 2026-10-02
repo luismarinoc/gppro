@@ -99,6 +99,47 @@ class ColorTest extends TestCase
         self::assertEquals('#000000', $sut->getFontContrastColor('#ffffff'));
     }
 
+    public function testGetFontContrastColorPicksTheTextColorWithTheHigherContrast(): void
+    {
+        $sut = new Color();
+        // mid-tone colors where the former YIQ rule chose white with a contrast below 4.5
+        self::assertEquals('#000000', $sut->getFontContrastColor('#2196F3'));
+        self::assertEquals('#000000', $sut->getFontContrastColor('#00bb32'));
+        self::assertEquals('#000000', $sut->getFontContrastColor('#E91E63'));
+        self::assertEquals('#ffffff', $sut->getFontContrastColor('#2f4f4f'));
+    }
+
+    public function testGetFontContrastColorMeetsAaContrastForEveryPaletteColor(): void
+    {
+        $sut = new Color();
+        $reflection = new \ReflectionClass(Color::class);
+        /** @var array<string> $palette */
+        $palette = $reflection->getConstant('PALETTE');
+
+        foreach ($palette as $color) {
+            $text = $sut->getFontContrastColor($color);
+            $background = $this->relativeLuminance($color);
+            $foreground = $this->relativeLuminance($text);
+            $ratio = (max($background, $foreground) + 0.05) / (min($background, $foreground) + 0.05);
+
+            self::assertGreaterThanOrEqual(4.5, $ratio, \sprintf('Text %s on %s only reaches %.2f', $text, $color, $ratio));
+        }
+    }
+
+    private function relativeLuminance(string $hex): float
+    {
+        $channels = array_map(
+            static function (string $value): float {
+                $channel = hexdec($value) / 255;
+
+                return $channel <= 0.03928 ? $channel / 12.92 : (($channel + 0.055) / 1.055) ** 2.4;
+            },
+            str_split(substr($hex, 1), 2)
+        );
+
+        return 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+    }
+
     public function testGetFontContrastColorReturnsContrastForDefaultColorOnInvalidColor(): void
     {
         $sut = new Color();

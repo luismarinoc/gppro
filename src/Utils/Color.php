@@ -127,11 +127,20 @@ final class Color
             $color = substr(Constants::DEFAULT_COLOR, 1);
         }
 
-        $r = hexdec(substr($color, 0, 2));
-        $g = hexdec(substr($color, 2, 2));
-        $b = hexdec(substr($color, 4, 2));
-        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        $linear = static function (string $value): float {
+            $channel = hexdec($value) / 255;
 
-        return ($yiq >= 128) ? '#000000' : '#ffffff';
+            return $channel <= 0.03928 ? $channel / 12.92 : (($channel + 0.055) / 1.055) ** 2.4;
+        };
+
+        $luminance = 0.2126 * $linear(substr($color, 0, 2))
+            + 0.7152 * $linear(substr($color, 2, 2))
+            + 0.0722 * $linear(substr($color, 4, 2));
+
+        // WCAG contrast ratios against white and black: pick the text color that reads better
+        $contrastWithWhite = 1.05 / ($luminance + 0.05);
+        $contrastWithBlack = ($luminance + 0.05) / 0.05;
+
+        return ($contrastWithBlack >= $contrastWithWhite) ? '#000000' : '#ffffff';
     }
 }
