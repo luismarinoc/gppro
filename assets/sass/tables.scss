@@ -258,3 +258,10 @@ table.table-hover {
     // stay on top of sticky elements (like table header)
     z-index: 1021;
 }
+
+/* Link buttons in table rows use a fixed blue that fails contrast on the dark surface */
+[data-bs-theme="dark"] table.dataTable .btn-link:not(.text-danger) {
+    --tblr-btn-color: var(--tblr-link-color);
+    --tblr-btn-hover-color: var(--tblr-link-hover-color);
+    color: var(--tblr-link-color);
+}
