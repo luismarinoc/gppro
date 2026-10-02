@@ -400,7 +400,7 @@
       </trans-unit>
       <trans-unit id="r.ZOT9U" resname="country">
         <source>country</source>
-        <target>Pais</target>
+        <target>País</target>
       </trans-unit>
       <trans-unit id="RVadpX9" resname="phone">
         <source>phone</source>
@@ -2711,6 +2711,7 @@
       <trans-unit id="quotationViewPdf" resname="quotation.view_pdf" xml:space="preserve"><source>quotation.view_pdf</source><target state="translated">Ver PDF</target></trans-unit>
       <trans-unit id="quotationViewTitle" resname="quotation.view_title" xml:space="preserve"><source>quotation.view_title</source><target state="translated">Cotización</target></trans-unit>
       <trans-unit id="quotationCreateAction" resname="quotation.create_action" xml:space="preserve"><source>quotation.create_action</source><target state="translated">Crear cotización</target></trans-unit>
+      <trans-unit id="quotationViewHistory" resname="quotation.view_history" xml:space="preserve"><source>quotation.view_history</source><target state="translated">Ver historial de cotizaciones</target></trans-unit>
       <trans-unit id="quotationHistoryTitle" resname="quotation.history_title" xml:space="preserve"><source>quotation.history_title</source><target state="translated">Historial de cotizaciones de %customer%</target></trans-unit>
       <trans-unit id="quotationAllStatuses" resname="quotation.all_statuses" xml:space="preserve"><source>quotation.all_statuses</source><target state="translated">Todos los estados</target></trans-unit>
       <trans-unit id="quotationStatusDraft" resname="quotation.status.draft" xml:space="preserve"><source>quotation.status.draft</source><target state="translated">Borrador</target></trans-unit>
