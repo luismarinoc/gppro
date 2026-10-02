@@ -65,7 +65,7 @@
     {% block box_footer %}
         {%- if form is not null -%}
             {{ form_start(form) }}
-            {{ form_widget(form.message, {'attr': {'rows': '3', 'placeholder': 'placeholder.type_message'|trans, 'style': 'margin-bottom: 5px'}}) }}
+            {{ form_widget(form.message, {'attr': {'rows': '3', 'aria-label': 'comment'|trans, 'placeholder': 'placeholder.type_message'|trans, 'style': 'margin-bottom: 5px'}}) }}
             <button type="submit" class="btn btn-primary">
                 {{ icon('comment', true) }}
                 {{ 'comment'|trans }}

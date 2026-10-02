@@ -326,6 +326,9 @@ class CustomerControllerTest extends AbstractControllerBaseTestCase
         self::assertEquals(1, $node->count());
         $node = $client->getCrawler()->filter('div.card#comments_box');
         self::assertEquals(1, $node->count());
+        $textarea = $client->getCrawler()->filter('div.card#comments_box textarea');
+        self::assertCount(1, $textarea);
+        self::assertNotEmpty(trim((string) $textarea->attr('aria-label')));
         $node = $client->getCrawler()->filter('div.card#team_listing_box .card-actions a.btn');
         self::assertEquals(2, $node->count());
         $node = $client->getCrawler()->filter('div.card#customer_rates_box');
