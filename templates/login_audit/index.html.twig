@@ -3,9 +3,6 @@
 
 {% block main %}
     <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">{{ 'login_audit'|trans }}</h3>
-        </div>
         <div class="card-body">
             <form method="get" action="{{ path('admin_login_audit') }}" class="row g-2 mb-3">
                 <div class="col-auto">
@@ -50,9 +47,9 @@
                         <td>{% if entry.user %}{{ widgets.label_user(entry.user) }}{% else %}<span class="text-muted">&mdash;</span>{% endif %}</td>
                         <td>{{ ('login_audit.outcome.' ~ entry.outcome)|trans }}</td>
                         <td>{{ entry.failureReason }}</td>
-                        <td>{{ entry.ipAddress }}</td>
-                        <td>{{ entry.userAgent }}</td>
-                        <td>{{ entry.createdAt|date_time }}</td>
+                        <td class="text-nowrap">{{ entry.ipAddress }}</td>
+                        <td class="small text-muted">{{ entry.userAgent }}</td>
+                        <td class="text-nowrap">{{ entry.createdAt|date_time }}</td>
                     </tr>
                 {% else %}
                     <tr><td colspan="7">{{ 'login_audit.none_found'|trans }}</td></tr>
