@@ -2772,6 +2772,12 @@
       <trans-unit id="quotationViewTitle" resname="quotation.view_title"><source>quotation.view_title</source><target>Quotation</target></trans-unit>
       <trans-unit id="quotationCreateAction" resname="quotation.create_action"><source>quotation.create_action</source><target>Create quotation</target></trans-unit>
       <trans-unit id="quotationViewHistory" resname="quotation.view_history"><source>quotation.view_history</source><target>View quotation history</target></trans-unit>
+      <trans-unit id="quotationCatalogTitle" resname="quotation_catalog.title"><source>quotation_catalog.title</source><target>Quotation catalog</target></trans-unit>
+      <trans-unit id="quotationCatalogAdd" resname="quotation_catalog.add"><source>quotation_catalog.add</source><target>Add catalog item</target></trans-unit>
+      <trans-unit id="quotationCatalogEditTitle" resname="quotation_catalog.edit_title"><source>quotation_catalog.edit_title</source><target>Edit catalog item</target></trans-unit>
+      <trans-unit id="quotationCatalogDefaultPrice" resname="quotation_catalog.default_price"><source>quotation_catalog.default_price</source><target>Default price</target></trans-unit>
+      <trans-unit id="quotationCatalogInactive" resname="quotation_catalog.inactive"><source>quotation_catalog.inactive</source><target>Inactive</target></trans-unit>
+      <trans-unit id="quotationCatalogNoneFound" resname="quotation_catalog.none_found"><source>quotation_catalog.none_found</source><target>No catalog items found.</target></trans-unit>
       <trans-unit id="quotationHistoryTitle" resname="quotation.history_title"><source>quotation.history_title</source><target>Quotation history for %customer%</target></trans-unit>
       <trans-unit id="quotationAllStatuses" resname="quotation.all_statuses"><source>quotation.all_statuses</source><target>All statuses</target></trans-unit>
       <trans-unit id="quotationStatusDraft" resname="quotation.status.draft"><source>quotation.status.draft</source><target>Draft</target></trans-unit>

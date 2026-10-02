@@ -2716,6 +2716,12 @@
       <trans-unit id="quotationViewTitle" resname="quotation.view_title" xml:space="preserve"><source>quotation.view_title</source><target state="translated">Cotización</target></trans-unit>
       <trans-unit id="quotationCreateAction" resname="quotation.create_action" xml:space="preserve"><source>quotation.create_action</source><target state="translated">Crear cotización</target></trans-unit>
       <trans-unit id="quotationViewHistory" resname="quotation.view_history" xml:space="preserve"><source>quotation.view_history</source><target state="translated">Ver historial de cotizaciones</target></trans-unit>
+      <trans-unit id="quotationCatalogTitle" resname="quotation_catalog.title" xml:space="preserve"><source>quotation_catalog.title</source><target state="translated">Catálogo de presupuestos</target></trans-unit>
+      <trans-unit id="quotationCatalogAdd" resname="quotation_catalog.add" xml:space="preserve"><source>quotation_catalog.add</source><target state="translated">Agregar ítem al catálogo</target></trans-unit>
+      <trans-unit id="quotationCatalogEditTitle" resname="quotation_catalog.edit_title" xml:space="preserve"><source>quotation_catalog.edit_title</source><target state="translated">Editar ítem del catálogo</target></trans-unit>
+      <trans-unit id="quotationCatalogDefaultPrice" resname="quotation_catalog.default_price" xml:space="preserve"><source>quotation_catalog.default_price</source><target state="translated">Precio predeterminado</target></trans-unit>
+      <trans-unit id="quotationCatalogInactive" resname="quotation_catalog.inactive" xml:space="preserve"><source>quotation_catalog.inactive</source><target state="translated">Inactivo</target></trans-unit>
+      <trans-unit id="quotationCatalogNoneFound" resname="quotation_catalog.none_found" xml:space="preserve"><source>quotation_catalog.none_found</source><target state="translated">No hay ítems en el catálogo.</target></trans-unit>
       <trans-unit id="quotationHistoryTitle" resname="quotation.history_title" xml:space="preserve"><source>quotation.history_title</source><target state="translated">Historial de cotizaciones de %customer%</target></trans-unit>
       <trans-unit id="quotationAllStatuses" resname="quotation.all_statuses" xml:space="preserve"><source>quotation.all_statuses</source><target state="translated">Todos los estados</target></trans-unit>
       <trans-unit id="quotationStatusDraft" resname="quotation.status.draft" xml:space="preserve"><source>quotation.status.draft</source><target state="translated">Borrador</target></trans-unit>

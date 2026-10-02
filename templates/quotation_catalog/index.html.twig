@@ -3,32 +3,32 @@
 {% block main %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Catálogo de presupuestos</h3>
+            <h3 class="card-title">{{ 'quotation_catalog.title'|trans }}</h3>
             <div class="card-actions">
-                <a class="btn btn-primary" href="{{ path('admin_quotation_catalog_create') }}">Agregar ítem al catálogo</a>
+                <a class="btn btn-primary" href="{{ path('admin_quotation_catalog_create') }}">{{ 'quotation_catalog.add'|trans }}</a>
             </div>
         </div>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Nombre</th><th>Precio predeterminado</th><th>Estado</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'name'|trans }}</th><th class="text-end">{{ 'quotation_catalog.default_price'|trans }}</th><th>{{ 'status'|trans }}</th><th></th></tr></thead>
                 <tbody>
                 {% for item in items %}
                     <tr class="alternative-link cursor-pointer" data-href="{{ path('admin_quotation_catalog_edit', {id: item.id}) }}">
                         <td>{{ item.name }}</td>
-                        <td>{{ item.defaultPrice }}</td>
-                        <td>{{ item.active ? 'Activo' : 'Inactivo' }}</td>
+                        <td class="text-end text-nowrap">{{ (item.defaultPrice * 1)|format_number({fraction_digit: 2}) }}</td>
+                        <td>{{ item.active ? 'active'|trans : 'quotation_catalog.inactive'|trans }}</td>
                         <td class="text-end">
-                            <a href="{{ path('admin_quotation_catalog_edit', {id: item.id}) }}">Editar</a>
+                            <a href="{{ path('admin_quotation_catalog_edit', {id: item.id}) }}">{{ 'edit'|trans }}</a>
                             {% if item.active %}
                                 <form class="d-inline" method="post" action="{{ path('admin_quotation_catalog_delete', {id: item.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('quotation_catalog_item') }}">
-                                    <button class="btn btn-link text-danger" type="submit">Desactivar</button>
+                                    <button class="btn btn-link text-danger" type="submit">{{ 'deactivate'|trans }}</button>
                                 </form>
                             {% endif %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="4">No hay ítems en el catálogo.</td></tr>
+                    <tr><td colspan="4">{{ 'quotation_catalog.none_found'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

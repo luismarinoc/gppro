@@ -54,4 +54,23 @@ class QuotationCatalogControllerTest extends AbstractControllerBaseTestCase
         );
         self::assertMatchesRegularExpression('/<tr[^>]*class="[^"]*alternative-link[^"]*"/', $content);
     }
+
+    public function testIndexFormatsDefaultPriceWithTwoDecimalsAndNoCurrency(): void
+    {
+        $client = $this->getClientForAuthenticatedUser(User::ROLE_ADMIN);
+
+        $item = new QuotationCatalogItem();
+        $item->setName('Price format catalog item ' . uniqid());
+        $item->setDefaultPrice('1234.5000');
+        $em = $this->getEntityManager();
+        $em->persist($item);
+        $em->flush();
+
+        $this->request($client, '/admin/quotation/catalog/');
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('1234.5000', $content);
+        self::assertMatchesRegularExpression('/<td class="text-end text-nowrap">\s*1[,.\x{202F}\x{00A0} ]?234[,.]50\s*<\/td>/u', $content);
+    }
 }
