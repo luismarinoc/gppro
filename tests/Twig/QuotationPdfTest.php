@@ -132,7 +132,8 @@ class QuotationPdfTest extends KernelTestCase
         self::assertStringContainsString('Gpartner Consulting', $content);
         self::assertStringContainsString('Signature Customer', $content);
         // date lines: one per signature column
-        self::assertSame(2, substr_count($content, 'quotation.signature_date'), 'Expected the date placeholder to appear once per signature column.');
+        self::assertSame(2, substr_count($content, 'Date: ______________'), 'Expected the date placeholder to appear once per signature column.');
+        self::assertStringNotContainsString('quotation.signature_date', $content);
     }
 
     public function testCustomerSignatureNamePrefillsFromContactWhenAvailable(): void
