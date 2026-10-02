@@ -83,6 +83,9 @@ table.dataTable {
        (e.g. timesheet approve/reject) that need more than the dropdown-only 40px */
     .actions {
         min-width: 40px;
+        /* 1% keeps the column at its content width in auto table layout so the
+           dropdown stays at the right edge instead of absorbing spare width */
+        width: 1%;
         white-space: nowrap;
     }
     tr {
