@@ -2848,6 +2848,8 @@
        <trans-unit id="gpQuotPdf7" resname="quotation.signature_date"><source>quotation.signature_date</source><target>Date</target></trans-unit>
        <trans-unit id="gpQuotPdf8" resname="quotation.footer_payment"><source>quotation.footer_payment</source><target>Bank transfer. We will arrange the account details together with the acceptance.</target></trans-unit>
        <trans-unit id="gpQuotPdf9" resname="quotation.footer_terms"><source>quotation.footer_terms</source><target>Prices are subject to availability and to the validity period stated in this quotation.</target></trans-unit>
+       <trans-unit id="gpSidebar1" resname="gppro.sidebar.show"><source>gppro.sidebar.show</source><target>Show sidebar</target></trans-unit>
+       <trans-unit id="gpSidebar2" resname="gppro.sidebar.toggle"><source>gppro.sidebar.toggle</source><target>Toggle sidebar</target></trans-unit>
     </body>
   </file>
 </xliff>

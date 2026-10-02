@@ -41,7 +41,7 @@
                             {% if is_granted('view_user') %}
                                 <a href="{{ path('admin_user', {'role': role.getName()}) }}" class="fs-6 mb-1">{{ 'amount'|trans }}: {{ roleUsers|length }}</a>
                             {% else %}
-                                <span class="fs-6 mb-1">Total {{ roleUsers|length }} users</span>
+                                <span class="fs-6 mb-1">{{ 'amount'|trans }}: {{ roleUsers|length }}</span>
                             {% endif %}
                         </div>
                     </div>

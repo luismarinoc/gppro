@@ -7,7 +7,7 @@
 
 {% block after_body_start %}
     <a class="gp-skip-link" href="#main-content">{{ 'gppro.skip_to_main'|trans }}</a>
-    <button type="button" class="sidebar-show-btn" aria-label="Show sidebar">
+    <button type="button" class="sidebar-show-btn" aria-label="{{ 'gppro.sidebar.show'|trans }}">
         <i class="fas fa-angle-double-right"></i>
     </button>
     {% embed '@theme/embeds/modal.html.twig' %}

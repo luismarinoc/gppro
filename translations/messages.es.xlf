@@ -2790,6 +2790,8 @@
       <trans-unit id="gpPilot6" resname="gppro.domain.money" xml:space="preserve"><source>gppro.domain.money</source><target state="translated">Dinero</target></trans-unit>
       <trans-unit id="gpPilot7" resname="gppro.domain.company" xml:space="preserve"><source>gppro.domain.company</source><target state="translated">Empresa</target></trans-unit>
       <trans-unit id="gpSubmitAction" resname="submit" xml:space="preserve"><source>submit</source><target state="translated">Enviar</target></trans-unit>
+      <trans-unit id="gpSidebar1" resname="gppro.sidebar.show" xml:space="preserve"><source>gppro.sidebar.show</source><target state="translated">Mostrar barra lateral</target></trans-unit>
+      <trans-unit id="gpSidebar2" resname="gppro.sidebar.toggle" xml:space="preserve"><source>gppro.sidebar.toggle</source><target state="translated">Alternar barra lateral</target></trans-unit>
     </body>
   </file>
 </xliff>
