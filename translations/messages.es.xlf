@@ -466,6 +466,10 @@
         <source>ROLE_USER</source>
         <target>Usuario</target>
       </trans-unit>
+      <trans-unit id="gpRoleSwitch" resname="ROLE_ALLOWED_TO_SWITCH" xml:space="preserve">
+        <source>ROLE_ALLOWED_TO_SWITCH</source>
+        <target state="translated">Puede cambiar de usuario</target>
+      </trans-unit>
       <trans-unit id="TdBJBAl" resname="stats.durationToday" xml:space="preserve">
         <source>stats.durationToday</source>
         <target state="translated">Hoy</target>
