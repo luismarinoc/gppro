@@ -2832,6 +2832,22 @@
        <trans-unit id="gpPilot5" resname="gppro.domain.work"><source>gppro.domain.work</source><target>Work</target></trans-unit>
        <trans-unit id="gpPilot6" resname="gppro.domain.money"><source>gppro.domain.money</source><target>Money</target></trans-unit>
        <trans-unit id="gpPilot7" resname="gppro.domain.company"><source>gppro.domain.company</source><target>Company</target></trans-unit>
+       <trans-unit id="gpSubmitAction" resname="submit"><source>submit</source><target>Submit</target></trans-unit>
+       <trans-unit id="gpExpPdf1" resname="expense.pdf_title"><source>expense.pdf_title</source><target>Expense receipt</target></trans-unit>
+       <trans-unit id="gpExpPdf2" resname="expense.created_by"><source>expense.created_by</source><target>Recorded by</target></trans-unit>
+       <trans-unit id="gpExpPdf3" resname="expense.allocation_amount"><source>expense.allocation_amount</source><target>Amount</target></trans-unit>
+       <trans-unit id="gpExpPdf4" resname="expense.approval_level"><source>expense.approval_level</source><target>Level</target></trans-unit>
+       <trans-unit id="gpExpPdf5" resname="expense.approval_by"><source>expense.approval_by</source><target>Approved by</target></trans-unit>
+       <trans-unit id="gpExpPdf6" resname="expense.approval_date"><source>expense.approval_date</source><target>Date</target></trans-unit>
+       <trans-unit id="gpQuotPdf1" resname="quotation.notes"><source>quotation.notes</source><target>Notes</target></trans-unit>
+       <trans-unit id="gpQuotPdf2" resname="quotation.seller"><source>quotation.seller</source><target>Seller</target></trans-unit>
+       <trans-unit id="gpQuotPdf3" resname="quotation.issuer_phone"><source>quotation.issuer_phone</source><target>Phone</target></trans-unit>
+       <trans-unit id="gpQuotPdf4" resname="quotation.issuer_vat_id"><source>quotation.issuer_vat_id</source><target>Tax ID</target></trans-unit>
+       <trans-unit id="gpQuotPdf5" resname="quotation.signature_customer"><source>quotation.signature_customer</source><target>Customer signature</target></trans-unit>
+       <trans-unit id="gpQuotPdf6" resname="quotation.signature_issuer"><source>quotation.signature_issuer</source><target>Issuer signature</target></trans-unit>
+       <trans-unit id="gpQuotPdf7" resname="quotation.signature_date"><source>quotation.signature_date</source><target>Date</target></trans-unit>
+       <trans-unit id="gpQuotPdf8" resname="quotation.footer_payment"><source>quotation.footer_payment</source><target>Bank transfer. We will arrange the account details together with the acceptance.</target></trans-unit>
+       <trans-unit id="gpQuotPdf9" resname="quotation.footer_terms"><source>quotation.footer_terms</source><target>Prices are subject to availability and to the validity period stated in this quotation.</target></trans-unit>
     </body>
   </file>
 </xliff>
