@@ -172,7 +172,7 @@
       </trans-unit>
       <trans-unit id="Dp2KT8W" resname="The field {{ field }} is required, please select a value">
         <source>The field {{ field }} is required, please select a value</source>
-        <target>Bitten wählen Sie einen Wert für {{ field }} aus</target>
+        <target>Please select a value for {{ field }}</target>
       </trans-unit>
       <trans-unit id="gpExpenseV1" resname="expense.allocations_minimum">
         <source>expense.allocations_minimum</source>

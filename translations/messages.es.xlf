@@ -2767,6 +2767,18 @@
       <trans-unit id="gpApprovalsNotif2" resname="approvals.notification.expense" xml:space="preserve"><source>approvals.notification.expense</source><target state="translated">%count% gasto(s) pendiente(s) de aprobación</target></trans-unit>
       <trans-unit id="gpApprovalsNotif3" resname="approvals.notification.invoice" xml:space="preserve"><source>approvals.notification.invoice</source><target state="translated">%count% pago(s) de factura pendiente(s) de aprobación</target></trans-unit>
       <trans-unit id="gpApprovalsNotif4" resname="approvals.notification.timesheet" xml:space="preserve"><source>approvals.notification.timesheet</source><target state="translated">%count% registro(s) de horas pendiente(s) de aprobación</target></trans-unit>
+      <trans-unit id="gpFxRateIndicator" resname="indicator" xml:space="preserve"><source>indicator</source><target state="translated">Indicador</target></trans-unit>
+      <trans-unit id="gpFxRateModifiedAt" resname="modified_at" xml:space="preserve"><source>modified_at</source><target state="translated">Modificado el</target></trans-unit>
+      <trans-unit id="8pQmR1a" resname="invoice.submit_payment_approval" xml:space="preserve"><source>invoice.submit_payment_approval</source><target state="translated">Enviar a aprobación de pago</target></trans-unit>
+      <trans-unit id="8pQmR1b" resname="invoice.approve_payment" xml:space="preserve"><source>invoice.approve_payment</source><target state="translated">Aprobar pago</target></trans-unit>
+      <trans-unit id="8pQmR1c" resname="invoice.reject_payment" xml:space="preserve"><source>invoice.reject_payment</source><target state="translated">Rechazar pago</target></trans-unit>
+      <trans-unit id="gpPilot1" resname="gppro.skip_to_main" xml:space="preserve"><source>gppro.skip_to_main</source><target state="translated">Saltar al contenido principal</target></trans-unit>
+      <trans-unit id="gpPilot2" resname="gppro.dashboard.eyebrow" xml:space="preserve"><source>gppro.dashboard.eyebrow</source><target state="translated">Resumen operativo</target></trans-unit>
+      <trans-unit id="gpPilot3" resname="gppro.dashboard.description" xml:space="preserve"><source>gppro.dashboard.description</source><target state="translated">Comience por el trabajo que requiere atención y siga cada registro hasta su origen.</target></trans-unit>
+      <trans-unit id="gpPilot4" resname="gppro.dashboard.domains" xml:space="preserve"><source>gppro.dashboard.domains</source><target state="translated">Áreas de la plataforma</target></trans-unit>
+      <trans-unit id="gpPilot5" resname="gppro.domain.work" xml:space="preserve"><source>gppro.domain.work</source><target state="translated">Trabajo</target></trans-unit>
+      <trans-unit id="gpPilot6" resname="gppro.domain.money" xml:space="preserve"><source>gppro.domain.money</source><target state="translated">Dinero</target></trans-unit>
+      <trans-unit id="gpPilot7" resname="gppro.domain.company" xml:space="preserve"><source>gppro.domain.company</source><target state="translated">Empresa</target></trans-unit>
     </body>
   </file>
 </xliff>

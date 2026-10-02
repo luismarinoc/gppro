@@ -2,6 +2,14 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" target-language="es" datatype="plaintext" original="validators.en.xlf">
     <body>
+      <trans-unit id="EDEDQtZ" resname="These characters are not allowed: {{ chars }}" xml:space="preserve">
+        <source>These characters are not allowed: {{ chars }}</source>
+        <target state="translated">Los siguientes caracteres no están permitidos: {{ chars }}</target>
+      </trans-unit>
+      <trans-unit id="Dp2KT8W" resname="The field {{ field }} is required, please select a value" xml:space="preserve">
+        <source>The field {{ field }} is required, please select a value</source>
+        <target state="translated">Seleccione un valor para {{ field }}</target>
+      </trans-unit>
       <trans-unit id="IkNxbBI" resname="This value is not a valid role.">
         <source>This value is not a valid role.</source>
         <target>El valor indicado no es un tipo de rol válido.</target>
