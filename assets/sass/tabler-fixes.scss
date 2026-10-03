@@ -72,7 +72,8 @@ fieldset.form-fieldset > legend {
 
 /* Status badges use near-white text on mid-tone fills: success 2.63, warning 2.04
    and the light default badge 4.15, all below the 4.5 AA minimum. Darken only the
-   text through the foreground variables the text-*-fg utilities read. */
+   text through the foreground variables the text-*-fg utilities read. The default
+   badge has no such utility rule and takes its text from --badge-color instead. */
 .badge.bg-success {
     --#{$prefix}success-fg: #182433;
 }
@@ -82,5 +83,5 @@ fieldset.form-fieldset > legend {
 }
 
 :root:not([data-bs-theme="dark"]) .badge.bg-default {
-    --#{$prefix}default-fg: #5f6b7c;
+    --#{$prefix}badge-color: #5f6b7c;
 }
