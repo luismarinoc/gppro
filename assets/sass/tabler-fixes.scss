@@ -146,3 +146,22 @@ fieldset.form-fieldset > legend {
     --#{$prefix}btn-hover-bg: color-mix(in srgb, var(--#{$prefix}success), #fff 15%);
     --#{$prefix}btn-hover-border-color: color-mix(in srgb, var(--#{$prefix}success), #fff 15%);
 }
+
+/* An unchecked checkbox, radio or switch is outlined with a 20% translucent navy: 1.51 on
+   the light surface and 1.03 to 1.08 on the dark one, so the control is barely visible
+   (3:1 is needed to identify it). Use the muted ink token, which follows the theme. The
+   checked and indeterminate states keep their own fill and border. */
+.form-check-input:not(:checked):not(:indeterminate) {
+    border-color: var(--gp-ink-muted, var(--#{$prefix}secondary));
+}
+
+/* The destructive menu item ("Eliminar") uses the red fill color for its text, forced with
+   !important: 4.55 on light (4.13 on the hover highlight) and 3.04 on dark (2.81). Use a
+   darker red on light and Tabler's text red on dark, 6.41 and 5.57. */
+.dropdown-item.text-danger {
+    color: #b42318 !important;
+}
+
+[data-bs-theme="dark"] .dropdown-item.text-danger {
+    color: var(--#{$prefix}danger-text-emphasis) !important;
+}
