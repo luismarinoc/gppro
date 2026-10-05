@@ -108,3 +108,15 @@ fieldset.form-fieldset > legend {
         --#{$prefix}btn-color: #5f6b7c;
     }
 }
+
+/* The active page number is white on the light blue primary of the dark theme (2.20). The
+   light theme already passes with white (5.00), so only the dark theme gets dark text. */
+[data-bs-theme="dark"] .pagination {
+    --#{$prefix}pagination-active-color: #182433;
+}
+
+/* The secondary badge shares the #a3a3a3 fill of the dark secondary button, with the same
+   near-white text (2.41). The light theme fill is darker and already passes (4.63). */
+[data-bs-theme="dark"] .badge.bg-secondary {
+    --#{$prefix}secondary-fg: #182433;
+}
