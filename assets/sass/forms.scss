@@ -138,3 +138,12 @@ fieldset > .mb-3.row:last-child {
         }
     }
 }
+
+/* TomSelect draws its box on the .ts-wrapper (class form-select), but the library moves the
+   focus styles to the inner .ts-control, which has no border here, and removes the outline
+   from its inner input. The focused wrapper looked identical to an unfocused one, so
+   keyboard focus was invisible. Use the same ring as the other controls. */
+.ts-wrapper.focus,
+.ts-wrapper:focus-within {
+    outline: 2px solid var(--gp-focus, var(--tblr-primary));
+}
