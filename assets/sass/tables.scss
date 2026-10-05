@@ -273,3 +273,13 @@ table.table-hover {
 table.dataTable th.today {
     color: var(--tblr-body-color);
 }
+
+/* The user and super admin columns of the roles table are tinted green and orange, and
+   Tabler forces a saturated text color on the tint with !important (2.43 and 2.67 on
+   light, 4.45 and 4.14 on dark). Keep the tint as the cue and use the body text color. */
+.datatable_user_admin_permissions {
+    th.bg-green-lt,
+    th.bg-orange-lt {
+        color: var(--tblr-body-color) !important;
+    }
+}
