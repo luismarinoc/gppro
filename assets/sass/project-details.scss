@@ -53,7 +53,7 @@
     }
     &__hero-copy, &__overview { min-width: 0; }
     &__eyebrow, &__reference > span {
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
         font-size: .6875rem;
         font-weight: 600;
         letter-spacing: .09em;
@@ -67,7 +67,7 @@
         line-height: 1.2;
         overflow-wrap: anywhere;
     }
-    &__customer { color: var(--tblr-secondary); }
+    &__customer { color: var(--gp-ink-muted); }
     &__reference { display: grid; gap: .375rem; }
     &__reference strong { font-weight: 500; font-variant-numeric: tabular-nums; }
     #project_details_box > .card-body { padding: 0; }
@@ -88,7 +88,7 @@
     }
     .table thead th {
         background: var(--tblr-bg-surface-secondary);
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
         font-size: .6875rem;
         font-weight: 600;
         letter-spacing: .025em;
@@ -101,7 +101,7 @@
     #project_details_box .table th {
         font-size: .75rem;
         font-weight: 400;
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
     }
     #project_details_box .table td,
     #project_details_box .table th { padding: .75rem .375rem; overflow-wrap: anywhere; }

@@ -65,7 +65,7 @@
 
     &__hero-copy, &__overview { min-width: 0; }
     &__eyebrow, &__facts dt {
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
         font-size: .6875rem;
         font-weight: 600;
         letter-spacing: .09em;
@@ -81,7 +81,7 @@
         overflow-wrap: anywhere;
     }
 
-    &__company { color: var(--tblr-secondary); }
+    &__company { color: var(--gp-ink-muted); }
     &__facts {
         display: flex;
         flex-wrap: wrap;
@@ -114,7 +114,7 @@
     }
     .table thead th {
         background: var(--tblr-bg-surface-secondary);
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
         font-size: .6875rem;
         font-weight: 600;
         letter-spacing: .025em;
@@ -124,7 +124,7 @@
         width: 38%;
         font-size: .75rem;
         font-weight: 400;
-        color: var(--tblr-secondary);
+        color: var(--gp-ink-muted);
     }
     #customer_details_box .table td,
     #customer_details_box .table th { padding: .75rem .5rem; overflow-wrap: anywhere; }
