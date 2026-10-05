@@ -165,3 +165,15 @@ fieldset.form-fieldset > legend {
 [data-bs-theme="dark"] .dropdown-item.text-danger {
     color: var(--#{$prefix}danger-text-emphasis) !important;
 }
+
+/* Two more places use the secondary text color #737373 on a surface it does not suit: the
+   addon of an input group ("$", 4.15 on light and 2.48 on dark) and the inactive tabs and
+   pills on dark (2.99). Use the muted ink token, which follows the theme (5.29, 5.91, 7.12).
+   The active tab keeps its own color. */
+.input-group-text {
+    color: var(--gp-ink-muted, var(--#{$prefix}secondary));
+}
+
+[data-bs-theme="dark"] :is(.nav-tabs, .nav-pills) {
+    --#{$prefix}nav-link-color: var(--gp-ink-muted);
+}
