@@ -259,16 +259,17 @@ table.table-hover {
     z-index: 1021;
 }
 
-/* Link buttons use a fixed blue that fails contrast on the dark surface, in table rows
-   and in toolbars alike (3.43 against the 4.5 minimum) */
-[data-bs-theme="dark"] .btn-link:not(.text-danger) {
+/* Link buttons use a fixed blue that fails contrast on both themes (3.43 on dark, 4.03
+   on light, against the 4.5 minimum), in table rows and in toolbars alike. Use the theme
+   link color, which is also what plain links use. */
+.btn-link:not(.text-danger) {
     --tblr-btn-color: var(--tblr-link-color);
     --tblr-btn-hover-color: var(--tblr-link-hover-color);
     color: var(--tblr-link-color);
 }
 
-/* The highlighted "today" header cell is dark amber on the dark theme, and the grey
-   header text on it only reaches 3.7 */
-[data-bs-theme="dark"] table.dataTable th.today {
+/* The highlighted "today" header cell keeps the grey header text, which only reaches
+   3.7 on the dark amber fill and 4.07 on the light one */
+table.dataTable th.today {
     color: var(--tblr-body-color);
 }
