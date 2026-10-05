@@ -95,3 +95,16 @@ fieldset.form-fieldset > legend {
     --#{$prefix}btn-hover-color: #182433;
     --#{$prefix}btn-active-color: #182433;
 }
+
+/* Light theme only, the dark theme already passes: placeholders use #9ca3af (2.48 on the
+   input fill) and the outline secondary button text #6b7280 reaches 4.23 on its fill. */
+:root:not([data-bs-theme="dark"]) {
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--#{$prefix}muted);
+    }
+
+    .btn-outline-secondary {
+        --#{$prefix}btn-color: #5f6b7c;
+    }
+}
