@@ -21,6 +21,11 @@
         color: var(--tblr-body-bg);
         font-size: 30px;
     }
+    /* The focus ring sits inside the circle, so it uses the icon color (the opposite of the
+       circle in both themes) instead of the blue that blended into it, 1.93 on light. */
+    a:focus-visible {
+        outline-color: var(--tblr-body-bg);
+    }
 }
 
 /* Keep the wide locale reference navigable without changing shared DataTable behavior. */
