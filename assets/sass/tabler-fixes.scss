@@ -120,3 +120,17 @@ fieldset.form-fieldset > legend {
 [data-bs-theme="dark"] .badge.bg-secondary {
     --#{$prefix}secondary-fg: #182433;
 }
+
+/* The form help icon sits on a light grey circle in both themes, but its "?" follows the
+   secondary text color, which is #737373 on light (4.35) and #a3a3a3 on dark (2.31). One
+   darker color works for both because the circle does not change. The hover state keeps
+   its own white-on-primary rule. */
+.form-help {
+    color: #5f6b7c;
+}
+
+/* The muted text color (.text-muted, subtitles) is #6b7280 in both themes: 4.6 on the
+   light surface but 2.93 on the dark one. Lighten it on the dark theme only. */
+[data-bs-theme="dark"] {
+    --#{$prefix}muted: #9ca3af;
+}
