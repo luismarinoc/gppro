@@ -166,6 +166,19 @@ fieldset.form-fieldset > legend {
     color: var(--#{$prefix}danger-text-emphasis) !important;
 }
 
+/* The outlined danger button ("Quitar") draws its text and border in the red fill color:
+   4.08 on the light surface and 2.53 on the dark one. Same fix as the destructive menu item;
+   the hover state keeps its own white-on-red fill (5.0). */
+.btn-outline-danger {
+    --#{$prefix}btn-color: #b42318;
+    --#{$prefix}btn-border-color: #b42318;
+}
+
+[data-bs-theme="dark"] .btn-outline-danger {
+    --#{$prefix}btn-color: var(--#{$prefix}danger-text-emphasis);
+    --#{$prefix}btn-border-color: var(--#{$prefix}danger-text-emphasis);
+}
+
 /* Two more places use the secondary text color #737373 on a surface it does not suit: the
    addon of an input group ("$", 4.15 on light and 2.48 on dark) and the inactive tabs and
    pills on dark (2.99). Use the muted ink token, which follows the theme (5.29, 5.91, 7.12).
