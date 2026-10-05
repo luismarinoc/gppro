@@ -86,10 +86,11 @@ fieldset.form-fieldset > legend {
     --#{$prefix}badge-color: #5f6b7c;
 }
 
-/* The secondary button pairs near-white text with a #a3a3a3 fill (2.41). Use the same
-   dark text as the status badges; on the dark theme the translucent hover fill still
-   reaches 4.55. */
-.btn-secondary {
+/* On the dark theme the secondary button pairs near-white text with a #a3a3a3 fill
+   (2.41). Use the same dark text as the status badges; the translucent hover fill still
+   reaches 4.55. Only the dark theme: the light theme fill is #737373, where the default
+   near-white text reaches 4.54 and dark text would drop to 3.31. */
+[data-bs-theme="dark"] .btn-secondary {
     --#{$prefix}btn-color: #182433;
     --#{$prefix}btn-hover-color: #182433;
     --#{$prefix}btn-active-color: #182433;
