@@ -222,6 +222,23 @@ class QuotationPdfTest extends KernelTestCase
         self::assertStringNotContainsString('quotation.notes', $contentWithout);
     }
 
+    public function testEnglishPdfRendersTranslatedLabelsInsteadOfRawKeys(): void
+    {
+        $content = $this->renderQuotation($this->buildQuotation(new Customer('English Customer')));
+
+        self::assertStringContainsString('Tax ID: 77.073.462-2', $content);
+        self::assertStringContainsString('Phone: +56 9 44516977', $content);
+        self::assertStringContainsString('Issuer signature', $content);
+        self::assertStringContainsString('Customer signature', $content);
+        self::assertStringContainsString('Date: ______________', $content);
+        self::assertStringContainsString('Bank transfer.', $content);
+        self::assertStringContainsString('Prices are subject to availability', $content);
+
+        foreach (['issuer_vat_id', 'issuer_phone', 'signature_issuer', 'signature_customer', 'signature_date', 'footer_payment', 'footer_terms'] as $key) {
+            self::assertStringNotContainsString('quotation.' . $key, $content);
+        }
+    }
+
     public function testFooterBarAlwaysRenders(): void
     {
         $content = $this->renderQuotation($this->buildQuotation(new Customer('Footer Customer')), 'es');
