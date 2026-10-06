@@ -109,6 +109,18 @@ fieldset.form-fieldset > legend {
     }
 }
 
+/* Footer copy and its secondary links share one readable neutral on the
+   footer surface; changing links alone leaves the copyright below AA. */
+.footer {
+    color: var(--gp-ink-muted);
+
+    .link-secondary,
+    .link-secondary:hover,
+    .link-secondary:focus {
+        color: var(--gp-ink-muted) !important;
+    }
+}
+
 /* The active page number is white on the light blue primary of the dark theme (2.20). The
    light theme already passes with white (5.00), so only the dark theme gets dark text. */
 [data-bs-theme="dark"] .pagination {
