@@ -1258,6 +1258,10 @@
         <source>remove_filter</source>
         <target state="translated">Restablecer el filtro de búsqueda</target>
       </trans-unit>
+      <trans-unit id="gpSecurityMenu" resname="security">
+        <source>security</source>
+        <target state="translated">Seguridad</target>
+      </trans-unit>
       <trans-unit id="fQ3Prt4" resname="security.unlock.title">
         <source>security.unlock.title</source>
         <target state="translated">Desbloquear la cuenta</target>

@@ -252,6 +252,10 @@ table.table-hover {
     }
 }
 
+.page-header .gp-datatable-toolbar .searchform .inline-search > :is(#searchTerm, #search-dropdown-btn) {
+    border-color: var(--gp-control-outline);
+}
+
 /* For the context menu */
 .action-dropdown,
 .actions .dropdown .dropdown-menu {

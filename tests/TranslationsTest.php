@@ -15,6 +15,21 @@ use PHPUnit\Framework\TestCase;
 #[Group('integration')]
 class TranslationsTest extends TestCase
 {
+    public function testSecurityMenuLabelInEnglishAndSpanish(): void
+    {
+        foreach (['en' => 'Security', 'es' => 'Seguridad'] as $locale => $expected) {
+            $xml = simplexml_load_file(__DIR__ . '/../translations/messages.' . $locale . '.xlf');
+            self::assertInstanceOf(\SimpleXMLElement::class, $xml);
+            $matches = [];
+            foreach ($xml->file->body->children() as $unit) {
+                if ((string) $unit->source === 'security') {
+                    $matches[] = (string) $unit->target;
+                }
+            }
+            self::assertSame([$expected], $matches, 'Expected one security label for ' . $locale);
+        }
+    }
+
     public function testForWrongFileExtension(): void
     {
         $files = glob(__DIR__ . '/../translations/*.*');
