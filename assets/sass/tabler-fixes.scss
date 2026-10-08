@@ -54,7 +54,7 @@ fieldset.form-fieldset > legend {
 [data-bs-theme=dark] {
     ::selection,
     .text-selected {
-        background-color: var(--#{$prefix}primary);
+        background-color: var(--tblr-primary);
     }
 }
 
@@ -75,15 +75,15 @@ fieldset.form-fieldset > legend {
    text through the foreground variables the text-*-fg utilities read. The default
    badge has no such utility rule and takes its text from --badge-color instead. */
 .badge.bg-success {
-    --#{$prefix}success-fg: #182433;
+    --tblr-success-fg: #182433;
 }
 
 .badge.bg-warning {
-    --#{$prefix}warning-fg: #182433;
+    --tblr-warning-fg: #182433;
 }
 
 :root:not([data-bs-theme="dark"]) .badge.bg-default {
-    --#{$prefix}badge-color: #5f6b7c;
+    --tblr-badge-color: #5f6b7c;
 }
 
 /* On the dark theme the secondary button pairs near-white text with a #a3a3a3 fill
@@ -91,9 +91,9 @@ fieldset.form-fieldset > legend {
    reaches 4.55. Only the dark theme: the light theme fill is #737373, where the default
    near-white text reaches 4.54 and dark text would drop to 3.31. */
 [data-bs-theme="dark"] .btn-secondary {
-    --#{$prefix}btn-color: #182433;
-    --#{$prefix}btn-hover-color: #182433;
-    --#{$prefix}btn-active-color: #182433;
+    --tblr-btn-color: #182433;
+    --tblr-btn-hover-color: #182433;
+    --tblr-btn-active-color: #182433;
 }
 
 /* Light theme only, the dark theme already passes: placeholders use #9ca3af (2.48 on the
@@ -101,11 +101,11 @@ fieldset.form-fieldset > legend {
 :root:not([data-bs-theme="dark"]) {
     input::placeholder,
     textarea::placeholder {
-        color: var(--#{$prefix}muted);
+        color: var(--tblr-muted);
     }
 
     .btn-outline-secondary {
-        --#{$prefix}btn-color: #5f6b7c;
+        --tblr-btn-color: #5f6b7c;
     }
 }
 
@@ -124,13 +124,13 @@ fieldset.form-fieldset > legend {
 /* The active page number is white on the light blue primary of the dark theme (2.20). The
    light theme already passes with white (5.00), so only the dark theme gets dark text. */
 [data-bs-theme="dark"] .pagination {
-    --#{$prefix}pagination-active-color: #182433;
+    --tblr-pagination-active-color: #182433;
 }
 
 /* The secondary badge shares the #a3a3a3 fill of the dark secondary button, with the same
    near-white text (2.41). The light theme fill is darker and already passes (4.63). */
 [data-bs-theme="dark"] .badge.bg-secondary {
-    --#{$prefix}secondary-fg: #182433;
+    --tblr-secondary-fg: #182433;
 }
 
 /* The form help icon sits on a light grey circle in both themes, but its "?" follows the
@@ -144,7 +144,7 @@ fieldset.form-fieldset > legend {
 /* The muted text color (.text-muted, subtitles) is #6b7280 in both themes: 4.6 on the
    light surface but 2.93 on the dark one. Lighten it on the dark theme only. */
 [data-bs-theme="dark"] {
-    --#{$prefix}muted: #9ca3af;
+    --tblr-muted: #9ca3af;
 }
 
 /* The success button pairs near-white text with the #2fb344 fill (2.63) in both themes. Use
@@ -152,11 +152,11 @@ fieldset.form-fieldset > legend {
    darkens it over the dark surface and drops the dark text to 4.23, so hover lightens the
    fill instead (6.62). */
 .btn-success {
-    --#{$prefix}btn-color: #182433;
-    --#{$prefix}btn-hover-color: #182433;
-    --#{$prefix}btn-active-color: #182433;
-    --#{$prefix}btn-hover-bg: color-mix(in srgb, var(--#{$prefix}success), #fff 15%);
-    --#{$prefix}btn-hover-border-color: color-mix(in srgb, var(--#{$prefix}success), #fff 15%);
+    --tblr-btn-color: #182433;
+    --tblr-btn-hover-color: #182433;
+    --tblr-btn-active-color: #182433;
+    --tblr-btn-hover-bg: color-mix(in srgb, var(--tblr-success), #fff 15%);
+    --tblr-btn-hover-border-color: color-mix(in srgb, var(--tblr-success), #fff 15%);
 }
 
 /* An unchecked checkbox, radio or switch is outlined with a 20% translucent navy: 1.51 on
@@ -164,7 +164,7 @@ fieldset.form-fieldset > legend {
    (3:1 is needed to identify it). Use the muted ink token, which follows the theme. The
    checked and indeterminate states keep their own fill and border. */
 .form-check-input:not(:checked):not(:indeterminate) {
-    border-color: var(--gp-ink-muted, var(--#{$prefix}secondary));
+    border-color: var(--gp-ink-muted, var(--tblr-secondary));
 }
 
 /* The destructive menu item ("Eliminar") uses the red fill color for its text, forced with
@@ -175,20 +175,20 @@ fieldset.form-fieldset > legend {
 }
 
 [data-bs-theme="dark"] .dropdown-item.text-danger {
-    color: var(--#{$prefix}danger-text-emphasis) !important;
+    color: var(--tblr-danger-text-emphasis) !important;
 }
 
 /* The outlined danger button ("Quitar") draws its text and border in the red fill color:
    4.08 on the light surface and 2.53 on the dark one. Same fix as the destructive menu item;
    the hover state keeps its own white-on-red fill (5.0). */
 .btn-outline-danger {
-    --#{$prefix}btn-color: #b42318;
-    --#{$prefix}btn-border-color: #b42318;
+    --tblr-btn-color: #b42318;
+    --tblr-btn-border-color: #b42318;
 }
 
 [data-bs-theme="dark"] .btn-outline-danger {
-    --#{$prefix}btn-color: var(--#{$prefix}danger-text-emphasis);
-    --#{$prefix}btn-border-color: var(--#{$prefix}danger-text-emphasis);
+    --tblr-btn-color: var(--tblr-danger-text-emphasis);
+    --tblr-btn-border-color: var(--tblr-danger-text-emphasis);
 }
 
 /* Two more places use the secondary text color #737373 on a surface it does not suit: the
@@ -196,9 +196,9 @@ fieldset.form-fieldset > legend {
    pills on dark (2.99). Use the muted ink token, which follows the theme (5.29, 5.91, 7.12).
    The active tab keeps its own color. */
 .input-group-text {
-    color: var(--gp-ink-muted, var(--#{$prefix}secondary));
+    color: var(--gp-ink-muted, var(--tblr-secondary));
 }
 
 [data-bs-theme="dark"] :is(.nav-tabs, .nav-pills) {
-    --#{$prefix}nav-link-color: var(--gp-ink-muted);
+    --tblr-nav-link-color: var(--gp-ink-muted);
 }
