@@ -11,6 +11,8 @@ $modal-backdrop-opacity: 0.7 !default;
 @import '~@tabler/core/scss/tabler-themes';
 @import '~@tabler/core/scss/vendor/litepicker';
 
+// Tom Select desaturates this border color, so it must remain a Sass color.
+$select-color-item-border: $gray-200;
 @import '~tom-select/dist/scss/tom-select.bootstrap5';
 @import '~@tabler/core/scss/vendor/tom-select';
 
