@@ -72,7 +72,9 @@
       "browserslist": ">=4.28.7 <5",
       "baseline-browser-mapping": ">=2.11.0 <3",
       "fast-uri": ">=4.1.5",
-      "nanoid": ">=3.3.18 <4.0.0"
+      "nanoid": ">=3.3.18 <4.0.0",
+      "source-map-js": ">=1.2.2 <2",
+      "postcss-selector-parser": ">=7.1.6 <8"
     }
   },
   "packageManager": "pnpm@10.34.4+sha512.8768be55200ae3f2226b6527fcca2687e14bc4e5f12d7721a0f25da3df47915177058648db4177baf348120fa0ba2752d8d8d93f6beaf1fe64ae18da8de961af"
