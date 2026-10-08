@@ -238,10 +238,15 @@
     }
 
     @media (max-width: 767.98px) {
+        .gp-calendar-scroll {
+            container-type: inline-size;
+        }
+
         #timesheet_calendar {
             min-width: 36rem;
 
             .fc-header-toolbar.row {
+                width: 100cqw;
                 grid-template-columns: minmax(0, 1fr) auto;
                 gap: .75rem;
             }

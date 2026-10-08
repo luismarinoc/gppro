@@ -105,6 +105,10 @@
         border-color: var(--gp-line, var(--tblr-border-color));
     }
 
+    > .btn-list > .btn {
+        border-color: var(--gp-control-outline, var(--tblr-border-color));
+    }
+
     .searchform .form-control:focus,
     .searchform .btn:focus-visible,
     > .btn-list > .btn:focus-visible {
