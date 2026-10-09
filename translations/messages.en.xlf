@@ -2,6 +2,42 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" target-language="en" datatype="plaintext" original="messages.en.xlf">
     <body>
+      <trans-unit id="onboarding.title" resname="onboarding.title">
+        <source>onboarding.title</source>
+        <target>Getting started</target>
+      </trans-unit>
+      <trans-unit id="onboarding.progress" resname="onboarding.progress">
+        <source>onboarding.progress</source>
+        <target>%completed% of %total% steps completed</target>
+      </trans-unit>
+      <trans-unit id="onboarding.done" resname="onboarding.done">
+        <source>onboarding.done</source>
+        <target>Completed</target>
+      </trans-unit>
+      <trans-unit id="onboarding.pending" resname="onboarding.pending">
+        <source>onboarding.pending</source>
+        <target>Not completed</target>
+      </trans-unit>
+      <trans-unit id="onboarding.step.customer" resname="onboarding.step.customer">
+        <source>onboarding.step.customer</source>
+        <target>Create a customer</target>
+      </trans-unit>
+      <trans-unit id="onboarding.step.project" resname="onboarding.step.project">
+        <source>onboarding.step.project</source>
+        <target>Create a project</target>
+      </trans-unit>
+      <trans-unit id="onboarding.step.activity" resname="onboarding.step.activity">
+        <source>onboarding.step.activity</source>
+        <target>Create an activity</target>
+      </trans-unit>
+      <trans-unit id="onboarding.step.timesheet" resname="onboarding.step.timesheet">
+        <source>onboarding.step.timesheet</source>
+        <target>Record your first timesheet</target>
+      </trans-unit>
+      <trans-unit id="onboarding.step.colleague" resname="onboarding.step.colleague">
+        <source>onboarding.step.colleague</source>
+        <target>Invite a colleague</target>
+      </trans-unit>
       <trans-unit id="N7mikjJ" resname="time_tracking" xml:space="preserve">
         <source>Time Tracking</source>
         <target state="translated">Time Tracking</target>

@@ -91,6 +91,7 @@ final class DashboardController extends AbstractController
 
         // default widgets
         $dashboard = [
+            'OnboardingChecklist',
             'PaginatedWorkingTimeChart',
             //'UserAmountToday',
             //'UserAmountWeek',

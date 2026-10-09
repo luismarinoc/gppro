@@ -41,9 +41,12 @@
                 <div class="row row-deck row-cards">
                 {% for widget in widgets %}
                     {% set columnSize = widget.width %}
+                    {% set renderedWidget = render_widget(widget) %}
+                    {% if renderedWidget|trim is not empty %}
                     <div class="col-md-{{ columnSize * 3 }}{% if columnSize <= 2 %} col-sm-{{ columnSize * 6  }}{% endif %}" id="{{ widget.id }}">
-                        {{ render_widget(widget) }}
+                        {{ renderedWidget|raw }}
                     </div>
+                    {% endif %}
                 {% endfor %}
                 </div>
             </section>
